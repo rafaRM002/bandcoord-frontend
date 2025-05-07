@@ -1,0 +1,212 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import { ArrowLeft, Save, Users, MessageSquare } from "lucide-react"
+import api from "../../api/axios"
+
+export default function FormularioMensaje() {
+  const navigate = useNavigate()
+
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState("")
+  const [usuarios, setUsuarios] = useState([])
+
+  const [formData, setFormData] = useState({
+    asunto: "",
+    contenido: "",
+    receptores: [],
+  })
+
+  useEffect(() => {
+    const fetchUsuarios = async () => {
+      try {
+        setLoading(true)
+        const response = await api.get("/usuarios")
+        setUsuarios(response.data)
+      } catch (error) {
+        console.error("Error al cargar usuarios:", error)
+        setError("Error al cargar la lista de usuarios. Por favor, inténtalo de nuevo.")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchUsuarios()
+  }, [])
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleReceptorChange = (e) => {
+    const { value, checked } = e.target
+
+    if (checked) {
+      setFormData((prev) => ({
+        ...prev,
+        receptores: [...prev.receptores, Number.parseInt(value)],
+      }))
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        receptores: prev.receptores.filter((id) => id !== Number.parseInt(value)),
+      }))
+    }
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setSaving(true)
+    setError("")
+
+    try {
+      // Crear el mensaje
+      const mensajeResponse = await api.post("/mensajes", {
+        asunto: formData.asunto,
+        contenido: formData.contenido,
+      })
+
+      const mensajeId = mensajeResponse.data.id
+
+      // Crear las relaciones mensaje-usuario para cada receptor
+      await Promise.all(
+        formData.receptores.map((usuarioId) =>
+          api.post("/mensaje-usuarios", {
+            mensaje_id: mensajeId,
+            usuario_id_receptor: usuarioId,
+            leido: false,
+          }),
+        ),
+      )
+
+      navigate("/admin/mensajes")
+    } catch (error) {
+      console.error("Error al enviar mensaje:", error)
+      setError("Error al enviar el mensaje. Por favor, verifica la información e inténtalo de nuevo.")
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-center items-center h-64">
+          <div className="text-[#C0C0C0]">Cargando...</div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex items-center mb-6">
+        <button
+          onClick={() => navigate("/admin/mensajes")}
+          className="mr-4 p-2 text-gray-400 hover:text-[#C0C0C0] rounded-full hover:bg-gray-900/50"
+        >
+          <ArrowLeft size={20} />
+        </button>
+        <h1 className="text-2xl font-bold text-[#C0C0C0]">Nuevo Mensaje</h1>
+      </div>
+
+      {error && (
+        <div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md mb-6">{error}</div>
+      )}
+
+      <div className="bg-black/30 border border-gray-800 rounded-lg p-6">
+        <form onSubmit={handleSubmit}>
+          {/* Asunto */}
+          <div className="space-y-2 mb-6">
+            <label htmlFor="asunto" className="block text-[#C0C0C0] text-sm font-medium">
+              Asunto *
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                <MessageSquare size={18} />
+              </div>
+              <input
+                id="asunto"
+                name="asunto"
+                value={formData.asunto}
+                onChange={handleChange}
+                required
+                className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+              />
+            </div>
+          </div>
+
+          {/* Contenido */}
+          <div className="space-y-2 mb-6">
+            <label htmlFor="contenido" className="block text-[#C0C0C0] text-sm font-medium">
+              Contenido *
+            </label>
+            <textarea
+              id="contenido"
+              name="contenido"
+              value={formData.contenido}
+              onChange={handleChange}
+              required
+              rows={6}
+              className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+            />
+          </div>
+
+          {/* Receptores */}
+          <div className="space-y-2 mb-6">
+            <label className="block text-[#C0C0C0] text-sm font-medium flex items-center">
+              <Users size={18} className="mr-2" />
+              Destinatarios *
+            </label>
+            <div className="bg-gray-900/50 border border-gray-800 rounded-md p-4 max-h-60 overflow-y-auto">
+              {usuarios.length === 0 ? (
+                <p className="text-gray-400">No hay usuarios disponibles</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {usuarios.map((usuario) => (
+                    <div key={usuario.id} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id={`usuario-${usuario.id}`}
+                        value={usuario.id}
+                        onChange={handleReceptorChange}
+                        className="mr-2 h-4 w-4 rounded border-gray-700 bg-gray-800 text-[#C0C0C0] focus:ring-[#C0C0C0]"
+                      />
+                      <label htmlFor={`usuario-${usuario.id}`} className="text-[#C0C0C0] text-sm">
+                        {usuario.nombre} {usuario.apellido1}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            {formData.receptores.length === 0 && (
+              <p className="text-red-400 text-xs">Debes seleccionar al menos un destinatario</p>
+            )}
+          </div>
+
+          <div className="mt-8 flex justify-end">
+            <button
+              type="button"
+              onClick={() => navigate("/admin/mensajes")}
+              className="mr-4 px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={saving || formData.receptores.length === 0}
+              className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              <Save size={18} />
+              {saving ? "Enviando..." : "Enviar mensaje"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
