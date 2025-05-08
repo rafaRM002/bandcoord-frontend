@@ -2,9 +2,10 @@
 
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { Eye, EyeOff, Mail, Lock } from "lucide-react"
+import { Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react"
+import { useAuth } from "../../context/AuthContext"
 
-export default function Login({ login }) {
+export default function Login() {
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -13,6 +14,7 @@ export default function Login({ login }) {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
   const navigate = useNavigate()
+  const { login } = useAuth()
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
@@ -22,24 +24,13 @@ export default function Login({ login }) {
     setError("")
 
     try {
-      // Simulación de inicio de sesión
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const result = await login(form.email, form.password)
 
-      // En una implementación real, aquí harías la llamada a tu API
-      // const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(form)
-      // });
-
-      // Simulación de respuesta exitosa - estableciendo role como "admin" para pruebas
-      const userData = { nombre: "Usuario", email: form.email, role: "admin" }
-
-      // Llamar a la función login del contexto
-      login(userData)
-
-      // Redirigir al inicio
-      navigate("/")
+      if (result.success) {
+        navigate("/")
+      } else {
+        setError(result.message)
+      }
     } catch (error) {
       console.error("Error al iniciar sesión:", error)
       setError("Error al iniciar sesión. Verifica tus credenciales.")
@@ -115,8 +106,16 @@ export default function Login({ login }) {
 
               {/* Mensaje de error */}
               {error && (
-                <div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-2 rounded-md text-sm">
-                  {error}
+                <div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md text-sm flex items-start">
+                  <AlertCircle size={18} className="mr-2 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p>{error}</p>
+                    {error === "El usuario no existe. Por favor, regístrate." && (
+                      <Link to="/register" className="underline mt-1 block">
+                        Ir a registro
+                      </Link>
+                    )}
+                  </div>
                 </div>
               )}
             </div>

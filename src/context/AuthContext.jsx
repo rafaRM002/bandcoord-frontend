@@ -2,6 +2,7 @@
 
 import { createContext, useState, useEffect, useContext } from "react"
 import { useNavigate } from "react-router-dom"
+import api from "../api/axios"
 
 const AuthContext = createContext()
 
@@ -20,25 +21,25 @@ export const AuthProvider = ({ children }) => {
           return
         }
 
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-
-        if (response.ok) {
-          const userData = await response.json()
+        try {
+          const response = await api.get("/me")
 
           // Verificar si el usuario está pendiente
-          if (userData.estado === "pendiente") {
+          if (response.data.estado === "pendiente") {
             localStorage.removeItem("token")
             setUser(null)
             navigate("/registro-pendiente")
+          } else if (response.data.estado === "bloqueado") {
+            localStorage.removeItem("token")
+            setUser(null)
+            alert("Tu cuenta ha sido bloqueada. Contacta con el administrador.")
+            navigate("/login")
           } else {
-            setUser(userData)
+            setUser(response.data)
           }
-        } else {
+        } catch (error) {
           // Token inválido o expirado
+          console.error("Error al verificar token:", error)
           localStorage.removeItem("token")
           setUser(null)
         }
@@ -57,57 +58,70 @@ export const AuthProvider = ({ children }) => {
   // Función para iniciar sesión
   const login = async (email, password) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      })
+      const response = await api.post("/login", { email, password })
 
-      const data = await response.json()
+      // Si la respuesta es exitosa, guardamos el token y los datos del usuario
+      if (response.status === 200) {
+        const { token } = response.data
+        localStorage.setItem("token", token)
 
-      if (response.ok) {
-        // Verificar si el usuario está pendiente
-        if (data.user && data.user.estado === "pendiente") {
+        // Obtener datos del usuario
+        const userResponse = await api.get("/me")
+
+        // Verificar estado del usuario
+        if (userResponse.data.estado === "pendiente") {
+          localStorage.removeItem("token")
           navigate("/registro-pendiente")
           return { success: false, message: "Tu cuenta está pendiente de aprobación." }
+        } else if (userResponse.data.estado === "bloqueado") {
+          localStorage.removeItem("token")
+          return { success: false, message: "Tu cuenta ha sido bloqueada. Contacta con el administrador." }
         }
 
-        localStorage.setItem("token", data.token)
-        setUser(data.user)
+        setUser(userResponse.data)
         return { success: true }
-      } else {
-        return { success: false, message: data.message || "Error al iniciar sesión" }
       }
     } catch (error) {
       console.error("Error al iniciar sesión:", error)
-      return { success: false, message: "Error de conexión" }
+
+      // Verificar si el error es porque el usuario no existe
+      if (error.response && error.response.status === 401) {
+        if (error.response.data.message === "Tu cuenta está pendiente de aprobación por un administrador.") {
+          navigate("/registro-pendiente")
+          return { success: false, message: "Tu cuenta está pendiente de aprobación." }
+        } else if (error.response.data.message === "Credenciales incorrectas.") {
+          return { success: false, message: "Email o contraseña incorrectos." }
+        } else if (error.response.data.message === "Usuario no encontrado.") {
+          return { success: false, message: "El usuario no existe. Por favor, regístrate." }
+        }
+      }
+
+      return { success: false, message: "Error al iniciar sesión. Inténtalo de nuevo." }
     }
   }
 
   // Función para registrarse
   const register = async (userData) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      })
+      const response = await api.post("/register", userData)
 
-      const data = await response.json()
-
-      if (response.ok) {
+      if (response.status === 201) {
         navigate("/registro-pendiente")
         return { success: true }
       } else {
-        return { success: false, message: data.message || "Error al registrarse" }
+        return { success: false, message: "Error al registrarse. Inténtalo de nuevo." }
       }
     } catch (error) {
       console.error("Error al registrarse:", error)
-      return { success: false, message: "Error de conexión" }
+
+      // Verificar si el error es porque el email ya está en uso
+      if (error.response && error.response.status === 422) {
+        if (error.response.data.errors && error.response.data.errors.email) {
+          return { success: false, message: "El email ya está en uso." }
+        }
+      }
+
+      return { success: false, message: "Error al registrarse. Inténtalo de nuevo." }
     }
   }
 
@@ -116,12 +130,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const token = localStorage.getItem("token")
       if (token) {
-        await fetch(`${import.meta.env.VITE_API_URL}/logout`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+        await api.post("/logout")
       }
     } catch (error) {
       console.error("Error al cerrar sesión:", error)
@@ -145,5 +154,9 @@ export const AuthProvider = ({ children }) => {
 }
 
 export const useAuth = () => {
-  return useContext(AuthContext)
+  const context = useContext(AuthContext)
+  if (!context) {
+    throw new Error("useAuth debe ser usado dentro de un AuthProvider")
+  }
+  return context
 }

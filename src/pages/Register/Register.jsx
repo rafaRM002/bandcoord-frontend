@@ -1,8 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { useNavigate, Link } from "react-router-dom"
-import { Eye, EyeOff, UserRound, Mail, Lock, Phone, Calendar } from "lucide-react"
+import { Link } from "react-router-dom"
+import { Eye, EyeOff, UserRound, Mail, Lock, Phone, Calendar, AlertCircle } from "lucide-react"
+import { useAuth } from "../../context/AuthContext"
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -12,36 +13,43 @@ export default function Register() {
     email: "",
     telefono: "",
     password: "",
+    password_confirmation: "",
     fecha_nac: "",
   })
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  const navigate = useNavigate()
+  const [error, setError] = useState("")
+  const { register } = useAuth()
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
+    setError("")
+
+    // Validar que las contraseñas coincidan
+    if (form.password !== form.password_confirmation) {
+      setError("Las contraseñas no coinciden")
+      setIsLoading(false)
+      return
+    }
 
     try {
       // Preparar los datos para enviar al backend
       const userData = {
         ...form,
-        estado: "pendiente", // Estado pendiente por defecto
         fecha_entrada: new Date().toISOString().split("T")[0], // Fecha actual
-        role: "usuario", // Role por defecto
       }
 
-      // Simulando la llamada a la API
-      // En un entorno real, reemplazar con tu llamada a API
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      // await api.post('/register', userData);
+      const result = await register(userData)
 
-      console.log("Datos enviados:", userData)
-      navigate("/registro-pendiente") // Redirigir a una página de confirmación
+      if (!result.success) {
+        setError(result.message)
+      }
     } catch (error) {
       console.error("Error al registrar:", error)
+      setError("Error al registrarse. Inténtalo de nuevo.")
     } finally {
       setIsLoading(false)
     }
@@ -60,7 +68,13 @@ export default function Register() {
             <p className="text-gray-400 text-sm sm:text-base">Completa tus datos para solicitar acceso</p>
           </div>
 
-          {/* Eliminamos la alerta */}
+          {/* Mensaje de error */}
+          {error && (
+            <div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md text-sm mx-4 mt-4 flex items-start">
+              <AlertCircle size={18} className="mr-2 flex-shrink-0 mt-0.5" />
+              <p>{error}</p>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit}>
             {/* Contenido del formulario */}
@@ -79,6 +93,7 @@ export default function Register() {
                       id="nombre"
                       name="nombre"
                       placeholder="Nombre"
+                      value={form.nombre}
                       onChange={handleChange}
                       required
                       className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -94,6 +109,7 @@ export default function Register() {
                     id="apellido1"
                     name="apellido1"
                     placeholder="Primer apellido"
+                    value={form.apellido1}
                     onChange={handleChange}
                     required
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -108,6 +124,7 @@ export default function Register() {
                     id="apellido2"
                     name="apellido2"
                     placeholder="Segundo apellido"
+                    value={form.apellido2}
                     onChange={handleChange}
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                   />
@@ -129,6 +146,7 @@ export default function Register() {
                       name="email"
                       type="email"
                       placeholder="tu@email.com"
+                      value={form.email}
                       onChange={handleChange}
                       required
                       className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -149,6 +167,7 @@ export default function Register() {
                       name="telefono"
                       type="tel"
                       placeholder="Número de teléfono"
+                      value={form.telefono}
                       onChange={handleChange}
                       required
                       className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -170,6 +189,7 @@ export default function Register() {
                     id="fecha_nac"
                     name="fecha_nac"
                     type="date"
+                    value={form.fecha_nac}
                     onChange={handleChange}
                     required
                     className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -191,6 +211,7 @@ export default function Register() {
                     name="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
+                    value={form.password}
                     onChange={handleChange}
                     required
                     className="w-full pl-10 pr-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -204,6 +225,28 @@ export default function Register() {
                   </button>
                 </div>
                 <p className="text-xs text-gray-400 mt-1">La contraseña debe tener al menos 8 caracteres</p>
+              </div>
+
+              {/* Confirmar Contraseña */}
+              <div className="space-y-2">
+                <label htmlFor="password_confirmation" className="block text-[#C0C0C0] text-sm font-medium">
+                  Confirmar Contraseña
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                    <Lock size={18} />
+                  </div>
+                  <input
+                    id="password_confirmation"
+                    name="password_confirmation"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={form.password_confirmation}
+                    onChange={handleChange}
+                    required
+                    className="w-full pl-10 pr-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                  />
+                </div>
               </div>
             </div>
 
