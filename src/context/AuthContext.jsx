@@ -22,7 +22,11 @@ export const AuthProvider = ({ children }) => {
         }
 
         try {
+          // Hacer la solicitud con manejo de errores mejorado
+          console.log("Verificando autenticación...")
           const response = await api.get("/me")
+
+          console.log("Respuesta de /me:", response.data)
 
           // Verificar si el usuario está pendiente
           if (response.data.estado === "pendiente") {
@@ -35,11 +39,26 @@ export const AuthProvider = ({ children }) => {
             alert("Tu cuenta ha sido bloqueada. Contacta con el administrador.")
             navigate("/login")
           } else {
+            // Asegurarse de que el usuario tenga toda la información, incluido el rol
             setUser(response.data)
+            console.log("Usuario autenticado:", response.data)
+
+            // Verificar explícitamente si el usuario es admin
+            if (response.data.role === "admin") {
+              console.log("El usuario es administrador")
+            } else {
+              console.log("El usuario NO es administrador, su rol es:", response.data.role)
+            }
           }
         } catch (error) {
           // Token inválido o expirado
           console.error("Error al verificar token:", error)
+
+          // Si el error es de conexión, mostrar un mensaje más claro
+          if (error.message && error.message.includes("Error de conexión")) {
+            alert("Error de conexión con el servidor. Por favor, verifica la configuración de la API.")
+          }
+
           localStorage.removeItem("token")
           setUser(null)
         }
@@ -58,15 +77,18 @@ export const AuthProvider = ({ children }) => {
   // Función para iniciar sesión
   const login = async (email, password) => {
     try {
+      console.log("Intentando iniciar sesión...")
       const response = await api.post("/login", { email, password })
 
       // Si la respuesta es exitosa, guardamos el token y los datos del usuario
       if (response.status === 200) {
         const { token } = response.data
         localStorage.setItem("token", token)
+        console.log("Token guardado correctamente")
 
         // Obtener datos del usuario
         const userResponse = await api.get("/me")
+        console.log("Datos del usuario obtenidos:", userResponse.data)
 
         // Verificar estado del usuario
         if (userResponse.data.estado === "pendiente") {
@@ -96,6 +118,11 @@ export const AuthProvider = ({ children }) => {
         }
       }
 
+      // Si es un error de conexión, mostrar un mensaje más claro
+      if (error.message && error.message.includes("Error de conexión")) {
+        return { success: false, message: "Error de conexión con el servidor. Por favor, inténtalo de nuevo." }
+      }
+
       return { success: false, message: "Error al iniciar sesión. Inténtalo de nuevo." }
     }
   }
@@ -103,6 +130,7 @@ export const AuthProvider = ({ children }) => {
   // Función para registrarse
   const register = async (userData) => {
     try {
+      console.log("Intentando registrar usuario...")
       const response = await api.post("/register", userData)
 
       if (response.status === 201) {
@@ -119,6 +147,11 @@ export const AuthProvider = ({ children }) => {
         if (error.response.data.errors && error.response.data.errors.email) {
           return { success: false, message: "El email ya está en uso." }
         }
+      }
+
+      // Si es un error de conexión, mostrar un mensaje más claro
+      if (error.message && error.message.includes("Error de conexión")) {
+        return { success: false, message: "Error de conexión con el servidor. Por favor, inténtalo de nuevo." }
       }
 
       return { success: false, message: "Error al registrarse. Inténtalo de nuevo." }

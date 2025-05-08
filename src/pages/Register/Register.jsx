@@ -39,6 +39,7 @@ export default function Register() {
       // Preparar los datos para enviar al backend
       const userData = {
         ...form,
+        fecha_nac: form.fecha_nac ? form.fecha_nac : null, // Aseguramos que la fecha tiene el formato correcto
         fecha_entrada: new Date().toISOString().split("T")[0], // Fecha actual
       }
 

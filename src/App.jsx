@@ -23,6 +23,7 @@ import FormularioComposicion from "./pages/Composiciones/FormularioComposicion"
 import Prestamos from "./pages/Prestamos/Prestamos"
 import Mensajes from "./pages/Mensajes/Mensajes"
 import FormularioMensaje from "./pages/Mensajes/FormularioMensaje"
+import GestionUsuarios from "./pages/Admin/GestionUsuarios"
 
 function App() {
   return (
@@ -153,6 +154,12 @@ function AppContent() {
           <Route
             path="/admin/calendario"
             element={user && user.role === "admin" ? <Calendario /> : <Navigate to="/login" replace />}
+          />
+
+          {/* Admin routes - Gestión de Usuarios */}
+          <Route
+            path="/admin/usuarios"
+            element={user && user.role === "admin" ? <GestionUsuarios /> : <Navigate to="/" replace />}
           />
 
           {/* Catch-all route */}

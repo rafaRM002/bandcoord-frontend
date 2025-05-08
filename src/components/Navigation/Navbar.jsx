@@ -1,16 +1,16 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Link, useNavigate, useLocation } from "react-router-dom"
-import { ChevronDown, User, LogOut, Settings, Menu, X } from "lucide-react"
+import { Link, useLocation } from "react-router-dom"
+import { ChevronDown, User, LogOut, Menu, X, Shield } from "lucide-react"
+import { useAuth } from "../../context/AuthContext"
 
 export default function Navbar() {
   const [loading, setLoading] = useState(true)
-  const [, setUser] = useState(null)
   const [hoveredMenu, setHoveredMenu] = useState(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const navigate = useNavigate()
   const location = useLocation()
+  const { user, logout, isAdmin } = useAuth()
 
   const buttonClass =
     "inline-flex items-center text-[#C0C0C0] hover:text-white border border-gray-800 rounded-md px-3 py-1 transition-colors hover:bg-gray-900/50 whitespace-nowrap"
@@ -36,53 +36,16 @@ export default function Navbar() {
   }, [location.pathname])
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const token = localStorage.getItem("token")
-        if (!token) {
-          setLoading(false)
-          return
-        }
+    // Simplemente establecer loading a false ya que ahora usamos el contexto de autenticación
+    setLoading(false)
 
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-
-        if (response.ok) {
-          const userData = await response.json()
-          setUser(userData)
-        } else {
-          localStorage.removeItem("token")
-        }
-      } catch (error) {
-        console.error("Error al verificar autenticación:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    checkAuth()
-  }, [location.pathname])
+    // Log para depuración
+    console.log("Navbar - isAdmin:", isAdmin)
+    console.log("Navbar - user:", user)
+  }, [isAdmin, user])
 
   const handleLogout = async () => {
-    try {
-      const token = localStorage.getItem("token")
-      if (token) {
-        await fetch(`${import.meta.env.VITE_API_URL}/logout`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-      }
-    } catch (error) {
-      console.error("Error al cerrar sesión:", error)
-    } finally {
-      localStorage.removeItem("token")
-      navigate("/login")
-    }
+    await logout()
   }
 
   if (loading) {
@@ -103,6 +66,9 @@ export default function Navbar() {
           <Link to="/" className="flex items-center space-x-2 min-w-[150px] whitespace-nowrap">
             <img src="/1-removebg-preview.png" alt="BandCoord logo" className="h-8 w-auto" />
             <span className="text-[#C0C0C0] font-bold text-xl whitespace-nowrap">BandCoord</span>
+            {isAdmin && (
+              <span className="bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-full ml-2">ADMIN</span>
+            )}
           </Link>
 
           {/* Mobile menu button */}
@@ -234,10 +200,10 @@ export default function Navbar() {
 
             {/* Usuario */}
             <div className="relative" onMouseEnter={() => handleMenuHover("usuario")} onMouseLeave={handleMenuLeave}>
-              <Link to="/admin/usuarios" className={buttonClass}>
+              <button className={buttonClass}>
                 Usuario
                 <ChevronDown size={16} className="ml-1" />
-              </Link>
+              </button>
               {hoveredMenu === "usuario" && (
                 <div className="absolute right-0 mt-1 w-60 bg-black border border-gray-800 rounded-md shadow-lg py-1 z-10">
                   <Link
@@ -246,18 +212,22 @@ export default function Navbar() {
                   >
                     <User size={18} className="mr-2" /> Mi Perfil
                   </Link>
-                  <Link
-                    to="/gestion-usuarios"
-                    className="flex items-center px-3 py-2 text-[#C0C0C0] hover:text-white hover:bg-gray-900/50 transition-colors duration-300 rounded-md whitespace-nowrap"
-                  >
-                    <Settings size={18} className="mr-2" /> Gestión de usuarios
-                  </Link>
-                  <Link
+
+                  {isAdmin && (
+                    <Link
+                      to="/admin/usuarios"
+                      className="flex items-center px-3 py-2 text-[#C0C0C0] hover:text-white hover:bg-gray-900/50 transition-colors duration-300 rounded-md whitespace-nowrap"
+                    >
+                      <Shield size={18} className="mr-2" /> Gestión de usuarios
+                    </Link>
+                  )}
+
+                  <button
                     onClick={handleLogout}
-                    className="flex items-center px-3 py-2 text-[#C0C0C0] hover:text-white hover:bg-gray-900/50 transition-colors duration-300 rounded-md whitespace-nowrap"
+                    className="flex items-center px-3 py-2 text-[#C0C0C0] hover:text-white hover:bg-gray-900/50 transition-colors duration-300 rounded-md whitespace-nowrap w-full text-left"
                   >
                     <LogOut size={18} className="mr-2" /> Cerrar Sesión
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>
@@ -326,9 +296,13 @@ export default function Navbar() {
               <Link to="/perfil" className="flex items-center px-3 py-2 text-[#C0C0C0] hover:text-white">
                 <User size={18} className="mr-2" /> Mi Perfil
               </Link>
-              <Link to="/gestion-usuarios" className="flex items-center px-3 py-2 text-[#C0C0C0] hover:text-white">
-                <Settings size={18} className="mr-2" /> Gestión de usuarios
-              </Link>
+
+              {isAdmin && (
+                <Link to="/admin/usuarios" className="flex items-center px-3 py-2 text-[#C0C0C0] hover:text-white">
+                  <Shield size={18} className="mr-2" /> Gestión de usuarios
+                </Link>
+              )}
+
               <button
                 onClick={handleLogout}
                 className="flex items-center w-full text-left px-3 py-2 text-[#C0C0C0] hover:text-white"
