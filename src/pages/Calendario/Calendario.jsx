@@ -80,7 +80,7 @@ export default function Calendario() {
 
     // Días vacíos al inicio para alinear con el día de la semana correcto
     for (let i = 0; i < firstDayOfMonth; i++) {
-      days.push(<div key={`empty-${i}`} className="h-12 md:h-16"></div>)
+      days.push(<div key={`empty-${i}`} className="h-8 sm:h-10 md:h-12 lg:h-16"></div>)
     }
 
     // Días del mes
@@ -99,11 +99,11 @@ export default function Calendario() {
         <div
           key={day}
           onClick={() => handleDateClick(day)}
-          className={`h-12 md:h-16 p-1 border border-gray-800 hover:bg-gray-900/30 cursor-pointer transition-colors relative ${
+          className={`h-8 sm:h-10 md:h-12 lg:h-16 p-1 border border-gray-800 hover:bg-gray-900/30 cursor-pointer transition-colors relative ${
             isSelected ? "bg-gray-800/50 border-[#C0C0C0]" : ""
           }`}
         >
-          <div className="text-sm text-[#C0C0C0]">{day}</div>
+          <div className="text-xs sm:text-sm text-[#C0C0C0]">{day}</div>
           {hasEvents && <div className="absolute bottom-1 right-1 w-2 h-2 rounded-full bg-[#C0C0C0]"></div>}
         </div>,
       )
@@ -113,8 +113,8 @@ export default function Calendario() {
   }
 
   //const formatDate = (dateString) => {
-    //const options = { day: "2-digit", month: "2-digit", year: "numeric" }
-    //return new Date(dateString).toLocaleDateString("es-ES", options)
+  //const options = { day: "2-digit", month: "2-digit", year: "numeric" }
+  //return new Date(dateString).toLocaleDateString("es-ES", options)
   //}
 
   const formatTime = (timeString) => {
@@ -205,7 +205,7 @@ export default function Calendario() {
                 {eventosDelDia.map((evento) => (
                   <div key={evento.id} className="bg-gray-900/30 border border-gray-800 rounded-lg p-3">
                     <h3 className="text-[#C0C0C0] font-medium">{evento.nombre}</h3>
-                    <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
+                    <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                       <div>
                         <span className="text-gray-400">Tipo:</span>
                         <span className="ml-2 text-[#C0C0C0]">
@@ -216,7 +216,7 @@ export default function Calendario() {
                         <span className="text-gray-400">Hora:</span>
                         <span className="ml-2 text-[#C0C0C0]">{formatTime(evento.hora)}</span>
                       </div>
-                      <div className="col-span-2">
+                      <div className="col-span-1 sm:col-span-2">
                         <span className="text-gray-400">Lugar:</span>
                         <span className="ml-2 text-[#C0C0C0]">{evento.lugar}</span>
                       </div>

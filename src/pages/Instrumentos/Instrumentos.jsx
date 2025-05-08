@@ -176,71 +176,75 @@ export default function Instrumentos() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-900/50 border-b border-gray-800">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Nº Serie
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Marca
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Modelo
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Tipo
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Estado
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-800">
-                {filteredInstrumentos.map((instrumento) => (
-                  <tr key={instrumento.num_serie} className="hover:bg-gray-900/30">
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{instrumento.num_serie}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{instrumento.marca}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{instrumento.modelo}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                      {getTipoNombre(instrumento.tipo_instrumento_id)}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          instrumento.estado === "disponible"
-                            ? "bg-green-900/30 text-green-400 border border-green-800"
-                            : instrumento.estado === "prestado"
-                              ? "bg-yellow-900/30 text-yellow-400 border border-yellow-800"
-                              : "bg-red-900/30 text-red-400 border border-red-800"
-                        }`}
-                      >
-                        {instrumento.estado.charAt(0).toUpperCase() + instrumento.estado.slice(1)}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                      <div className="flex space-x-2">
-                        <Link
-                          to={`/admin/instrumentos/editar/${instrumento.num_serie}`}
-                          className="p-1 text-gray-400 hover:text-[#C0C0C0]"
-                        >
-                          <Edit size={18} />
-                        </Link>
-                        <button
-                          onClick={() => confirmDelete(instrumento.num_serie)}
-                          className="p-1 text-gray-400 hover:text-red-400"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="min-w-full inline-block align-middle">
+              <div className="overflow-hidden">
+                <table className="min-w-full">
+                  <thead className="bg-gray-900/50 border-b border-gray-800">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        Nº Serie
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        Marca
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        Modelo
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        Tipo
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        Estado
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        Acciones
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-800">
+                    {filteredInstrumentos.map((instrumento) => (
+                      <tr key={instrumento.num_serie} className="hover:bg-gray-900/30">
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{instrumento.num_serie}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{instrumento.marca}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{instrumento.modelo}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                          {getTipoNombre(instrumento.tipo_instrumento_id)}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm">
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              instrumento.estado === "disponible"
+                                ? "bg-green-900/30 text-green-400 border border-green-800"
+                                : instrumento.estado === "prestado"
+                                  ? "bg-yellow-900/30 text-yellow-400 border border-yellow-800"
+                                  : "bg-red-900/30 text-red-400 border border-red-800"
+                            }`}
+                          >
+                            {instrumento.estado.charAt(0).toUpperCase() + instrumento.estado.slice(1)}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                          <div className="flex space-x-2">
+                            <Link
+                              to={`/admin/instrumentos/editar/${instrumento.num_serie}`}
+                              className="p-1 text-gray-400 hover:text-[#C0C0C0]"
+                            >
+                              <Edit size={18} />
+                            </Link>
+                            <button
+                              onClick={() => confirmDelete(instrumento.num_serie)}
+                              className="p-1 text-gray-400 hover:text-red-400"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         )}
       </div>

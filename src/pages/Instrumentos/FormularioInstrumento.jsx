@@ -231,18 +231,18 @@ export default function FormularioInstrumento() {
             />
           </div>
 
-          <div className="mt-8 flex justify-end">
+          <div className="mt-8 flex flex-col sm:flex-row sm:justify-end gap-3">
             <button
               type="button"
               onClick={() => navigate("/admin/instrumentos")}
-              className="mr-4 px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+              className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700 w-full sm:w-auto"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed w-full sm:w-auto"
             >
               <Save size={18} />
               {saving ? "Guardando..." : "Guardar"}

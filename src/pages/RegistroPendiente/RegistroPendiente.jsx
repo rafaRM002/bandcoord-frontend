@@ -3,7 +3,7 @@ import { AlertTriangle } from "lucide-react"
 
 export default function RegistroPendiente() {
   return (
-    <div className="w-full py-12 px-4 flex justify-center items-center">
+    <div className="w-full min-h-[70vh] flex justify-center items-center py-12 px-4">
       <div className="w-full max-w-md mx-auto">
         <div className="border border-gray-800 rounded-lg bg-black/90 backdrop-blur-sm shadow-xl">
           {/* Header */}

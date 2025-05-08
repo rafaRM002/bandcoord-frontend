@@ -49,21 +49,21 @@ export default function Login({ login }) {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-[calc(100vh-64px)] py-12 px-4">
+    <div className="flex justify-center items-center min-h-[calc(100vh-64px)] py-8 px-4">
       <div className="w-full max-w-md mx-auto">
         <div className="border border-gray-800 rounded-lg bg-black/90 backdrop-blur-sm shadow-xl">
           {/* Header */}
           <div className="space-y-3 text-center border-b border-gray-800 p-6">
             <Link to="/">
-              <img src="/1-removebg-preview.png" alt="Logo BandCoord" className="mx-auto h-20 w-auto" />
+              <img src="/1-removebg-preview.png" alt="Logo BandCoord" className="mx-auto h-16 sm:h-20 w-auto" />
             </Link>
-            <h2 className="text-2xl font-bold tracking-tight text-[#C0C0C0]">Iniciar Sesión</h2>
-            <p className="text-gray-400">Accede a tu cuenta de BandCoord</p>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#C0C0C0]">Iniciar Sesión</h2>
+            <p className="text-gray-400 text-sm sm:text-base">Accede a tu cuenta de BandCoord</p>
           </div>
 
           {/* Formulario */}
           <form onSubmit={handleSubmit}>
-            <div className="space-y-4 p-6">
+            <div className="space-y-4 p-4 sm:p-6">
               {/* Email */}
               <div className="space-y-2">
                 <label htmlFor="email" className="block text-[#C0C0C0] text-sm font-medium">
@@ -122,7 +122,7 @@ export default function Login({ login }) {
             </div>
 
             {/* Footer */}
-            <div className="flex flex-col space-y-4 border-t border-gray-800 p-6">
+            <div className="flex flex-col space-y-4 border-t border-gray-800 p-4 sm:p-6">
               <button
                 type="submit"
                 className="w-full py-2 px-4 bg-gradient-to-r from-[#C0C0C0] to-gray-400 text-black font-medium rounded-md hover:from-gray-300 hover:to-[#C0C0C0] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"

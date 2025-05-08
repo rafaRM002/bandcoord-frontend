@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useNavigate,Link } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import { Eye, EyeOff, UserRound, Mail, Lock, Phone, Calendar } from "lucide-react"
 
 export default function Register() {
@@ -48,29 +48,25 @@ export default function Register() {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-[calc(100vh-64px)] py-12 px-4">
+    <div className="flex justify-center items-center min-h-[calc(100vh-64px)] py-8 px-4">
       <div className="w-full max-w-2xl mx-auto">
         <div className="border border-gray-800 rounded-lg bg-black/90 backdrop-blur-sm shadow-xl">
           {/* Header */}
           <div className="space-y-1 text-center border-b border-gray-800 p-6">
             <div className="flex justify-center mb-2">
-            <img
-                src="/1-removebg-preview.png" 
-                alt="Logo BandCoord"
-                className="mx-auto h-20 w-auto"
-              />
+              <img src="/1-removebg-preview.png" alt="Logo BandCoord" className="mx-auto h-16 sm:h-20 w-auto" />
             </div>
-            <h2 className="text-2xl font-bold tracking-tight text-[#C0C0C0]">Crear cuenta</h2>
-            <p className="text-gray-400">Completa tus datos para solicitar acceso</p>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#C0C0C0]">Crear cuenta</h2>
+            <p className="text-gray-400 text-sm sm:text-base">Completa tus datos para solicitar acceso</p>
           </div>
 
           {/* Eliminamos la alerta */}
 
           <form onSubmit={handleSubmit}>
             {/* Contenido del formulario */}
-            <div className="space-y-4 p-6">
+            <div className="space-y-4 p-4 sm:p-6">
               {/* Datos personales */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label htmlFor="nombre" className="block text-[#C0C0C0] text-sm font-medium">
                     Nombre
@@ -119,7 +115,7 @@ export default function Register() {
               </div>
 
               {/* Contacto */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label htmlFor="email" className="block text-[#C0C0C0] text-sm font-medium">
                     Email
@@ -212,7 +208,7 @@ export default function Register() {
             </div>
 
             {/* Footer */}
-            <div className="flex flex-col space-y-4 border-t border-gray-800 p-6">
+            <div className="flex flex-col space-y-4 border-t border-gray-800 p-4 sm:p-6">
               <button
                 type="submit"
                 className="w-full py-2 px-4 bg-gradient-to-r from-[#C0C0C0] to-gray-400 text-black font-medium rounded-md hover:from-gray-300 hover:to-[#C0C0C0] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"

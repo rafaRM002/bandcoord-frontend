@@ -136,76 +136,84 @@ export default function Eventos() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-900/50 border-b border-gray-800">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Nombre
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Tipo
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Fecha
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Hora
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Lugar
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-800">
-                {filteredEventos.map((evento) => (
-                  <tr key={evento.id} className="hover:bg-gray-900/30">
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{evento.nombre}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          evento.tipo === "concierto"
-                            ? "bg-purple-900/30 text-purple-400 border border-purple-800"
-                            : evento.tipo === "ensayo"
-                              ? "bg-blue-900/30 text-blue-400 border border-blue-800"
-                              : evento.tipo === "procesion"
-                                ? "bg-green-900/30 text-green-400 border border-green-800"
-                                : "bg-gray-900/30 text-gray-400 border border-gray-800"
-                        }`}
-                      >
-                        {evento.tipo.charAt(0).toUpperCase() + evento.tipo.slice(1)}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{formatDate(evento.fecha)}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{formatTime(evento.hora)}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                      <div className="flex items-center">
-                        <MapPin size={14} className="mr-1 text-gray-400" />
-                        {evento.lugar}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                      <div className="flex space-x-2">
-                        <Link
-                          to={`/admin/eventos/editar/${evento.id}`}
-                          className="p-1 text-gray-400 hover:text-[#C0C0C0]"
-                        >
-                          <Edit size={18} />
-                        </Link>
-                        <button
-                          onClick={() => confirmDelete(evento.id)}
-                          className="p-1 text-gray-400 hover:text-red-400"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="min-w-full inline-block align-middle">
+              <div className="overflow-hidden">
+                <table className="min-w-full">
+                  <thead className="bg-gray-900/50 border-b border-gray-800">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        Nombre
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        Tipo
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        Fecha
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        Hora
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        Lugar
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        Acciones
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-800">
+                    {filteredEventos.map((evento) => (
+                      <tr key={evento.id} className="hover:bg-gray-900/30">
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{evento.nombre}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm">
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              evento.tipo === "concierto"
+                                ? "bg-purple-900/30 text-purple-400 border border-purple-800"
+                                : evento.tipo === "ensayo"
+                                  ? "bg-blue-900/30 text-blue-400 border border-blue-800"
+                                  : evento.tipo === "procesion"
+                                    ? "bg-green-900/30 text-green-400 border border-green-800"
+                                    : "bg-gray-900/30 text-gray-400 border border-gray-800"
+                            }`}
+                          >
+                            {evento.tipo.charAt(0).toUpperCase() + evento.tipo.slice(1)}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                          {formatDate(evento.fecha)}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                          {formatTime(evento.hora)}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                          <div className="flex items-center">
+                            <MapPin size={14} className="mr-1 text-gray-400 flex-shrink-0" />
+                            {evento.lugar}
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                          <div className="flex space-x-2">
+                            <Link
+                              to={`/admin/eventos/editar/${evento.id}`}
+                              className="p-1 text-gray-400 hover:text-[#C0C0C0]"
+                            >
+                              <Edit size={18} />
+                            </Link>
+                            <button
+                              onClick={() => confirmDelete(evento.id)}
+                              className="p-1 text-gray-400 hover:text-red-400"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         )}
       </div>
