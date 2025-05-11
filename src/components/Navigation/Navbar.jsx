@@ -303,12 +303,12 @@ export default function Navbar() {
                 </Link>
               )}
 
-              <button
+              <Link
                 onClick={handleLogout}
                 className="flex items-center w-full text-left px-3 py-2 text-[#C0C0C0] hover:text-white"
               >
                 <LogOut size={18} className="mr-2" /> Cerrar Sesión
-              </button>
+              </Link>
             </div>
           </div>
         )}

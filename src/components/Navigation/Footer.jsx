@@ -38,12 +38,11 @@ export default function Footer() {
           </div>
 
           {/* Enlaces rápidos */}
-          <div className="col-span-1 my-4 flex flex-col items-center sm:items-start">
-            <h3 className="text-[#C0C0C0] font-semibold mb-4 text-center sm:text-left">Enlaces rápidos</h3>
+          <div className="col-span-1 my-4 flex flex-col items-center">
+            <h3 className="text-[#C0C0C0] font-semibold mb-4 text-center">Enlaces rápidos</h3>
 
-            {/* Div 1 con 4 enlaces */}
-            <div className="flex flex-col sm:flex-row sm:justify-between mb-4 w-full">
-              <div className="flex flex-col space-y-2 mb-4 sm:mb-0 items-center sm:items-start">
+            <div className="flex flex-col sm:flex-row sm:justify-center mb-4 w-full">
+              <div className="flex flex-col space-y-2 mb-4 sm:mb-0 items-center sm:mr-8">
                 <Link to="/" className="text-gray-400 hover:text-[#C0C0C0] transition-colors duration-300">
                   Inicio
                 </Link>
@@ -58,8 +57,7 @@ export default function Footer() {
                 </Link>
               </div>
 
-              {/* Div 2 con 4 enlaces */}
-              <div className="flex flex-col space-y-2 items-center sm:items-start">
+              <div className="flex flex-col space-y-2 items-center">
                 <Link to="/prestamos" className="text-gray-400 hover:text-[#C0C0C0] transition-colors duration-300">
                   Préstamos
                 </Link>
@@ -77,9 +75,9 @@ export default function Footer() {
           </div>
 
           {/* Recursos */}
-          <div className="col-span-1 my-4 flex flex-col items-center sm:items-start">
-            <h3 className="text-[#C0C0C0] font-semibold mb-4 text-center sm:text-left">Recursos</h3>
-            <ul className="space-y-2 flex flex-col items-center sm:items-start">
+          <div className="col-span-1 my-4 flex flex-col items-center">
+            <h3 className="text-[#C0C0C0] font-semibold mb-4 text-center">Recursos</h3>
+            <ul className="space-y-2 flex flex-col items-center">
               <li>
                 <a href="#" className="text-gray-400 hover:text-[#C0C0C0] transition-colors duration-300">
                   Guía de usuario
