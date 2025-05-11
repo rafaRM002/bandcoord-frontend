@@ -294,11 +294,13 @@ export default function GestionUsuarios() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[#C0C0C0]">
                       <div className="flex space-x-2">
-                        {usuario.estado === "pendiente" && (
+                        {(usuario.estado === "pendiente" ||
+                          usuario.estado === "bloqueado" ||
+                          usuario.estado === "suspendido") && (
                           <button
                             onClick={() => mostrarConfirmacion("aprobar", usuario)}
                             className="text-green-400 hover:text-green-300"
-                            title="Aprobar usuario"
+                            title="Activar usuario"
                           >
                             <CheckCircle size={20} />
                           </button>
@@ -337,7 +339,7 @@ export default function GestionUsuarios() {
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 max-w-md w-full">
             <h3 className="text-xl font-bold text-white mb-4">
               {modalConfirmacion.accion === "aprobar"
-                ? "Aprobar usuario"
+                ? "Activar usuario"
                 : modalConfirmacion.accion === "bloquear"
                   ? "Bloquear usuario"
                   : "Eliminar usuario"}
@@ -345,7 +347,7 @@ export default function GestionUsuarios() {
 
             <p className="text-[#C0C0C0] mb-6">
               {modalConfirmacion.accion === "aprobar"
-                ? "¿Estás seguro de que deseas aprobar a este usuario? Podrá acceder a la plataforma."
+                ? "¿Estás seguro de que deseas activar a este usuario? Podrá acceder a la plataforma."
                 : modalConfirmacion.accion === "bloquear"
                   ? "¿Estás seguro de que deseas bloquear a este usuario? No podrá acceder a la plataforma."
                   : "¿Estás seguro de que deseas eliminar a este usuario? Esta acción no se puede deshacer."}
