@@ -35,12 +35,23 @@ export default function Register() {
       return
     }
 
+    // Validar formato de teléfono
+    const phoneRegex = /^[0-9]{9}$/
+    if (!phoneRegex.test(form.telefono)) {
+      setError("El teléfono debe contener 9 dígitos numéricos")
+      setIsLoading(false)
+      return
+    }
+
     try {
       // Preparar los datos para enviar al backend
+      // Asegurarse de que la fecha tiene el formato correcto (YYYY-MM-DD)
+      const fechaNac = form.fecha_nac ? new Date(form.fecha_nac).toISOString().split("T")[0] : null
+
       const userData = {
         ...form,
-        fecha_nac: form.fecha_nac ? form.fecha_nac : null, // Aseguramos que la fecha tiene el formato correcto
-        fecha_entrada: new Date().toISOString().split("T")[0], // Fecha actual
+        fecha_nac: fechaNac,
+        fecha_entrada: new Date().toISOString().split("T")[0], // Fecha actual en formato YYYY-MM-DD
       }
 
       const result = await register(userData)
@@ -167,13 +178,20 @@ export default function Register() {
                       id="telefono"
                       name="telefono"
                       type="tel"
-                      placeholder="Número de teléfono"
+                      pattern="[0-9]{9}"
+                      maxLength="9"
+                      placeholder="Número de teléfono (9 dígitos)"
                       value={form.telefono}
-                      onChange={handleChange}
+                      onChange={(e) => {
+                        // Solo permitir números
+                        const value = e.target.value.replace(/\D/g, "")
+                        setForm({ ...form, telefono: value })
+                      }}
                       required
                       className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                     />
                   </div>
+                  <p className="text-xs text-gray-400">Introduce 9 dígitos numéricos</p>
                 </div>
               </div>
 
