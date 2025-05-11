@@ -24,6 +24,9 @@ import Prestamos from "./pages/Prestamos/Prestamos"
 import Mensajes from "./pages/Mensajes/Mensajes"
 import FormularioMensaje from "./pages/Mensajes/FormularioMensaje"
 import GestionUsuarios from "./pages/Admin/GestionUsuarios"
+import Perfil from "./pages/Perfil/Perfil"
+import RestablecerPassword from "./pages/RestablecerPassword/RestablecerPassword"
+import NuevaPassword from "./pages/RestablecerPassword/NuevaPassword"
 
 function App() {
   return (
@@ -69,6 +72,13 @@ function AppContent() {
 
           {/* Protected routes */}
           <Route path="/" element={<Home user={user} loading={loading} />} />
+
+          {/* Perfil de usuario */}
+          <Route path="/perfil" element={user ? <Perfil /> : <Navigate to="/login" replace />} />
+
+          {/* Rutas para restablecer contraseña */}
+          <Route path="/restablecer-password" element={<RestablecerPassword />} />
+          <Route path="/nueva-password" element={<NuevaPassword />} />
 
           {/* Admin routes - Instrumentos */}
           <Route

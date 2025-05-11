@@ -136,6 +136,15 @@ export default function Login() {
                   Registrarse
                 </Link>
               </div>
+
+              <div className="text-center text-sm">
+                <Link
+                  to="/restablecer-password"
+                  className="text-[#C0C0C0] hover:text-white underline underline-offset-4"
+                >
+                  ¿Olvidaste tu contraseña?
+                </Link>
+              </div>
             </div>
           </form>
         </div>
