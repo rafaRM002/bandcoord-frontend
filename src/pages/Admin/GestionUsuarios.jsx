@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import api from "../../api/axios"
-import { CheckCircle, XCircle, Trash2, RefreshCw, Search, Filter, Bell } from "lucide-react"
+import { CheckCircle, XCircle, Trash2, RefreshCw, Search, Filter, Bell, AlertCircle } from "lucide-react"
 
 export default function GestionUsuarios() {
   const [usuarios, setUsuarios] = useState([])
@@ -121,6 +121,25 @@ export default function GestionUsuarios() {
     }
   }
 
+  // Suspender usuario
+  const suspenderUsuario = async (id) => {
+    try {
+      setActualizando(true)
+      await api.patch(`/usuarios/${id}/suspend`)
+
+      // Actualizar la lista de usuarios
+      cargarUsuarios()
+
+      // Cerrar modal
+      setModalConfirmacion({ visible: false, accion: null, usuario: null })
+    } catch (error) {
+      console.error("Error al suspender usuario:", error)
+      setError("Error al suspender el usuario. Por favor, inténtalo de nuevo.")
+    } finally {
+      setActualizando(false)
+    }
+  }
+
   // Mostrar modal de confirmación
   const mostrarConfirmacion = (accion, usuario) => {
     setModalConfirmacion({
@@ -138,6 +157,8 @@ export default function GestionUsuarios() {
       aprobarUsuario(usuario.id)
     } else if (accion === "bloquear") {
       bloquearUsuario(usuario.id)
+    } else if (accion === "suspender") {
+      suspenderUsuario(usuario.id)
     } else if (accion === "eliminar") {
       eliminarUsuario(usuario.id)
     }
@@ -221,7 +242,6 @@ export default function GestionUsuarios() {
           <table className="min-w-full divide-y divide-gray-800">
             <thead className="bg-gray-900">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">ID</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
                   Nombre
                 </th>
@@ -246,20 +266,19 @@ export default function GestionUsuarios() {
             <tbody className="divide-y divide-gray-800">
               {loading ? (
                 <tr>
-                  <td colSpan="8" className="px-6 py-4 text-center text-[#C0C0C0]">
+                  <td colSpan="7" className="px-6 py-4 text-center text-[#C0C0C0]">
                     Cargando usuarios...
                   </td>
                 </tr>
               ) : usuariosFiltrados.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="px-6 py-4 text-center text-[#C0C0C0]">
+                  <td colSpan="7" className="px-6 py-4 text-center text-[#C0C0C0]">
                     No se encontraron usuarios
                   </td>
                 </tr>
               ) : (
                 usuariosFiltrados.map((usuario) => (
                   <tr key={usuario.id} className="hover:bg-gray-800/50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#C0C0C0]">{usuario.id}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[#C0C0C0]">
                       {usuario.nombre} {usuario.apellido1} {usuario.apellido2}
                     </td>
@@ -307,13 +326,22 @@ export default function GestionUsuarios() {
                         )}
 
                         {usuario.estado === "activo" && (
-                          <button
-                            onClick={() => mostrarConfirmacion("bloquear", usuario)}
-                            className="text-red-400 hover:text-red-300"
-                            title="Bloquear usuario"
-                          >
-                            <XCircle size={20} />
-                          </button>
+                          <>
+                            <button
+                              onClick={() => mostrarConfirmacion("bloquear", usuario)}
+                              className="text-red-400 hover:text-red-300"
+                              title="Bloquear usuario"
+                            >
+                              <XCircle size={20} />
+                            </button>
+                            <button
+                              onClick={() => mostrarConfirmacion("suspender", usuario)}
+                              className="text-yellow-400 hover:text-yellow-300"
+                              title="Suspender usuario"
+                            >
+                              <AlertCircle size={20} />
+                            </button>
+                          </>
                         )}
 
                         <button
@@ -342,7 +370,9 @@ export default function GestionUsuarios() {
                 ? "Activar usuario"
                 : modalConfirmacion.accion === "bloquear"
                   ? "Bloquear usuario"
-                  : "Eliminar usuario"}
+                  : modalConfirmacion.accion === "suspender"
+                    ? "Suspender usuario"
+                    : "Eliminar usuario"}
             </h3>
 
             <p className="text-[#C0C0C0] mb-6">
@@ -350,7 +380,9 @@ export default function GestionUsuarios() {
                 ? "¿Estás seguro de que deseas activar a este usuario? Podrá acceder a la plataforma."
                 : modalConfirmacion.accion === "bloquear"
                   ? "¿Estás seguro de que deseas bloquear a este usuario? No podrá acceder a la plataforma."
-                  : "¿Estás seguro de que deseas eliminar a este usuario? Esta acción no se puede deshacer."}
+                  : modalConfirmacion.accion === "suspender"
+                    ? "¿Estás seguro de que deseas suspender a este usuario? No podrá acceder a la plataforma temporalmente."
+                    : "¿Estás seguro de que deseas eliminar a este usuario? Esta acción no se puede deshacer."}
             </p>
 
             <div className="flex justify-end space-x-3">
@@ -369,7 +401,9 @@ export default function GestionUsuarios() {
                     ? "bg-green-700 hover:bg-green-600 text-white"
                     : modalConfirmacion.accion === "bloquear"
                       ? "bg-red-700 hover:bg-red-600 text-white"
-                      : "bg-red-700 hover:bg-red-600 text-white"
+                      : modalConfirmacion.accion === "suspender"
+                        ? "bg-yellow-700 hover:bg-yellow-600 text-white"
+                        : "bg-red-700 hover:bg-red-600 text-white"
                 }`}
                 disabled={actualizando}
               >
@@ -379,7 +413,9 @@ export default function GestionUsuarios() {
                     ? "Aprobar"
                     : modalConfirmacion.accion === "bloquear"
                       ? "Bloquear"
-                      : "Eliminar"}
+                      : modalConfirmacion.accion === "suspender"
+                        ? "Suspender"
+                        : "Eliminar"}
               </button>
             </div>
           </div>

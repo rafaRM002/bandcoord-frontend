@@ -18,6 +18,8 @@ export default function Perfil() {
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [activeTab, setActiveTab] = useState("datos")
+  // Añadir un nuevo estado para el spinner
+  const [showSpinner, setShowSpinner] = useState(false)
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -71,6 +73,7 @@ export default function Perfil() {
     setSaving(true)
     setError("")
     setSuccess("")
+    setShowSpinner(true)
 
     try {
       // Validar formato de teléfono
@@ -78,6 +81,7 @@ export default function Perfil() {
       if (!phoneRegex.test(formData.telefono)) {
         setError("El teléfono debe contener 9 dígitos numéricos")
         setSaving(false)
+        setShowSpinner(false)
         return
       }
 
@@ -93,12 +97,19 @@ export default function Perfil() {
       await api.put(`/usuarios/${user.id}`, userData)
       setSuccess("Datos actualizados correctamente")
 
+      // Configurar el temporizador para ocultar el mensaje después de 3 segundos
+      setTimeout(() => {
+        setSuccess("")
+        setShowSpinner(false)
+      }, 3000)
+
       // Actualizar los datos del usuario en el contexto
       // Esto normalmente requeriría recargar los datos del usuario desde el backend
       // o actualizar el contexto de autenticación
     } catch (error) {
       console.error("Error al actualizar perfil:", error)
       setError("Error al actualizar los datos. Por favor, inténtalo de nuevo.")
+      setShowSpinner(false)
     } finally {
       setSaving(false)
     }
@@ -109,12 +120,14 @@ export default function Perfil() {
     setSaving(true)
     setError("")
     setSuccess("")
+    setShowSpinner(true)
 
     try {
       // Validar que las contraseñas coincidan
       if (passwordData.new_password !== passwordData.new_password_confirmation) {
         setError("Las nuevas contraseñas no coinciden")
         setSaving(false)
+        setShowSpinner(false)
         return
       }
 
@@ -122,6 +135,7 @@ export default function Perfil() {
       if (passwordData.new_password.length < 8) {
         setError("La nueva contraseña debe tener al menos 8 caracteres")
         setSaving(false)
+        setShowSpinner(false)
         return
       }
 
@@ -136,6 +150,12 @@ export default function Perfil() {
         new_password: "",
         new_password_confirmation: "",
       })
+
+      // Configurar el temporizador para ocultar el mensaje después de 3 segundos
+      setTimeout(() => {
+        setSuccess("")
+        setShowSpinner(false)
+      }, 3000)
     } catch (error) {
       console.error("Error al cambiar contraseña:", error)
 
@@ -144,6 +164,7 @@ export default function Perfil() {
       } else {
         setError("Error al cambiar la contraseña. Por favor, inténtalo de nuevo.")
       }
+      setShowSpinner(false)
     } finally {
       setSaving(false)
     }
@@ -200,8 +221,17 @@ export default function Perfil() {
 
       {success && (
         <div className="bg-green-900/20 border border-green-800 text-green-100 px-4 py-3 rounded-md mb-6 flex items-center">
-          <CheckCircle size={20} className="mr-2" />
-          {success}
+          {showSpinner ? (
+            <>
+              <div className="animate-spin mr-2 h-5 w-5 border-2 border-green-500 border-t-transparent rounded-full"></div>
+              {success}
+            </>
+          ) : (
+            <>
+              <CheckCircle size={20} className="mr-2" />
+              {success}
+            </>
+          )}
         </div>
       )}
 

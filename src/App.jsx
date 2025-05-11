@@ -82,93 +82,93 @@ function AppContent() {
 
           {/* Admin routes - Instrumentos */}
           <Route
-            path="/admin/instrumentos"
+            path="/instrumentos"
             element={user && user.role === "admin" ? <Instrumentos /> : <Navigate to="/login" replace />}
           />
           <Route
-            path="/admin/instrumentos/nuevo"
+            path="/instrumentos/nuevo"
             element={user && user.role === "admin" ? <FormularioInstrumento /> : <Navigate to="/login" replace />}
           />
           <Route
-            path="/admin/instrumentos/editar/:id"
+            path="/instrumentos/editar/:id"
             element={user && user.role === "admin" ? <FormularioInstrumento /> : <Navigate to="/login" replace />}
           />
           <Route
-            path="/admin/tipos-instrumentos"
+            path="/tipos-instrumentos"
             element={user && user.role === "admin" ? <TiposInstrumento /> : <Navigate to="/login" replace />}
           />
 
           {/* Admin routes - Eventos */}
           <Route
-            path="/admin/eventos"
+            path="/eventos"
             element={user && user.role === "admin" ? <Eventos /> : <Navigate to="/login" replace />}
           />
           <Route
-            path="/admin/eventos/nuevo"
+            path="/eventos/nuevo"
             element={user && user.role === "admin" ? <FormularioEvento /> : <Navigate to="/login" replace />}
           />
           <Route
-            path="/admin/eventos/editar/:id"
+            path="/eventos/editar/:id"
             element={user && user.role === "admin" ? <FormularioEvento /> : <Navigate to="/login" replace />}
           />
           <Route
-            path="/admin/minimos-eventos"
+            path="/minimos-eventos"
             element={user && user.role === "admin" ? <MinimosEvento /> : <Navigate to="/login" replace />}
           />
 
           {/* Admin routes - Préstamos */}
           <Route
-            path="/admin/prestamos"
+            path="/prestamos"
             element={user && user.role === "admin" ? <Prestamos /> : <Navigate to="/login" replace />}
           />
 
           {/* Admin routes - Entidades */}
           <Route
-            path="/admin/entidades"
+            path="/entidades"
             element={user && user.role === "admin" ? <Entidades /> : <Navigate to="/login" replace />}
           />
           <Route
-            path="/admin/entidades/nueva"
+            path="/entidades/nueva"
             element={user && user.role === "admin" ? <FormularioEntidad /> : <Navigate to="/login" replace />}
           />
           <Route
-            path="/admin/entidades/editar/:id"
+            path="/entidades/editar/:id"
             element={user && user.role === "admin" ? <FormularioEntidad /> : <Navigate to="/login" replace />}
           />
 
           {/* Admin routes - Composiciones */}
           <Route
-            path="/admin/composiciones"
+            path="/composiciones"
             element={user && user.role === "admin" ? <Composiciones /> : <Navigate to="/login" replace />}
           />
           <Route
-            path="/admin/composiciones/nueva"
+            path="/composiciones/nueva"
             element={user && user.role === "admin" ? <FormularioComposicion /> : <Navigate to="/login" replace />}
           />
           <Route
-            path="/admin/composiciones/editar/:id"
+            path="/composiciones/editar/:id"
             element={user && user.role === "admin" ? <FormularioComposicion /> : <Navigate to="/login" replace />}
           />
 
           {/* Admin routes - Mensajes */}
           <Route
-            path="/admin/mensajes"
+            path="/mensajes"
             element={user && user.role === "admin" ? <Mensajes /> : <Navigate to="/login" replace />}
           />
           <Route
-            path="/admin/mensajes/nuevo"
+            path="/mensajes/nuevo"
             element={user && user.role === "admin" ? <FormularioMensaje /> : <Navigate to="/login" replace />}
           />
 
           {/* Admin routes - Calendario */}
           <Route
-            path="/admin/calendario"
+            path="/calendario"
             element={user && user.role === "admin" ? <Calendario /> : <Navigate to="/login" replace />}
           />
 
           {/* Admin routes - Gestión de Usuarios */}
           <Route
-            path="/admin/usuarios"
+            path="/usuarios"
             element={user && user.role === "admin" ? <GestionUsuarios /> : <Navigate to="/" replace />}
           />
 
