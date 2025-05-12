@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Edit, Trash2, Search, Music } from "lucide-react"
+import { Plus, Edit, Trash2, Search, Music, ChevronLeft, ChevronRight } from "lucide-react"
 import api from "../../api/axios"
 
 export default function TiposInstrumento() {
@@ -14,6 +14,10 @@ export default function TiposInstrumento() {
   const [currentTipo, setCurrentTipo] = useState({ instrumento: "", cantidad: 0 })
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [tipoToDelete, setTipoToDelete] = useState(null)
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage] = useState(10)
 
   useEffect(() => {
     fetchTipos()
@@ -86,14 +90,22 @@ export default function TiposInstrumento() {
       if (modalMode === "create") {
         await api.post("/tipo-instrumentos", currentTipo)
       } else {
-        // Usar el nombre del instrumento como identificador para la actualización
-        await api.put(`/tipo-instrumentos/${currentTipo.instrumento}`, currentTipo)
+        // Corregir la ruta para actualizar según la captura de Postman
+        console.log("Actualizando tipo:", currentTipo.instrumento, "con datos:", currentTipo)
+
+        // Usar la ruta correcta para la actualización según Postman
+        await api.put(`/tipo-instrumentos/${encodeURIComponent(currentTipo.instrumento)}`, {
+          cantidad: currentTipo.cantidad,
+        })
       }
 
       fetchTipos()
       handleCloseModal()
     } catch (error) {
       console.error("Error al guardar tipo de instrumento:", error)
+      if (error.response) {
+        console.error("Respuesta del servidor:", error.response.status, error.response.data)
+      }
     }
   }
 
@@ -107,7 +119,7 @@ export default function TiposInstrumento() {
 
     try {
       // Usar el nombre del instrumento como identificador para la eliminación
-      await api.delete(`/tipo-instrumentos/${tipoToDelete}`)
+      await api.delete(`/tipo-instrumentos/${encodeURIComponent(tipoToDelete)}`)
       setTipos(tipos.filter((tipo) => tipo.instrumento !== tipoToDelete))
       setShowDeleteModal(false)
       setTipoToDelete(null)
@@ -117,6 +129,18 @@ export default function TiposInstrumento() {
   }
 
   const filteredTipos = tipos.filter((tipo) => tipo.instrumento.toLowerCase().includes(searchTerm.toLowerCase()))
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentTipos = filteredTipos.slice(indexOfFirstItem, indexOfLastItem)
+  const totalPages = Math.ceil(filteredTipos.length / itemsPerPage)
+
+  const paginate = (pageNumber) => {
+    if (pageNumber > 0 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber)
+    }
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -199,7 +223,7 @@ export default function TiposInstrumento() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800">
-              {filteredTipos.map((tipo) => (
+              {currentTipos.map((tipo) => (
                 <tr key={tipo.instrumento} className="hover:bg-gray-900/30">
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{tipo.instrumento}</td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{tipo.cantidad}</td>
@@ -223,6 +247,59 @@ export default function TiposInstrumento() {
               ))}
             </tbody>
           </table>
+        )}
+
+        {/* Pagination */}
+        {filteredTipos.length > 0 && (
+          <div className="px-4 py-3 flex items-center justify-between border-t border-gray-800">
+            <div className="text-sm text-gray-400">
+              Mostrando {indexOfFirstItem + 1} a {Math.min(indexOfLastItem, filteredTipos.length)} de{" "}
+              {filteredTipos.length} tipos
+            </div>
+            <div className="flex space-x-1">
+              <button
+                onClick={() => paginate(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="p-2 rounded-md bg-gray-900/50 text-gray-400 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                // Show pages around current page
+                let pageNum
+                if (totalPages <= 5) {
+                  pageNum = i + 1
+                } else if (currentPage <= 3) {
+                  pageNum = i + 1
+                } else if (currentPage >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i
+                } else {
+                  pageNum = currentPage - 2 + i
+                }
+
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => paginate(pageNum)}
+                    className={`w-8 h-8 flex items-center justify-center rounded-md ${
+                      currentPage === pageNum
+                        ? "bg-black border border-[#C0C0C0] text-[#C0C0C0]"
+                        : "bg-gray-900/50 text-gray-400 hover:bg-gray-800"
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                )
+              })}
+              <button
+                onClick={() => paginate(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="p-2 rounded-md bg-gray-900/50 text-gray-400 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
         )}
       </div>
 

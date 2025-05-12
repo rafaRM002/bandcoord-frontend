@@ -172,6 +172,10 @@ function AppContent() {
             element={user && user.role === "admin" ? <GestionUsuarios /> : <Navigate to="/" replace />}
           />
 
+          {/* Admin routes - Instrumentos */}
+          <Route path="/admin/instrumentos/nuevo" element={<FormularioInstrumento />} />
+          <Route path="/admin/instrumentos/editar/:id" element={<FormularioInstrumento />} />
+
           {/* Catch-all route */}
           <Route path="*" element={<NotFound />} />
         </Routes>

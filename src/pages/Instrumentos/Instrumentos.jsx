@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
-import { Plus, Edit, Trash2, Search, Music, Filter } from "lucide-react"
+import { Plus, Edit, Trash2, Search, Music, Filter, ChevronLeft, ChevronRight } from "lucide-react"
 import api from "../../api/axios"
 
 export default function Instrumentos() {
@@ -14,6 +14,10 @@ export default function Instrumentos() {
   const [tiposInstrumento, setTiposInstrumento] = useState([])
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [instrumentoToDelete, setInstrumentoToDelete] = useState(null)
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage] = useState(10)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -92,6 +96,18 @@ export default function Instrumentos() {
 
     return matchesSearch && matchesTipo
   })
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentInstrumentos = filteredInstrumentos.slice(indexOfFirstItem, indexOfLastItem)
+  const totalPages = Math.ceil(filteredInstrumentos.length / itemsPerPage)
+
+  const paginate = (pageNumber) => {
+    if (pageNumber > 0 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber)
+    }
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -198,7 +214,7 @@ export default function Instrumentos() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-800">
-                    {filteredInstrumentos.map((instrumento) => (
+                    {currentInstrumentos.map((instrumento) => (
                       <tr key={instrumento.numero_serie} className="hover:bg-gray-900/30">
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
                           {instrumento.numero_serie}
@@ -240,6 +256,59 @@ export default function Instrumentos() {
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {filteredInstrumentos.length > 0 && (
+          <div className="px-4 py-3 flex items-center justify-between border-t border-gray-800">
+            <div className="text-sm text-gray-400">
+              Mostrando {indexOfFirstItem + 1} a {Math.min(indexOfLastItem, filteredInstrumentos.length)} de{" "}
+              {filteredInstrumentos.length} instrumentos
+            </div>
+            <div className="flex space-x-1">
+              <button
+                onClick={() => paginate(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="p-2 rounded-md bg-gray-900/50 text-gray-400 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                // Show pages around current page
+                let pageNum
+                if (totalPages <= 5) {
+                  pageNum = i + 1
+                } else if (currentPage <= 3) {
+                  pageNum = i + 1
+                } else if (currentPage >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i
+                } else {
+                  pageNum = currentPage - 2 + i
+                }
+
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => paginate(pageNum)}
+                    className={`w-8 h-8 flex items-center justify-center rounded-md ${
+                      currentPage === pageNum
+                        ? "bg-black border border-[#C0C0C0] text-[#C0C0C0]"
+                        : "bg-gray-900/50 text-gray-400 hover:bg-gray-800"
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                )
+              })}
+              <button
+                onClick={() => paginate(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="p-2 rounded-md bg-gray-900/50 text-gray-400 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronRight size={16} />
+              </button>
             </div>
           </div>
         )}
