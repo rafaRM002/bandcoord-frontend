@@ -13,6 +13,7 @@ export default function FormularioEvento() {
   const [loading, setLoading] = useState(isEditing)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
+  const [entidades, setEntidades] = useState([])
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -21,34 +22,58 @@ export default function FormularioEvento() {
     hora: "",
     lugar: "",
     descripcion: "",
+    estado: "planificado",
+    entidad_id: "",
   })
 
   useEffect(() => {
-    const fetchEvento = async () => {
-      if (!isEditing) return
-
+    const fetchData = async () => {
       try {
-        setLoading(true)
-        const response = await api.get(`/eventos/${id}`)
-        const evento = response.data
+        // Cargar entidades para el selector
+        const entidadesRes = await api.get("/entidades")
+        if (entidadesRes.data && Array.isArray(entidadesRes.data)) {
+          setEntidades(entidadesRes.data)
+        } else if (entidadesRes.data && entidadesRes.data.entidades && Array.isArray(entidadesRes.data.entidades)) {
+          setEntidades(entidadesRes.data.entidades)
+        }
 
-        setFormData({
-          nombre: evento.nombre,
-          tipo: evento.tipo,
-          fecha: evento.fecha,
-          hora: evento.hora || "",
-          lugar: evento.lugar,
-          descripcion: evento.descripcion || "",
-        })
+        // Si estamos editando, cargar los datos del evento
+        if (isEditing) {
+          setLoading(true)
+          const response = await api.get(`/eventos/${id}`)
+          console.log("Respuesta del evento:", response)
+
+          let evento = null
+          if (response.data && response.data.id) {
+            evento = response.data
+          } else if (response.data && response.data.evento) {
+            evento = response.data.evento
+          }
+
+          if (evento) {
+            setFormData({
+              nombre: evento.nombre,
+              tipo: evento.tipo,
+              fecha: evento.fecha,
+              hora: evento.hora || "",
+              lugar: evento.lugar,
+              descripcion: evento.descripcion || "",
+              estado: evento.estado || "planificado",
+              entidad_id: evento.entidad_id || "",
+            })
+          } else {
+            setError("No se pudo cargar la información del evento.")
+          }
+        }
       } catch (error) {
-        console.error("Error al cargar evento:", error)
-        setError("Error al cargar los datos del evento. Por favor, inténtalo de nuevo.")
+        console.error("Error al cargar datos:", error)
+        setError("Error al cargar los datos. Por favor, inténtalo de nuevo.")
       } finally {
         setLoading(false)
       }
     }
 
-    fetchEvento()
+    fetchData()
   }, [id, isEditing])
 
   const handleChange = (e) => {
@@ -62,15 +87,26 @@ export default function FormularioEvento() {
     setError("")
 
     try {
+      console.log("Enviando datos:", formData)
+
       if (isEditing) {
-        await api.put(`/eventos/${id}`, formData)
+        const response = await api.put(`/eventos/${id}`, formData)
+        console.log("Respuesta de actualización:", response)
       } else {
-        await api.post("/eventos", formData)
+        const response = await api.post("/eventos", formData)
+        console.log("Respuesta de creación:", response)
       }
+
       navigate("/admin/eventos")
     } catch (error) {
       console.error("Error al guardar evento:", error)
-      setError("Error al guardar los datos. Por favor, verifica la información e inténtalo de nuevo.")
+
+      if (error.response) {
+        console.error("Respuesta del servidor:", error.response.status, error.response.data)
+        setError(`Error del servidor: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+      } else {
+        setError("Error al guardar los datos. Por favor, verifica la información e inténtalo de nuevo.")
+      }
     } finally {
       setSaving(false)
     }
@@ -141,6 +177,7 @@ export default function FormularioEvento() {
                 <option value="concierto">Concierto</option>
                 <option value="ensayo">Ensayo</option>
                 <option value="procesion">Procesión</option>
+                <option value="pasacalles">Pasacalles</option>
                 <option value="otro">Otro</option>
               </select>
             </div>
@@ -187,7 +224,7 @@ export default function FormularioEvento() {
             </div>
 
             {/* Lugar */}
-            <div className="space-y-2 md:col-span-2">
+            <div className="space-y-2">
               <label htmlFor="lugar" className="block text-[#C0C0C0] text-sm font-medium">
                 Lugar *
               </label>
@@ -204,6 +241,48 @@ export default function FormularioEvento() {
                   className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                 />
               </div>
+            </div>
+
+            {/* Estado */}
+            <div className="space-y-2">
+              <label htmlFor="estado" className="block text-[#C0C0C0] text-sm font-medium">
+                Estado *
+              </label>
+              <select
+                id="estado"
+                name="estado"
+                value={formData.estado}
+                onChange={handleChange}
+                required
+                className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+              >
+                <option value="planificado">Planificado</option>
+                <option value="en progreso">En progreso</option>
+                <option value="finalizado">Finalizado</option>
+                <option value="completado">Completado</option>
+                <option value="cancelado">Cancelado</option>
+              </select>
+            </div>
+
+            {/* Entidad */}
+            <div className="space-y-2">
+              <label htmlFor="entidad_id" className="block text-[#C0C0C0] text-sm font-medium">
+                Entidad
+              </label>
+              <select
+                id="entidad_id"
+                name="entidad_id"
+                value={formData.entidad_id}
+                onChange={handleChange}
+                className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+              >
+                <option value="">Ninguna</option>
+                {entidades.map((entidad) => (
+                  <option key={entidad.id} value={entidad.id}>
+                    {entidad.nombre}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
