@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Edit, Trash2, Filter } from "lucide-react"
+import { Plus, Edit, Trash2, Filter, Search, ChevronDown, ChevronUp, AlertCircle } from "lucide-react"
 import api from "../../api/axios"
+import { toast } from "react-toastify"
 
 export default function MinimosEvento() {
   const [minimos, setMinimos] = useState([])
@@ -12,15 +13,19 @@ export default function MinimosEvento() {
   const [tiposInstrumento, setTiposInstrumento] = useState([])
   const [eventoFilter, setEventoFilter] = useState("")
   const [tipoFilter, setTipoFilter] = useState("")
+  const [searchTerm, setSearchTerm] = useState("")
   const [showModal, setShowModal] = useState(false)
   const [modalMode, setModalMode] = useState("create") // "create" o "edit"
   const [currentMinimo, setCurrentMinimo] = useState({
     evento_id: "",
     instrumento_tipo_id: "",
-    cantidad_minima: 1,
+    cantidad: 1,
   })
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [minimoToDelete, setMinimoToDelete] = useState(null)
+  const [expandedEventos, setExpandedEventos] = useState({})
+  const [currentPage, setCurrentPage] = useState(1)
+  const [eventosPerPage] = useState(2) // Mostrar solo 2 eventos por página
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,15 +50,41 @@ export default function MinimosEvento() {
           minimosData = minimosRes.data
         } else if (minimosRes.data && minimosRes.data.data && Array.isArray(minimosRes.data.data)) {
           minimosData = minimosRes.data.data
+        } else if (
+          minimosRes.data &&
+          minimosRes.data.originalData &&
+          minimosRes.data.originalData.data &&
+          Array.isArray(minimosRes.data.originalData.data)
+        ) {
+          minimosData = minimosRes.data.originalData.data
         } else {
           console.warn("Formato de respuesta inesperado para mínimos:", minimosRes.data)
         }
-        setMinimos(minimosData)
+
+        // Mapear los datos para tener una estructura consistente
+        const mappedMinimos = minimosData.map((minimo) => ({
+          evento_id: minimo.evento_id,
+          instrumento_tipo_id: minimo.instrumento_tipo_id,
+          cantidad: minimo.cantidad || 0,
+          evento: minimo.evento || null,
+          tipo_instrumento: minimo.tipo_instrumento || null,
+        }))
+
+        setMinimos(mappedMinimos)
 
         // Procesar datos de eventos
         let eventosData = []
         if (eventosRes.data && Array.isArray(eventosRes.data)) {
           eventosData = eventosRes.data
+        } else if (eventosRes.data && eventosRes.data.eventos && Array.isArray(eventosRes.data.eventos)) {
+          eventosData = eventosRes.data.eventos
+        } else if (
+          eventosRes.data &&
+          eventosRes.data.data &&
+          eventosRes.data.data.eventos &&
+          Array.isArray(eventosRes.data.data.eventos)
+        ) {
+          eventosData = eventosRes.data.data.eventos
         } else if (eventosRes.data && eventosRes.data.data && Array.isArray(eventosRes.data.data)) {
           eventosData = eventosRes.data.data
         } else {
@@ -71,6 +102,13 @@ export default function MinimosEvento() {
           console.warn("Formato de respuesta inesperado para tipos de instrumento:", tiposRes.data)
         }
         setTiposInstrumento(tiposData)
+
+        // Inicializar todos los eventos como expandidos
+        const initialExpandedState = {}
+        eventosData.forEach((evento) => {
+          initialExpandedState[evento.id] = true
+        })
+        setExpandedEventos(initialExpandedState)
       } catch (error) {
         console.error("Error al cargar datos:", error)
         setError(`Error al cargar datos: ${error.message}`)
@@ -94,7 +132,7 @@ export default function MinimosEvento() {
     fetchData()
   }, [])
 
-  const handleOpenModal = (mode, minimo = { evento_id: "", instrumento_tipo_id: "", cantidad_minima: 1 }) => {
+  const handleOpenModal = (mode, minimo = { evento_id: "", instrumento_tipo_id: "", cantidad: 1 }) => {
     setModalMode(mode)
     setCurrentMinimo(minimo)
     setShowModal(true)
@@ -102,7 +140,7 @@ export default function MinimosEvento() {
 
   const handleCloseModal = () => {
     setShowModal(false)
-    setCurrentMinimo({ evento_id: "", instrumento_tipo_id: "", cantidad_minima: 1 })
+    setCurrentMinimo({ evento_id: "", instrumento_tipo_id: "", cantidad: 1 })
   }
 
   const handleInputChange = (e) => {
@@ -114,10 +152,32 @@ export default function MinimosEvento() {
     e.preventDefault()
 
     try {
+      // Verificar si ya existe un mínimo para este evento y tipo de instrumento
       if (modalMode === "create") {
-        await api.post("/minimos-evento", currentMinimo)
+        const existeMinimo = minimos.some(
+          (minimo) =>
+            minimo.evento_id.toString() === currentMinimo.evento_id.toString() &&
+            minimo.instrumento_tipo_id.toString() === currentMinimo.instrumento_tipo_id.toString(),
+        )
+
+        if (existeMinimo) {
+          toast.error(
+            "Ya existe un mínimo para este evento y tipo de instrumento. Por favor, edita el existente si necesitas modificarlo.",
+          )
+          return
+        }
+
+        await api.post("/minimos-evento", {
+          evento_id: currentMinimo.evento_id,
+          instrumento_tipo_id: currentMinimo.instrumento_tipo_id,
+          cantidad: Number.parseInt(currentMinimo.cantidad),
+        })
+        toast.success("Mínimo de instrumento creado correctamente")
       } else {
-        await api.put(`/minimos-evento/${currentMinimo.evento_id}/${currentMinimo.instrumento_tipo_id}`, currentMinimo)
+        await api.put(`/minimos-evento/${currentMinimo.evento_id}/${currentMinimo.instrumento_tipo_id}`, {
+          cantidad: Number.parseInt(currentMinimo.cantidad),
+        })
+        toast.success("Mínimo de instrumento actualizado correctamente")
       }
 
       // Recargar los datos
@@ -129,12 +189,29 @@ export default function MinimosEvento() {
         minimosData = response.data
       } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
         minimosData = response.data.data
+      } else if (
+        response.data &&
+        response.data.originalData &&
+        response.data.originalData.data &&
+        Array.isArray(response.data.originalData.data)
+      ) {
+        minimosData = response.data.originalData.data
       }
 
-      setMinimos(minimosData)
+      // Mapear los datos para tener una estructura consistente
+      const mappedMinimos = minimosData.map((minimo) => ({
+        evento_id: minimo.evento_id,
+        instrumento_tipo_id: minimo.instrumento_tipo_id,
+        cantidad: minimo.cantidad || 0,
+        evento: minimo.evento || null,
+        tipo_instrumento: minimo.tipo_instrumento || null,
+      }))
+
+      setMinimos(mappedMinimos)
       handleCloseModal()
     } catch (error) {
       console.error("Error al guardar mínimo de evento:", error)
+      toast.error("Error al guardar el mínimo de instrumento")
     }
   }
 
@@ -159,26 +236,81 @@ export default function MinimosEvento() {
       )
       setShowDeleteModal(false)
       setMinimoToDelete(null)
+      toast.success("Mínimo de instrumento eliminado correctamente")
     } catch (error) {
       console.error("Error al eliminar mínimo de evento:", error)
+      toast.error("Error al eliminar el mínimo de instrumento")
     }
   }
 
-  const filteredMinimos = minimos.filter((minimo) => {
-    const matchesEvento = eventoFilter === "" || minimo.evento_id.toString() === eventoFilter
-    const matchesTipo = tipoFilter === "" || minimo.instrumento_tipo_id.toString() === tipoFilter
-
-    return matchesEvento && matchesTipo
-  })
-
-  const getEventoNombre = (eventoId) => {
-    const evento = eventos.find((e) => e.id === eventoId)
-    return evento ? evento.nombre : "Desconocido"
+  const toggleEventoExpanded = (eventoId) => {
+    setExpandedEventos((prev) => ({
+      ...prev,
+      [eventoId]: !prev[eventoId],
+    }))
   }
 
+  // Filtrar eventos según los criterios de búsqueda
+  const filteredEventos = eventos.filter((evento) => {
+    // Filtrar por término de búsqueda en el nombre del evento
+    const matchesSearch = evento.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+
+    // Filtrar por evento seleccionado
+    const matchesEvento = eventoFilter === "" || evento.id.toString() === eventoFilter
+
+    // Verificar si el evento tiene al menos un mínimo que coincida con el filtro de tipo
+    const tieneMinimosConTipo =
+      tipoFilter === "" ||
+      minimos.some(
+        (minimo) =>
+          minimo.evento_id === evento.id &&
+          (minimo.instrumento_tipo_id.toString() === tipoFilter ||
+            (minimo.tipo_instrumento &&
+              ((minimo.tipo_instrumento.instrumento && minimo.tipo_instrumento.instrumento.toString() === tipoFilter) ||
+                (minimo.tipo_instrumento.id && minimo.tipo_instrumento.id.toString() === tipoFilter)))),
+      )
+
+    return matchesSearch && matchesEvento && tieneMinimosConTipo
+  })
+
+  // Paginación para mostrar solo 2 eventos por página
+  const indexOfLastEvento = currentPage * eventosPerPage
+  const indexOfFirstEvento = indexOfLastEvento - eventosPerPage
+  const currentEventos = filteredEventos.slice(indexOfFirstEvento, indexOfLastEvento)
+  const totalPages = Math.ceil(filteredEventos.length / eventosPerPage)
+
+  const paginate = (pageNumber) => {
+    if (pageNumber > 0 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber)
+    }
+  }
+
+  // Función para obtener el nombre del tipo de instrumento
   const getTipoNombre = (tipoId) => {
-    const tipo = tiposInstrumento.find((t) => t.id === tipoId)
-    return tipo ? tipo.nombre : "Desconocido"
+    // Primero buscar en los minimos por si tiene el objeto tipo_instrumento anidado
+    const minimoConTipo = minimos.find(
+      (m) => (m.instrumento_tipo_id === tipoId || m.instrumento_tipo_id.toString() === tipoId) && m.tipo_instrumento,
+    )
+
+    if (minimoConTipo && minimoConTipo.tipo_instrumento) {
+      return minimoConTipo.tipo_instrumento.instrumento || minimoConTipo.tipo_instrumento.nombre || tipoId
+    }
+
+    // Si no, buscar en la lista de tipos
+    const tipo = tiposInstrumento.find((t) => t.id === tipoId || t.instrumento === tipoId)
+    return tipo ? tipo.nombre || tipo.instrumento : tipoId
+  }
+
+  // Agrupar mínimos por evento
+  const getMinimosPorEvento = (eventoId) => {
+    return minimos.filter((minimo) => minimo.evento_id === eventoId)
+  }
+
+  // Formatear fecha para mostrar
+  const formatDate = (dateString) => {
+    if (!dateString) return ""
+    const options = { day: "2-digit", month: "2-digit", year: "numeric" }
+    return new Date(dateString).toLocaleDateString("es-ES", options)
   }
 
   return (
@@ -211,57 +343,64 @@ export default function MinimosEvento() {
         </div>
       )}
 
-      {/* Filtros */}
+      {/* Filtros y búsqueda */}
       <div className="bg-black/30 border border-gray-800 rounded-lg p-4 mb-6">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="w-full md:w-1/2">
-            <div className="relative">
-              <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-              <select
-                value={eventoFilter}
-                onChange={(e) => setEventoFilter(e.target.value)}
-                className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
-              >
-                <option value="">Todos los eventos</option>
-                {eventos.map((evento) => (
-                  <option key={evento.id} value={evento.id.toString()}>
-                    {evento.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+            <input
+              type="text"
+              placeholder="Buscar por nombre de evento..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+            />
           </div>
-          <div className="w-full md:w-1/2">
-            <div className="relative">
-              <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-              <select
-                value={tipoFilter}
-                onChange={(e) => setTipoFilter(e.target.value)}
-                className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
-              >
-                <option value="">Todos los tipos de instrumento</option>
-                {tiposInstrumento.map((tipo) => (
-                  <option key={tipo.id} value={tipo.id.toString()}>
-                    {tipo.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div className="relative">
+            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+            <select
+              value={eventoFilter}
+              onChange={(e) => setEventoFilter(e.target.value)}
+              className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
+            >
+              <option value="">Todos los eventos</option>
+              {eventos.map((evento) => (
+                <option key={evento.id} value={evento.id.toString()}>
+                  {evento.nombre}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="relative">
+            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+            <select
+              value={tipoFilter}
+              onChange={(e) => setTipoFilter(e.target.value)}
+              className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
+            >
+              <option value="">Todos los tipos de instrumento</option>
+              {/* Extraer tipos únicos de los mínimos para asegurar que mostramos los que realmente existen */}
+              {Array.from(new Set(minimos.map((m) => m.instrumento_tipo_id))).map((tipoId) => (
+                <option key={tipoId} value={tipoId.toString()}>
+                  {getTipoNombre(tipoId)}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
       </div>
 
-      {/* Tabla de mínimos */}
-      <div className="bg-black/30 border border-gray-800 rounded-lg overflow-hidden">
+      {/* Lista de eventos con sus mínimos */}
+      <div className="space-y-6">
         {loading ? (
-          <div className="flex justify-center items-center h-64">
+          <div className="flex justify-center items-center h-64 bg-black/30 border border-gray-800 rounded-lg">
             <div className="text-[#C0C0C0]">Cargando datos...</div>
           </div>
-        ) : filteredMinimos.length === 0 ? (
-          <div className="flex flex-col justify-center items-center h-64">
+        ) : filteredEventos.length === 0 ? (
+          <div className="flex flex-col justify-center items-center h-64 bg-black/30 border border-gray-800 rounded-lg">
             <p className="text-gray-400 text-center">
-              {eventoFilter || tipoFilter
-                ? "No se encontraron mínimos con los filtros aplicados."
+              {eventoFilter || tipoFilter || searchTerm
+                ? "No se encontraron eventos con los filtros aplicados."
                 : "No hay mínimos de instrumentos registrados."}
             </p>
             <button
@@ -272,55 +411,157 @@ export default function MinimosEvento() {
             </button>
           </div>
         ) : (
-          <table className="w-full">
-            <thead className="bg-gray-900/50 border-b border-gray-800">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                  Evento
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                  Tipo de Instrumento
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                  Cantidad Mínima
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                  Acciones
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-800">
-              {filteredMinimos.map((minimo) => (
-                <tr key={`${minimo.evento_id}-${minimo.instrumento_tipo_id}`} className="hover:bg-gray-900/30">
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                    {getEventoNombre(minimo.evento_id)}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                    {getTipoNombre(minimo.instrumento_tipo_id)}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{minimo.cantidad_minima}</td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => handleOpenModal("edit", minimo)}
-                        className="p-1 text-gray-400 hover:text-[#C0C0C0]"
-                      >
-                        <Edit size={18} />
-                      </button>
-                      <button
-                        onClick={() => confirmDelete(minimo.evento_id, minimo.instrumento_tipo_id)}
-                        className="p-1 text-gray-400 hover:text-red-400"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          currentEventos.map((evento) => {
+            const eventosMinimos = getMinimosPorEvento(evento.id)
+
+            // Si no hay mínimos para este evento y hay un filtro de tipo, no mostrar el evento
+            if (eventosMinimos.length === 0 && tipoFilter !== "") {
+              return null
+            }
+
+            return (
+              <div key={evento.id} className="bg-black/30 border border-gray-800 rounded-lg overflow-hidden">
+                {/* Cabecera del evento */}
+                <div
+                  className="bg-gray-900/50 px-4 py-3 flex justify-between items-center cursor-pointer"
+                  onClick={() => toggleEventoExpanded(evento.id)}
+                >
+                  <div>
+                    <h2 className="text-lg font-semibold text-[#C0C0C0]">{evento.nombre}</h2>
+                    <p className="text-sm text-gray-400">
+                      {evento.fecha && `${formatDate(evento.fecha)} · `}
+                      {evento.tipo && evento.tipo.charAt(0).toUpperCase() + evento.tipo.slice(1)}
+                      {evento.lugar && ` · ${evento.lugar}`}
+                    </p>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-sm text-gray-400 mr-3">{eventosMinimos.length} instrumentos</span>
+                    <button className="text-gray-400">
+                      {expandedEventos[evento.id] ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Contenido expandible con los mínimos */}
+                {expandedEventos[evento.id] && (
+                  <div className="px-4 py-2">
+                    {eventosMinimos.length === 0 ? (
+                      <div className="py-4 text-center text-gray-400">
+                        No hay mínimos de instrumentos registrados para este evento.
+                        <button
+                          onClick={() =>
+                            handleOpenModal("create", { evento_id: evento.id, instrumento_tipo_id: "", cantidad: 1 })
+                          }
+                          className="ml-2 text-[#C0C0C0] hover:text-white underline"
+                        >
+                          Añadir
+                        </button>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="grid grid-cols-12 gap-4 py-2 border-b border-gray-800 text-xs font-medium text-gray-400 uppercase">
+                          <div className="col-span-5">Tipo de Instrumento</div>
+                          <div className="col-span-3">Cantidad Mínima</div>
+                          <div className="col-span-4 text-right">Acciones</div>
+                        </div>
+
+                        {/* Lista de mínimos para este evento */}
+                        {eventosMinimos.map((minimo) => (
+                          <div
+                            key={`${minimo.evento_id}-${minimo.instrumento_tipo_id}`}
+                            className="grid grid-cols-12 gap-4 py-3 border-b border-gray-800 items-center hover:bg-gray-900/20"
+                          >
+                            <div className="col-span-5 text-[#C0C0C0]">{getTipoNombre(minimo.instrumento_tipo_id)}</div>
+                            <div className="col-span-3 text-[#C0C0C0]">{minimo.cantidad || 0}</div>
+                            <div className="col-span-4 flex justify-end space-x-2">
+                              <button
+                                onClick={() => handleOpenModal("edit", minimo)}
+                                className="p-1 text-gray-400 hover:text-[#C0C0C0]"
+                                title="Editar"
+                              >
+                                <Edit size={18} />
+                              </button>
+                              <button
+                                onClick={() => confirmDelete(minimo.evento_id, minimo.instrumento_tipo_id)}
+                                className="p-1 text-gray-400 hover:text-red-400"
+                                title="Eliminar"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+
+                        {/* Botón para añadir nuevo mínimo para este evento */}
+                        <div className="py-3 flex justify-center">
+                          <button
+                            onClick={() =>
+                              handleOpenModal("create", { evento_id: evento.id, instrumento_tipo_id: "", cantidad: 1 })
+                            }
+                            className="flex items-center gap-1 text-sm text-gray-400 hover:text-[#C0C0C0]"
+                          >
+                            <Plus size={16} />
+                            Añadir instrumento
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )
+          })
         )}
       </div>
+
+      {/* Paginación */}
+      {filteredEventos.length > 0 && (
+        <div className="mt-6 flex justify-center">
+          <div className="flex space-x-1">
+            <button
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="p-2 rounded-md bg-gray-900/50 text-gray-400 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              &lt;
+            </button>
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              // Show pages around current page
+              let pageNum
+              if (totalPages <= 5) {
+                pageNum = i + 1
+              } else if (currentPage <= 3) {
+                pageNum = i + 1
+              } else if (currentPage >= totalPages - 2) {
+                pageNum = totalPages - 4 + i
+              } else {
+                pageNum = currentPage - 2 + i
+              }
+
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => paginate(pageNum)}
+                  className={`w-8 h-8 flex items-center justify-center rounded-md ${
+                    currentPage === pageNum
+                      ? "bg-black border border-[#C0C0C0] text-[#C0C0C0]"
+                      : "bg-gray-900/50 text-gray-400 hover:bg-gray-800"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              )
+            })}
+            <button
+              onClick={() => paginate(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="p-2 rounded-md bg-gray-900/50 text-gray-400 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              &gt;
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Modal para crear/editar mínimo */}
       {showModal && (
@@ -368,21 +609,37 @@ export default function MinimosEvento() {
                     <option value="">Selecciona un tipo</option>
                     {tiposInstrumento.map((tipo) => (
                       <option key={tipo.id} value={tipo.id}>
-                        {tipo.nombre}
+                        {tipo.nombre || tipo.instrumento}
                       </option>
                     ))}
                   </select>
+                  {modalMode === "create" &&
+                    currentMinimo.evento_id &&
+                    currentMinimo.instrumento_tipo_id &&
+                    minimos.some(
+                      (minimo) =>
+                        minimo.evento_id.toString() === currentMinimo.evento_id.toString() &&
+                        minimo.instrumento_tipo_id.toString() === currentMinimo.instrumento_tipo_id.toString(),
+                    ) && (
+                      <div className="mt-2 flex items-start text-amber-400 text-sm">
+                        <AlertCircle size={16} className="mr-1 mt-0.5 flex-shrink-0" />
+                        <span>
+                          Este mínimo ya existe para este evento. Por favor, edita el existente o selecciona otro tipo
+                          de instrumento.
+                        </span>
+                      </div>
+                    )}
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="cantidad_minima" className="block text-[#C0C0C0] text-sm font-medium">
+                  <label htmlFor="cantidad" className="block text-[#C0C0C0] text-sm font-medium">
                     Cantidad Mínima *
                   </label>
                   <input
-                    id="cantidad_minima"
-                    name="cantidad_minima"
+                    id="cantidad"
+                    name="cantidad"
                     type="number"
                     min="1"
-                    value={currentMinimo.cantidad_minima}
+                    value={currentMinimo.cantidad}
                     onChange={handleInputChange}
                     required
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -400,6 +657,16 @@ export default function MinimosEvento() {
                 <button
                   type="submit"
                   className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors"
+                  disabled={
+                    modalMode === "create" &&
+                    currentMinimo.evento_id &&
+                    currentMinimo.instrumento_tipo_id &&
+                    minimos.some(
+                      (minimo) =>
+                        minimo.evento_id.toString() === currentMinimo.evento_id.toString() &&
+                        minimo.instrumento_tipo_id.toString() === currentMinimo.instrumento_tipo_id.toString(),
+                    )
+                  }
                 >
                   {modalMode === "create" ? "Crear" : "Guardar"}
                 </button>

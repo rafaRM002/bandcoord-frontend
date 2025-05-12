@@ -1,16 +1,13 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useParams, useNavigate } from "react-router-dom"
-import { ArrowLeft, Save, MapPin, Calendar, Clock, Info } from "lucide-react"
+import { Save, MapPin, Calendar, Clock, Info, X } from "lucide-react"
 import api from "../../api/axios"
 
-export default function FormularioEvento() {
-  const { id } = useParams()
-  const navigate = useNavigate()
-  const isEditing = !!id
+export default function FormularioEvento({ evento = null, onClose }) {
+  const isEditing = !!evento
 
-  const [loading, setLoading] = useState(isEditing)
+  const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
   const [entidades, setEntidades] = useState([])
@@ -29,6 +26,8 @@ export default function FormularioEvento() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true)
+
         // Cargar entidades para el selector
         const entidadesRes = await api.get("/entidades")
         if (entidadesRes.data && Array.isArray(entidadesRes.data)) {
@@ -39,31 +38,16 @@ export default function FormularioEvento() {
 
         // Si estamos editando, cargar los datos del evento
         if (isEditing) {
-          setLoading(true)
-          const response = await api.get(`/eventos/${id}`)
-          console.log("Respuesta del evento:", response)
-
-          let evento = null
-          if (response.data && response.data.id) {
-            evento = response.data
-          } else if (response.data && response.data.evento) {
-            evento = response.data.evento
-          }
-
-          if (evento) {
-            setFormData({
-              nombre: evento.nombre,
-              tipo: evento.tipo,
-              fecha: evento.fecha,
-              hora: evento.hora || "",
-              lugar: evento.lugar,
-              descripcion: evento.descripcion || "",
-              estado: evento.estado || "planificado",
-              entidad_id: evento.entidad_id || "",
-            })
-          } else {
-            setError("No se pudo cargar la información del evento.")
-          }
+          setFormData({
+            nombre: evento.nombre || "",
+            tipo: evento.tipo || "concierto",
+            fecha: evento.fecha || "",
+            hora: evento.hora || "",
+            lugar: evento.lugar || "",
+            descripcion: evento.descripcion || "",
+            estado: evento.estado || "planificado",
+            entidad_id: evento.entidad_id || "",
+          })
         }
       } catch (error) {
         console.error("Error al cargar datos:", error)
@@ -74,7 +58,7 @@ export default function FormularioEvento() {
     }
 
     fetchData()
-  }, [id, isEditing])
+  }, [isEditing, evento])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -90,14 +74,14 @@ export default function FormularioEvento() {
       console.log("Enviando datos:", formData)
 
       if (isEditing) {
-        const response = await api.put(`/eventos/${id}`, formData)
+        const response = await api.put(`/eventos/${evento.id}`, formData)
         console.log("Respuesta de actualización:", response)
       } else {
         const response = await api.post("/eventos", formData)
         console.log("Respuesta de creación:", response)
       }
 
-      navigate("/admin/eventos")
+      onClose(true) // Cerrar modal y refrescar datos
     } catch (error) {
       console.error("Error al guardar evento:", error)
 
@@ -107,38 +91,39 @@ export default function FormularioEvento() {
       } else {
         setError("Error al guardar los datos. Por favor, verifica la información e inténtalo de nuevo.")
       }
-    } finally {
       setSaving(false)
     }
   }
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-center items-center h-64">
-          <div className="text-[#C0C0C0]">Cargando...</div>
+      <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+        <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-3xl">
+          <div className="flex justify-center items-center h-64">
+            <div className="text-[#C0C0C0]">Cargando...</div>
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center mb-6">
-        <button
-          onClick={() => navigate("/admin/eventos")}
-          className="mr-4 p-2 text-gray-400 hover:text-[#C0C0C0] rounded-full hover:bg-gray-900/50"
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <h1 className="text-2xl font-bold text-[#C0C0C0]">{isEditing ? "Editar Evento" : "Nuevo Evento"}</h1>
-      </div>
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+      <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold text-[#C0C0C0]">{isEditing ? "Editar Evento" : "Nuevo Evento"}</h2>
+          <button
+            onClick={() => onClose(false)}
+            className="p-2 text-gray-400 hover:text-[#C0C0C0] rounded-full hover:bg-gray-900/50"
+          >
+            <X size={20} />
+          </button>
+        </div>
 
-      {error && (
-        <div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md mb-6">{error}</div>
-      )}
+        {error && (
+          <div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md mb-6">{error}</div>
+        )}
 
-      <div className="bg-black/30 border border-gray-800 rounded-lg p-6">
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Nombre del evento */}
@@ -304,7 +289,7 @@ export default function FormularioEvento() {
           <div className="mt-8 flex justify-end">
             <button
               type="button"
-              onClick={() => navigate("/admin/eventos")}
+              onClick={() => onClose(false)}
               className="mr-4 px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
             >
               Cancelar

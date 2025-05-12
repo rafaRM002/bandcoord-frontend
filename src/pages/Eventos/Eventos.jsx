@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
 import { Plus, Edit, Trash2, Search, Calendar, Filter, MapPin, ChevronLeft, ChevronRight } from "lucide-react"
 import api from "../../api/axios"
+import FormularioEvento from "./FormularioEvento"
 
 export default function Eventos() {
   const [eventos, setEventos] = useState([])
@@ -14,6 +14,8 @@ export default function Eventos() {
   const [estadoFilter, setEstadoFilter] = useState("")
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [eventoToDelete, setEventoToDelete] = useState(null)
+  const [showFormModal, setShowFormModal] = useState(false)
+  const [currentEvento, setCurrentEvento] = useState(null)
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1)
@@ -87,6 +89,19 @@ export default function Eventos() {
     setShowDeleteModal(true)
   }
 
+  const handleOpenFormModal = (evento = null) => {
+    setCurrentEvento(evento)
+    setShowFormModal(true)
+  }
+
+  const handleCloseFormModal = (shouldRefresh = false) => {
+    setShowFormModal(false)
+    setCurrentEvento(null)
+    if (shouldRefresh) {
+      fetchEventos()
+    }
+  }
+
   const filteredEventos = eventos.filter((evento) => {
     const matchesSearch =
       evento.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -127,13 +142,13 @@ export default function Eventos() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-[#C0C0C0]">Gestión de Eventos</h1>
-        <Link
-          to="/admin/eventos/nuevo"
+        <button
+          onClick={() => handleOpenFormModal()}
           className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
         >
           <Plus size={18} />
           Nuevo Evento
-        </Link>
+        </button>
       </div>
 
       {/* Mensaje de error */}
@@ -213,9 +228,9 @@ export default function Eventos() {
                 ? "No se encontraron eventos con los filtros aplicados."
                 : "No hay eventos registrados."}
             </p>
-            <Link to="/admin/eventos/nuevo" className="mt-4 text-[#C0C0C0] hover:text-white underline">
+            <button onClick={() => handleOpenFormModal()} className="mt-4 text-[#C0C0C0] hover:text-white underline">
               Añadir el primer evento
-            </Link>
+            </button>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -297,12 +312,12 @@ export default function Eventos() {
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
                           <div className="flex space-x-2">
-                            <Link
-                              to={`/admin/eventos/editar/${evento.id}`}
+                            <button
+                              onClick={() => handleOpenFormModal(evento)}
                               className="p-1 text-gray-400 hover:text-[#C0C0C0]"
                             >
                               <Edit size={18} />
-                            </Link>
+                            </button>
                             <button
                               onClick={() => confirmDelete(evento.id)}
                               className="p-1 text-gray-400 hover:text-red-400"
@@ -396,6 +411,9 @@ export default function Eventos() {
           </div>
         </div>
       )}
+
+      {/* Modal de formulario de evento */}
+      {showFormModal && <FormularioEvento evento={currentEvento} onClose={handleCloseFormModal} />}
     </div>
   )
 }

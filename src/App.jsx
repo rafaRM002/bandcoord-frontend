@@ -27,6 +27,8 @@ import GestionUsuarios from "./pages/Admin/GestionUsuarios"
 import Perfil from "./pages/Perfil/Perfil"
 import RestablecerPassword from "./pages/RestablecerPassword/RestablecerPassword"
 import NuevaPassword from "./pages/RestablecerPassword/NuevaPassword"
+import EventoUsuario from "./pages/EventoUsuario/EventoUsuario"
+import ConfirmacionEventos from "./pages/ConfirmacionEventos/ConfirmacionEventos"
 
 function App() {
   return (
@@ -57,6 +59,13 @@ function AppContent() {
         <div className="text-[#C0C0C0]">Cargando...</div>
       </div>
     )
+  }
+
+  const ProtectedRoute = ({ children }) => {
+    if (!user) {
+      return <Navigate to="/login" replace />
+    }
+    return children
   }
 
   return (
@@ -175,6 +184,23 @@ function AppContent() {
           {/* Admin routes - Instrumentos */}
           <Route path="/admin/instrumentos/nuevo" element={<FormularioInstrumento />} />
           <Route path="/admin/instrumentos/editar/:id" element={<FormularioInstrumento />} />
+
+          <Route
+            path="/usuarios-eventos"
+            element={
+              <ProtectedRoute>
+                <EventoUsuario />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/confirmacion-eventos"
+            element={
+              <ProtectedRoute>
+                <ConfirmacionEventos />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Catch-all route */}
           <Route path="*" element={<NotFound />} />
