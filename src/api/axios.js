@@ -16,7 +16,14 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
-    console.log("Request:", config.method, config.url, config.data)
+
+    // Log mejorado pero más compacto
+    console.log("Request:", {
+      method: config.method,
+      url: config.url,
+      data: config.data,
+    })
+
     return config
   },
   (error) => {
@@ -28,7 +35,11 @@ api.interceptors.request.use(
 // Interceptor para manejar las respuestas
 api.interceptors.response.use(
   (response) => {
-    console.log("Response:", response.status, response.config.url, response.data)
+    console.log("Response:", {
+      status: response.status,
+      url: response.config.url,
+      data: response.data,
+    })
 
     // Normalizar la respuesta para manejar diferentes formatos
     if (response.data && response.data.data) {

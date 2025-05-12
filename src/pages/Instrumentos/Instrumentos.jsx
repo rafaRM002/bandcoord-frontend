@@ -28,32 +28,14 @@ export default function Instrumentos() {
         const instrumentosRes = await api.get("/instrumentos")
         console.log("Respuesta de instrumentos:", instrumentosRes)
 
-        // Verificar la estructura de la respuesta
-        let instrumentosData = []
-        if (instrumentosRes.data && Array.isArray(instrumentosRes.data)) {
-          instrumentosData = instrumentosRes.data
-        } else if (instrumentosRes.data && instrumentosRes.data.data && Array.isArray(instrumentosRes.data.data)) {
-          instrumentosData = instrumentosRes.data.data
-        } else {
-          console.warn("Formato de respuesta inesperado para instrumentos:", instrumentosRes.data)
-        }
-
-        setInstrumentos(instrumentosData)
+        // Según las capturas de Postman, la API devuelve directamente el array de instrumentos
+        setInstrumentos(instrumentosRes.data)
 
         const tiposRes = await api.get("/tipo-instrumentos")
         console.log("Respuesta de tipos:", tiposRes)
 
-        // Verificar la estructura de la respuesta
-        let tiposData = []
-        if (tiposRes.data && Array.isArray(tiposRes.data)) {
-          tiposData = tiposRes.data
-        } else if (tiposRes.data && tiposRes.data.data && Array.isArray(tiposRes.data.data)) {
-          tiposData = tiposRes.data.data
-        } else {
-          console.warn("Formato de respuesta inesperado para tipos:", tiposRes.data)
-        }
-
-        setTiposInstrumento(tiposData)
+        // Según la estructura observada, asumimos que la API devuelve directamente el array de tipos
+        setTiposInstrumento(tiposRes.data)
       } catch (error) {
         console.error("Error al cargar datos:", error)
         setError(`Error al cargar datos: ${error.message}`)
@@ -84,8 +66,9 @@ export default function Instrumentos() {
     if (!instrumentoToDelete) return
 
     try {
+      // Usar la ruta exacta que se muestra en Postman
       await api.delete(`/instrumentos/${instrumentoToDelete}`)
-      setInstrumentos(instrumentos.filter((item) => item.num_serie !== instrumentoToDelete))
+      setInstrumentos(instrumentos.filter((item) => item.numero_serie !== instrumentoToDelete))
       setShowDeleteModal(false)
       setInstrumentoToDelete(null)
     } catch (error) {
@@ -100,19 +83,15 @@ export default function Instrumentos() {
 
   const filteredInstrumentos = instrumentos.filter((instrumento) => {
     const matchesSearch =
-      instrumento.marca?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      instrumento.modelo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      instrumento.num_serie?.toLowerCase().includes(searchTerm.toLowerCase())
+      String(instrumento.numero_serie).toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (instrumento.instrumento_tipo_id &&
+        instrumento.instrumento_tipo_id.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (instrumento.estado && instrumento.estado.toLowerCase().includes(searchTerm.toLowerCase()))
 
-    const matchesTipo = tipoFilter === "" || instrumento.tipo_instrumento_id?.toString() === tipoFilter
+    const matchesTipo = tipoFilter === "" || instrumento.instrumento_tipo_id === tipoFilter
 
     return matchesSearch && matchesTipo
   })
-
-  const getTipoNombre = (tipoId) => {
-    const tipo = tiposInstrumento.find((t) => t.id === tipoId)
-    return tipo ? tipo.nombre : "Desconocido"
-  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -152,7 +131,7 @@ export default function Instrumentos() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
               <input
                 type="text"
-                placeholder="Buscar por marca, modelo o número de serie..."
+                placeholder="Buscar por número de serie o tipo..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -169,8 +148,8 @@ export default function Instrumentos() {
               >
                 <option value="">Todos los tipos</option>
                 {tiposInstrumento.map((tipo) => (
-                  <option key={tipo.id} value={tipo.id.toString()}>
-                    {tipo.nombre}
+                  <option key={tipo.instrumento} value={tipo.instrumento}>
+                    {tipo.instrumento}
                   </option>
                 ))}
               </select>
@@ -208,12 +187,6 @@ export default function Instrumentos() {
                         Nº Serie
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        Marca
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        Modelo
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                         Tipo
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
@@ -226,12 +199,12 @@ export default function Instrumentos() {
                   </thead>
                   <tbody className="divide-y divide-gray-800">
                     {filteredInstrumentos.map((instrumento) => (
-                      <tr key={instrumento.num_serie} className="hover:bg-gray-900/30">
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{instrumento.num_serie}</td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{instrumento.marca}</td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{instrumento.modelo}</td>
+                      <tr key={instrumento.numero_serie} className="hover:bg-gray-900/30">
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                          {getTipoNombre(instrumento.tipo_instrumento_id)}
+                          {instrumento.numero_serie}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                          {instrumento.instrumento_tipo_id}
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm">
                           <span
@@ -249,13 +222,13 @@ export default function Instrumentos() {
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
                           <div className="flex space-x-2">
                             <Link
-                              to={`/admin/instrumentos/editar/${instrumento.num_serie}`}
+                              to={`/admin/instrumentos/editar/${instrumento.numero_serie}`}
                               className="p-1 text-gray-400 hover:text-[#C0C0C0]"
                             >
                               <Edit size={18} />
                             </Link>
                             <button
-                              onClick={() => confirmDelete(instrumento.num_serie)}
+                              onClick={() => confirmDelete(instrumento.numero_serie)}
                               className="p-1 text-gray-400 hover:text-red-400"
                             >
                               <Trash2 size={18} />

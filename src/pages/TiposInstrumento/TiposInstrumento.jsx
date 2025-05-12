@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Edit, Trash2, Search } from "lucide-react"
+import { Plus, Edit, Trash2, Search, Music } from "lucide-react"
 import api from "../../api/axios"
 
 export default function TiposInstrumento() {
@@ -11,7 +11,7 @@ export default function TiposInstrumento() {
   const [searchTerm, setSearchTerm] = useState("")
   const [showModal, setShowModal] = useState(false)
   const [modalMode, setModalMode] = useState("create") // "create" o "edit"
-  const [currentTipo, setCurrentTipo] = useState({ id: null, nombre: "", descripcion: "" })
+  const [currentTipo, setCurrentTipo] = useState({ instrumento: "", cantidad: 0 })
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [tipoToDelete, setTipoToDelete] = useState(null)
 
@@ -19,7 +19,6 @@ export default function TiposInstrumento() {
     fetchTipos()
   }, [])
 
-  // Update the instrument type loading function to match the API response structure
   const fetchTipos = async () => {
     try {
       setLoading(true)
@@ -61,7 +60,7 @@ export default function TiposInstrumento() {
     }
   }
 
-  const handleOpenModal = (mode, tipo = { id: null, nombre: "", descripcion: "" }) => {
+  const handleOpenModal = (mode, tipo = { instrumento: "", cantidad: 0 }) => {
     setModalMode(mode)
     setCurrentTipo(tipo)
     setShowModal(true)
@@ -69,12 +68,15 @@ export default function TiposInstrumento() {
 
   const handleCloseModal = () => {
     setShowModal(false)
-    setCurrentTipo({ id: null, nombre: "", descripcion: "" })
+    setCurrentTipo({ instrumento: "", cantidad: 0 })
   }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
-    setCurrentTipo((prev) => ({ ...prev, [name]: value }))
+    setCurrentTipo((prev) => ({
+      ...prev,
+      [name]: name === "cantidad" ? Number.parseInt(value, 10) || 0 : value,
+    }))
   }
 
   const handleSubmit = async (e) => {
@@ -84,7 +86,8 @@ export default function TiposInstrumento() {
       if (modalMode === "create") {
         await api.post("/tipo-instrumentos", currentTipo)
       } else {
-        await api.put(`/tipo-instrumentos/${currentTipo.id}`, currentTipo)
+        // Usar el nombre del instrumento como identificador para la actualización
+        await api.put(`/tipo-instrumentos/${currentTipo.instrumento}`, currentTipo)
       }
 
       fetchTipos()
@@ -94,8 +97,8 @@ export default function TiposInstrumento() {
     }
   }
 
-  const confirmDelete = (id) => {
-    setTipoToDelete(id)
+  const confirmDelete = (instrumento) => {
+    setTipoToDelete(instrumento)
     setShowDeleteModal(true)
   }
 
@@ -103,8 +106,9 @@ export default function TiposInstrumento() {
     if (!tipoToDelete) return
 
     try {
+      // Usar el nombre del instrumento como identificador para la eliminación
       await api.delete(`/tipo-instrumentos/${tipoToDelete}`)
-      setTipos(tipos.filter((tipo) => tipo.id !== tipoToDelete))
+      setTipos(tipos.filter((tipo) => tipo.instrumento !== tipoToDelete))
       setShowDeleteModal(false)
       setTipoToDelete(null)
     } catch (error) {
@@ -112,11 +116,7 @@ export default function TiposInstrumento() {
     }
   }
 
-  const filteredTipos = tipos.filter(
-    (tipo) =>
-      tipo.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (tipo.descripcion && tipo.descripcion.toLowerCase().includes(searchTerm.toLowerCase())),
-  )
+  const filteredTipos = tipos.filter((tipo) => tipo.instrumento.toLowerCase().includes(searchTerm.toLowerCase()))
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -154,7 +154,7 @@ export default function TiposInstrumento() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
           <input
             type="text"
-            placeholder="Buscar por nombre o descripción..."
+            placeholder="Buscar por nombre..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -170,6 +170,7 @@ export default function TiposInstrumento() {
           </div>
         ) : filteredTipos.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-64">
+            <Music size={48} className="text-gray-600 mb-4" />
             <p className="text-gray-400 text-center">
               {searchTerm
                 ? "No se encontraron tipos de instrumento con la búsqueda aplicada."
@@ -186,12 +187,11 @@ export default function TiposInstrumento() {
           <table className="w-full">
             <thead className="bg-gray-900/50 border-b border-gray-800">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ID</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                  Nombre
+                  Instrumento
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                  Descripción
+                  Cantidad
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Acciones
@@ -200,10 +200,9 @@ export default function TiposInstrumento() {
             </thead>
             <tbody className="divide-y divide-gray-800">
               {filteredTipos.map((tipo) => (
-                <tr key={tipo.id} className="hover:bg-gray-900/30">
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{tipo.id}</td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{tipo.nombre}</td>
-                  <td className="px-4 py-3 text-sm text-[#C0C0C0]">{tipo.descripcion || "-"}</td>
+                <tr key={tipo.instrumento} className="hover:bg-gray-900/30">
+                  <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{tipo.instrumento}</td>
+                  <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{tipo.cantidad}</td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
                     <div className="flex space-x-2">
                       <button
@@ -212,7 +211,10 @@ export default function TiposInstrumento() {
                       >
                         <Edit size={18} />
                       </button>
-                      <button onClick={() => confirmDelete(tipo.id)} className="p-1 text-gray-400 hover:text-red-400">
+                      <button
+                        onClick={() => confirmDelete(tipo.instrumento)}
+                        className="p-1 text-gray-400 hover:text-red-400"
+                      >
                         <Trash2 size={18} />
                       </button>
                     </div>
@@ -234,28 +236,34 @@ export default function TiposInstrumento() {
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label htmlFor="nombre" className="block text-[#C0C0C0] text-sm font-medium">
-                    Nombre *
+                  <label htmlFor="instrumento" className="block text-[#C0C0C0] text-sm font-medium">
+                    Nombre del Instrumento *
                   </label>
                   <input
-                    id="nombre"
-                    name="nombre"
-                    value={currentTipo.nombre}
+                    id="instrumento"
+                    name="instrumento"
+                    value={currentTipo.instrumento}
                     onChange={handleInputChange}
+                    disabled={modalMode === "edit"} // No permitir cambiar el nombre en modo edición
                     required
-                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] disabled:opacity-60 disabled:cursor-not-allowed"
                   />
+                  {modalMode === "edit" && (
+                    <p className="text-xs text-gray-500">El nombre del instrumento no se puede modificar.</p>
+                  )}
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="descripcion" className="block text-[#C0C0C0] text-sm font-medium">
-                    Descripción
+                  <label htmlFor="cantidad" className="block text-[#C0C0C0] text-sm font-medium">
+                    Cantidad *
                   </label>
-                  <textarea
-                    id="descripcion"
-                    name="descripcion"
-                    value={currentTipo.descripcion}
+                  <input
+                    id="cantidad"
+                    name="cantidad"
+                    type="number"
+                    min="0"
+                    value={currentTipo.cantidad}
                     onChange={handleInputChange}
-                    rows={3}
+                    required
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                   />
                 </div>
@@ -286,7 +294,8 @@ export default function TiposInstrumento() {
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
             <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">Confirmar eliminación</h3>
             <p className="text-gray-400 mb-6">
-              ¿Estás seguro de que deseas eliminar este tipo de instrumento? Esta acción no se puede deshacer.
+              ¿Estás seguro de que deseas eliminar el tipo de instrumento "{tipoToDelete}"? Esta acción no se puede
+              deshacer.
             </p>
             <div className="flex justify-end space-x-3">
               <button
