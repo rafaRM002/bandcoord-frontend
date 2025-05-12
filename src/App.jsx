@@ -11,7 +11,6 @@ import Home from "./pages/Home/Home"
 import NotFound from "./pages/NotFound/NotFound"
 import Calendario from "./pages/Calendario/Calendario"
 import Entidades from "./pages/Entidades.jsx/Entidades"
-import FormularioEntidad from "./pages/Entidades.jsx/FormularioEntidad"
 import Instrumentos from "./pages/Instrumentos/Instrumentos"
 import FormularioInstrumento from "./pages/Instrumentos/FormularioInstrumento"
 import TiposInstrumento from "./pages/TiposInstrumento/TiposInstrumento"
@@ -135,14 +134,6 @@ function AppContent() {
           <Route
             path="/entidades"
             element={user && user.role === "admin" ? <Entidades /> : <Navigate to="/login" replace />}
-          />
-          <Route
-            path="/entidades/nueva"
-            element={user && user.role === "admin" ? <FormularioEntidad /> : <Navigate to="/login" replace />}
-          />
-          <Route
-            path="/entidades/editar/:id"
-            element={user && user.role === "admin" ? <FormularioEntidad /> : <Navigate to="/login" replace />}
           />
 
           {/* Admin routes - Composiciones */}
