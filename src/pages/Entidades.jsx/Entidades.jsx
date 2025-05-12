@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { Plus, Edit, Trash2, Search, Building2 } from "lucide-react"
 import api from "../../api/axios"
+import { toast } from "react-toastify"
 
 export default function Entidades() {
   const [entidades, setEntidades] = useState([])
@@ -23,6 +24,7 @@ export default function Entidades() {
         setEntidades(entidadesData)
       } catch (error) {
         console.error("Error al cargar entidades:", error)
+        toast.error("Error al cargar las entidades")
       } finally {
         setLoading(false)
       }
@@ -39,8 +41,10 @@ export default function Entidades() {
       setEntidades(entidades.filter((entidad) => entidad.id !== entidadToDelete))
       setShowDeleteModal(false)
       setEntidadToDelete(null)
+      toast.success("Entidad eliminada correctamente")
     } catch (error) {
       console.error("Error al eliminar entidad:", error)
+      toast.error("Error al eliminar la entidad")
     }
   }
 
@@ -52,9 +56,22 @@ export default function Entidades() {
   const filteredEntidades = entidades.filter(
     (entidad) =>
       entidad.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (entidad.cif && entidad.cif.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (entidad.localidad && entidad.localidad.toLowerCase().includes(searchTerm.toLowerCase())),
+      (entidad.tipo && entidad.tipo.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (entidad.persona_contacto && entidad.persona_contacto.toLowerCase().includes(searchTerm.toLowerCase())),
   )
+
+  const getTipoEntidad = (tipo) => {
+    switch (tipo) {
+      case "hermandad":
+        return "Hermandad"
+      case "ayuntamiento":
+        return "Ayuntamiento"
+      case "otro":
+        return "Otro"
+      default:
+        return tipo
+    }
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -75,7 +92,7 @@ export default function Entidades() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
           <input
             type="text"
-            placeholder="Buscar por nombre, CIF o localidad..."
+            placeholder="Buscar por nombre, tipo o persona de contacto..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -108,10 +125,10 @@ export default function Entidades() {
                     Nombre
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    CIF
+                    Tipo
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Localidad
+                    Persona de Contacto
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                     Teléfono
@@ -125,8 +142,12 @@ export default function Entidades() {
                 {filteredEntidades.map((entidad) => (
                   <tr key={entidad.id} className="hover:bg-gray-900/30">
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{entidad.nombre}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{entidad.cif || "-"}</td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{entidad.localidad || "-"}</td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                      {getTipoEntidad(entidad.tipo)}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                      {entidad.persona_contacto || "-"}
+                    </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{entidad.telefono || "-"}</td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
                       <div className="flex space-x-2">

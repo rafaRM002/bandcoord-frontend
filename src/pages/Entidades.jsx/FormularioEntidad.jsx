@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { ArrowLeft, Save, Building2, Phone, Mail, MapPin, CreditCard } from "lucide-react"
+import { ArrowLeft, Save, Building2, Phone, Mail, User } from "lucide-react"
 import api from "../../api/axios"
+import { toast } from "react-toastify"
 
 export default function FormularioEntidad() {
   const { id } = useParams()
@@ -16,15 +17,10 @@ export default function FormularioEntidad() {
 
   const [formData, setFormData] = useState({
     nombre: "",
-    cif: "",
-    direccion: "",
-    localidad: "",
-    provincia: "",
-    codigo_postal: "",
-    telefono: "",
-    email: "",
+    tipo: "hermandad",
     persona_contacto: "",
-    observaciones: "",
+    telefono: "",
+    email_contacto: "",
   })
 
   useEffect(() => {
@@ -37,20 +33,16 @@ export default function FormularioEntidad() {
         const entidad = response.data
 
         setFormData({
-          nombre: entidad.nombre,
-          cif: entidad.cif || "",
-          direccion: entidad.direccion || "",
-          localidad: entidad.localidad || "",
-          provincia: entidad.provincia || "",
-          codigo_postal: entidad.codigo_postal || "",
-          telefono: entidad.telefono || "",
-          email: entidad.email || "",
+          nombre: entidad.nombre || "",
+          tipo: entidad.tipo || "hermandad",
           persona_contacto: entidad.persona_contacto || "",
-          observaciones: entidad.observaciones || "",
+          telefono: entidad.telefono || "",
+          email_contacto: entidad.email_contacto || "",
         })
       } catch (error) {
         console.error("Error al cargar entidad:", error)
         setError("Error al cargar los datos de la entidad. Por favor, inténtalo de nuevo.")
+        toast.error("Error al cargar los datos de la entidad")
       } finally {
         setLoading(false)
       }
@@ -72,13 +64,16 @@ export default function FormularioEntidad() {
     try {
       if (isEditing) {
         await api.put(`/entidades/${id}`, formData)
+        toast.success("Entidad actualizada correctamente")
       } else {
         await api.post("/entidades", formData)
+        toast.success("Entidad creada correctamente")
       }
       navigate("/admin/entidades")
     } catch (error) {
       console.error("Error al guardar entidad:", error)
       setError("Error al guardar los datos. Por favor, verifica la información e inténtalo de nuevo.")
+      toast.error("Error al guardar la entidad")
     } finally {
       setSaving(false)
     }
@@ -133,80 +128,41 @@ export default function FormularioEntidad() {
               </div>
             </div>
 
-            {/* CIF */}
+            {/* Tipo */}
             <div className="space-y-2">
-              <label htmlFor="cif" className="block text-[#C0C0C0] text-sm font-medium">
-                CIF
+              <label htmlFor="tipo" className="block text-[#C0C0C0] text-sm font-medium">
+                Tipo *
+              </label>
+              <select
+                id="tipo"
+                name="tipo"
+                value={formData.tipo}
+                onChange={handleChange}
+                required
+                className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+              >
+                <option value="hermandad">Hermandad</option>
+                <option value="ayuntamiento">Ayuntamiento</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+
+            {/* Persona de contacto */}
+            <div className="space-y-2">
+              <label htmlFor="persona_contacto" className="block text-[#C0C0C0] text-sm font-medium">
+                Persona de contacto *
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
-                  <CreditCard size={18} />
+                  <User size={18} />
                 </div>
                 <input
-                  id="cif"
-                  name="cif"
-                  value={formData.cif}
+                  id="persona_contacto"
+                  name="persona_contacto"
+                  value={formData.persona_contacto}
                   onChange={handleChange}
+                  required
                   className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
-                />
-              </div>
-            </div>
-
-            {/* Dirección */}
-            <div className="space-y-2 md:col-span-2">
-              <label htmlFor="direccion" className="block text-[#C0C0C0] text-sm font-medium">
-                Dirección
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
-                  <MapPin size={18} />
-                </div>
-                <input
-                  id="direccion"
-                  name="direccion"
-                  value={formData.direccion}
-                  onChange={handleChange}
-                  className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
-                />
-              </div>
-            </div>
-
-            {/* Localidad, Provincia y Código Postal */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:col-span-2">
-              <div className="space-y-2">
-                <label htmlFor="localidad" className="block text-[#C0C0C0] text-sm font-medium">
-                  Localidad
-                </label>
-                <input
-                  id="localidad"
-                  name="localidad"
-                  value={formData.localidad}
-                  onChange={handleChange}
-                  className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="provincia" className="block text-[#C0C0C0] text-sm font-medium">
-                  Provincia
-                </label>
-                <input
-                  id="provincia"
-                  name="provincia"
-                  value={formData.provincia}
-                  onChange={handleChange}
-                  className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="codigo_postal" className="block text-[#C0C0C0] text-sm font-medium">
-                  Código Postal
-                </label>
-                <input
-                  id="codigo_postal"
-                  name="codigo_postal"
-                  value={formData.codigo_postal}
-                  onChange={handleChange}
-                  className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                 />
               </div>
             </div>
@@ -214,7 +170,7 @@ export default function FormularioEntidad() {
             {/* Teléfono */}
             <div className="space-y-2">
               <label htmlFor="telefono" className="block text-[#C0C0C0] text-sm font-medium">
-                Teléfono
+                Teléfono *
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -225,59 +181,32 @@ export default function FormularioEntidad() {
                   name="telefono"
                   value={formData.telefono}
                   onChange={handleChange}
+                  required
                   className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                 />
               </div>
             </div>
 
-            {/* Email */}
-            <div className="space-y-2">
-              <label htmlFor="email" className="block text-[#C0C0C0] text-sm font-medium">
-                Email
+            {/* Email de contacto */}
+            <div className="space-y-2 md:col-span-2">
+              <label htmlFor="email_contacto" className="block text-[#C0C0C0] text-sm font-medium">
+                Email de contacto *
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
                   <Mail size={18} />
                 </div>
                 <input
-                  id="email"
-                  name="email"
+                  id="email_contacto"
+                  name="email_contacto"
                   type="email"
-                  value={formData.email}
+                  value={formData.email_contacto}
                   onChange={handleChange}
+                  required
                   className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                 />
               </div>
             </div>
-
-            {/* Persona de contacto */}
-            <div className="space-y-2 md:col-span-2">
-              <label htmlFor="persona_contacto" className="block text-[#C0C0C0] text-sm font-medium">
-                Persona de contacto
-              </label>
-              <input
-                id="persona_contacto"
-                name="persona_contacto"
-                value={formData.persona_contacto}
-                onChange={handleChange}
-                className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
-              />
-            </div>
-          </div>
-
-          {/* Observaciones */}
-          <div className="mt-6 space-y-2">
-            <label htmlFor="observaciones" className="block text-[#C0C0C0] text-sm font-medium">
-              Observaciones
-            </label>
-            <textarea
-              id="observaciones"
-              name="observaciones"
-              value={formData.observaciones}
-              onChange={handleChange}
-              rows={4}
-              className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
-            />
           </div>
 
           <div className="mt-8 flex justify-end">
