@@ -1,8 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
-import { Plus, Edit, Trash2, Search, Music, Filter, ChevronLeft, ChevronRight } from "lucide-react"
+import { Plus, Edit, Trash2, Search, Music, Filter, ChevronLeft, ChevronRight, Save, X } from "lucide-react"
 import api from "../../api/axios"
 
 export default function Instrumentos() {
@@ -19,52 +18,61 @@ export default function Instrumentos() {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage] = useState(10)
 
+  // Modal para crear/editar instrumento
+  const [showModal, setShowModal] = useState(false)
+  const [modalMode, setModalMode] = useState("create") // "create" o "edit"
+  const [currentInstrumento, setCurrentInstrumento] = useState({
+    numero_serie: "",
+    instrumento_tipo_id: "",
+    estado: "disponible",
+  })
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-
-        // Prueba de conexión básica
-        console.log("Intentando conectar a:", `${api.defaults.baseURL}/instrumentos`)
-
-        // Realizar peticiones
-        const instrumentosRes = await api.get("/instrumentos")
-        console.log("Respuesta de instrumentos:", instrumentosRes)
-
-        // Según las capturas de Postman, la API devuelve directamente el array de instrumentos
-        setInstrumentos(instrumentosRes.data)
-
-        const tiposRes = await api.get("/tipo-instrumentos")
-        console.log("Respuesta de tipos:", tiposRes)
-
-        // Según la estructura observada, asumimos que la API devuelve directamente el array de tipos
-        setTiposInstrumento(tiposRes.data)
-      } catch (error) {
-        console.error("Error al cargar datos:", error)
-        setError(`Error al cargar datos: ${error.message}`)
-
-        // Intentar determinar el tipo de error
-        if (error.response) {
-          // El servidor respondió con un código de estado fuera del rango 2xx
-          console.error("Respuesta del servidor:", error.response.status, error.response.data)
-          setError(`Error del servidor: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
-        } else if (error.request) {
-          // La petición fue hecha pero no se recibió respuesta
-          console.error("No se recibió respuesta del servidor")
-          setError("No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.")
-        } else {
-          // Algo ocurrió al configurar la petición
-          console.error("Error de configuración:", error.message)
-          setError(`Error de configuración: ${error.message}`)
-        }
-      } finally {
-        setLoading(false)
-      }
-    }
-
     fetchData()
   }, [])
+
+  const fetchData = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      // Prueba de conexión básica
+      console.log("Intentando conectar a:", `${api.defaults.baseURL}/instrumentos`)
+
+      // Realizar peticiones
+      const instrumentosRes = await api.get("/instrumentos")
+      console.log("Respuesta de instrumentos:", instrumentosRes)
+
+      // Según las capturas de Postman, la API devuelve directamente el array de instrumentos
+      setInstrumentos(instrumentosRes.data)
+
+      const tiposRes = await api.get("/tipo-instrumentos")
+      console.log("Respuesta de tipos:", tiposRes)
+
+      // Según la estructura observada, asumimos que la API devuelve directamente el array de tipos
+      setTiposInstrumento(tiposRes.data)
+    } catch (error) {
+      console.error("Error al cargar datos:", error)
+      setError(`Error al cargar datos: ${error.message}`)
+
+      // Intentar determinar el tipo de error
+      if (error.response) {
+        // El servidor respondió con un código de estado fuera del rango 2xx
+        console.error("Respuesta del servidor:", error.response.status, error.response.data)
+        setError(`Error del servidor: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+      } else if (error.request) {
+        // La petición fue hecha pero no se recibió respuesta
+        console.error("No se recibió respuesta del servidor")
+        setError("No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.")
+      } else {
+        // Algo ocurrió al configurar la petición
+        console.error("Error de configuración:", error.message)
+        setError(`Error de configuración: ${error.message}`)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleDelete = async () => {
     if (!instrumentoToDelete) return
@@ -83,6 +91,65 @@ export default function Instrumentos() {
   const confirmDelete = (numSerie) => {
     setInstrumentoToDelete(numSerie)
     setShowDeleteModal(true)
+  }
+
+  // Funciones para el modal de crear/editar
+  const handleOpenModal = (mode, instrumento = null) => {
+    setModalMode(mode)
+    if (mode === "edit" && instrumento) {
+      setCurrentInstrumento({
+        numero_serie: instrumento.numero_serie,
+        instrumento_tipo_id: instrumento.instrumento_tipo_id,
+        estado: instrumento.estado,
+      })
+    } else {
+      setCurrentInstrumento({
+        numero_serie: "",
+        instrumento_tipo_id: tiposInstrumento.length > 0 ? tiposInstrumento[0].instrumento : "",
+        estado: "disponible",
+      })
+    }
+    setShowModal(true)
+  }
+
+  const handleCloseModal = () => {
+    setShowModal(false)
+    setCurrentInstrumento({
+      numero_serie: "",
+      instrumento_tipo_id: "",
+      estado: "disponible",
+    })
+  }
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setCurrentInstrumento((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    try {
+      if (modalMode === "create") {
+        const response = await api.post("/instrumentos", currentInstrumento)
+        setInstrumentos([...instrumentos, response.data])
+      } else {
+        await api.put(`/instrumentos/${currentInstrumento.numero_serie}`, currentInstrumento)
+        setInstrumentos(
+          instrumentos.map((item) =>
+            item.numero_serie === currentInstrumento.numero_serie ? currentInstrumento : item,
+          ),
+        )
+      }
+
+      handleCloseModal()
+      fetchData() // Recargar datos para asegurar que tenemos la información actualizada
+    } catch (error) {
+      console.error("Error al guardar instrumento:", error)
+    }
   }
 
   const filteredInstrumentos = instrumentos.filter((instrumento) => {
@@ -113,13 +180,13 @@ export default function Instrumentos() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-[#C0C0C0]">Gestión de Instrumentos</h1>
-        <Link
-          to="/admin/instrumentos/nuevo"
+        <button
+          onClick={() => handleOpenModal("create")}
           className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
         >
           <Plus size={18} />
           Nuevo Instrumento
-        </Link>
+        </button>
       </div>
 
       {/* Mensaje de error */}
@@ -188,9 +255,12 @@ export default function Instrumentos() {
                 ? "No se encontraron instrumentos con los filtros aplicados."
                 : "No hay instrumentos registrados."}
             </p>
-            <Link to="/admin/instrumentos/nuevo" className="mt-4 text-[#C0C0C0] hover:text-white underline">
+            <button
+              onClick={() => handleOpenModal("create")}
+              className="mt-4 text-[#C0C0C0] hover:text-white underline"
+            >
               Añadir el primer instrumento
-            </Link>
+            </button>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -237,12 +307,12 @@ export default function Instrumentos() {
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
                           <div className="flex space-x-2">
-                            <Link
-                              to={`/admin/instrumentos/editar/${instrumento.numero_serie}`}
+                            <button
+                              onClick={() => handleOpenModal("edit", instrumento)}
                               className="p-1 text-gray-400 hover:text-[#C0C0C0]"
                             >
                               <Edit size={18} />
-                            </Link>
+                            </button>
                             <button
                               onClick={() => confirmDelete(instrumento.numero_serie)}
                               className="p-1 text-gray-400 hover:text-red-400"
@@ -313,6 +383,96 @@ export default function Instrumentos() {
           </div>
         )}
       </div>
+
+      {/* Modal para crear/editar instrumento */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-semibold text-[#C0C0C0]">
+                {modalMode === "create" ? "Nuevo Instrumento" : "Editar Instrumento"}
+              </h3>
+              <button onClick={handleCloseModal} className="text-gray-400 hover:text-white">
+                <X size={20} />
+              </button>
+            </div>
+            <form onSubmit={handleSubmit}>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label htmlFor="numero_serie" className="block text-[#C0C0C0] text-sm font-medium">
+                    Número de Serie *
+                  </label>
+                  <input
+                    id="numero_serie"
+                    name="numero_serie"
+                    value={currentInstrumento.numero_serie}
+                    onChange={handleInputChange}
+                    disabled={modalMode === "edit"} // No permitir cambiar el número de serie en modo edición
+                    required
+                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] disabled:opacity-60 disabled:cursor-not-allowed"
+                  />
+                  {modalMode === "edit" && (
+                    <p className="text-xs text-gray-500">El número de serie no se puede modificar.</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="instrumento_tipo_id" className="block text-[#C0C0C0] text-sm font-medium">
+                    Tipo de Instrumento *
+                  </label>
+                  <select
+                    id="instrumento_tipo_id"
+                    name="instrumento_tipo_id"
+                    value={currentInstrumento.instrumento_tipo_id}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                  >
+                    <option value="">Selecciona un tipo</option>
+                    {tiposInstrumento.map((tipo) => (
+                      <option key={tipo.instrumento} value={tipo.instrumento}>
+                        {tipo.instrumento}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="estado" className="block text-[#C0C0C0] text-sm font-medium">
+                    Estado *
+                  </label>
+                  <select
+                    id="estado"
+                    name="estado"
+                    value={currentInstrumento.estado}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                  >
+                    <option value="disponible">Disponible</option>
+                    <option value="prestado">Prestado</option>
+                    <option value="reparacion">En reparación</option>
+                  </select>
+                </div>
+              </div>
+              <div className="mt-6 flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors flex items-center gap-2"
+                >
+                  <Save size={18} />
+                  {modalMode === "create" ? "Crear" : "Guardar"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Modal de confirmación de eliminación */}
       {showDeleteModal && (
