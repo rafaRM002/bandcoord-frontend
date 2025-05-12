@@ -17,7 +17,10 @@ export default function Entidades() {
       try {
         setLoading(true)
         const response = await api.get("/entidades")
-        setEntidades(response.data)
+
+        // Check if response.data is an array or if it has a data property
+        const entidadesData = Array.isArray(response.data) ? response.data : response.data.data || []
+        setEntidades(entidadesData)
       } catch (error) {
         console.error("Error al cargar entidades:", error)
       } finally {

@@ -16,7 +16,10 @@ export default function Calendario() {
       try {
         setLoading(true)
         const response = await api.get("/eventos")
-        setEventos(response.data)
+
+        // Check if response.data is an array or if it has a data property
+        const eventosData = Array.isArray(response.data) ? response.data : response.data.data || []
+        setEventos(eventosData)
       } catch (error) {
         console.error("Error al cargar eventos:", error)
       } finally {

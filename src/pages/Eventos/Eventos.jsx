@@ -8,6 +8,7 @@ import api from "../../api/axios"
 export default function Eventos() {
   const [eventos, setEventos] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [tipoFilter, setTipoFilter] = useState("")
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -17,10 +18,39 @@ export default function Eventos() {
     const fetchEventos = async () => {
       try {
         setLoading(true)
+        setError(null)
+        console.log("Intentando conectar a:", `${api.defaults.baseURL}/eventos`)
+
         const response = await api.get("/eventos")
-        setEventos(response.data)
+        console.log("Respuesta completa de eventos:", response)
+
+        // Verificar la estructura de la respuesta
+        let eventosData = []
+        if (response.data && Array.isArray(response.data)) {
+          eventosData = response.data
+        } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
+          eventosData = response.data.data
+        } else {
+          console.warn("Formato de respuesta inesperado para eventos:", response.data)
+          setError("Formato de respuesta inesperado. Verifica la consola para más detalles.")
+        }
+
+        setEventos(eventosData)
       } catch (error) {
         console.error("Error al cargar eventos:", error)
+        setError(`Error al cargar eventos: ${error.message}`)
+
+        // Intentar determinar el tipo de error
+        if (error.response) {
+          console.error("Respuesta del servidor:", error.response.status, error.response.data)
+          setError(`Error del servidor: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+        } else if (error.request) {
+          console.error("No se recibió respuesta del servidor")
+          setError("No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.")
+        } else {
+          console.error("Error de configuración:", error.message)
+          setError(`Error de configuración: ${error.message}`)
+        }
       } finally {
         setLoading(false)
       }
@@ -59,6 +89,7 @@ export default function Eventos() {
 
   // Formatear fecha para mostrar
   const formatDate = (dateString) => {
+    if (!dateString) return "-"
     const options = { day: "2-digit", month: "2-digit", year: "numeric" }
     return new Date(dateString).toLocaleDateString("es-ES", options)
   }
@@ -81,6 +112,23 @@ export default function Eventos() {
           Nuevo Evento
         </Link>
       </div>
+
+      {/* Mensaje de error */}
+      {error && (
+        <div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md mb-6">
+          <h3 className="font-semibold">Error de conexión</h3>
+          <p>{error}</p>
+          <p className="mt-2 text-sm">
+            Verifica que:
+            <ul className="list-disc pl-5 mt-1">
+              <li>El servidor Laravel esté en ejecución en http://localhost:8000</li>
+              <li>La configuración CORS en Laravel permita peticiones desde http://localhost:5173</li>
+              <li>Las rutas de la API estén correctamente definidas</li>
+              <li>Estés autenticado con un token válido</li>
+            </ul>
+          </p>
+        </div>
+      )}
 
       {/* Filtros y búsqueda */}
       <div className="bg-black/30 border border-gray-800 rounded-lg p-4 mb-6">

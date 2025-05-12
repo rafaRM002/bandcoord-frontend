@@ -1,58 +1,75 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Plus, Edit, Trash2, Search, Filter, Package } from "lucide-react"
+import { useState, useEffect, useContext } from "react"
+import { AuthContext } from "../../context/AuthContext"
+import axios from "../../api/axios"
+import { toast } from "react-toastify"
+import { Plus, Edit, Trash2, Search, Filter, Calendar } from "lucide-react"
 import api from "../../api/axios"
 
-export default function Prestamos() {
-  const [prestamos, setPrestamos] = useState([])
+const EventoUsuario = () => {
+  const [eventos, setEventos] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [usuarios, setUsuarios] = useState([])
-  const [instrumentos, setInstrumentos] = useState([])
+  const { user } = useContext(AuthContext)
+  const [eventosUsuario, setEventosUsuario] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
+  const [eventoFilter, setEventoFilter] = useState("")
   const [usuarioFilter, setUsuarioFilter] = useState("")
-  const [estadoFilter, setEstadoFilter] = useState("")
   const [showModal, setShowModal] = useState(false)
   const [modalMode, setModalMode] = useState("create") // "create" o "edit"
-  const [currentPrestamo, setCurrentPrestamo] = useState({
-    num_serie: "",
+  const [currentEventoUsuario, setCurrentEventoUsuario] = useState({
+    evento_id: "",
     usuario_id: "",
-    fecha_prestamo: new Date().toISOString().split("T")[0],
-    fecha_devolucion: "",
-    estado: "activo",
+    confirmado: false,
     observaciones: "",
   })
   const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [prestamoToDelete, setPrestamoToDelete] = useState(null)
+  const [eventoUsuarioToDelete, setEventoUsuarioToDelete] = useState(null)
+  const [usuarios, setUsuarios] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true)
         setError(null)
-        console.log("Intentando cargar datos de préstamos...")
+        console.log("Intentando cargar datos de eventos-usuario...")
 
-        const [prestamosRes, usuariosRes, instrumentosRes] = await Promise.all([
-          api.get("/prestamos"),
+        const [eventosUsuarioRes, eventosRes, usuariosRes] = await Promise.all([
+          api.get("/evento-usuario"),
+          api.get("/eventos"),
           api.get("/usuarios"),
-          api.get("/instrumentos"),
         ])
 
-        console.log("Respuesta de préstamos:", prestamosRes)
+        console.log("Respuesta de evento-usuario:", eventosUsuarioRes)
+        console.log("Respuesta de eventos:", eventosRes)
         console.log("Respuesta de usuarios:", usuariosRes)
-        console.log("Respuesta de instrumentos:", instrumentosRes)
 
-        // Procesar datos de préstamos
-        let prestamosData = []
-        if (prestamosRes.data && Array.isArray(prestamosRes.data)) {
-          prestamosData = prestamosRes.data
-        } else if (prestamosRes.data && prestamosRes.data.data && Array.isArray(prestamosRes.data.data)) {
-          prestamosData = prestamosRes.data.data
+        // Procesar datos de eventos-usuario
+        let eventosUsuarioData = []
+        if (eventosUsuarioRes.data && Array.isArray(eventosUsuarioRes.data)) {
+          eventosUsuarioData = eventosUsuarioRes.data
+        } else if (
+          eventosUsuarioRes.data &&
+          eventosUsuarioRes.data.data &&
+          Array.isArray(eventosUsuarioRes.data.data)
+        ) {
+          eventosUsuarioData = eventosUsuarioRes.data.data
         } else {
-          console.warn("Formato de respuesta inesperado para préstamos:", prestamosRes.data)
+          console.warn("Formato de respuesta inesperado para eventos-usuario:", eventosUsuarioRes.data)
         }
-        setPrestamos(prestamosData)
+        setEventosUsuario(eventosUsuarioData)
+
+        // Procesar datos de eventos
+        let eventosData = []
+        if (eventosRes.data && Array.isArray(eventosRes.data)) {
+          eventosData = eventosRes.data
+        } else if (eventosRes.data && eventosRes.data.data && Array.isArray(eventosRes.data.data)) {
+          eventosData = eventosRes.data.data
+        } else {
+          console.warn("Formato de respuesta inesperado para eventos:", eventosRes.data)
+        }
+        setEventos(eventosData)
 
         // Procesar datos de usuarios
         let usuariosData = []
@@ -64,17 +81,6 @@ export default function Prestamos() {
           console.warn("Formato de respuesta inesperado para usuarios:", usuariosRes.data)
         }
         setUsuarios(usuariosData)
-
-        // Procesar datos de instrumentos
-        let instrumentosData = []
-        if (instrumentosRes.data && Array.isArray(instrumentosRes.data)) {
-          instrumentosData = instrumentosRes.data
-        } else if (instrumentosRes.data && instrumentosRes.data.data && Array.isArray(instrumentosRes.data.data)) {
-          instrumentosData = instrumentosRes.data.data
-        } else {
-          console.warn("Formato de respuesta inesperado para instrumentos:", instrumentosRes.data)
-        }
-        setInstrumentos(instrumentosData)
       } catch (error) {
         console.error("Error al cargar datos:", error)
         setError(`Error al cargar datos: ${error.message}`)
@@ -95,40 +101,65 @@ export default function Prestamos() {
       }
     }
 
+    const fetchEventosUsuario = async () => {
+      try {
+        setLoading(true)
+        const response = await axios.get(`/evento-usuario`)
+        console.log("Respuesta de eventos del usuario:", response.data)
+
+        // Manejar diferentes formatos de respuesta
+        const eventosData = Array.isArray(response.data)
+          ? response.data
+          : response.data.eventos || response.data.data || []
+
+        setEventos(eventosData)
+        setError(null)
+      } catch (err) {
+        console.error("Error al cargar eventos del usuario:", err)
+        setError("Error al cargar tus eventos. Por favor, inténtelo de nuevo más tarde.")
+        toast.error("Error al cargar tus eventos")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (user && user.id) {
+      fetchEventosUsuario()
+    }
+
     fetchData()
-  }, [])
+  }, [user])
 
   const handleOpenModal = (
     mode,
-    prestamo = {
-      num_serie: "",
+    eventoUsuario = {
+      evento_id: "",
       usuario_id: "",
-      fecha_prestamo: new Date().toISOString().split("T")[0],
-      fecha_devolucion: "",
-      estado: "activo",
+      confirmado: false,
       observaciones: "",
     },
   ) => {
     setModalMode(mode)
-    setCurrentPrestamo(prestamo)
+    setCurrentEventoUsuario(eventoUsuario)
     setShowModal(true)
   }
 
   const handleCloseModal = () => {
     setShowModal(false)
-    setCurrentPrestamo({
-      num_serie: "",
+    setCurrentEventoUsuario({
+      evento_id: "",
       usuario_id: "",
-      fecha_prestamo: new Date().toISOString().split("T")[0],
-      fecha_devolucion: "",
-      estado: "activo",
+      confirmado: false,
       observaciones: "",
     })
   }
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setCurrentPrestamo((prev) => ({ ...prev, [name]: value }))
+    const { name, value, type, checked } = e.target
+    setCurrentEventoUsuario((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }))
   }
 
   const handleSubmit = async (e) => {
@@ -136,70 +167,72 @@ export default function Prestamos() {
 
     try {
       if (modalMode === "create") {
-        await api.post("/prestamos", currentPrestamo)
+        await api.post("/evento-usuario", currentEventoUsuario)
       } else {
-        await api.put(`/prestamos/${currentPrestamo.num_serie}/${currentPrestamo.usuario_id}`, currentPrestamo)
+        await api.put(
+          `/evento-usuario/${currentEventoUsuario.evento_id}/${currentEventoUsuario.usuario_id}`,
+          currentEventoUsuario,
+        )
       }
 
       // Recargar los datos
-      const response = await api.get("/prestamos")
+      const response = await api.get("/evento-usuario")
 
-      // Procesar datos de préstamos
-      let prestamosData = []
+      // Procesar datos de eventos-usuario
+      let eventosUsuarioData = []
       if (response.data && Array.isArray(response.data)) {
-        prestamosData = response.data
+        eventosUsuarioData = response.data
       } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
-        prestamosData = response.data.data
+        eventosUsuarioData = response.data.data
       }
 
-      setPrestamos(prestamosData)
+      setEventosUsuario(eventosUsuarioData)
       handleCloseModal()
     } catch (error) {
-      console.error("Error al guardar préstamo:", error)
+      console.error("Error al guardar asignación de evento:", error)
     }
   }
 
-  const confirmDelete = (numSerie, usuarioId) => {
-    setPrestamoToDelete({ numSerie, usuarioId })
+  const confirmDelete = (eventoId, usuarioId) => {
+    setEventoUsuarioToDelete({ eventoId, usuarioId })
     setShowDeleteModal(true)
   }
 
   const handleDelete = async () => {
-    if (!prestamoToDelete) return
+    if (!eventoUsuarioToDelete) return
 
     try {
-      await api.delete(`/prestamos/${prestamoToDelete.numSerie}/${prestamoToDelete.usuarioId}`)
-      setPrestamos(
-        prestamos.filter(
-          (prestamo) =>
-            !(prestamo.num_serie === prestamoToDelete.numSerie && prestamo.usuario_id === prestamoToDelete.usuarioId),
+      await api.delete(`/evento-usuario/${eventoUsuarioToDelete.eventoId}/${eventoUsuarioToDelete.usuarioId}`)
+      setEventosUsuario(
+        eventosUsuario.filter(
+          (item) =>
+            !(item.evento_id === eventoUsuarioToDelete.eventoId && item.usuario_id === eventoUsuarioToDelete.usuarioId),
         ),
       )
       setShowDeleteModal(false)
-      setPrestamoToDelete(null)
+      setEventoUsuarioToDelete(null)
     } catch (error) {
-      console.error("Error al eliminar préstamo:", error)
+      console.error("Error al eliminar asignación de evento:", error)
     }
   }
 
-  const filteredPrestamos = prestamos.filter((prestamo) => {
-    const instrumento = instrumentos.find((i) => i.num_serie === prestamo.num_serie)
-    const usuario = usuarios.find((u) => u.id === prestamo.usuario_id)
+  const filteredEventosUsuario = eventosUsuario.filter((item) => {
+    const evento = eventos.find((e) => e.id === item.evento_id)
+    const usuario = usuarios.find((u) => u.id === item.usuario_id)
 
     const matchesSearch =
-      (instrumento && instrumento.marca.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (instrumento && instrumento.modelo.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (evento && evento.nombre.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (usuario && `${usuario.nombre} ${usuario.apellido1}`.toLowerCase().includes(searchTerm.toLowerCase()))
 
-    const matchesUsuario = usuarioFilter === "" || prestamo.usuario_id.toString() === usuarioFilter
-    const matchesEstado = estadoFilter === "" || prestamo.estado === estadoFilter
+    const matchesEvento = eventoFilter === "" || item.evento_id.toString() === eventoFilter
+    const matchesUsuario = usuarioFilter === "" || item.usuario_id.toString() === usuarioFilter
 
-    return matchesSearch && matchesUsuario && matchesEstado
+    return matchesSearch && matchesEvento && matchesUsuario
   })
 
-  const getInstrumentoInfo = (numSerie) => {
-    const instrumento = instrumentos.find((i) => i.num_serie === numSerie)
-    return instrumento ? `${instrumento.marca} ${instrumento.modelo}` : "Desconocido"
+  const getEventoNombre = (eventoId) => {
+    const evento = eventos.find((e) => e.id === eventoId)
+    return evento ? evento.nombre : "Desconocido"
   }
 
   const getUsuarioNombre = (usuarioId) => {
@@ -214,16 +247,39 @@ export default function Prestamos() {
     return new Date(dateString).toLocaleDateString("es-ES", options)
   }
 
+  const getEventoFecha = (eventoId) => {
+    const evento = eventos.find((e) => e.id === eventoId)
+    return evento ? formatDate(evento.fecha) : "-"
+  }
+
+  const cancelarAsistencia = async (eventoId) => {
+    try {
+      await axios.delete(`/evento-usuario/${eventoId}/${user.id}`)
+
+      // Actualizar la lista de eventos
+      setEventos(eventos.filter((evento) => evento.id !== eventoId))
+
+      toast.success("Has cancelado tu asistencia al evento")
+    } catch (err) {
+      console.error("Error al cancelar asistencia:", err)
+      toast.error("Error al cancelar la asistencia")
+    }
+  }
+
+  if (loading) return <div className="container mx-auto p-4">Cargando tus eventos...</div>
+  if (error) return <div className="container mx-auto p-4 text-red-500">{error}</div>
+
   return (
     <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-6">Mis Eventos</h1>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-[#C0C0C0]">Gestión de Préstamos</h1>
+        <h1 className="text-2xl font-bold text-[#C0C0C0]">Asignación de Eventos</h1>
         <button
           onClick={() => handleOpenModal("create")}
           className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
         >
           <Plus size={18} />
-          Nuevo Préstamo
+          Nueva Asignación
         </button>
       </div>
 
@@ -251,11 +307,26 @@ export default function Prestamos() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
             <input
               type="text"
-              placeholder="Buscar por instrumento o usuario..."
+              placeholder="Buscar por evento o usuario..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
             />
+          </div>
+          <div className="relative">
+            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+            <select
+              value={eventoFilter}
+              onChange={(e) => setEventoFilter(e.target.value)}
+              className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
+            >
+              <option value="">Todos los eventos</option>
+              {eventos.map((evento) => (
+                <option key={evento.id} value={evento.id.toString()}>
+                  {evento.nombre}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="relative">
             <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
@@ -272,41 +343,28 @@ export default function Prestamos() {
               ))}
             </select>
           </div>
-          <div className="relative">
-            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-            <select
-              value={estadoFilter}
-              onChange={(e) => setEstadoFilter(e.target.value)}
-              className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
-            >
-              <option value="">Todos los estados</option>
-              <option value="activo">Activo</option>
-              <option value="devuelto">Devuelto</option>
-              <option value="vencido">Vencido</option>
-            </select>
-          </div>
         </div>
       </div>
 
-      {/* Tabla de préstamos */}
+      {/* Tabla de asignaciones */}
       <div className="bg-black/30 border border-gray-800 rounded-lg overflow-hidden">
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="text-[#C0C0C0]">Cargando préstamos...</div>
+            <div className="text-[#C0C0C0]">Cargando asignaciones...</div>
           </div>
-        ) : filteredPrestamos.length === 0 ? (
+        ) : filteredEventosUsuario.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-64">
-            <Package size={48} className="text-gray-600 mb-4" />
+            <Calendar size={48} className="text-gray-600 mb-4" />
             <p className="text-gray-400 text-center">
-              {searchTerm || usuarioFilter || estadoFilter
-                ? "No se encontraron préstamos con los filtros aplicados."
-                : "No hay préstamos registrados."}
+              {searchTerm || eventoFilter || usuarioFilter
+                ? "No se encontraron asignaciones con los filtros aplicados."
+                : "No hay asignaciones de eventos registradas."}
             </p>
             <button
               onClick={() => handleOpenModal("create")}
               className="mt-4 text-[#C0C0C0] hover:text-white underline"
             >
-              Añadir el primer préstamo
+              Añadir la primera asignación
             </button>
           </div>
         ) : (
@@ -315,19 +373,19 @@ export default function Prestamos() {
               <thead className="bg-gray-900/50 border-b border-gray-800">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Instrumento
+                    Evento
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    Fecha
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                     Usuario
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Fecha Préstamo
+                    Confirmado
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Fecha Devolución
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Estado
+                    Observaciones
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                     Acciones
@@ -335,43 +393,39 @@ export default function Prestamos() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-800">
-                {filteredPrestamos.map((prestamo) => (
-                  <tr key={`${prestamo.num_serie}-${prestamo.usuario_id}`} className="hover:bg-gray-900/30">
+                {filteredEventosUsuario.map((item) => (
+                  <tr key={`${item.evento_id}-${item.usuario_id}`} className="hover:bg-gray-900/30">
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                      {getInstrumentoInfo(prestamo.num_serie)}
+                      {getEventoNombre(item.evento_id)}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                      {getUsuarioNombre(prestamo.usuario_id)}
+                      {getEventoFecha(item.evento_id)}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                      {formatDate(prestamo.fecha_prestamo)}
+                      {getUsuarioNombre(item.usuario_id)}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                      {formatDate(prestamo.fecha_devolucion)}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm">
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          prestamo.estado === "activo"
-                            ? "bg-blue-900/30 text-blue-400 border border-blue-800"
-                            : prestamo.estado === "devuelto"
-                              ? "bg-green-900/30 text-green-400 border border-green-800"
-                              : "bg-red-900/30 text-red-400 border border-red-800"
+                          item.confirmado
+                            ? "bg-green-900/30 text-green-400 border border-green-800"
+                            : "bg-yellow-900/30 text-yellow-400 border border-yellow-800"
                         }`}
                       >
-                        {prestamo.estado.charAt(0).toUpperCase() + prestamo.estado.slice(1)}
+                        {item.confirmado ? "Confirmado" : "Pendiente"}
                       </span>
                     </td>
+                    <td className="px-4 py-3 text-sm text-[#C0C0C0]">{item.observaciones || "-"}</td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
                       <div className="flex space-x-2">
                         <button
-                          onClick={() => handleOpenModal("edit", prestamo)}
+                          onClick={() => handleOpenModal("edit", item)}
                           className="p-1 text-gray-400 hover:text-[#C0C0C0]"
                         >
                           <Edit size={18} />
                         </button>
                         <button
-                          onClick={() => confirmDelete(prestamo.num_serie, prestamo.usuario_id)}
+                          onClick={() => confirmDelete(item.evento_id, item.usuario_id)}
                           className="p-1 text-gray-400 hover:text-red-400"
                         >
                           <Trash2 size={18} />
@@ -386,39 +440,34 @@ export default function Prestamos() {
         )}
       </div>
 
-      {/* Modal para crear/editar préstamo */}
+      {/* Modal para crear/editar asignación */}
       {showModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
             <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">
-              {modalMode === "create" ? "Nuevo Préstamo" : "Editar Préstamo"}
+              {modalMode === "create" ? "Nueva Asignación de Evento" : "Editar Asignación de Evento"}
             </h3>
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label htmlFor="num_serie" className="block text-[#C0C0C0] text-sm font-medium">
-                    Instrumento *
+                  <label htmlFor="evento_id" className="block text-[#C0C0C0] text-sm font-medium">
+                    Evento *
                   </label>
                   <select
-                    id="num_serie"
-                    name="num_serie"
-                    value={currentPrestamo.num_serie}
+                    id="evento_id"
+                    name="evento_id"
+                    value={currentEventoUsuario.evento_id}
                     onChange={handleInputChange}
                     required
                     disabled={modalMode === "edit"}
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] disabled:opacity-70"
                   >
-                    <option value="">Selecciona un instrumento</option>
-                    {instrumentos
-                      .filter(
-                        (instrumento) =>
-                          instrumento.estado === "disponible" || instrumento.num_serie === currentPrestamo.num_serie,
-                      )
-                      .map((instrumento) => (
-                        <option key={instrumento.num_serie} value={instrumento.num_serie}>
-                          {instrumento.marca} {instrumento.modelo} ({instrumento.num_serie})
-                        </option>
-                      ))}
+                    <option value="">Selecciona un evento</option>
+                    {eventos.map((evento) => (
+                      <option key={evento.id} value={evento.id}>
+                        {evento.nombre} ({formatDate(evento.fecha)})
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="space-y-2">
@@ -428,7 +477,7 @@ export default function Prestamos() {
                   <select
                     id="usuario_id"
                     name="usuario_id"
-                    value={currentPrestamo.usuario_id}
+                    value={currentEventoUsuario.usuario_id}
                     onChange={handleInputChange}
                     required
                     disabled={modalMode === "edit"}
@@ -442,49 +491,18 @@ export default function Prestamos() {
                     ))}
                   </select>
                 </div>
-                <div className="space-y-2">
-                  <label htmlFor="fecha_prestamo" className="block text-[#C0C0C0] text-sm font-medium">
-                    Fecha de préstamo *
-                  </label>
+                <div className="flex items-center">
                   <input
-                    id="fecha_prestamo"
-                    name="fecha_prestamo"
-                    type="date"
-                    value={currentPrestamo.fecha_prestamo}
+                    id="confirmado"
+                    name="confirmado"
+                    type="checkbox"
+                    checked={currentEventoUsuario.confirmado}
                     onChange={handleInputChange}
-                    required
-                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    className="h-4 w-4 text-[#C0C0C0] focus:ring-[#C0C0C0] border-gray-800 rounded"
                   />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="fecha_devolucion" className="block text-[#C0C0C0] text-sm font-medium">
-                    Fecha de devolución
+                  <label htmlFor="confirmado" className="ml-2 block text-[#C0C0C0] text-sm">
+                    Confirmado
                   </label>
-                  <input
-                    id="fecha_devolucion"
-                    name="fecha_devolucion"
-                    type="date"
-                    value={currentPrestamo.fecha_devolucion || ""}
-                    onChange={handleInputChange}
-                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="estado" className="block text-[#C0C0C0] text-sm font-medium">
-                    Estado *
-                  </label>
-                  <select
-                    id="estado"
-                    name="estado"
-                    value={currentPrestamo.estado}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
-                  >
-                    <option value="activo">Activo</option>
-                    <option value="devuelto">Devuelto</option>
-                    <option value="vencido">Vencido</option>
-                  </select>
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="observaciones" className="block text-[#C0C0C0] text-sm font-medium">
@@ -493,7 +511,7 @@ export default function Prestamos() {
                   <textarea
                     id="observaciones"
                     name="observaciones"
-                    value={currentPrestamo.observaciones || ""}
+                    value={currentEventoUsuario.observaciones || ""}
                     onChange={handleInputChange}
                     rows={3}
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -526,7 +544,7 @@ export default function Prestamos() {
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
             <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">Confirmar eliminación</h3>
             <p className="text-gray-400 mb-6">
-              ¿Estás seguro de que deseas eliminar este préstamo? Esta acción no se puede deshacer.
+              ¿Estás seguro de que deseas eliminar esta asignación de evento? Esta acción no se puede deshacer.
             </p>
             <div className="flex justify-end space-x-3">
               <button
@@ -542,6 +560,39 @@ export default function Prestamos() {
           </div>
         </div>
       )}
+      {eventos.length === 0 ? (
+        <p>No tienes eventos programados.</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {eventos.map((evento) => (
+            <div key={evento.id} className="border rounded-lg p-4 shadow-md">
+              <h2 className="text-xl font-semibold">{evento.nombre || evento.titulo}</h2>
+              <p className="text-gray-600">
+                {new Date(evento.fecha).toLocaleDateString("es-ES", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </p>
+              <p className="my-2">{evento.descripcion}</p>
+              <p className="mb-4">Lugar: {evento.lugar}</p>
+
+              <div className="flex space-x-2 mt-4">
+                <button
+                  onClick={() => cancelarAsistencia(evento.id)}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                >
+                  Cancelar asistencia
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
+
+export default EventoUsuario

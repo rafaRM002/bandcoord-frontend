@@ -130,7 +130,7 @@ export const AuthProvider = ({ children }) => {
   // Función para registrarse
   const register = async (userData) => {
     try {
-      console.log("Intentando registrar usuario...")
+      console.log("Intentando registrar usuario con datos:", userData)
       const response = await api.post("/register", userData)
 
       if (response.status === 201) {
@@ -146,6 +146,11 @@ export const AuthProvider = ({ children }) => {
       if (error.response && error.response.status === 422) {
         if (error.response.data.errors && error.response.data.errors.email) {
           return { success: false, message: "El email ya está en uso." }
+        }
+
+        // Check for fecha_nac validation errors
+        if (error.response.data.errors && error.response.data.errors.fecha_nac) {
+          return { success: false, message: "Formato de fecha de nacimiento incorrecto." }
         }
       }
 

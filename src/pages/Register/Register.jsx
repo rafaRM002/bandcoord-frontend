@@ -44,15 +44,17 @@ export default function Register() {
     }
 
     try {
-      // Preparar los datos para enviar al backend
-      // Asegurarse de que la fecha tiene el formato correcto (YYYY-MM-DD)
-      const fechaNac = form.fecha_nac ? new Date(form.fecha_nac).toISOString().split("T")[0] : null
-
+      // Ensure the date is in the correct format (YYYY-MM-DD)
+      // This is the key fix - we need to properly format the date
       const userData = {
         ...form,
-        fecha_nac: fechaNac,
-        fecha_entrada: new Date().toISOString().split("T")[0], // Fecha actual en formato YYYY-MM-DD
+        // Explicitly format the date to ensure it's in the correct format
+        fecha_nac: form.fecha_nac ? form.fecha_nac : null,
+        // Use current date for fecha_entrada
+        fecha_entrada: new Date().toISOString().split("T")[0],
       }
+
+      console.log("Sending registration data:", userData)
 
       const result = await register(userData)
 

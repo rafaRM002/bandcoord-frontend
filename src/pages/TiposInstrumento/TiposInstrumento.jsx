@@ -7,6 +7,7 @@ import api from "../../api/axios"
 export default function TiposInstrumento() {
   const [tipos, setTipos] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [showModal, setShowModal] = useState(false)
   const [modalMode, setModalMode] = useState("create") // "create" o "edit"
@@ -18,13 +19,43 @@ export default function TiposInstrumento() {
     fetchTipos()
   }, [])
 
+  // Update the instrument type loading function to match the API response structure
   const fetchTipos = async () => {
     try {
       setLoading(true)
+      setError(null)
+      console.log("Intentando conectar a:", `${api.defaults.baseURL}/tipo-instrumentos`)
+
       const response = await api.get("/tipo-instrumentos")
-      setTipos(response.data)
+      console.log("Respuesta completa de tipos:", response)
+
+      // Verificar la estructura de la respuesta
+      let tiposData = []
+      if (response.data && Array.isArray(response.data)) {
+        tiposData = response.data
+      } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
+        tiposData = response.data.data
+      } else {
+        console.warn("Formato de respuesta inesperado para tipos:", response.data)
+        setError("Formato de respuesta inesperado. Verifica la consola para más detalles.")
+      }
+
+      setTipos(tiposData)
     } catch (error) {
       console.error("Error al cargar tipos de instrumento:", error)
+      setError(`Error al cargar tipos de instrumento: ${error.message}`)
+
+      // Intentar determinar el tipo de error
+      if (error.response) {
+        console.error("Respuesta del servidor:", error.response.status, error.response.data)
+        setError(`Error del servidor: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+      } else if (error.request) {
+        console.error("No se recibió respuesta del servidor")
+        setError("No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.")
+      } else {
+        console.error("Error de configuración:", error.message)
+        setError(`Error de configuración: ${error.message}`)
+      }
     } finally {
       setLoading(false)
     }
@@ -99,6 +130,23 @@ export default function TiposInstrumento() {
           Nuevo Tipo
         </button>
       </div>
+
+      {/* Mensaje de error */}
+      {error && (
+        <div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md mb-6">
+          <h3 className="font-semibold">Error de conexión</h3>
+          <p>{error}</p>
+          <p className="mt-2 text-sm">
+            Verifica que:
+            <ul className="list-disc pl-5 mt-1">
+              <li>El servidor Laravel esté en ejecución en http://localhost:8000</li>
+              <li>La configuración CORS en Laravel permita peticiones desde http://localhost:5173</li>
+              <li>Las rutas de la API estén correctamente definidas</li>
+              <li>Estés autenticado con un token válido</li>
+            </ul>
+          </p>
+        </div>
+      )}
 
       {/* Búsqueda */}
       <div className="bg-black/30 border border-gray-800 rounded-lg p-4 mb-6">

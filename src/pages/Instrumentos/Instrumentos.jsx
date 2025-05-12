@@ -26,12 +26,34 @@ export default function Instrumentos() {
 
         // Realizar peticiones
         const instrumentosRes = await api.get("/instrumentos")
-        console.log("Respuesta de instrumentos:", instrumentosRes.data)
-        setInstrumentos(instrumentosRes.data)
+        console.log("Respuesta de instrumentos:", instrumentosRes)
+
+        // Verificar la estructura de la respuesta
+        let instrumentosData = []
+        if (instrumentosRes.data && Array.isArray(instrumentosRes.data)) {
+          instrumentosData = instrumentosRes.data
+        } else if (instrumentosRes.data && instrumentosRes.data.data && Array.isArray(instrumentosRes.data.data)) {
+          instrumentosData = instrumentosRes.data.data
+        } else {
+          console.warn("Formato de respuesta inesperado para instrumentos:", instrumentosRes.data)
+        }
+
+        setInstrumentos(instrumentosData)
 
         const tiposRes = await api.get("/tipo-instrumentos")
-        console.log("Respuesta de tipos:", tiposRes.data)
-        setTiposInstrumento(tiposRes.data)
+        console.log("Respuesta de tipos:", tiposRes)
+
+        // Verificar la estructura de la respuesta
+        let tiposData = []
+        if (tiposRes.data && Array.isArray(tiposRes.data)) {
+          tiposData = tiposRes.data
+        } else if (tiposRes.data && tiposRes.data.data && Array.isArray(tiposRes.data.data)) {
+          tiposData = tiposRes.data.data
+        } else {
+          console.warn("Formato de respuesta inesperado para tipos:", tiposRes.data)
+        }
+
+        setTiposInstrumento(tiposData)
       } catch (error) {
         console.error("Error al cargar datos:", error)
         setError(`Error al cargar datos: ${error.message}`)
@@ -116,6 +138,7 @@ export default function Instrumentos() {
               <li>El servidor Laravel esté en ejecución en http://localhost:8000</li>
               <li>La configuración CORS en Laravel permita peticiones desde http://localhost:5173</li>
               <li>Las rutas de la API estén correctamente definidas</li>
+              <li>Estés autenticado con un token válido</li>
             </ul>
           </p>
         </div>

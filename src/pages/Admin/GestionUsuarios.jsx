@@ -24,8 +24,8 @@ export default function GestionUsuarios() {
       const response = await api.get("/usuarios")
       console.log("Respuesta de usuarios:", response.data)
 
-      // Corregido: Acceder a response.data.data en lugar de response.data
-      const usuariosData = response.data.data || []
+      // Check if response.data is an array or if it has a data property
+      const usuariosData = Array.isArray(response.data) ? response.data : response.data.data || []
       setUsuarios(usuariosData)
 
       // Contar usuarios pendientes
@@ -40,6 +40,30 @@ export default function GestionUsuarios() {
   }
 
   useEffect(() => {
+    const cargarUsuarios = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+
+        console.log("Cargando usuarios...")
+        const response = await api.get("/usuarios")
+        console.log("Respuesta de usuarios:", response.data)
+
+        // Check if response.data is an array or if it has a data property
+        const usuariosData = Array.isArray(response.data) ? response.data : response.data.data || []
+        setUsuarios(usuariosData)
+
+        // Contar usuarios pendientes
+        const pendientes = usuariosData.filter((usuario) => usuario.estado === "pendiente").length
+        setUsuariosPendientes(pendientes)
+      } catch (error) {
+        console.error("Error al cargar usuarios:", error)
+        setError("Error al cargar los usuarios. Por favor, inténtalo de nuevo.")
+      } finally {
+        setLoading(false)
+      }
+    }
+
     cargarUsuarios()
   }, [])
 

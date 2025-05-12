@@ -18,8 +18,14 @@ export default function Mensajes() {
       try {
         setLoading(true)
         const [mensajesRes, usuariosRes] = await Promise.all([api.get("/mensajes"), api.get("/usuarios")])
-        setMensajes(mensajesRes.data)
-        setUsuarios(usuariosRes.data)
+
+        // Check if response.data is an array or if it has a data property
+        const mensajesData = Array.isArray(mensajesRes.data) ? mensajesRes.data : mensajesRes.data.data || []
+        setMensajes(mensajesData)
+
+        // Check if response.data is an array or if it has a data property
+        const usuariosData = Array.isArray(usuariosRes.data) ? usuariosRes.data : usuariosRes.data.data || []
+        setUsuarios(usuariosData)
       } catch (error) {
         console.error("Error al cargar mensajes:", error)
       } finally {

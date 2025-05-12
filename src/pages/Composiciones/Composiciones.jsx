@@ -8,6 +8,7 @@ import api from "../../api/axios"
 export default function Composiciones() {
   const [composiciones, setComposiciones] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [tipoFilter, setTipoFilter] = useState("")
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -17,10 +18,39 @@ export default function Composiciones() {
     const fetchComposiciones = async () => {
       try {
         setLoading(true)
+        setError(null)
+        console.log("Intentando conectar a:", `${api.defaults.baseURL}/composiciones`)
+
         const response = await api.get("/composiciones")
-        setComposiciones(response.data)
+        console.log("Respuesta completa de composiciones:", response)
+
+        // Verificar la estructura de la respuesta
+        let composicionesData = []
+        if (response.data && Array.isArray(response.data)) {
+          composicionesData = response.data
+        } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
+          composicionesData = response.data.data
+        } else {
+          console.warn("Formato de respuesta inesperado para composiciones:", response.data)
+          setError("Formato de respuesta inesperado. Verifica la consola para más detalles.")
+        }
+
+        setComposiciones(composicionesData)
       } catch (error) {
         console.error("Error al cargar composiciones:", error)
+        setError(`Error al cargar composiciones: ${error.message}`)
+
+        // Intentar determinar el tipo de error
+        if (error.response) {
+          console.error("Respuesta del servidor:", error.response.status, error.response.data)
+          setError(`Error del servidor: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+        } else if (error.request) {
+          console.error("No se recibió respuesta del servidor")
+          setError("No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.")
+        } else {
+          console.error("Error de configuración:", error.message)
+          setError(`Error de configuración: ${error.message}`)
+        }
       } finally {
         setLoading(false)
       }
@@ -48,11 +78,13 @@ export default function Composiciones() {
   }
 
   const filteredComposiciones = composiciones.filter((composicion) => {
+    if (!composicion) return false
+
     const matchesSearch =
-      composicion.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (composicion.titulo && composicion.titulo.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (composicion.compositor && composicion.compositor.toLowerCase().includes(searchTerm.toLowerCase()))
 
-    const matchesTipo = tipoFilter === "" || composicion.tipo === tipoFilter
+    const matchesTipo = tipoFilter === "" || (composicion.tipo && composicion.tipo === tipoFilter)
 
     return matchesSearch && matchesTipo
   })
@@ -69,6 +101,14 @@ export default function Composiciones() {
           Nueva Composición
         </Link>
       </div>
+
+      {/* Mostrar mensaje de error si existe */}
+      {error && (
+        <div className="bg-red-900/30 border border-red-800 text-red-400 p-4 rounded-md mb-6">
+          <p className="font-medium">Error:</p>
+          <p>{error}</p>
+        </div>
+      )}
 
       {/* Filtros y búsqueda */}
       <div className="bg-black/30 border border-gray-800 rounded-lg p-4 mb-6">
@@ -166,7 +206,9 @@ export default function Composiciones() {
                                 : "bg-gray-900/30 text-gray-400 border border-gray-800"
                         }`}
                       >
-                        {composicion.tipo.charAt(0).toUpperCase() + composicion.tipo.slice(1)}
+                        {composicion.tipo
+                          ? composicion.tipo.charAt(0).toUpperCase() + composicion.tipo.slice(1)
+                          : "Desconocido"}
                       </span>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{composicion.anio || "-"}</td>
