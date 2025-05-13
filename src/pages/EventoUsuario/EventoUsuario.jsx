@@ -2,21 +2,7 @@
 
 import { useState, useEffect, useContext } from "react"
 import { AuthContext } from "../../context/AuthContext"
-import {
-  Plus,
-  Edit,
-  Trash2,
-  Search,
-  Filter,
-  Calendar,
-  ChevronDown,
-  ChevronUp,
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-  MapPin,
-  Info,
-} from "lucide-react"
+import {Plus, Edit, Trash2, Search, Filter, Calendar, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Clock, MapPin, Info} from "lucide-react"
 import api from "../../api/axios"
 import { toast } from "react-toastify"
 
