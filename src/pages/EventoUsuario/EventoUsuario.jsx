@@ -2,7 +2,21 @@
 
 import { useState, useEffect, useContext } from "react"
 import { AuthContext } from "../../context/AuthContext"
-import { Plus, Edit, Trash2, Search, Filter, Calendar, ChevronDown, ChevronUp } from "lucide-react"
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Search,
+  Filter,
+  Calendar,
+  ChevronDown,
+  ChevronUp,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  MapPin,
+  Info,
+} from "lucide-react"
 import api from "../../api/axios"
 import { toast } from "react-toastify"
 
@@ -24,12 +38,15 @@ export default function EventoUsuario() {
     evento_id: "",
     usuario_id: "",
     confirmacion: false,
-    observaciones: "",
   })
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [eventoUsuarioToDelete, setEventoUsuarioToDelete] = useState(null)
   const [expandedEventos, setExpandedEventos] = useState({})
   const [viewMode, setViewMode] = useState("list") // "list" o "stats"
+  const [itemsPerPage] = useState(2)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [currentStatsPage, setCurrentStatsPage] = useState(1)
+  const [statsPerPage] = useState(2)
 
   useEffect(() => {
     fetchData()
@@ -68,7 +85,6 @@ export default function EventoUsuario() {
         evento_id: item.evento_id,
         usuario_id: item.usuario_id,
         confirmacion: item.confirmacion || false,
-        observaciones: item.observaciones || "",
         evento: item.evento || null,
         usuario: item.usuario || null,
       }))
@@ -93,6 +109,9 @@ export default function EventoUsuario() {
       } else {
         console.warn("Formato de respuesta inesperado para eventos:", eventosRes.data)
       }
+
+      // Ordenar eventos por nombre
+      eventosData.sort((a, b) => a.nombre.localeCompare(b.nombre))
       setEventos(eventosData)
 
       // Procesar datos de usuarios
@@ -153,7 +172,6 @@ export default function EventoUsuario() {
       evento_id: "",
       usuario_id: user ? user.id : "",
       confirmacion: false,
-      observaciones: "",
     },
   ) => {
     setModalMode(mode)
@@ -167,7 +185,6 @@ export default function EventoUsuario() {
       evento_id: "",
       usuario_id: user ? user.id : "",
       confirmacion: false,
-      observaciones: "",
     })
   }
 
@@ -188,13 +205,11 @@ export default function EventoUsuario() {
           evento_id: currentEventoUsuario.evento_id,
           usuario_id: currentEventoUsuario.usuario_id,
           confirmacion: currentEventoUsuario.confirmacion,
-          observaciones: currentEventoUsuario.observaciones,
         })
         toast.success("Asignación creada correctamente")
       } else {
         await api.put(`/evento-usuario/${currentEventoUsuario.evento_id}/${currentEventoUsuario.usuario_id}`, {
           confirmacion: currentEventoUsuario.confirmacion,
-          observaciones: currentEventoUsuario.observaciones,
         })
         toast.success("Asignación actualizada correctamente")
       }
@@ -254,39 +269,6 @@ export default function EventoUsuario() {
     return matchesSearch && matchesEvento && tieneAsignaciones
   })
 
-  // Filtrar asignaciones según los criterios de búsqueda (para vista de lista)
-  const filteredEventosUsuario = eventosUsuario.filter((item) => {
-    const evento = item.evento || eventos.find((e) => e.id === item.evento_id)
-    const usuario = item.usuario || usuarios.find((u) => u.id === item.usuario_id)
-
-    const matchesSearch =
-      (evento && evento.nombre && evento.nombre.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (usuario &&
-        usuario.nombre &&
-        `${usuario.nombre} ${usuario.apellido1 || ""}`.toLowerCase().includes(searchTerm.toLowerCase()))
-
-    const matchesEvento = eventoFilter === "" || item.evento_id.toString() === eventoFilter
-    const matchesUsuario = usuarioFilter === "" || item.usuario_id.toString() === usuarioFilter
-    const matchesConfirmado =
-      confirmadoFilter === "" ||
-      (confirmadoFilter === "true" && item.confirmacion) ||
-      (confirmadoFilter === "false" && !item.confirmacion)
-
-    return matchesSearch && matchesEvento && matchesUsuario && matchesConfirmado
-  })
-
-  const getEventoNombre = (eventoId) => {
-    // Primero buscar en los eventosUsuario por si tiene el objeto evento anidado
-    const itemConEvento = eventosUsuario.find((item) => item.evento_id === eventoId && item.evento)
-    if (itemConEvento && itemConEvento.evento) {
-      return itemConEvento.evento.nombre
-    }
-
-    // Si no, buscar en la lista de eventos
-    const evento = eventos.find((e) => e.id === eventoId)
-    return evento ? evento.nombre : "Desconocido"
-  }
-
   const getUsuarioNombre = (usuarioId) => {
     // Primero buscar en los eventosUsuario por si tiene el objeto usuario anidado
     const itemConUsuario = eventosUsuario.find((item) => item.usuario_id === usuarioId && item.usuario)
@@ -306,6 +288,12 @@ export default function EventoUsuario() {
     return new Date(dateString).toLocaleDateString("es-ES", options)
   }
 
+  // Formatear hora para mostrar
+  const formatTime = (timeString) => {
+    if (!timeString) return "-"
+    return timeString.substring(0, 5) // Extraer solo HH:MM
+  }
+
   const getEventoFecha = (eventoId) => {
     // Primero buscar en los eventosUsuario por si tiene el objeto evento anidado
     const itemConEvento = eventosUsuario.find((item) => item.evento_id === eventoId && item.evento)
@@ -316,6 +304,21 @@ export default function EventoUsuario() {
     // Si no, buscar en la lista de eventos
     const evento = eventos.find((e) => e.id === eventoId)
     return evento && evento.fecha ? formatDate(evento.fecha) : "-"
+  }
+
+  const getEventoHora = (eventoId) => {
+    const evento = eventos.find((e) => e.id === eventoId)
+    return evento && evento.hora ? formatTime(evento.hora) : "-"
+  }
+
+  const getEventoLugar = (eventoId) => {
+    const evento = eventos.find((e) => e.id === eventoId)
+    return evento && evento.lugar ? evento.lugar : "-"
+  }
+
+  const getEventoTipo = (eventoId) => {
+    const evento = eventos.find((e) => e.id === eventoId)
+    return evento && evento.tipo ? evento.tipo : ""
   }
 
   // Obtener asignaciones por evento
@@ -372,6 +375,40 @@ export default function EventoUsuario() {
   const getTipoInstrumentoNombre = (tipoId) => {
     const tipo = tiposInstrumento.find((t) => t.id === tipoId || t.instrumento === tipoId)
     return tipo ? tipo.nombre || tipo.instrumento : "Desconocido"
+  }
+
+  // Agrupar asignaciones por evento para la vista de lista
+  const eventosAgrupados = filteredEventos.map((evento) => {
+    const asignaciones = getAsignacionesPorEvento(evento.id)
+    return {
+      evento,
+      asignaciones,
+    }
+  })
+
+  // Calcular los índices para la paginación
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentEventosAgrupados = eventosAgrupados.slice(indexOfFirstItem, indexOfLastItem)
+  const totalPages = Math.ceil(eventosAgrupados.length / itemsPerPage)
+
+  // Función para cambiar la página
+  const paginate = (pageNumber) => {
+    if (pageNumber > 0 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber)
+    }
+  }
+
+  const indexOfLastStat = currentStatsPage * statsPerPage
+  const indexOfFirstStat = indexOfLastStat - statsPerPage
+  const currentStatsEventos = filteredEventos.slice(indexOfFirstStat, indexOfLastStat)
+  const totalStatsPages = Math.ceil(filteredEventos.length / statsPerPage)
+
+  // Función para cambiar la página de estadísticas
+  const paginateStats = (pageNumber) => {
+    if (pageNumber > 0 && pageNumber <= totalStatsPages) {
+      setCurrentStatsPage(pageNumber)
+    }
   }
 
   return (
@@ -494,10 +531,10 @@ export default function EventoUsuario() {
           <div className="text-[#C0C0C0]">Cargando datos...</div>
         </div>
       ) : viewMode === "list" ? (
-        /* Vista de lista */
-        <div className="bg-black/30 border border-gray-800 rounded-lg overflow-hidden">
-          {filteredEventosUsuario.length === 0 ? (
-            <div className="flex flex-col justify-center items-center h-64">
+        /* Vista de lista agrupada por evento */
+        <div className="space-y-6">
+          {currentEventosAgrupados.length === 0 ? (
+            <div className="flex flex-col justify-center items-center h-64 bg-black/30 border border-gray-800 rounded-lg">
               <Calendar size={48} className="text-gray-600 mb-4" />
               <p className="text-gray-400 text-center">
                 {searchTerm || eventoFilter || usuarioFilter || confirmadoFilter
@@ -512,76 +549,176 @@ export default function EventoUsuario() {
               </button>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-900/50 border-b border-gray-800">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                      Evento
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                      Fecha
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                      Usuario
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                      Confirmado
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                      Observaciones
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                      Acciones
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-800">
-                  {filteredEventosUsuario.map((item) => (
-                    <tr key={`${item.evento_id}-${item.usuario_id}`} className="hover:bg-gray-900/30">
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                        {getEventoNombre(item.evento_id)}
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                        {getEventoFecha(item.evento_id)}
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                        {getUsuarioNombre(item.usuario_id)}
-                      </td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            item.confirmacion
-                              ? "bg-green-900/30 text-green-400 border border-green-800"
-                              : "bg-yellow-900/30 text-yellow-400 border border-yellow-800"
-                          }`}
-                        >
-                          {item.confirmacion ? "Confirmado" : "Pendiente"}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-sm text-[#C0C0C0]">{item.observaciones || "-"}</td>
-                      <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => handleOpenModal("edit", item)}
-                            className="p-1 text-gray-400 hover:text-[#C0C0C0]"
-                            title="Editar"
-                          >
-                            <Edit size={18} />
-                          </button>
-                          <button
-                            onClick={() => confirmDelete(item.evento_id, item.usuario_id)}
-                            className="p-1 text-gray-400 hover:text-red-400"
-                            title="Eliminar"
-                          >
-                            <Trash2 size={18} />
-                          </button>
+            currentEventosAgrupados.map(({ evento, asignaciones }) => (
+              <div key={evento.id} className="bg-black/30 border border-gray-800 rounded-lg overflow-hidden">
+                {/* Cabecera del evento */}
+                <div
+                  className="bg-gray-900/50 px-4 py-3 flex justify-between items-center cursor-pointer"
+                  onClick={() => toggleEventoExpanded(evento.id)}
+                >
+                  <div>
+                    <h2 className="text-lg font-semibold text-[#C0C0C0]">{evento.nombre}</h2>
+                    <div className="flex flex-wrap gap-4 mt-2 text-sm text-gray-400">
+                      <div className="flex items-center">
+                        <Calendar size={16} className="mr-2" />
+                        {getEventoFecha(evento.id)}
+                      </div>
+                      {getEventoHora(evento.id) !== "-" && (
+                        <div className="flex items-center">
+                          <Clock size={16} className="mr-2" />
+                          {getEventoHora(evento.id)}
                         </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      )}
+                      {getEventoLugar(evento.id) !== "-" && (
+                        <div className="flex items-center">
+                          <MapPin size={16} className="mr-2" />
+                          {getEventoLugar(evento.id)}
+                        </div>
+                      )}
+                      {getEventoTipo(evento.id) && (
+                        <div className="flex items-center">
+                          <Info size={16} className="mr-2" />
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              getEventoTipo(evento.id) === "concierto"
+                                ? "bg-purple-900/30 text-purple-400 border border-purple-800"
+                                : getEventoTipo(evento.id) === "ensayo"
+                                  ? "bg-blue-900/30 text-blue-400 border border-blue-800"
+                                  : getEventoTipo(evento.id) === "procesion"
+                                    ? "bg-green-900/30 text-green-400 border border-green-800"
+                                    : getEventoTipo(evento.id) === "pasacalles"
+                                      ? "bg-yellow-900/30 text-yellow-400 border border-yellow-800"
+                                      : "bg-gray-900/30 text-gray-400 border border-gray-800"
+                            }`}
+                          >
+                            {getEventoTipo(evento.id).charAt(0).toUpperCase() + getEventoTipo(evento.id).slice(1)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <button className="text-gray-400">
+                    {expandedEventos[evento.id] ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                  </button>
+                </div>
+
+                {/* Tabla de asignaciones (solo visible si está expandido) */}
+                {expandedEventos[evento.id] && (
+                  <>
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead className="bg-gray-900/30 border-b border-gray-800">
+                          <tr>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                              Usuario
+                            </th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                              Confirmado
+                            </th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                              Acciones
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-800">
+                          {asignaciones.map((item) => (
+                            <tr key={`${item.evento_id}-${item.usuario_id}`} className="hover:bg-gray-900/30">
+                              <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                                {getUsuarioNombre(item.usuario_id)}
+                              </td>
+                              <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                                <span
+                                  className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                    item.confirmacion
+                                      ? "bg-green-900/30 text-green-400 border border-green-800"
+                                      : "bg-yellow-900/30 text-yellow-400 border border-yellow-800"
+                                  }`}
+                                >
+                                  {item.confirmacion ? "Confirmado" : "Pendiente"}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                                <div className="flex space-x-2">
+                                  <button
+                                    onClick={() => handleOpenModal("edit", item)}
+                                    className="p-1 text-gray-400 hover:text-[#C0C0C0]"
+                                    title="Editar"
+                                  >
+                                    <Edit size={18} />
+                                  </button>
+                                  <button
+                                    onClick={() => confirmDelete(item.evento_id, item.usuario_id)}
+                                    className="p-1 text-gray-400 hover:text-red-400"
+                                    title="Eliminar"
+                                  >
+                                    <Trash2 size={18} />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Botón para añadir asignación a este evento */}
+                    <div className="bg-gray-900/20 px-4 py-3 flex justify-end">
+                      <button
+                        onClick={() =>
+                          handleOpenModal("create", {
+                            evento_id: evento.id,
+                            usuario_id: "",
+                            confirmacion: false,
+                          })
+                        }
+                        className="flex items-center gap-1 text-sm text-gray-400 hover:text-[#C0C0C0]"
+                      >
+                        <Plus size={16} />
+                        Añadir asignación
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            ))
+          )}
+
+          {/* Paginación */}
+          {totalPages > 1 && (
+            <div className="flex justify-between items-center bg-gray-900/50 px-4 py-3 rounded-md">
+              <div className="text-sm text-gray-400">
+                Mostrando {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, eventosAgrupados.length)} de{" "}
+                {eventosAgrupados.length} eventos
+              </div>
+              <div className="flex space-x-1">
+                <button
+                  onClick={() => paginate(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="p-2 rounded-md bg-gray-800 text-gray-400 hover:text-[#C0C0C0] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => paginate(page)}
+                    className={`w-8 h-8 rounded-md flex items-center justify-center ${
+                      currentPage === page
+                        ? "bg-black text-[#C0C0C0]"
+                        : "bg-gray-900 text-gray-400 hover:text-[#C0C0C0]"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+                <button
+                  onClick={() => paginate(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="p-2 rounded-md bg-gray-800 text-gray-400 hover:text-[#C0C0C0] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -604,7 +741,7 @@ export default function EventoUsuario() {
               </button>
             </div>
           ) : (
-            filteredEventos.map((evento) => {
+            currentStatsEventos.map((evento) => {
               const estadisticas = getEstadisticasEvento(evento.id)
 
               return (
@@ -700,7 +837,6 @@ export default function EventoUsuario() {
                                 evento_id: evento.id,
                                 usuario_id: "",
                                 confirmacion: false,
-                                observaciones: "",
                               })
                             }
                             className="flex items-center gap-1 text-sm text-gray-400 hover:text-[#C0C0C0]"
@@ -772,6 +908,44 @@ export default function EventoUsuario() {
               )
             })
           )}
+          {/* Paginación para estadísticas */}
+          {totalStatsPages > 1 && (
+            <div className="flex justify-between items-center bg-gray-900/50 px-4 py-3 rounded-md">
+              <div className="text-sm text-gray-400">
+                Mostrando {indexOfFirstStat + 1}-{Math.min(indexOfLastStat, filteredEventos.length)} de{" "}
+                {filteredEventos.length} eventos
+              </div>
+              <div className="flex space-x-1">
+                <button
+                  onClick={() => paginateStats(currentStatsPage - 1)}
+                  disabled={currentStatsPage === 1}
+                  className="p-2 rounded-md bg-gray-800 text-gray-400 hover:text-[#C0C0C0] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                {Array.from({ length: totalStatsPages }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => paginateStats(page)}
+                    className={`w-8 h-8 rounded-md ${
+                      currentStatsPage === page
+                        ? "bg-black text-[#C0C0C0]"
+                        : "bg-gray-900 text-gray-400 hover:text-[#C0C0C0]"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+                <button
+                  onClick={() => paginateStats(currentStatsPage + 1)}
+                  disabled={currentStatsPage === totalStatsPages}
+                  className="p-2 rounded-md bg-gray-800 text-gray-400 hover:text-[#C0C0C0] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -838,19 +1012,6 @@ export default function EventoUsuario() {
                   <label htmlFor="confirmacion" className="ml-2 block text-[#C0C0C0] text-sm">
                     Confirmado
                   </label>
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="observaciones" className="block text-[#C0C0C0] text-sm font-medium">
-                    Observaciones
-                  </label>
-                  <textarea
-                    id="observaciones"
-                    name="observaciones"
-                    value={currentEventoUsuario.observaciones || ""}
-                    onChange={handleInputChange}
-                    rows={3}
-                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
-                  />
                 </div>
               </div>
               <div className="mt-6 flex justify-end space-x-3">

@@ -17,7 +17,7 @@ export default function ConfirmacionEventos() {
   const [tipoFilter, setTipoFilter] = useState("")
   const [estadoFilter, setEstadoFilter] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage] = useState(5)
+  const [itemsPerPage] = useState(6)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -337,7 +337,7 @@ export default function ConfirmacionEventos() {
               <button
                 key={page}
                 onClick={() => paginate(page)}
-                className={`w-8 h-8 rounded-md ${
+                className={`w-8 h-8 rounded-md flex items-center justify-center ${
                   currentPage === page ? "bg-black text-[#C0C0C0]" : "bg-gray-900 text-gray-400 hover:text-[#C0C0C0]"
                 }`}
               >
