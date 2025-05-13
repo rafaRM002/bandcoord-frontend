@@ -15,7 +15,7 @@ export default function ConfirmacionEventos() {
 
   const [searchTerm, setSearchTerm] = useState("")
   const [tipoFilter, setTipoFilter] = useState("")
-  const [estadoFilter, setEstadoFilter] = useState("")
+  const [confirmadoFilter, setConfirmadoFilter] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage] = useState(6)
 
@@ -142,6 +142,7 @@ export default function ConfirmacionEventos() {
       tipo: eventoDetalle.tipo || "",
       estado: eventoDetalle.estado || "",
       descripcion: eventoDetalle.descripcion || "",
+      confirmacion: item.confirmacion || false,
     }
   })
 
@@ -151,9 +152,12 @@ export default function ConfirmacionEventos() {
       evento.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (evento.lugar && evento.lugar.toLowerCase().includes(searchTerm.toLowerCase()))
     const matchesTipo = tipoFilter === "" || evento.tipo === tipoFilter
-    const matchesEstado = estadoFilter === "" || evento.estado === estadoFilter
+    const matchesConfirmado =
+      confirmadoFilter === "" ||
+      (confirmadoFilter === "true" && evento.confirmacion) ||
+      (confirmadoFilter === "false" && !evento.confirmacion)
 
-    return matchesSearch && matchesTipo && matchesEstado
+    return matchesSearch && matchesTipo && matchesConfirmado
   })
 
   // Paginación
@@ -223,14 +227,13 @@ export default function ConfirmacionEventos() {
           <div className="relative">
             <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
             <select
-              value={estadoFilter}
-              onChange={(e) => setEstadoFilter(e.target.value)}
+              value={confirmadoFilter}
+              onChange={(e) => setConfirmadoFilter(e.target.value)}
               className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
             >
-              <option value="">Todos los estados</option>
-              <option value="planificado">Planificado</option>
-              <option value="en progreso">En progreso</option>
-              <option value="finalizado">Finalizado</option>
+              <option value="">Todos</option>
+              <option value="true">Confirmados</option>
+              <option value="false">Pendientes</option>
             </select>
           </div>
         </div>
