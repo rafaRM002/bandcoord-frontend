@@ -244,8 +244,6 @@ export default function FormularioEvento({ evento = null, onClose }) {
                 <option value="planificado">Planificado</option>
                 <option value="en progreso">En progreso</option>
                 <option value="finalizado">Finalizado</option>
-                <option value="completado">Completado</option>
-                <option value="cancelado">Cancelado</option>
               </select>
             </div>
 
