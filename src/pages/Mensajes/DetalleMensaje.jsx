@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { ArrowLeft, User, Calendar, Reply } from "lucide-react"
+import { ArrowLeft, User, Calendar, Reply, Archive } from "lucide-react"
 import api from "../../api/axios"
 import { toast } from "react-toastify"
 import { useAuth } from "../../context/AuthContext"
@@ -28,10 +28,15 @@ export default function DetalleMensaje() {
         setMensaje(mensajeData)
 
         // Si el mensaje es recibido por el usuario actual, marcarlo como leído
-        if (mensajeData.usuario_id_receptor === user.id && !mensajeData.leido) {
-          await api.put(`/mensaje-usuarios/${id}/${user.id}`, {
-            leido: true,
-          })
+        if (mensajeData.usuario_id_receptor === user.id) {
+          try {
+            await api.put(`/mensaje-usuarios/${id}/${user.id}`, {
+              leido: true,
+              estado: 1,
+            })
+          } catch (err) {
+            console.error("Error al marcar como leído:", err)
+          }
         }
 
         // Obtener datos del emisor
@@ -59,6 +64,9 @@ export default function DetalleMensaje() {
         respuestaA: mensaje.id,
         asunto: `RE: ${mensaje.asunto}`,
         destinatario: mensaje.usuario_id_emisor,
+        destinatarioNombre: emisor ? `${emisor.nombre} ${emisor.apellido1}` : `Usuario ${mensaje.usuario_id_emisor}`,
+        destinatarioEmail: emisor ? emisor.email : "",
+        soloLectura: true,
       },
     })
   }
@@ -131,16 +139,29 @@ export default function DetalleMensaje() {
               </div>
             </div>
 
-            {/* Botón de responder (solo si el mensaje es recibido) */}
-            {mensaje.usuario_id_emisor !== user.id && (
+            {/* Botones de acción */}
+            <div className="flex justify-end mt-4 space-x-3">
+              {mensaje.usuario_id_emisor !== user.id && (
+                <button
+                  onClick={handleResponder}
+                  className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-3 py-2 rounded-md hover:bg-gray-900 transition-colors"
+                >
+                  <Reply size={16} />
+                  Responder
+                </button>
+              )}
+
               <button
-                onClick={handleResponder}
-                className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-3 py-1 rounded-md hover:bg-gray-900 transition-colors"
+                onClick={() => {
+                  // Implementar función para archivar
+                  navigate("/mensajes")
+                }}
+                className="flex items-center gap-2 bg-gray-800 text-[#C0C0C0] px-3 py-2 rounded-md hover:bg-gray-700 transition-colors"
               >
-                <Reply size={16} />
-                Responder
+                <Archive size={16} />
+                Archivar
               </button>
-            )}
+            </div>
           </div>
         </div>
 

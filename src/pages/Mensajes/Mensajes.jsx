@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
-import { Plus, Trash2, Search, MessageSquare, User, Calendar } from "lucide-react"
+import { Plus, Trash2, Search, MessageSquare, User, Calendar, Archive, CheckSquare, Square } from "lucide-react"
 import api from "../../api/axios"
 import { toast } from "react-toastify"
 import { useAuth } from "../../context/AuthContext"
@@ -18,6 +18,9 @@ export default function Mensajes() {
   const [, setTotalPages] = useState(1)
   const { user } = useAuth()
   const itemsPerPage = 6
+  const [selectedMensajes, setSelectedMensajes] = useState([])
+  const [filtroActual, setFiltroActual] = useState("enviados") // enviados, archivados
+  const [selectAll, setSelectAll] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,7 +32,12 @@ export default function Mensajes() {
         const mensajesData = Array.isArray(mensajesRes.data) ? mensajesRes.data : mensajesRes.data.data || []
 
         // Filtrar solo los mensajes enviados por el usuario actual
-        const mensajesEnviados = mensajesData.filter((mensaje) => mensaje.usuario_id_emisor === user?.id)
+        const mensajesEnviados = mensajesData
+          .filter((mensaje) => mensaje.usuario_id_emisor === user?.id)
+          .map((mensaje) => ({
+            ...mensaje,
+            archivado: mensaje.archivado || false,
+          }))
 
         setMensajes(mensajesEnviados)
         setTotalPages(Math.ceil(mensajesEnviados.length / itemsPerPage))
@@ -70,11 +78,89 @@ export default function Mensajes() {
     setShowDeleteModal(true)
   }
 
-  const filteredMensajes = mensajes.filter(
-    (mensaje) =>
+  const handleSelectMensaje = (id) => {
+    if (selectedMensajes.includes(id)) {
+      setSelectedMensajes(selectedMensajes.filter((mensajeId) => mensajeId !== id))
+    } else {
+      setSelectedMensajes([...selectedMensajes, id])
+    }
+  }
+
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedMensajes([])
+    } else {
+      setSelectedMensajes(paginatedMensajes.map((mensaje) => mensaje.id))
+    }
+    setSelectAll(!selectAll)
+  }
+
+  const handleDeleteSelected = async () => {
+    if (selectedMensajes.length === 0) return
+
+    try {
+      await Promise.all(selectedMensajes.map((id) => api.delete(`/mensajes/${id}`)))
+      setMensajes(mensajes.filter((mensaje) => !selectedMensajes.includes(mensaje.id)))
+      toast.success(`${selectedMensajes.length} mensaje(s) eliminado(s) correctamente`)
+      setSelectedMensajes([])
+      setSelectAll(false)
+    } catch (error) {
+      console.error("Error al eliminar mensajes:", error)
+      toast.error("Error al eliminar los mensajes")
+    }
+  }
+
+  const handleArchiveSelected = async () => {
+    if (selectedMensajes.length === 0) return
+
+    try {
+      await Promise.all(selectedMensajes.map((id) => api.put(`/mensajes/${id}`, { archivado: true })))
+
+      setMensajes(
+        mensajes.map((mensaje) => (selectedMensajes.includes(mensaje.id) ? { ...mensaje, archivado: true } : mensaje)),
+      )
+
+      toast.success(`${selectedMensajes.length} mensaje(s) archivado(s) correctamente`)
+      setSelectedMensajes([])
+      setSelectAll(false)
+    } catch (error) {
+      console.error("Error al archivar mensajes:", error)
+      toast.error("Error al archivar los mensajes")
+    }
+  }
+
+  const handleUnarchiveSelected = async () => {
+    if (selectedMensajes.length === 0) return
+
+    try {
+      await Promise.all(selectedMensajes.map((id) => api.put(`/mensajes/${id}`, { archivado: false })))
+
+      setMensajes(
+        mensajes.map((mensaje) => (selectedMensajes.includes(mensaje.id) ? { ...mensaje, archivado: false } : mensaje)),
+      )
+
+      toast.success(`${selectedMensajes.length} mensaje(s) desarchivado(s) correctamente`)
+      setSelectedMensajes([])
+      setSelectAll(false)
+    } catch (error) {
+      console.error("Error al desarchivar mensajes:", error)
+      toast.error("Error al desarchivar los mensajes")
+    }
+  }
+
+  const filteredMensajes = mensajes.filter((mensaje) => {
+    const matchesSearch =
       mensaje.asunto?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mensaje.contenido?.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+      mensaje.contenido?.toLowerCase().includes(searchTerm.toLowerCase())
+
+    if (filtroActual === "enviados") {
+      return matchesSearch && !mensaje.archivado
+    } else if (filtroActual === "archivados") {
+      return matchesSearch && mensaje.archivado
+    }
+
+    return matchesSearch
+  })
 
   // Paginación
   const paginatedMensajes = filteredMensajes.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
@@ -135,14 +221,75 @@ export default function Mensajes() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-[#C0C0C0]">Mensajes Enviados</h1>
-        <Link
-          to="/mensajes/nuevo"
-          className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
-        >
-          <Plus size={18} />
-          Nuevo Mensaje
-        </Link>
+        <div className="flex items-center">
+          <h1 className="text-2xl font-bold text-[#C0C0C0] mr-4">
+            {filtroActual === "enviados" ? "Mensajes Enviados" : "Mensajes Archivados"}
+          </h1>
+          <div className="flex space-x-2">
+            <button
+              onClick={() => setFiltroActual("enviados")}
+              className={`px-3 py-1 rounded-md text-sm ${
+                filtroActual === "enviados"
+                  ? "bg-[#C0C0C0] text-black"
+                  : "bg-gray-900 border border-gray-700 text-[#C0C0C0]"
+              }`}
+            >
+              Enviados
+            </button>
+            <button
+              onClick={() => setFiltroActual("archivados")}
+              className={`px-3 py-1 rounded-md text-sm ${
+                filtroActual === "archivados"
+                  ? "bg-[#C0C0C0] text-black"
+                  : "bg-gray-900 border border-gray-700 text-[#C0C0C0]"
+              }`}
+            >
+              Archivados
+            </button>
+          </div>
+        </div>
+        <div className="flex items-center space-x-2">
+          {selectedMensajes.length > 0 && (
+            <>
+              <button
+                onClick={handleDeleteSelected}
+                className="flex items-center gap-1 bg-red-900/80 text-white px-3 py-1 rounded-md hover:bg-red-800"
+                title="Eliminar seleccionados"
+              >
+                <Trash2 size={16} />
+                <span className="hidden sm:inline">Eliminar</span>
+                <span className="bg-red-700 text-xs px-1.5 py-0.5 rounded-full">{selectedMensajes.length}</span>
+              </button>
+
+              {filtroActual === "enviados" ? (
+                <button
+                  onClick={handleArchiveSelected}
+                  className="flex items-center gap-1 bg-gray-800 text-[#C0C0C0] px-3 py-1 rounded-md hover:bg-gray-700"
+                  title="Archivar seleccionados"
+                >
+                  <Archive size={16} />
+                  <span className="hidden sm:inline">Archivar</span>
+                </button>
+              ) : (
+                <button
+                  onClick={handleUnarchiveSelected}
+                  className="flex items-center gap-1 bg-gray-800 text-[#C0C0C0] px-3 py-1 rounded-md hover:bg-gray-700"
+                  title="Desarchivar seleccionados"
+                >
+                  <Archive size={16} />
+                  <span className="hidden sm:inline">Desarchivar</span>
+                </button>
+              )}
+            </>
+          )}
+          <Link
+            to="/mensajes/nuevo"
+            className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
+          >
+            <Plus size={18} />
+            Nuevo Mensaje
+          </Link>
+        </div>
       </div>
 
       {/* Búsqueda */}
@@ -177,29 +324,50 @@ export default function Mensajes() {
           </div>
         ) : (
           <div className="divide-y divide-gray-800">
+            <div className="p-2 bg-gray-900/50 flex items-center">
+              <button
+                onClick={handleSelectAll}
+                className="p-1 text-gray-400 hover:text-[#C0C0C0]"
+                title={selectAll ? "Deseleccionar todos" : "Seleccionar todos"}
+              >
+                {selectAll ? <CheckSquare size={18} /> : <Square size={18} />}
+              </button>
+              <span className="ml-2 text-sm text-gray-400">
+                {selectedMensajes.length > 0 ? `${selectedMensajes.length} seleccionado(s)` : "Seleccionar"}
+              </span>
+            </div>
+
             {paginatedMensajes.map((mensaje) => (
               <div key={mensaje.id} className="p-4 hover:bg-gray-900/30">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <Link
-                      to={`/mensajes/${mensaje.id}`}
-                      className="text-lg font-medium text-[#C0C0C0] hover:text-white"
-                    >
-                      {mensaje.asunto}
-                    </Link>
-                    <div className="flex items-center mt-1 text-sm text-gray-400">
-                      <User size={14} className="mr-1" />
-                      <span>Para: {getUsuarioNombre(mensaje.usuario_id_receptor)}</span>
-                      <span className="mx-2">•</span>
-                      <Calendar size={14} className="mr-1" />
-                      <span>{formatDate(mensaje.created_at || mensaje.fecha_envio)}</span>
-                    </div>
-                  </div>
-                  <button onClick={() => confirmDelete(mensaje.id)} className="p-1 text-gray-400 hover:text-red-400">
-                    <Trash2 size={18} />
+                <div className="flex items-start">
+                  <button
+                    onClick={() => handleSelectMensaje(mensaje.id)}
+                    className="p-1 mr-2 text-gray-400 hover:text-[#C0C0C0] mt-1"
+                  >
+                    {selectedMensajes.includes(mensaje.id) ? <CheckSquare size={18} /> : <Square size={18} />}
                   </button>
+
+                  <div className="flex-1">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <Link
+                          to={`/mensajes/${mensaje.id}`}
+                          className="text-lg font-medium text-[#C0C0C0] hover:text-white"
+                        >
+                          {mensaje.asunto}
+                        </Link>
+                        <div className="flex items-center mt-1 text-sm text-gray-400">
+                          <User size={14} className="mr-1" />
+                          <span>Para: {getUsuarioNombre(mensaje.usuario_id_receptor)}</span>
+                          <span className="mx-2">•</span>
+                          <Calendar size={14} className="mr-1" />
+                          <span>{formatDate(mensaje.created_at || mensaje.fecha_envio)}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="mt-2 text-gray-400 line-clamp-2">{mensaje.contenido}</p>
+                  </div>
                 </div>
-                <p className="mt-2 text-gray-400 line-clamp-2">{mensaje.contenido}</p>
               </div>
             ))}
           </div>

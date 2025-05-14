@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import { ArrowLeft, Save, Users, MessageSquare } from "lucide-react"
 import api from "../../api/axios"
 import { toast } from "react-toastify"
@@ -9,12 +9,14 @@ import { useAuth } from "../../context/AuthContext"
 
 export default function FormularioMensaje() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { user } = useAuth()
 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
   const [usuarios, setUsuarios] = useState([])
+  const [esRespuesta, setEsRespuesta] = useState(false)
 
   const [formData, setFormData] = useState({
     asunto: "",
@@ -23,6 +25,16 @@ export default function FormularioMensaje() {
   })
 
   useEffect(() => {
+    // Verificar si estamos respondiendo a un mensaje
+    if (location.state && location.state.destinatario) {
+      setEsRespuesta(true)
+      setFormData({
+        asunto: location.state.asunto || "",
+        contenido: "",
+        receptores: [Number.parseInt(location.state.destinatario)],
+      })
+    }
+
     const fetchUsuarios = async () => {
       try {
         setLoading(true)
@@ -42,7 +54,7 @@ export default function FormularioMensaje() {
     }
 
     fetchUsuarios()
-  }, [user])
+  }, [user, location.state])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -50,6 +62,9 @@ export default function FormularioMensaje() {
   }
 
   const handleReceptorChange = (e) => {
+    // Si es una respuesta, no permitir cambiar el receptor
+    if (esRespuesta) return
+
     const { value, checked } = e.target
 
     if (checked) {
@@ -76,6 +91,7 @@ export default function FormularioMensaje() {
         asunto: formData.asunto,
         contenido: formData.contenido,
         usuario_id_emisor: user.id, // Asegurarse de que el emisor sea el usuario actual
+        respuesta_a: location.state?.respuestaA || null,
       })
 
       const mensajeId = mensajeResponse.data.id
@@ -87,6 +103,7 @@ export default function FormularioMensaje() {
             mensaje_id: mensajeId,
             usuario_id_receptor: usuarioId,
             leido: false,
+            estado: 0,
           }),
         ),
       )
@@ -121,7 +138,7 @@ export default function FormularioMensaje() {
         >
           <ArrowLeft size={20} />
         </button>
-        <h1 className="text-2xl font-bold text-[#C0C0C0]">Nuevo Mensaje</h1>
+        <h1 className="text-2xl font-bold text-[#C0C0C0]">{esRespuesta ? "Responder Mensaje" : "Nuevo Mensaje"}</h1>
       </div>
 
       {error && (
@@ -172,29 +189,52 @@ export default function FormularioMensaje() {
               <Users size={18} className="mr-2" />
               Destinatarios *
             </label>
-            <div className="bg-gray-900/50 border border-gray-800 rounded-md p-4 max-h-60 overflow-y-auto">
-              {usuarios.length === 0 ? (
-                <p className="text-gray-400">No hay usuarios disponibles</p>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {usuarios.map((usuario) => (
-                    <div key={usuario.id} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id={`usuario-${usuario.id}`}
-                        value={usuario.id}
-                        onChange={handleReceptorChange}
-                        className="mr-2 h-4 w-4 rounded border-gray-700 bg-gray-800 text-[#C0C0C0] focus:ring-[#C0C0C0]"
-                      />
-                      <label htmlFor={`usuario-${usuario.id}`} className="text-[#C0C0C0] text-sm">
-                        {usuario.nombre} {usuario.apellido1}
-                      </label>
-                    </div>
-                  ))}
+
+            {esRespuesta && location.state?.destinatarioNombre ? (
+              <div className="bg-gray-900/50 border border-gray-800 rounded-md p-4">
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={true}
+                    disabled
+                    className="mr-2 h-4 w-4 rounded border-gray-700 bg-gray-800 text-[#C0C0C0]"
+                  />
+                  <label className="text-[#C0C0C0] text-sm">
+                    {location.state.destinatarioNombre}
+                    {location.state.destinatarioEmail && ` (${location.state.destinatarioEmail})`}
+                  </label>
                 </div>
-              )}
-            </div>
-            {formData.receptores.length === 0 && (
+                <p className="text-gray-400 text-xs mt-2">
+                  Estás respondiendo a un mensaje. El destinatario no puede ser modificado.
+                </p>
+              </div>
+            ) : (
+              <div className="bg-gray-900/50 border border-gray-800 rounded-md p-4 max-h-60 overflow-y-auto">
+                {usuarios.length === 0 ? (
+                  <p className="text-gray-400">No hay usuarios disponibles</p>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {usuarios.map((usuario) => (
+                      <div key={usuario.id} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id={`usuario-${usuario.id}`}
+                          value={usuario.id}
+                          checked={formData.receptores.includes(usuario.id)}
+                          onChange={handleReceptorChange}
+                          className="mr-2 h-4 w-4 rounded border-gray-700 bg-gray-800 text-[#C0C0C0] focus:ring-[#C0C0C0]"
+                        />
+                        <label htmlFor={`usuario-${usuario.id}`} className="text-[#C0C0C0] text-sm">
+                          {usuario.nombre} {usuario.apellido1}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {formData.receptores.length === 0 && !esRespuesta && (
               <p className="text-red-400 text-xs">Debes seleccionar al menos un destinatario</p>
             )}
           </div>

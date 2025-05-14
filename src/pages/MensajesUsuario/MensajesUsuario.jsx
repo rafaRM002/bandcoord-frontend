@@ -5,7 +5,7 @@ import { AuthContext } from "../../context/AuthContext"
 import axios from "../../api/axios"
 import { toast } from "react-toastify"
 import { Link } from "react-router-dom"
-import { Search, MessageSquare, User, Calendar, Eye, Bell, Inbox, Mail, CheckCircle } from "lucide-react"
+import { Search, MessageSquare, User, Calendar, Eye, Bell, Inbox, Mail, CheckCircle, Archive } from "lucide-react"
 
 const MensajesUsuario = () => {
   const [mensajes, setMensajes] = useState([])
@@ -15,7 +15,7 @@ const MensajesUsuario = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [, setTotalPages] = useState(1)
-  const [filtroActual, setFiltroActual] = useState("todos") // todos, leidos, no-leidos
+  const [filtroActual, setFiltroActual] = useState("todos") // todos, leidos, no-leidos, archivados
   const { user } = useContext(AuthContext)
   const itemsPerPage = 6
 
@@ -61,6 +61,7 @@ const MensajesUsuario = () => {
             usuario_id_emisor: mensajeCompleto?.usuario_id_emisor,
             // Importante: el estado 0 es no leído, 1 es leído
             leido: relacion.estado === 1,
+            archivado: relacion.archivado || false,
           }
         })
 
@@ -104,6 +105,28 @@ const MensajesUsuario = () => {
     }
   }
 
+  const archivarMensaje = async (mensajeId) => {
+    try {
+      await axios.put(`/mensaje-usuarios/${mensajeId}/${user.id}`, {
+        archivado: true,
+      })
+
+      // Actualizar el estado del mensaje en la lista
+      setMensajes(
+        mensajes.map((mensaje) =>
+          mensaje.mensaje_id === mensajeId && mensaje.usuario_id_receptor === user.id
+            ? { ...mensaje, archivado: true }
+            : mensaje,
+        ),
+      )
+
+      toast.success("Mensaje archivado")
+    } catch (err) {
+      console.error("Error al archivar mensaje:", err)
+      toast.error("Error al archivar el mensaje")
+    }
+  }
+
   // Obtener el nombre del remitente
   const getNombreRemitente = (usuarioId) => {
     // Aquí podrías implementar una lógica para obtener el nombre del remitente
@@ -121,13 +144,15 @@ const MensajesUsuario = () => {
 
     // Luego aplicar filtro de estado
     if (filtroActual === "leidos") {
-      return matchesSearch && mensaje.leido
+      return matchesSearch && mensaje.leido && !mensaje.archivado
     } else if (filtroActual === "no-leidos") {
-      return matchesSearch && !mensaje.leido
+      return matchesSearch && !mensaje.leido && !mensaje.archivado
+    } else if (filtroActual === "archivados") {
+      return matchesSearch && mensaje.archivado
     }
 
-    // Si es "todos", solo aplicar filtro de búsqueda
-    return matchesSearch
+    // Si es "todos", mostrar todos excepto archivados
+    return matchesSearch && !mensaje.archivado
   })
 
   // Paginación
@@ -265,6 +290,23 @@ const MensajesUsuario = () => {
                   </span>
                 </button>
               </li>
+              <li>
+                <button
+                  onClick={() => {
+                    setFiltroActual("archivados")
+                    setCurrentPage(1)
+                  }}
+                  className={`flex items-center w-full px-3 py-2 rounded-md ${
+                    filtroActual === "archivados" ? "bg-gray-800 text-white" : "text-gray-400 hover:bg-gray-900/50"
+                  }`}
+                >
+                  <Archive size={18} className="mr-2" />
+                  <span>Archivados</span>
+                  <span className="ml-auto bg-gray-700 text-xs px-2 py-1 rounded-full">
+                    {mensajes.filter((m) => m.archivado).length}
+                  </span>
+                </button>
+              </li>
             </ul>
           </div>
         </div>
@@ -338,15 +380,24 @@ const MensajesUsuario = () => {
                           <span>{formatDate(mensaje.created_at)}</span>
                         </div>
                       </div>
-                      {!mensaje.leido && (
+                      <div className="flex">
+                        {!mensaje.leido && (
+                          <button
+                            onClick={() => marcarComoLeido(mensaje.mensaje_id)}
+                            className="p-1 mr-2 text-gray-400 hover:text-[#C0C0C0] bg-gray-900/50 rounded-full"
+                            title="Marcar como leído"
+                          >
+                            <Eye size={18} />
+                          </button>
+                        )}
                         <button
-                          onClick={() => marcarComoLeido(mensaje.mensaje_id)}
+                          onClick={() => archivarMensaje(mensaje.mensaje_id)}
                           className="p-1 text-gray-400 hover:text-[#C0C0C0] bg-gray-900/50 rounded-full"
-                          title="Marcar como leído"
+                          title="Archivar mensaje"
                         >
-                          <Eye size={18} />
+                          <Archive size={18} />
                         </button>
-                      )}
+                      </div>
                     </div>
                     <p className={`mt-2 ${!mensaje.leido ? "text-gray-300" : "text-gray-400"} line-clamp-2`}>
                       {mensaje.contenido || "Sin contenido"}
