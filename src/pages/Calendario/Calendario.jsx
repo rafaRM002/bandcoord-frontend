@@ -583,7 +583,8 @@ export default function Calendario() {
                 {!showDeleteConfirm ? (
                   <button
                     onClick={handleShowDeleteConfirm}
-                    className="w-full py-2 bg-red-900/50 hover:bg-red-900/80 text-red-100 rounded-md transition-colors"
+                    className="w-full py-2 !bg-red-600 hover:!bg-red-700 text-white rounded-md transition-colors"
+                    style={{ backgroundColor: "#dc2626" }}
                   >
                     Cancelar evento
                   </button>
@@ -601,7 +602,8 @@ export default function Calendario() {
                       </button>
                       <button
                         onClick={handleDeleteEvent}
-                        className="flex-1 py-2 bg-red-900/80 hover:bg-red-800 text-white rounded-md transition-colors"
+                        className="flex-1 py-2 !bg-red-800 hover:!bg-red-900 text-white rounded-md transition-colors"
+                        style={{ backgroundColor: "#dc2626" }}
                       >
                         Sí, eliminar
                       </button>
