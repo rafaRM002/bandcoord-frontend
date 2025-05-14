@@ -4,9 +4,12 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { ArrowLeft, Save, Users, MessageSquare } from "lucide-react"
 import api from "../../api/axios"
+import { toast } from "react-toastify"
+import { useAuth } from "../../context/AuthContext"
 
 export default function FormularioMensaje() {
   const navigate = useNavigate()
+  const { user } = useAuth()
 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -24,7 +27,12 @@ export default function FormularioMensaje() {
       try {
         setLoading(true)
         const response = await api.get("/usuarios")
-        setUsuarios(response.data)
+        // Filtrar para no incluir al usuario actual en la lista de receptores
+        const usuariosData = Array.isArray(response.data)
+          ? response.data.filter((u) => u.id !== user.id)
+          : (response.data.data || []).filter((u) => u.id !== user.id)
+
+        setUsuarios(usuariosData)
       } catch (error) {
         console.error("Error al cargar usuarios:", error)
         setError("Error al cargar la lista de usuarios. Por favor, inténtalo de nuevo.")
@@ -34,7 +42,7 @@ export default function FormularioMensaje() {
     }
 
     fetchUsuarios()
-  }, [])
+  }, [user])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -67,6 +75,7 @@ export default function FormularioMensaje() {
       const mensajeResponse = await api.post("/mensajes", {
         asunto: formData.asunto,
         contenido: formData.contenido,
+        usuario_id_emisor: user.id, // Asegurarse de que el emisor sea el usuario actual
       })
 
       const mensajeId = mensajeResponse.data.id
@@ -82,10 +91,12 @@ export default function FormularioMensaje() {
         ),
       )
 
-      navigate("/admin/mensajes")
+      toast.success("Mensaje enviado correctamente")
+      navigate("/mensajes")
     } catch (error) {
       console.error("Error al enviar mensaje:", error)
       setError("Error al enviar el mensaje. Por favor, verifica la información e inténtalo de nuevo.")
+      toast.error("Error al enviar el mensaje")
     } finally {
       setSaving(false)
     }
@@ -105,7 +116,7 @@ export default function FormularioMensaje() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center mb-6">
         <button
-          onClick={() => navigate("/admin/mensajes")}
+          onClick={() => navigate("/mensajes")}
           className="mr-4 p-2 text-gray-400 hover:text-[#C0C0C0] rounded-full hover:bg-gray-900/50"
         >
           <ArrowLeft size={20} />
@@ -191,7 +202,7 @@ export default function FormularioMensaje() {
           <div className="mt-8 flex justify-end">
             <button
               type="button"
-              onClick={() => navigate("/admin/mensajes")}
+              onClick={() => navigate("/mensajes")}
               className="mr-4 px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
             >
               Cancelar

@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { Plus, Trash2, Search, MessageSquare, User, Calendar } from "lucide-react"
 import api from "../../api/axios"
+import { toast } from "react-toastify"
+import { useAuth } from "../../context/AuthContext"
 
 export default function Mensajes() {
   const [mensajes, setMensajes] = useState([])
@@ -12,6 +14,10 @@ export default function Mensajes() {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [mensajeToDelete, setMensajeToDelete] = useState(null)
   const [usuarios, setUsuarios] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [, setTotalPages] = useState(1)
+  const { user } = useAuth()
+  const itemsPerPage = 6
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,20 +27,28 @@ export default function Mensajes() {
 
         // Check if response.data is an array or if it has a data property
         const mensajesData = Array.isArray(mensajesRes.data) ? mensajesRes.data : mensajesRes.data.data || []
-        setMensajes(mensajesData)
+
+        // Filtrar solo los mensajes enviados por el usuario actual
+        const mensajesEnviados = mensajesData.filter((mensaje) => mensaje.usuario_id_emisor === user?.id)
+
+        setMensajes(mensajesEnviados)
+        setTotalPages(Math.ceil(mensajesEnviados.length / itemsPerPage))
 
         // Check if response.data is an array or if it has a data property
         const usuariosData = Array.isArray(usuariosRes.data) ? usuariosRes.data : usuariosRes.data.data || []
         setUsuarios(usuariosData)
       } catch (error) {
         console.error("Error al cargar mensajes:", error)
+        toast.error("Error al cargar los mensajes")
       } finally {
         setLoading(false)
       }
     }
 
-    fetchData()
-  }, [])
+    if (user && user.id) {
+      fetchData()
+    }
+  }, [user])
 
   const handleDelete = async () => {
     if (!mensajeToDelete) return
@@ -42,10 +56,12 @@ export default function Mensajes() {
     try {
       await api.delete(`/mensajes/${mensajeToDelete}`)
       setMensajes(mensajes.filter((mensaje) => mensaje.id !== mensajeToDelete))
+      toast.success("Mensaje eliminado correctamente")
       setShowDeleteModal(false)
       setMensajeToDelete(null)
     } catch (error) {
       console.error("Error al eliminar mensaje:", error)
+      toast.error("Error al eliminar el mensaje")
     }
   }
 
@@ -56,9 +72,16 @@ export default function Mensajes() {
 
   const filteredMensajes = mensajes.filter(
     (mensaje) =>
-      mensaje.asunto.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mensaje.contenido.toLowerCase().includes(searchTerm.toLowerCase()),
+      mensaje.asunto?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      mensaje.contenido?.toLowerCase().includes(searchTerm.toLowerCase()),
   )
+
+  // Paginación
+  const paginatedMensajes = filteredMensajes.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
+  }
 
   // Formatear fecha para mostrar
   const formatDate = (dateString) => {
@@ -68,15 +91,53 @@ export default function Mensajes() {
 
   const getUsuarioNombre = (usuarioId) => {
     const usuario = usuarios.find((u) => u.id === usuarioId)
-    return usuario ? `${usuario.nombre} ${usuario.apellido1}` : "Desconocido"
+    return usuario ? `${usuario.nombre} ${usuario.apellido1 || ""}` : "Desconocido"
+  }
+
+  const renderPagination = () => {
+    const totalFilteredPages = Math.ceil(filteredMensajes.length / itemsPerPage)
+
+    if (totalFilteredPages <= 1) return null
+
+    return (
+      <div className="flex justify-center mt-6 space-x-2">
+        <button
+          onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+          disabled={currentPage === 1}
+          className="px-3 py-1 bg-gray-900 border border-gray-700 rounded-md text-[#C0C0C0] disabled:opacity-50"
+        >
+          Anterior
+        </button>
+
+        {Array.from({ length: totalFilteredPages }, (_, i) => i + 1).map((page) => (
+          <button
+            key={page}
+            onClick={() => handlePageChange(page)}
+            className={`px-3 py-1 rounded-md ${
+              currentPage === page ? "bg-[#C0C0C0] text-black" : "bg-gray-900 border border-gray-700 text-[#C0C0C0]"
+            }`}
+          >
+            {page}
+          </button>
+        ))}
+
+        <button
+          onClick={() => handlePageChange(Math.min(totalFilteredPages, currentPage + 1))}
+          disabled={currentPage === totalFilteredPages}
+          className="px-3 py-1 bg-gray-900 border border-gray-700 rounded-md text-[#C0C0C0] disabled:opacity-50"
+        >
+          Siguiente
+        </button>
+      </div>
+    )
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-[#C0C0C0]">Mensajes</h1>
+        <h1 className="text-2xl font-bold text-[#C0C0C0]">Mensajes Enviados</h1>
         <Link
-          to="/admin/mensajes/nuevo"
+          to="/mensajes/nuevo"
           className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
         >
           <Plus size={18} />
@@ -104,34 +165,34 @@ export default function Mensajes() {
           <div className="flex justify-center items-center h-64">
             <div className="text-[#C0C0C0]">Cargando mensajes...</div>
           </div>
-        ) : filteredMensajes.length === 0 ? (
+        ) : paginatedMensajes.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-64">
             <MessageSquare size={48} className="text-gray-600 mb-4" />
             <p className="text-gray-400 text-center">
-              {searchTerm ? "No se encontraron mensajes con la búsqueda aplicada." : "No hay mensajes registrados."}
+              {searchTerm ? "No se encontraron mensajes con la búsqueda aplicada." : "No has enviado ningún mensaje."}
             </p>
-            <Link to="/admin/mensajes/nuevo" className="mt-4 text-[#C0C0C0] hover:text-white underline">
-              Crear el primer mensaje
+            <Link to="/mensajes/nuevo" className="mt-4 text-[#C0C0C0] hover:text-white underline">
+              Crear un nuevo mensaje
             </Link>
           </div>
         ) : (
           <div className="divide-y divide-gray-800">
-            {filteredMensajes.map((mensaje) => (
+            {paginatedMensajes.map((mensaje) => (
               <div key={mensaje.id} className="p-4 hover:bg-gray-900/30">
                 <div className="flex justify-between items-start">
                   <div>
                     <Link
-                      to={`/admin/mensajes/${mensaje.id}`}
+                      to={`/mensajes/${mensaje.id}`}
                       className="text-lg font-medium text-[#C0C0C0] hover:text-white"
                     >
                       {mensaje.asunto}
                     </Link>
                     <div className="flex items-center mt-1 text-sm text-gray-400">
                       <User size={14} className="mr-1" />
-                      <span>De: {getUsuarioNombre(mensaje.usuario_id_emisor)}</span>
+                      <span>Para: {getUsuarioNombre(mensaje.usuario_id_receptor)}</span>
                       <span className="mx-2">•</span>
                       <Calendar size={14} className="mr-1" />
-                      <span>{formatDate(mensaje.fecha_envio)}</span>
+                      <span>{formatDate(mensaje.created_at || mensaje.fecha_envio)}</span>
                     </div>
                   </div>
                   <button onClick={() => confirmDelete(mensaje.id)} className="p-1 text-gray-400 hover:text-red-400">
@@ -144,6 +205,9 @@ export default function Mensajes() {
           </div>
         )}
       </div>
+
+      {/* Paginación */}
+      {renderPagination()}
 
       {/* Modal de confirmación de eliminación */}
       {showDeleteModal && (

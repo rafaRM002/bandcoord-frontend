@@ -22,12 +22,15 @@ import FormularioComposicion from "./pages/Composiciones/FormularioComposicion"
 import Prestamos from "./pages/Prestamos/Prestamos"
 import Mensajes from "./pages/Mensajes/Mensajes"
 import FormularioMensaje from "./pages/Mensajes/FormularioMensaje"
+import DetalleMensaje from "./pages/Mensajes/DetalleMensaje"
 import GestionUsuarios from "./pages/Admin/GestionUsuarios"
 import Perfil from "./pages/Perfil/Perfil"
 import RestablecerPassword from "./pages/RestablecerPassword/RestablecerPassword"
 import NuevaPassword from "./pages/RestablecerPassword/NuevaPassword"
 import EventoUsuario from "./pages/EventoUsuario/EventoUsuario"
 import ConfirmacionEventos from "./pages/ConfirmacionEventos/ConfirmacionEventos"
+import ComposicionesInterpretadas from "./pages/ComposicionesInterpretadas/ComposicionesInterpretadas"
+import MensajesUsuario from "./pages/MensajesUsuario/MensajesUsuario"
 
 function App() {
   return (
@@ -150,14 +153,38 @@ function AppContent() {
             element={user && user.role === "admin" ? <FormularioComposicion /> : <Navigate to="/login" replace />}
           />
 
-          {/* Admin routes - Mensajes */}
+          {/* Mensajes routes */}
           <Route
             path="/mensajes"
-            element={user && user.role === "admin" ? <Mensajes /> : <Navigate to="/login" replace />}
+            element={
+              <ProtectedRoute>
+                <Mensajes />
+              </ProtectedRoute>
+            }
           />
           <Route
             path="/mensajes/nuevo"
-            element={user && user.role === "admin" ? <FormularioMensaje /> : <Navigate to="/login" replace />}
+            element={
+              <ProtectedRoute>
+                <FormularioMensaje />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/mensajes/:id"
+            element={
+              <ProtectedRoute>
+                <DetalleMensaje />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/mensajes-usuarios"
+            element={
+              <ProtectedRoute>
+                <MensajesUsuario />
+              </ProtectedRoute>
+            }
           />
 
           {/* Admin routes - Calendario */}
@@ -189,6 +216,14 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <ConfirmacionEventos />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/composiciones-interpretadas"
+            element={
+              <ProtectedRoute>
+                <ComposicionesInterpretadas />
               </ProtectedRoute>
             }
           />
