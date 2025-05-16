@@ -583,7 +583,7 @@ export default function Calendario() {
                 {!showDeleteConfirm ? (
                   <button
                     onClick={handleShowDeleteConfirm}
-                    className="w-full py-2 !bg-red-600 hover:!bg-red-700 text-white rounded-md transition-colors"
+                    className="w-full py-2 !bg-red-800 hover:!bg-red-900 text-white rounded-md transition-colors"
                     style={{ backgroundColor: "#dc2626" }}
                   >
                     Cancelar evento
