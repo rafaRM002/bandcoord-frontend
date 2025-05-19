@@ -50,6 +50,9 @@ export default function Eventos() {
         setError("Formato de respuesta inesperado. Verifica la consola para más detalles.")
       }
 
+      // Ordenar eventos alfabéticamente por nombre
+      eventosData.sort((a, b) => a.nombre.localeCompare(b.nombre))
+
       setEventos(eventosData)
     } catch (error) {
       console.error("Error al cargar eventos:", error)
@@ -102,6 +105,7 @@ export default function Eventos() {
     }
   }
 
+  // Aplicar filtros a todos los eventos
   const filteredEventos = eventos.filter((evento) => {
     const matchesSearch =
       evento.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -113,7 +117,7 @@ export default function Eventos() {
     return matchesSearch && matchesTipo && matchesEstado
   })
 
-  // Pagination logic
+  // Paginación después de aplicar filtros
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
   const currentEventos = filteredEventos.slice(indexOfFirstItem, indexOfLastItem)

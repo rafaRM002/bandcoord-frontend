@@ -2,9 +2,24 @@
 
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { ArrowLeft, Save, UserRound, Mail, Phone, Calendar, Lock, Eye, EyeOff, CheckCircle } from "lucide-react"
+import {
+  ArrowLeft,
+  Save,
+  UserRound,
+  Mail,
+  Phone,
+  Calendar,
+  Lock,
+  Eye,
+  EyeOff,
+  CheckCircle,
+  UserPlus,
+  UserMinus,
+  Shield,
+} from "lucide-react"
 import { useAuth } from "../../context/AuthContext"
 import api from "../../api/axios"
+import { toast } from "react-toastify"
 
 export default function Perfil() {
   const navigate = useNavigate()
@@ -20,6 +35,12 @@ export default function Perfil() {
   const [activeTab, setActiveTab] = useState("datos")
   // Añadir un nuevo estado para el spinner
   const [showSpinner, setShowSpinner] = useState(false)
+  const [usuarios, setUsuarios] = useState([])
+  const [adminUsers, setAdminUsers] = useState([])
+  const [loadingUsers, setLoadingUsers] = useState(false)
+  const [selectedUserId, setSelectedUserId] = useState("")
+  const [showAdminModal, setShowAdminModal] = useState(false)
+  const [adminAction, setAdminAction] = useState("add") // "add" or "remove"
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -52,6 +73,34 @@ export default function Perfil() {
     }
   }, [user])
 
+  useEffect(() => {
+    if (activeTab === "admin" && user && user.role === "admin") {
+      const fetchUsuarios = async () => {
+        try {
+          setLoadingUsers(true)
+          const response = await api.get("/usuarios")
+
+          // Obtener todos los usuarios
+          const usuariosData = Array.isArray(response.data) ? response.data : response.data.data || []
+
+          // Filtrar administradores y usuarios normales
+          const admins = usuariosData.filter((u) => u.role === "admin" && u.id !== user.id)
+          const regularUsers = usuariosData.filter((u) => u.role !== "admin" && u.estado === "activo")
+
+          setAdminUsers(admins)
+          setUsuarios(regularUsers)
+        } catch (error) {
+          console.error("Error al cargar usuarios:", error)
+          toast.error("Error al cargar la lista de usuarios")
+        } finally {
+          setLoadingUsers(false)
+        }
+      }
+
+      fetchUsuarios()
+    }
+  }, [activeTab, user])
+
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
@@ -66,6 +115,45 @@ export default function Perfil() {
     // Solo permitir números
     const value = e.target.value.replace(/\D/g, "")
     setFormData((prev) => ({ ...prev, telefono: value }))
+  }
+
+  const handleOpenAdminModal = (action) => {
+    setAdminAction(action)
+    setSelectedUserId("")
+    setShowAdminModal(true)
+  }
+
+  const handleAdminAction = async () => {
+    if (!selectedUserId) {
+      toast.error("Debes seleccionar un usuario")
+      return
+    }
+
+    try {
+      if (adminAction === "add") {
+        // Hacer al usuario seleccionado administrador
+        await api.put(`/usuarios/${selectedUserId}/make-admin`)
+        toast.success("Usuario promovido a administrador correctamente")
+      } else {
+        // Quitar permisos de administrador
+        await api.put(`/usuarios/${selectedUserId}/remove-admin`)
+        toast.success("Permisos de administrador revocados correctamente")
+      }
+
+      // Recargar la lista de usuarios
+      const response = await api.get("/usuarios")
+      const usuariosData = Array.isArray(response.data) ? response.data : response.data.data || []
+
+      const admins = usuariosData.filter((u) => u.role === "admin" && u.id !== user.id)
+      const regularUsers = usuariosData.filter((u) => u.role !== "admin" && u.estado === "activo")
+
+      setAdminUsers(admins)
+      setUsuarios(regularUsers)
+      setShowAdminModal(false)
+    } catch (error) {
+      console.error("Error al modificar permisos de administrador:", error)
+      toast.error("Error al modificar permisos de administrador")
+    }
   }
 
   const handleSubmitProfile = async (e) => {
@@ -212,6 +300,18 @@ export default function Perfil() {
         >
           Cambiar Contraseña
         </button>
+        {user && user.role === "admin" && (
+          <button
+            className={`px-4 py-2 font-medium ${
+              activeTab === "admin"
+                ? "text-[#C0C0C0] border-b-2 border-[#C0C0C0]"
+                : "text-gray-400 hover:text-[#C0C0C0]"
+            }`}
+            onClick={() => setActiveTab("admin")}
+          >
+            Gestión de Administradores
+          </button>
+        )}
       </div>
 
       {/* Mensajes de error y éxito */}
@@ -232,6 +332,113 @@ export default function Perfil() {
               {success}
             </>
           )}
+        </div>
+      )}
+
+      {activeTab === "admin" && user && user.role === "admin" && (
+        <div className="bg-black/30 border border-gray-800 rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-[#C0C0C0] mb-4">Gestión de Administradores</h2>
+
+          <div className="flex justify-between mb-6">
+            <button
+              onClick={() => handleOpenAdminModal("add")}
+              className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
+            >
+              <UserPlus size={18} />
+              Añadir Administrador
+            </button>
+
+            <button
+              onClick={() => handleOpenAdminModal("remove")}
+              className="flex items-center gap-2 bg-gray-800 text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
+            >
+              <UserMinus size={18} />
+              Revocar Permisos
+            </button>
+          </div>
+
+          <div className="space-y-6">
+            {/* Lista de administradores actuales */}
+            <div>
+              <h3 className="text-lg font-medium text-[#C0C0C0] mb-3 flex items-center">
+                <Shield size={18} className="mr-2" />
+                Administradores Actuales
+              </h3>
+
+              <div className="bg-gray-900/30 border border-gray-800 rounded-lg overflow-hidden">
+                {loadingUsers ? (
+                  <div className="p-4 text-center text-gray-400">Cargando usuarios...</div>
+                ) : adminUsers.length === 0 ? (
+                  <div className="p-4 text-center text-gray-400">No hay otros administradores</div>
+                ) : (
+                  <div className="divide-y divide-gray-800">
+                    {adminUsers.map((admin) => (
+                      <div key={admin.id} className="p-3 flex justify-between items-center">
+                        <div>
+                          <div className="text-[#C0C0C0] font-medium">
+                            {admin.nombre} {admin.apellido1} {admin.apellido2}
+                          </div>
+                          <div className="text-gray-400 text-sm">{admin.email}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal para añadir/quitar administradores */}
+      {showAdminModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">
+              {adminAction === "add" ? "Añadir Administrador" : "Revocar Permisos de Administrador"}
+            </h3>
+
+            <div className="mb-6">
+              <label htmlFor="usuario" className="block text-[#C0C0C0] text-sm font-medium mb-2">
+                Seleccionar usuario
+              </label>
+              <select
+                id="usuario"
+                value={selectedUserId}
+                onChange={(e) => setSelectedUserId(e.target.value)}
+                className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+              >
+                <option value="">Seleccionar usuario...</option>
+                {adminAction === "add"
+                  ? usuarios.map((usuario) => (
+                      <option key={usuario.id} value={usuario.id}>
+                        {usuario.nombre} {usuario.apellido1} - {usuario.email}
+                      </option>
+                    ))
+                  : adminUsers.map((admin) => (
+                      <option key={admin.id} value={admin.id}>
+                        {admin.nombre} {admin.apellido1} - {admin.email}
+                      </option>
+                    ))}
+              </select>
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowAdminModal(false)}
+                className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleAdminAction}
+                disabled={!selectedUserId}
+                className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {adminAction === "add" ? "Añadir" : "Revocar"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

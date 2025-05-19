@@ -29,6 +29,8 @@ export default function Composiciones() {
   const [currentAudio, setCurrentAudio] = useState(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [audioElement, setAudioElement] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage] = useState(9)
 
   // Estados para el modal de composición
   const [showModal, setShowModal] = useState(false)
@@ -80,6 +82,13 @@ export default function Composiciones() {
           console.warn("Formato de respuesta inesperado para composiciones:", response.data)
           setError("Formato de respuesta inesperado. Verifica la consola para más detalles.")
         }
+
+        // Ordenar composiciones alfabéticamente por nombre
+        composicionesData.sort((a, b) => {
+          const nombreA = a.nombre || a.titulo || ""
+          const nombreB = b.nombre || b.titulo || ""
+          return nombreA.localeCompare(nombreB)
+        })
 
         // Procesar las rutas para identificar YouTube vs imágenes
         composicionesData = composicionesData.map((comp) => {
@@ -399,6 +408,49 @@ export default function Composiciones() {
     return matchesSearch
   })
 
+  // Paginación
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const paginatedComposiciones = filteredComposiciones.slice(indexOfFirstItem, indexOfLastItem)
+  const totalPages = Math.ceil(filteredComposiciones.length / itemsPerPage)
+
+  // Add pagination controls function
+  const renderPagination = () => {
+    if (totalPages <= 1) return null
+
+    return (
+      <div className="flex justify-center mt-6 space-x-2">
+        <button
+          onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+          disabled={currentPage === 1}
+          className="px-3 py-1 bg-gray-900 border border-gray-700 rounded-md text-[#C0C0C0] disabled:opacity-50"
+        >
+          Anterior
+        </button>
+
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            className={`px-3 py-1 rounded-md ${
+              currentPage === page ? "bg-[#C0C0C0] text-black" : "bg-gray-900 border border-gray-700 text-[#C0C0C0]"
+            }`}
+          >
+            {page}
+          </button>
+        ))}
+
+        <button
+          onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 bg-gray-900 border border-gray-700 rounded-md text-[#C0C0C0] disabled:opacity-50"
+        >
+          Siguiente
+        </button>
+      </div>
+    )
+  }
+
   const getYoutubeEmbedUrl = (youtubeUrl) => {
     if (!youtubeUrl) return ""
 
@@ -478,7 +530,7 @@ export default function Composiciones() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-            {filteredComposiciones.map((composicion) => (
+            {paginatedComposiciones.map((composicion) => (
               <div key={composicion.id} className="bg-gray-900/30 border border-gray-800 rounded-lg overflow-hidden">
                 <div className="p-4">
                   <div className="flex justify-between items-start mb-3">
@@ -563,6 +615,9 @@ export default function Composiciones() {
           </div>
         )}
       </div>
+
+      {/* Paginación */}
+      {renderPagination()}
 
       {/* Modal de confirmación de eliminación */}
       {showDeleteModal && (
@@ -757,7 +812,7 @@ export default function Composiciones() {
                             id="archivo"
                             type="file"
                             ref={fileInputRef}
-                            accept=".mp3,audio/mpeg,.pdf,.jpg,.jpeg,.png"
+                            accept=".mp3,audio/mpeg,.pdf,.jpg,.jpeg,.png, .mp4, .webm"
                             onChange={handleAddFileUrl}
                             className="hidden"
                             multiple
@@ -770,7 +825,7 @@ export default function Composiciones() {
                             Seleccionar archivos
                           </label>
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">Archivos aceptados: MP3, PDF, JPG, PNG</p>
+                        <p className="text-xs text-gray-500 mt-1">Archivos aceptados: MP3, PDF, JPG, PNG, MP4, WEBM</p>
                       </div>
                     </div>
 

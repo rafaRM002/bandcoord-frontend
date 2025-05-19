@@ -90,6 +90,9 @@ export default function MinimosEvento() {
         } else {
           console.warn("Formato de respuesta inesperado para eventos:", eventosRes.data)
         }
+
+        // Ordenar eventos alfabéticamente por nombre
+        eventosData.sort((a, b) => a.nombre.localeCompare(b.nombre))
         setEventos(eventosData)
 
         // Procesar datos de tipos de instrumento

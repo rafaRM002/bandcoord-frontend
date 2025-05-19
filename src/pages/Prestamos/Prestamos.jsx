@@ -212,8 +212,9 @@ export default function Prestamos() {
     const usuario = usuarios.find((u) => u.id === prestamo.usuario_id)
 
     const matchesSearch =
-      (instrumento && instrumento.marca && instrumento.marca.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (instrumento && instrumento.modelo && instrumento.modelo.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (instrumento &&
+        instrumento.instrumento_tipo_id &&
+        instrumento.instrumento_tipo_id.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (usuario && `${usuario.nombre} ${usuario.apellido1}`.toLowerCase().includes(searchTerm.toLowerCase()))
 
     const matchesUsuario = usuarioFilter === "" || prestamo.usuario_id.toString() === usuarioFilter
@@ -234,8 +235,7 @@ export default function Prestamos() {
   const getInstrumentoInfo = (numSerie) => {
     const instrumento = instrumentos.find((i) => i.numero_serie === numSerie)
     if (!instrumento) return "Desconocido"
-
-    return `${instrumento.marca} ${instrumento.modelo}`
+    return instrumento.instrumento_tipo_id || "Desconocido"
   }
 
   const getUsuarioNombre = (usuarioId) => {
@@ -477,7 +477,7 @@ export default function Prestamos() {
                         .filter((instrumento) => instrumento.estado === "disponible")
                         .map((instrumento) => (
                           <option key={instrumento.numero_serie} value={instrumento.numero_serie}>
-                            {instrumento.marca} {instrumento.modelo} ({instrumento.numero_serie})
+                            ({instrumento.numero_serie})
                           </option>
                         ))}
                     </select>

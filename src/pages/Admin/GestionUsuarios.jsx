@@ -194,6 +194,9 @@ export default function GestionUsuarios() {
     return new Date(fecha).toLocaleDateString()
   }
 
+  // Modificar el filtro de usuarios para excluir los pendientes de la tabla principal
+  const usuariosFiltradosRegistrados = usuariosFiltrados.filter((usuario) => usuario.estado !== "pendiente")
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
@@ -260,8 +263,81 @@ export default function GestionUsuarios() {
         </div>
       )}
 
+      {/* Usuarios pendientes */}
+      {usuariosPendientes > 0 && (
+        <div className="mb-6">
+          <div className="bg-yellow-900/20 border border-yellow-800 rounded-lg overflow-hidden">
+            <div className="px-4 py-3 bg-yellow-900/30 border-b border-yellow-800">
+              <h2 className="text-lg font-semibold text-yellow-300">
+                Usuarios pendientes de aprobación ({usuariosPendientes})
+              </h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-yellow-800/50">
+                <thead className="bg-yellow-900/20">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
+                      Nombre
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
+                      Teléfono
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
+                      Fecha Registro
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
+                      Acciones
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-yellow-800/30">
+                  {usuariosFiltrados
+                    .filter((usuario) => usuario.estado === "pendiente")
+                    .map((usuario) => (
+                      <tr key={usuario.id} className="hover:bg-yellow-900/10">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-200">
+                          {usuario.nombre} {usuario.apellido1} {usuario.apellido2}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-200">{usuario.email}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-200">{usuario.telefono}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-200">
+                          {formatearFecha(usuario.created_at)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => mostrarConfirmacion("aprobar", usuario)}
+                              className="text-green-400 hover:text-green-300"
+                              title="Activar usuario"
+                            >
+                              <CheckCircle size={20} />
+                            </button>
+                            <button
+                              onClick={() => mostrarConfirmacion("eliminar", usuario)}
+                              className="text-gray-400 hover:text-gray-300"
+                              title="Eliminar usuario"
+                            >
+                              <Trash2 size={20} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Tabla de usuarios */}
       <div className="bg-gray-900/50 border border-gray-800 rounded-lg overflow-hidden">
+        <div className="px-4 py-3 bg-gray-900 border-b border-gray-800">
+          <h2 className="text-lg font-semibold text-[#C0C0C0]">Usuarios registrados</h2>
+        </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-800">
             <thead className="bg-gray-900">
@@ -294,14 +370,14 @@ export default function GestionUsuarios() {
                     Cargando usuarios...
                   </td>
                 </tr>
-              ) : usuariosFiltrados.length === 0 ? (
+              ) : usuariosFiltradosRegistrados.length === 0 ? (
                 <tr>
                   <td colSpan="7" className="px-6 py-4 text-center text-[#C0C0C0]">
                     No se encontraron usuarios
                   </td>
                 </tr>
               ) : (
-                usuariosFiltrados.map((usuario) => (
+                usuariosFiltradosRegistrados.map((usuario) => (
                   <tr key={usuario.id} className="hover:bg-gray-800/50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[#C0C0C0]">
                       {usuario.nombre} {usuario.apellido1} {usuario.apellido2}

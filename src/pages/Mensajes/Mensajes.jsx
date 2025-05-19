@@ -21,6 +21,7 @@ export default function Mensajes() {
   const [selectedMensajes, setSelectedMensajes] = useState([])
   const [filtroActual, setFiltroActual] = useState("enviados") // enviados, archivados
   const [selectAll, setSelectAll] = useState(false)
+  const [showDeleteSelectedModal, setShowDeleteSelectedModal] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -96,6 +97,10 @@ export default function Mensajes() {
   }
 
   const handleDeleteSelected = async () => {
+    setShowDeleteSelectedModal(true)
+  }
+
+  const confirmDeleteSelected = async () => {
     if (selectedMensajes.length === 0) return
 
     try {
@@ -104,6 +109,7 @@ export default function Mensajes() {
       toast.success(`${selectedMensajes.length} mensaje(s) eliminado(s) correctamente`)
       setSelectedMensajes([])
       setSelectAll(false)
+      setShowDeleteSelectedModal(false)
     } catch (error) {
       console.error("Error al eliminar mensajes:", error)
       toast.error("Error al eliminar los mensajes")
@@ -177,7 +183,11 @@ export default function Mensajes() {
 
   const getUsuarioNombre = (usuarioId) => {
     const usuario = usuarios.find((u) => u.id === usuarioId)
-    return usuario ? `${usuario.nombre} ${usuario.apellido1 || ""}` : "Desconocido"
+    if (!usuario) {
+      console.log(`Usuario con ID ${usuarioId} no encontrado`)
+      return "Desconocido"
+    }
+    return `${usuario.nombre || ""} ${usuario.apellido1 || ""}`.trim() || `Usuario #${usuarioId}`
   }
 
   const renderPagination = () => {
@@ -365,7 +375,9 @@ export default function Mensajes() {
                         </div>
                       </div>
                     </div>
-                    <p className="mt-2 text-gray-400 line-clamp-2">{mensaje.contenido}</p>
+                    <Link to={`/mensajes/${mensaje.id}`} className="block">
+                      <p className="mt-2 text-gray-400 line-clamp-2">{mensaje.contenido}</p>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -393,6 +405,31 @@ export default function Mensajes() {
                 Cancelar
               </button>
               <button onClick={handleDelete} className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800">
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showDeleteSelectedModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">Confirmar eliminación</h3>
+            <p className="text-gray-400 mb-6">
+              ¿Estás seguro de que deseas eliminar {selectedMensajes.length} mensaje(s)? Esta acción no se puede
+              deshacer.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowDeleteSelectedModal(false)}
+                className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmDeleteSelected}
+                className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800"
+              >
                 Eliminar
               </button>
             </div>

@@ -3,6 +3,7 @@
 import { createContext, useState, useEffect, useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import api from "../api/axios"
+import { Bell } from "lucide-react"
 
 const AuthContext = createContext()
 
@@ -10,6 +11,11 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
+
+  const [pendingUsersCount, setPendingUsersCount] = useState(0)
+  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0)
+  const [showNotification, setShowNotification] = useState(false)
+  const [notificationMessage, setNotificationMessage] = useState("")
 
   // Verificar autenticación al cargar la aplicación
   useEffect(() => {
@@ -73,6 +79,66 @@ export const AuthProvider = ({ children }) => {
 
     checkAuth()
   }, [navigate])
+
+  useEffect(() => {
+    const checkNotifications = async () => {
+      if (!user) return
+
+      try {
+        // Si es administrador, verificar usuarios pendientes
+        if (user.role === "admin") {
+          const usuariosResponse = await api.get("/usuarios")
+          const usuariosData = Array.isArray(usuariosResponse.data)
+            ? usuariosResponse.data
+            : usuariosResponse.data.data || []
+
+          const pendingUsers = usuariosData.filter((u) => u.estado === "pendiente").length
+          setPendingUsersCount(pendingUsers)
+
+          if (pendingUsers > 0) {
+            setNotificationMessage(
+              `Tienes ${pendingUsers} usuario${pendingUsers !== 1 ? "s" : ""} pendiente${pendingUsers !== 1 ? "s" : ""} de aprobación`,
+            )
+            setShowNotification(true)
+
+            // Ocultar notificación después de 5 segundos
+            setTimeout(() => {
+              setShowNotification(false)
+            }, 5000)
+          }
+        }
+
+        // Verificar mensajes no leídos para todos los usuarios
+        const mensajesResponse = await api.get("/mensaje-usuarios")
+        const mensajesData = Array.isArray(mensajesResponse.data)
+          ? mensajesResponse.data
+          : mensajesResponse.data.data || []
+
+        // Filtrar mensajes no leídos para el usuario actual
+        const unreadMessages = mensajesData.filter(
+          (m) => m.usuario_id_receptor === user.id && (m.estado === 0 || !m.leido),
+        ).length
+
+        setUnreadMessagesCount(unreadMessages)
+
+        if (unreadMessages > 0 && !showNotification) {
+          setNotificationMessage(`Tienes ${unreadMessages} mensaje${unreadMessages !== 1 ? "s" : ""} sin leer`)
+          setShowNotification(true)
+
+          // Ocultar notificación después de 5 segundos
+          setTimeout(() => {
+            setShowNotification(false)
+          }, 5000)
+        }
+      } catch (error) {
+        console.error("Error al verificar notificaciones:", error)
+      }
+    }
+
+    if (user) {
+      checkNotifications()
+    }
+  }, [user])
 
   // Función para iniciar sesión
   const login = async (email, password) => {
@@ -186,9 +252,23 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     isAdmin: user?.role === "admin",
+    pendingUsersCount,
+    unreadMessagesCount,
+    showNotification,
+    notificationMessage,
   }
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+      {showNotification && (
+        <div className="fixed bottom-4 right-4 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-3 rounded-md shadow-lg flex items-center z-50 animate-fade-in">
+          <Bell size={20} className="mr-2 text-yellow-500" />
+          <span>{notificationMessage}</span>
+        </div>
+      )}
+    </AuthContext.Provider>
+  )
 }
 
 export const useAuth = () => {

@@ -37,6 +37,10 @@ export default function Entidades() {
 
         // Check if response.data is an array or if it has a data property
         const entidadesData = Array.isArray(response.data) ? response.data : response.data.data || []
+
+        // Ordenar entidades alfabéticamente por nombre
+        entidadesData.sort((a, b) => a.nombre.localeCompare(b.nombre))
+
         setEntidades(entidadesData)
       } catch (error) {
         console.error("Error al cargar entidades:", error)

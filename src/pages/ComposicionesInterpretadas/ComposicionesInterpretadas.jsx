@@ -45,77 +45,100 @@ const ComposicionesInterpretadas = () => {
   const composicionesPorPagina = 2
   const usuariosPorPagina = 10
 
-  useEffect(() => {
-    const fetchComposicionesInterpretadas = async () => {
-      try {
-        setLoading(true)
-        const response = await axios.get("/composicion-usuario")
-        console.log("Respuesta de composiciones interpretadas:", response.data)
+  // Update the fetchComposicionesInterpretadas function to properly handle composition names
+  const fetchComposicionesInterpretadas = async () => {
+    try {
+      setLoading(true)
+      const response = await axios.get("/composicion-usuario")
+      console.log("Respuesta de composiciones interpretadas:", response.data)
 
-        // Manejar diferentes formatos de respuesta
-        const composicionesData = Array.isArray(response.data)
-          ? response.data
-          : response.data.composiciones || response.data.data || []
+      // Manejar diferentes formatos de respuesta
+      const composicionesData = Array.isArray(response.data)
+        ? response.data
+        : response.data.composiciones || response.data.data || []
 
-        // Agrupar por composición_id
-        const composicionesAgrupadas = {}
+      // Agrupar por composición_id
+      const composicionesAgrupadas = {}
 
-        composicionesData.forEach((item) => {
-          const composicionId = item.composicion_id
+      composicionesData.forEach((item) => {
+        const composicionId = item.composicion_id
 
-          if (!composicionesAgrupadas[composicionId]) {
-            composicionesAgrupadas[composicionId] = {
-              composicion_id: composicionId,
-              nombre: item.composicion?.nombre || item.titulo_composicion || `Composición ${composicionId}`,
-              descripcion: item.composicion?.descripcion || "",
-              nombre_autor: item.composicion?.nombre_autor || "",
-              anio: item.composicion?.anio || "",
-              ruta: item.composicion?.ruta || "",
-              usuarios: [],
-            }
+        if (!composicionesAgrupadas[composicionId]) {
+          // Asegurarse de obtener el nombre correcto de la composición
+          const nombreComposicion =
+            item.composicion?.nombre ||
+            item.titulo_composicion ||
+            (item.composicion
+              ? `${item.composicion.nombre || item.composicion.titulo || ""}`
+              : `Composición ${composicionId}`)
+
+          composicionesAgrupadas[composicionId] = {
+            composicion_id: composicionId,
+            nombre: nombreComposicion,
+            descripcion: item.composicion?.descripcion || "",
+            nombre_autor: item.composicion?.nombre_autor || "",
+            anio: item.composicion?.anio || "",
+            ruta: item.composicion?.ruta || "",
+            usuarios: [],
           }
+        }
 
-          // Añadir usuario a la composición
+        // Añadir usuario a la composición con información completa
+        if (item.usuario) {
           composicionesAgrupadas[composicionId].usuarios.push({
             usuario_id: item.usuario_id,
-            nombre: item.usuario?.nombre || "",
-            apellidos: item.usuario?.apellidos || "",
-            email: item.usuario?.email || "",
+            nombre: item.usuario.nombre || "",
+            apellidos: (item.usuario.apellido1 || "") + " " + (item.usuario.apellido2 || ""),
+            email: item.usuario.email || "",
             created_at: item.created_at,
             updated_at: item.updated_at,
           })
-        })
+        } else {
+          composicionesAgrupadas[composicionId].usuarios.push({
+            usuario_id: item.usuario_id,
+            nombre: "Usuario",
+            apellidos: `#${item.usuario_id}`,
+            email: "",
+            created_at: item.created_at,
+            updated_at: item.updated_at,
+          })
+        }
+      })
 
-        // Convertir a array y parsear rutas
-        const composicionesArray = Object.values(composicionesAgrupadas).map((comp) => ({
-          ...comp,
-          parsedRuta: parseRuta(comp.ruta),
-        }))
+      // Convertir a array y parsear rutas
+      const composicionesArray = Object.values(composicionesAgrupadas).map((comp) => ({
+        ...comp,
+        parsedRuta: parseRuta(comp.ruta),
+      }))
 
-        console.log("Composiciones agrupadas:", composicionesArray)
+      // Ordenar alfabéticamente por nombre
+      composicionesArray.sort((a, b) => a.nombre.localeCompare(b.nombre))
 
-        // Inicializar estados de expansión y paginación
-        const initialExpanded = {}
-        const initialPagination = {}
+      console.log("Composiciones agrupadas:", composicionesArray)
 
-        composicionesArray.forEach((comp) => {
-          initialExpanded[comp.composicion_id] = false
-          initialPagination[comp.composicion_id] = 1
-        })
+      // Inicializar estados de expansión y paginación
+      const initialExpanded = {}
+      const initialPagination = {}
 
-        setExpandedComposiciones(initialExpanded)
-        setUsuariosPagination(initialPagination)
-        setComposiciones(composicionesArray)
-        setError(null)
-      } catch (err) {
-        console.error("Error al cargar composiciones interpretadas:", err)
-        setError("Error al cargar las composiciones interpretadas. Por favor, inténtelo de nuevo más tarde.")
-        toast.error("Error al cargar las composiciones interpretadas")
-      } finally {
-        setLoading(false)
-      }
+      composicionesArray.forEach((comp) => {
+        initialExpanded[comp.composicion_id] = false
+        initialPagination[comp.composicion_id] = 1
+      })
+
+      setExpandedComposiciones(initialExpanded)
+      setUsuariosPagination(initialPagination)
+      setComposiciones(composicionesArray)
+      setError(null)
+    } catch (err) {
+      console.error("Error al cargar composiciones interpretadas:", err)
+      setError("Error al cargar las composiciones interpretadas. Por favor, inténtelo de nuevo más tarde.")
+      toast.error("Error al cargar las composiciones interpretadas")
+    } finally {
+      setLoading(false)
     }
+  }
 
+  useEffect(() => {
     fetchComposicionesInterpretadas()
 
     // Cargar usuarios para asignación
@@ -493,24 +516,25 @@ const ComposicionesInterpretadas = () => {
                 <div className="px-4 py-2 border-t border-gray-800 bg-gray-900/10">
                   {composicion.descripcion && <p className="text-sm text-gray-400 mb-2">{composicion.descripcion}</p>}
 
+                  {/* Eliminar o modificar esta sección en el componente */}
                   <div className="flex items-center text-xs text-gray-500">
                     {composicion.parsedRuta && composicion.parsedRuta.type === "youtube" ? (
                       <>
                         <Youtube size={14} className="mr-1 text-red-400" />
                         <span>Video de YouTube</span>
                       </>
-                    ) : (
+                    ) : composicion.parsedRuta &&
+                      composicion.parsedRuta.urls &&
+                      composicion.parsedRuta.urls.length > 0 ? (
                       <>
                         <FileMusic size={14} className="mr-1" />
                         <span>
-                          {composicion.parsedRuta &&
-                          composicion.parsedRuta.urls &&
-                          composicion.parsedRuta.urls.length > 1
+                          {composicion.parsedRuta.urls.length > 1
                             ? `${composicion.parsedRuta.urls.length} archivos`
-                            : "Archivo de audio"}
+                            : "Archivo adjunto"}
                         </span>
                       </>
-                    )}
+                    ) : null}
                   </div>
                 </div>
 
