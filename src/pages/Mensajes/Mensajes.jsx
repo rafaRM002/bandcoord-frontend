@@ -22,15 +22,25 @@ export default function Mensajes() {
   const [filtroActual, setFiltroActual] = useState("enviados") // enviados, archivados
   const [selectAll, setSelectAll] = useState(false)
   const [showDeleteSelectedModal, setShowDeleteSelectedModal] = useState(false)
+  const [mensajeUsuarios, setMensajeUsuarios] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true)
-        const [mensajesRes, usuariosRes] = await Promise.all([api.get("/mensajes"), api.get("/usuarios")])
+        const [mensajesRes, usuariosRes, mensajeUsuariosRes] = await Promise.all([
+          api.get("/mensajes"),
+          api.get("/usuarios"),
+          api.get("/mensaje-usuarios"),
+        ])
 
         // Check if response.data is an array or if it has a data property
         const mensajesData = Array.isArray(mensajesRes.data) ? mensajesRes.data : mensajesRes.data.data || []
+        const mensajeUsuariosData = Array.isArray(mensajeUsuariosRes.data)
+          ? mensajeUsuariosRes.data
+          : mensajeUsuariosRes.data.data || []
+
+        setMensajeUsuarios(mensajeUsuariosData)
 
         // Filtrar solo los mensajes enviados por el usuario actual
         const mensajesEnviados = mensajesData
@@ -181,13 +191,20 @@ export default function Mensajes() {
     return new Date(dateString).toLocaleDateString("es-ES", options)
   }
 
-  const getUsuarioNombre = (usuarioId) => {
-    const usuario = usuarios.find((u) => u.id === usuarioId)
+  const getReceptorId = (mensajeId) => {
+    const mensajeUsuario = mensajeUsuarios.find((mu) => mu.mensaje_id === mensajeId)
+    return mensajeUsuario ? mensajeUsuario.usuario_id_receptor : null
+  }
+
+  const getUsuarioNombre = (mensajeId) => {
+    const receptorId = getReceptorId(mensajeId)
+    if (!receptorId) return "Desconocido"
+
+    const usuario = usuarios.find((u) => u.id === receptorId)
     if (!usuario) {
-      console.log(`Usuario con ID ${usuarioId} no encontrado`)
       return "Desconocido"
     }
-    return `${usuario.nombre || ""} ${usuario.apellido1 || ""}`.trim() || `Usuario #${usuarioId}`
+    return `${usuario.nombre || ""} ${usuario.apellido1 || ""}`.trim() || `Usuario #${receptorId}`
   }
 
   const renderPagination = () => {
@@ -368,7 +385,7 @@ export default function Mensajes() {
                         </Link>
                         <div className="flex items-center mt-1 text-sm text-gray-400">
                           <User size={14} className="mr-1" />
-                          <span>Para: {getUsuarioNombre(mensaje.usuario_id_receptor)}</span>
+                          <span>Para: {getUsuarioNombre(mensaje.id)}</span>
                           <span className="mx-2">•</span>
                           <Calendar size={14} className="mr-1" />
                           <span>{formatDate(mensaje.created_at || mensaje.fecha_envio)}</span>

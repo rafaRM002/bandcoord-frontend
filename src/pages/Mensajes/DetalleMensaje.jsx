@@ -14,6 +14,7 @@ export default function DetalleMensaje() {
 
   const [mensaje, setMensaje] = useState(null)
   const [emisor, setEmisor] = useState(null)
+  const [receptor, setReceptor] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -21,11 +22,27 @@ export default function DetalleMensaje() {
     const fetchMensaje = async () => {
       try {
         setLoading(true)
+        // Obtener el mensaje
         const response = await api.get(`/mensajes/${id}`)
-
-        // Normalizar la respuesta
         const mensajeData = response.data.data || response.data
         setMensaje(mensajeData)
+
+        // Obtener la relación mensaje-usuario para encontrar el receptor
+        const mensajeUsuarioResponse = await api.get(`/mensaje-usuarios?mensaje_id=${id}`)
+        const mensajeUsuarioData = mensajeUsuarioResponse.data.data || mensajeUsuarioResponse.data
+
+        // Obtener datos del emisor
+        if (mensajeData.usuario_id_emisor) {
+          const emisorResponse = await api.get(`/usuarios/${mensajeData.usuario_id_emisor}`)
+          setEmisor(emisorResponse.data.data || emisorResponse.data)
+        }
+
+        // Obtener datos del receptor desde la tabla mensaje_usuario
+        if (mensajeUsuarioData && mensajeUsuarioData.length > 0) {
+          const receptorId = mensajeUsuarioData[0].usuario_id_receptor
+          const receptorResponse = await api.get(`/usuarios/${receptorId}`)
+          setReceptor(receptorResponse.data.data || receptorResponse.data)
+        }
 
         // Si el mensaje es recibido por el usuario actual, marcarlo como leído
         if (mensajeData.usuario_id_receptor === user.id) {
@@ -37,12 +54,6 @@ export default function DetalleMensaje() {
           } catch (err) {
             console.error("Error al marcar como leído:", err)
           }
-        }
-
-        // Obtener datos del emisor
-        if (mensajeData.usuario_id_emisor) {
-          const emisorResponse = await api.get(`/usuarios/${mensajeData.usuario_id_emisor}`)
-          setEmisor(emisorResponse.data.data || emisorResponse.data)
         }
       } catch (error) {
         console.error("Error al cargar el mensaje:", error)
@@ -128,9 +139,19 @@ export default function DetalleMensaje() {
               <div className="flex items-center mt-2 text-gray-400">
                 <User size={16} className="mr-2" />
                 <span>
+                  De:{" "}
                   {emisor
                     ? `${emisor.nombre} ${emisor.apellido1} (${emisor.email})`
                     : `Usuario ID: ${mensaje.usuario_id_emisor}`}
+                </span>
+              </div>
+              <div className="flex items-center mt-1 text-gray-400">
+                <User size={16} className="mr-2" />
+                <span>
+                  Para:{" "}
+                  {receptor
+                    ? `${receptor.nombre} ${receptor.apellido1} (${receptor.email})`
+                    : "Destinatario no encontrado"}
                 </span>
               </div>
               <div className="flex items-center mt-1 text-gray-400">

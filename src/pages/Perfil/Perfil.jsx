@@ -443,243 +443,144 @@ export default function Perfil() {
         </div>
       )}
 
-      <div className="bg-black/30 border border-gray-800 rounded-lg p-6">
-        {activeTab === "datos" ? (
-          <form onSubmit={handleSubmitProfile}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Nombre */}
-              <div className="space-y-2">
-                <label htmlFor="nombre" className="block text-[#C0C0C0] text-sm font-medium">
-                  Nombre *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
-                    <UserRound size={18} />
+      {activeTab !== "admin" && (
+        <div className="bg-black/30 border border-gray-800 rounded-lg p-6">
+          {activeTab === "datos" ? (
+            <form onSubmit={handleSubmitProfile}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Nombre */}
+                <div className="space-y-2">
+                  <label htmlFor="nombre" className="block text-[#C0C0C0] text-sm font-medium">
+                    Nombre *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                      <UserRound size={18} />
+                    </div>
+                    <input
+                      id="nombre"
+                      name="nombre"
+                      value={formData.nombre}
+                      onChange={handleChange}
+                      required
+                      className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    />
                   </div>
+                </div>
+
+                {/* Email (solo lectura) */}
+                <div className="space-y-2">
+                  <label htmlFor="email" className="block text-[#C0C0C0] text-sm font-medium">
+                    Email
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                      <Mail size={18} />
+                    </div>
+                    <input
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      readOnly
+                      className="w-full pl-10 py-2 bg-gray-800/50 border border-gray-800 rounded-md text-gray-400 cursor-not-allowed"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500">El email no se puede modificar</p>
+                </div>
+
+                {/* Primer apellido */}
+                <div className="space-y-2">
+                  <label htmlFor="apellido1" className="block text-[#C0C0C0] text-sm font-medium">
+                    Primer apellido *
+                  </label>
                   <input
-                    id="nombre"
-                    name="nombre"
-                    value={formData.nombre}
+                    id="apellido1"
+                    name="apellido1"
+                    value={formData.apellido1}
                     onChange={handleChange}
                     required
-                    className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                   />
                 </div>
-              </div>
 
-              {/* Email (solo lectura) */}
-              <div className="space-y-2">
-                <label htmlFor="email" className="block text-[#C0C0C0] text-sm font-medium">
-                  Email
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
-                    <Mail size={18} />
-                  </div>
+                {/* Segundo apellido */}
+                <div className="space-y-2">
+                  <label htmlFor="apellido2" className="block text-[#C0C0C0] text-sm font-medium">
+                    Segundo apellido
+                  </label>
                   <input
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    readOnly
-                    className="w-full pl-10 py-2 bg-gray-800/50 border border-gray-800 rounded-md text-gray-400 cursor-not-allowed"
-                  />
-                </div>
-                <p className="text-xs text-gray-500">El email no se puede modificar</p>
-              </div>
-
-              {/* Primer apellido */}
-              <div className="space-y-2">
-                <label htmlFor="apellido1" className="block text-[#C0C0C0] text-sm font-medium">
-                  Primer apellido *
-                </label>
-                <input
-                  id="apellido1"
-                  name="apellido1"
-                  value={formData.apellido1}
-                  onChange={handleChange}
-                  required
-                  className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
-                />
-              </div>
-
-              {/* Segundo apellido */}
-              <div className="space-y-2">
-                <label htmlFor="apellido2" className="block text-[#C0C0C0] text-sm font-medium">
-                  Segundo apellido
-                </label>
-                <input
-                  id="apellido2"
-                  name="apellido2"
-                  value={formData.apellido2}
-                  onChange={handleChange}
-                  className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
-                />
-              </div>
-
-              {/* Teléfono */}
-              <div className="space-y-2">
-                <label htmlFor="telefono" className="block text-[#C0C0C0] text-sm font-medium">
-                  Teléfono *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
-                    <Phone size={18} />
-                  </div>
-                  <input
-                    id="telefono"
-                    name="telefono"
-                    type="tel"
-                    pattern="[0-9]{9}"
-                    maxLength="9"
-                    value={formData.telefono}
-                    onChange={handlePhoneChange}
-                    required
-                    className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
-                  />
-                </div>
-                <p className="text-xs text-gray-400">Introduce 9 dígitos numéricos</p>
-              </div>
-
-              {/* Fecha de nacimiento */}
-              <div className="space-y-2">
-                <label htmlFor="fecha_nac" className="block text-[#C0C0C0] text-sm font-medium">
-                  Fecha de nacimiento *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
-                    <Calendar size={18} />
-                  </div>
-                  <input
-                    id="fecha_nac"
-                    name="fecha_nac"
-                    type="date"
-                    value={formData.fecha_nac}
+                    id="apellido2"
+                    name="apellido2"
+                    value={formData.apellido2}
                     onChange={handleChange}
-                    required
-                    className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                   />
                 </div>
-              </div>
 
-              {/* Fecha de entrada (solo lectura) */}
-              <div className="space-y-2">
-                <label htmlFor="fecha_entrada" className="block text-[#C0C0C0] text-sm font-medium">
-                  Fecha de entrada
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
-                    <Calendar size={18} />
+                {/* Teléfono */}
+                <div className="space-y-2">
+                  <label htmlFor="telefono" className="block text-[#C0C0C0] text-sm font-medium">
+                    Teléfono *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                      <Phone size={18} />
+                    </div>
+                    <input
+                      id="telefono"
+                      name="telefono"
+                      type="tel"
+                      pattern="[0-9]{9}"
+                      maxLength="9"
+                      value={formData.telefono}
+                      onChange={handlePhoneChange}
+                      required
+                      className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    />
                   </div>
-                  <input
-                    id="fecha_entrada"
-                    name="fecha_entrada"
-                    type="date"
-                    value={formData.fecha_entrada}
-                    readOnly
-                    className="w-full pl-10 py-2 bg-gray-800/50 border border-gray-800 rounded-md text-gray-400 cursor-not-allowed"
-                  />
+                  <p className="text-xs text-gray-400">Introduce 9 dígitos numéricos</p>
                 </div>
-                <p className="text-xs text-gray-500">La fecha de entrada no se puede modificar</p>
-              </div>
-            </div>
 
-            <div className="mt-8 flex justify-end">
-              <button
-                type="submit"
-                disabled={saving}
-                className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                <Save size={18} />
-                {saving ? "Guardando..." : "Guardar cambios"}
-              </button>
-            </div>
-          </form>
-        ) : (
-          <form onSubmit={handleSubmitPassword}>
-            <div className="space-y-6 max-w-md mx-auto">
-              {/* Contraseña actual */}
-              <div className="space-y-2">
-                <label htmlFor="current_password" className="block text-[#C0C0C0] text-sm font-medium">
-                  Contraseña actual *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
-                    <Lock size={18} />
+                {/* Fecha de nacimiento */}
+                <div className="space-y-2">
+                  <label htmlFor="fecha_nac" className="block text-[#C0C0C0] text-sm font-medium">
+                    Fecha de nacimiento *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                      <Calendar size={18} />
+                    </div>
+                    <input
+                      id="fecha_nac"
+                      name="fecha_nac"
+                      type="date"
+                      value={formData.fecha_nac}
+                      onChange={handleChange}
+                      required
+                      className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    />
                   </div>
-                  <input
-                    id="current_password"
-                    name="current_password"
-                    type={showPassword ? "text" : "password"}
-                    value={passwordData.current_password}
-                    onChange={handlePasswordChange}
-                    required
-                    className="w-full pl-10 pr-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-[#C0C0C0]"
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
                 </div>
-              </div>
 
-              {/* Nueva contraseña */}
-              <div className="space-y-2">
-                <label htmlFor="new_password" className="block text-[#C0C0C0] text-sm font-medium">
-                  Nueva contraseña *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
-                    <Lock size={18} />
+                {/* Fecha de entrada (solo lectura) */}
+                <div className="space-y-2">
+                  <label htmlFor="fecha_entrada" className="block text-[#C0C0C0] text-sm font-medium">
+                    Fecha de entrada
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                      <Calendar size={18} />
+                    </div>
+                    <input
+                      id="fecha_entrada"
+                      name="fecha_entrada"
+                      type="date"
+                      value={formData.fecha_entrada}
+                      readOnly
+                      className="w-full pl-10 py-2 bg-gray-800/50 border border-gray-800 rounded-md text-gray-400 cursor-not-allowed"
+                    />
                   </div>
-                  <input
-                    id="new_password"
-                    name="new_password"
-                    type={showNewPassword ? "text" : "password"}
-                    value={passwordData.new_password}
-                    onChange={handlePasswordChange}
-                    required
-                    minLength={8}
-                    className="w-full pl-10 pr-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-[#C0C0C0]"
-                  >
-                    {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-                <p className="text-xs text-gray-400">La contraseña debe tener al menos 8 caracteres</p>
-              </div>
-
-              {/* Confirmar nueva contraseña */}
-              <div className="space-y-2">
-                <label htmlFor="new_password_confirmation" className="block text-[#C0C0C0] text-sm font-medium">
-                  Confirmar nueva contraseña *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
-                    <Lock size={18} />
-                  </div>
-                  <input
-                    id="new_password_confirmation"
-                    name="new_password_confirmation"
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={passwordData.new_password_confirmation}
-                    onChange={handlePasswordChange}
-                    required
-                    className="w-full pl-10 pr-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-[#C0C0C0]"
-                  >
-                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
+                  <p className="text-xs text-gray-500">La fecha de entrada no se puede modificar</p>
                 </div>
               </div>
 
@@ -690,13 +591,114 @@ export default function Perfil() {
                   className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   <Save size={18} />
-                  {saving ? "Guardando..." : "Cambiar contraseña"}
+                  {saving ? "Guardando..." : "Guardar cambios"}
                 </button>
               </div>
-            </div>
-          </form>
-        )}
-      </div>
+            </form>
+          ) : (
+            <form onSubmit={handleSubmitPassword}>
+              <div className="space-y-6 max-w-md mx-auto">
+                {/* Contraseña actual */}
+                <div className="space-y-2">
+                  <label htmlFor="current_password" className="block text-[#C0C0C0] text-sm font-medium">
+                    Contraseña actual *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                      <Lock size={18} />
+                    </div>
+                    <input
+                      id="current_password"
+                      name="current_password"
+                      type={showPassword ? "text" : "password"}
+                      value={passwordData.current_password}
+                      onChange={handlePasswordChange}
+                      required
+                      className="w-full pl-10 pr-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-[#C0C0C0]"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Nueva contraseña */}
+                <div className="space-y-2">
+                  <label htmlFor="new_password" className="block text-[#C0C0C0] text-sm font-medium">
+                    Nueva contraseña *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                      <Lock size={18} />
+                    </div>
+                    <input
+                      id="new_password"
+                      name="new_password"
+                      type={showNewPassword ? "text" : "password"}
+                      value={passwordData.new_password}
+                      onChange={handlePasswordChange}
+                      required
+                      minLength={8}
+                      className="w-full pl-10 pr-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-[#C0C0C0]"
+                    >
+                      {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-400">La contraseña debe tener al menos 8 caracteres</p>
+                </div>
+
+                {/* Confirmar nueva contraseña */}
+                <div className="space-y-2">
+                  <label htmlFor="new_password_confirmation" className="block text-[#C0C0C0] text-sm font-medium">
+                    Confirmar nueva contraseña *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                      <Lock size={18} />
+                    </div>
+                    <input
+                      id="new_password_confirmation"
+                      name="new_password_confirmation"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={passwordData.new_password_confirmation}
+                      onChange={handlePasswordChange}
+                      required
+                      className="w-full pl-10 pr-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-[#C0C0C0]"
+                    >
+                      {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="mt-8 flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                  >
+                    <Save size={18} />
+                    {saving ? "Guardando..." : "Cambiar contraseña"}
+                  </button>
+                </div>
+              </div>
+            </form>
+          )}
+        </div>
+      )}
     </div>
   )
 }
