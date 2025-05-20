@@ -45,89 +45,126 @@ const ComposicionesInterpretadas = () => {
   const composicionesPorPagina = 2
   const usuariosPorPagina = 10
 
-  // Update the fetchComposicionesInterpretadas function to properly handle composition names
+  // Función simplificada para obtener composiciones interpretadas
   const fetchComposicionesInterpretadas = async () => {
     try {
       setLoading(true)
-      const response = await axios.get("/composicion-usuario")
-      console.log("Respuesta de composiciones interpretadas:", response.data)
 
-      // Manejar diferentes formatos de respuesta
-      const composicionesData = Array.isArray(response.data)
-        ? response.data
-        : response.data.composiciones || response.data.data || []
+      // 1. Obtener todas las relaciones composición-usuario
+      const composicionUsuarioResponse = await axios.get("/composicion-usuario")
+      console.log("Respuesta de composiciones-usuario:", composicionUsuarioResponse.data)
 
-      // Agrupar por composición_id
+      const relaciones = Array.isArray(composicionUsuarioResponse.data)
+        ? composicionUsuarioResponse.data
+        : composicionUsuarioResponse.data.data || []
+
+      if (relaciones.length === 0) {
+        setComposiciones([])
+        setLoading(false)
+        return
+      }
+
+      // 2. Obtener todas las composiciones
+      const composicionesResponse = await axios.get("/composiciones")
+      console.log("Respuesta de composiciones:", composicionesResponse.data)
+
+      const todasComposiciones = Array.isArray(composicionesResponse.data)
+        ? composicionesResponse.data
+        : composicionesResponse.data.data || []
+
+      // 3. Obtener todos los usuarios
+      const usuariosResponse = await axios.get("/usuarios")
+      console.log("Respuesta de usuarios:", usuariosResponse.data)
+
+      const todosUsuarios = Array.isArray(usuariosResponse.data)
+        ? usuariosResponse.data
+        : usuariosResponse.data.data || []
+
+      // 4. Crear un mapa de composiciones por ID para acceso rápido
+      const composicionesMap = {}
+      todasComposiciones.forEach((comp) => {
+        composicionesMap[comp.id] = comp
+      })
+
+      // 5. Crear un mapa de usuarios por ID para acceso rápido
+      const usuariosMap = {}
+      todosUsuarios.forEach((user) => {
+        usuariosMap[user.id] = user
+      })
+
+      // 6. Agrupar por composición_id
       const composicionesAgrupadas = {}
 
-      composicionesData.forEach((item) => {
-        const composicionId = item.composicion_id
+      relaciones.forEach((relacion) => {
+        const composicionId = relacion.composicion_id
 
+        // Si es la primera vez que vemos esta composición, inicializarla
         if (!composicionesAgrupadas[composicionId]) {
-          // Asegurarse de obtener el nombre correcto de la composición
-          const nombreComposicion =
-            item.composicion?.nombre ||
-            item.titulo_composicion ||
-            (item.composicion
-              ? `${item.composicion.nombre || item.composicion.titulo || ""}`
-              : `Composición ${composicionId}`)
+          const composicion = composicionesMap[composicionId]
 
+          // Si no encontramos la composición, usar valores por defecto
           composicionesAgrupadas[composicionId] = {
             composicion_id: composicionId,
-            nombre: nombreComposicion,
-            descripcion: item.composicion?.descripcion || "",
-            nombre_autor: item.composicion?.nombre_autor || "",
-            anio: item.composicion?.anio || "",
-            ruta: item.composicion?.ruta || "",
+            nombre: composicion ? composicion.nombre : `Composición ${composicionId}`,
+            descripcion: composicion ? composicion.descripcion : "",
+            nombre_autor: composicion ? composicion.nombre_autor : "",
+            ruta: composicion ? composicion.ruta : "",
+            anio: composicion ? composicion.anio : "",
             usuarios: [],
           }
         }
 
-        // Añadir usuario a la composición con información completa
-        if (item.usuario) {
+        // Añadir usuario a la composición
+        const usuario = usuariosMap[relacion.usuario_id]
+
+        if (usuario) {
           composicionesAgrupadas[composicionId].usuarios.push({
-            usuario_id: item.usuario_id,
-            nombre: item.usuario.nombre || "",
-            apellidos: (item.usuario.apellido1 || "") + " " + (item.usuario.apellido2 || ""),
-            email: item.usuario.email || "",
-            created_at: item.created_at,
-            updated_at: item.updated_at,
+            usuario_id: relacion.usuario_id,
+            nombre: usuario.nombre || "Usuario",
+            apellidos: `${usuario.apellido1 || ""} ${usuario.apellido2 || ""}`.trim(),
+            email: usuario.email || "",
+            created_at: relacion.created_at,
+            updated_at: relacion.updated_at,
           })
         } else {
+          // Si no encontramos el usuario, usar valores por defecto
           composicionesAgrupadas[composicionId].usuarios.push({
-            usuario_id: item.usuario_id,
+            usuario_id: relacion.usuario_id,
             nombre: "Usuario",
-            apellidos: `#${item.usuario_id}`,
+            apellidos: `#${relacion.usuario_id}`,
             email: "",
-            created_at: item.created_at,
-            updated_at: item.updated_at,
+            created_at: relacion.created_at,
+            updated_at: relacion.updated_at,
           })
         }
       })
 
-      // Convertir a array y parsear rutas
-      const composicionesArray = Object.values(composicionesAgrupadas).map((comp) => ({
+      // 7. Convertir a array y parsear rutas
+      const composicionesArray = Object.values(composicionesAgrupadas)
+
+      // 8. Parsear rutas y ordenar alfabéticamente
+      const composicionesConRutasParsed = composicionesArray.map((comp) => ({
         ...comp,
         parsedRuta: parseRuta(comp.ruta),
       }))
 
-      // Ordenar alfabéticamente por nombre
-      composicionesArray.sort((a, b) => a.nombre.localeCompare(b.nombre))
+      // 9. Ordenar alfabéticamente por nombre
+      composicionesConRutasParsed.sort((a, b) => a.nombre.localeCompare(b.nombre))
 
-      console.log("Composiciones agrupadas:", composicionesArray)
+      console.log("Composiciones procesadas:", composicionesConRutasParsed)
 
-      // Inicializar estados de expansión y paginación
+      // 10. Inicializar estados de expansión y paginación
       const initialExpanded = {}
       const initialPagination = {}
 
-      composicionesArray.forEach((comp) => {
+      composicionesConRutasParsed.forEach((comp) => {
         initialExpanded[comp.composicion_id] = false
         initialPagination[comp.composicion_id] = 1
       })
 
       setExpandedComposiciones(initialExpanded)
       setUsuariosPagination(initialPagination)
-      setComposiciones(composicionesArray)
+      setComposiciones(composicionesConRutasParsed)
       setError(null)
     } catch (err) {
       console.error("Error al cargar composiciones interpretadas:", err)
@@ -161,7 +198,7 @@ const ComposicionesInterpretadas = () => {
         audioElement.src = ""
       }
     }
-  }, [audioElement]) // Añadido audioElement como dependencia para corregir el warning
+  }, [])
 
   // Función para parsear la ruta (JSON o string simple)
   const parseRuta = (ruta) => {
@@ -313,7 +350,7 @@ const ComposicionesInterpretadas = () => {
       setShowAssignModal(false)
 
       // Recargar datos para mostrar la nueva asignación
-      window.location.reload()
+      fetchComposicionesInterpretadas()
     } catch (error) {
       console.error("Error al asignar composición:", error)
 
@@ -680,7 +717,7 @@ const ComposicionesInterpretadas = () => {
                 <option value="">Seleccionar usuario...</option>
                 {usuarios.map((usuario) => (
                   <option key={usuario.id} value={usuario.id}>
-                    {usuario.nombre} {usuario.apellidos} - {usuario.email}
+                    {usuario.nombre} {usuario.apellido1} {usuario.apellido2} - {usuario.email}
                   </option>
                 ))}
               </select>

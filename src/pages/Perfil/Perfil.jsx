@@ -123,6 +123,7 @@ export default function Perfil() {
     setShowAdminModal(true)
   }
 
+  // Modificar la función handleAdminAction para implementar la funcionalidad de cambio de rol
   const handleAdminAction = async () => {
     if (!selectedUserId) {
       toast.error("Debes seleccionar un usuario")
@@ -132,11 +133,11 @@ export default function Perfil() {
     try {
       if (adminAction === "add") {
         // Hacer al usuario seleccionado administrador
-        await api.put(`/usuarios/${selectedUserId}/make-admin`)
+        await api.put(`/usuarios/${selectedUserId}`, { role: "admin" })
         toast.success("Usuario promovido a administrador correctamente")
       } else {
-        // Quitar permisos de administrador
-        await api.put(`/usuarios/${selectedUserId}/remove-admin`)
+        // Quitar permisos de administrador (cambiar a miembro)
+        await api.put(`/usuarios/${selectedUserId}`, { role: "miembro" })
         toast.success("Permisos de administrador revocados correctamente")
       }
 

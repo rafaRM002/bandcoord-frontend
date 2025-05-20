@@ -8,13 +8,15 @@ import {
   Search,
   Music,
   FileMusic,
-  Play,
   Pause,
   Youtube,
   ImageIcon,
   X,
   Save,
   Calendar,
+  ArrowLeft,
+  ArrowRight,
+  File,
 } from "lucide-react"
 import api from "../../api/axios"
 import { toast } from "react-toastify"
@@ -43,8 +45,9 @@ export default function Composiciones() {
     anio: "",
   })
 
-  // Estado para el tipo de ruta (YouTube o archivo)
-  const [rutaType, setRutaType] = useState("youtube")
+  // Estado para el tipo de ruta (YouTube y/o archivo)
+  const [includeYoutube, setIncludeYoutube] = useState(false)
+  const [includeFiles, setIncludeFiles] = useState(false)
   const [youtubeUrl, setYoutubeUrl] = useState("")
   const [fileUrls, setFileUrls] = useState([])
   const fileInputRef = useRef(null)
@@ -93,25 +96,41 @@ export default function Composiciones() {
         // Procesar las rutas para identificar YouTube vs imágenes
         composicionesData = composicionesData.map((comp) => {
           const ruta = comp.ruta || ""
-          let parsedRuta = { type: "unknown", urls: [] }
+          let parsedRuta = { youtube: null, files: [] }
 
           try {
             // Intentar parsear la ruta como JSON si es un string
             if (ruta && typeof ruta === "string" && (ruta.startsWith("[") || ruta.startsWith("{"))) {
-              parsedRuta = JSON.parse(ruta)
+              const parsed = JSON.parse(ruta)
+
+              // Nuevo formato con youtube y files separados
+              if (parsed.youtube !== undefined || parsed.files !== undefined) {
+                parsedRuta = {
+                  youtube: parsed.youtube || null,
+                  files: Array.isArray(parsed.files) ? parsed.files : [],
+                }
+              }
+              // Formato anterior con type y urls
+              else if (parsed.type && parsed.urls) {
+                if (parsed.type === "youtube" && parsed.urls.length > 0) {
+                  parsedRuta = { youtube: parsed.urls[0], files: [] }
+                } else if (parsed.type === "file") {
+                  parsedRuta = { youtube: null, files: parsed.urls || [] }
+                }
+              }
             }
             // Si es una URL de YouTube (formato simple)
             else if (ruta && typeof ruta === "string" && (ruta.includes("youtube.com") || ruta.includes("youtu.be"))) {
-              parsedRuta = { type: "youtube", urls: [ruta] }
+              parsedRuta = { youtube: ruta, files: [] }
             }
             // Si es una ruta de archivo (formato simple)
             else if (ruta) {
-              parsedRuta = { type: "file", urls: [ruta] }
+              parsedRuta = { youtube: null, files: [ruta] }
             }
           } catch (e) {
             console.warn("Error al parsear ruta:", e)
             // Si hay error, mantener la ruta original como una sola URL
-            parsedRuta = { type: "unknown", urls: [ruta] }
+            parsedRuta = { youtube: null, files: ruta ? [ruta] : [] }
           }
 
           return {
@@ -150,7 +169,7 @@ export default function Composiciones() {
         audioElement.src = ""
       }
     }
-  }, [audioElement])
+  }, [])
 
   const handleDelete = async () => {
     if (!composicionToDelete) return
@@ -172,10 +191,10 @@ export default function Composiciones() {
     setShowDeleteModal(true)
   }
 
-  const handlePlayPause = (composicion) => {
-    // Si la composición tiene una URL de YouTube, no hacer nada (se abre en otra ventana)
-    if (composicion.parsedRuta && composicion.parsedRuta.type === "youtube") {
-      window.open(composicion.parsedRuta.urls[0], "_blank")
+  const handlePlayAudio = (composicion) => {
+    // Si no hay archivos de audio, no hacer nada
+    if (!composicion.parsedRuta || !composicion.parsedRuta.files || composicion.parsedRuta.files.length === 0) {
+      toast.error("No hay archivos de audio disponibles")
       return
     }
 
@@ -193,10 +212,7 @@ export default function Composiciones() {
     }
 
     // Obtener la URL del archivo de audio (primera URL si hay varias)
-    const audioUrl =
-      composicion.parsedRuta && composicion.parsedRuta.urls && composicion.parsedRuta.urls.length > 0
-        ? composicion.parsedRuta.urls[0]
-        : composicion.ruta || ""
+    const audioUrl = composicion.parsedRuta.files[0]
 
     // Crear nuevo elemento de audio
     const audio = new Audio(`${api.defaults.baseURL}${audioUrl}`)
@@ -223,6 +239,14 @@ export default function Composiciones() {
       })
   }
 
+  const handleOpenYoutube = (composicion) => {
+    if (composicion.parsedRuta && composicion.parsedRuta.youtube) {
+      window.open(composicion.parsedRuta.youtube, "_blank")
+    } else {
+      toast.error("No hay enlace de YouTube disponible")
+    }
+  }
+
   // Manejador para abrir modal de nueva composición
   const handleNewComposicion = () => {
     setEditingComposicion(null)
@@ -233,7 +257,8 @@ export default function Composiciones() {
       ruta: "",
       anio: "",
     })
-    setRutaType("youtube")
+    setIncludeYoutube(false)
+    setIncludeFiles(false)
     setYoutubeUrl("")
     setFileUrls([])
     setShowModal(true)
@@ -243,28 +268,14 @@ export default function Composiciones() {
   const handleEditComposicion = (composicion) => {
     setEditingComposicion(composicion)
 
-    // Determinar el tipo de ruta y parsear las URLs
-    let rutaType = "youtube"
-    let youtubeUrl = ""
-    let fileUrls = []
+    // Determinar si incluye YouTube y/o archivos
+    const hasYoutube = composicion.parsedRuta && composicion.parsedRuta.youtube
+    const hasFiles = composicion.parsedRuta && composicion.parsedRuta.files && composicion.parsedRuta.files.length > 0
 
-    if (composicion.parsedRuta) {
-      if (composicion.parsedRuta.type === "youtube" && composicion.parsedRuta.urls.length > 0) {
-        rutaType = "youtube"
-        youtubeUrl = composicion.parsedRuta.urls[0] || ""
-      } else if (composicion.parsedRuta.type === "file" || composicion.parsedRuta.urls.length > 0) {
-        rutaType = "file"
-        fileUrls = composicion.parsedRuta.urls || []
-      }
-    } else if (composicion.ruta) {
-      if (composicion.ruta.includes("youtube.com") || composicion.ruta.includes("youtu.be")) {
-        rutaType = "youtube"
-        youtubeUrl = composicion.ruta
-      } else {
-        rutaType = "file"
-        fileUrls = [composicion.ruta]
-      }
-    }
+    setIncludeYoutube(hasYoutube)
+    setIncludeFiles(hasFiles)
+    setYoutubeUrl(hasYoutube ? composicion.parsedRuta.youtube : "")
+    setFileUrls(hasFiles ? composicion.parsedRuta.files : [])
 
     setFormData({
       nombre: composicion.nombre || "",
@@ -274,9 +285,6 @@ export default function Composiciones() {
       anio: composicion.anio || "",
     })
 
-    setRutaType(rutaType)
-    setYoutubeUrl(youtubeUrl)
-    setFileUrls(fileUrls)
     setShowModal(true)
   }
 
@@ -284,11 +292,6 @@ export default function Composiciones() {
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
-  }
-
-  // Manejar cambio de tipo de ruta (YouTube/Archivo)
-  const handleRutaTypeChange = (type) => {
-    setRutaType(type)
   }
 
   // Manejar cambio en URL de YouTube
@@ -326,22 +329,32 @@ export default function Composiciones() {
     e.preventDefault()
 
     try {
-      // Preparar la ruta según el tipo seleccionado
-      let finalRuta
-
-      if (rutaType === "youtube") {
-        if (!youtubeUrl) {
-          toast.error("Debes proporcionar una URL de YouTube")
-          return
-        }
-        finalRuta = JSON.stringify({ type: "youtube", urls: [youtubeUrl] })
-      } else {
-        if (fileUrls.length === 0) {
-          toast.error("Debes agregar al menos un archivo")
-          return
-        }
-        finalRuta = JSON.stringify({ type: "file", urls: fileUrls })
+      // Verificar que al menos se ha seleccionado una opción
+      if (!includeYoutube && !includeFiles) {
+        toast.error("Debes incluir al menos un vídeo de YouTube o archivos")
+        return
       }
+
+      // Verificar que si se ha seleccionado YouTube, se ha proporcionado una URL
+      if (includeYoutube && !youtubeUrl) {
+        toast.error("Debes proporcionar una URL de YouTube")
+        return
+      }
+
+      // Verificar que si se han seleccionado archivos, se ha añadido al menos uno
+      if (includeFiles && fileUrls.length === 0) {
+        toast.error("Debes agregar al menos un archivo")
+        return
+      }
+
+      // Preparar la ruta en el nuevo formato
+      const rutaData = {
+        youtube: includeYoutube ? youtubeUrl : null,
+        files: includeFiles ? fileUrls : [],
+      }
+
+      // Convertir a JSON
+      const finalRuta = JSON.stringify(rutaData)
 
       // Preparar datos para el envío
       const composicionData = {
@@ -361,8 +374,7 @@ export default function Composiciones() {
               ? {
                   ...comp,
                   ...composicionData,
-                  parsedRuta:
-                    rutaType === "youtube" ? { type: "youtube", urls: [youtubeUrl] } : { type: "file", urls: fileUrls },
+                  parsedRuta: rutaData,
                 }
               : comp,
           ),
@@ -381,8 +393,7 @@ export default function Composiciones() {
           {
             ...newComposicion,
             ...composicionData,
-            parsedRuta:
-              rutaType === "youtube" ? { type: "youtube", urls: [youtubeUrl] } : { type: "file", urls: fileUrls },
+            parsedRuta: rutaData,
           },
         ])
 
@@ -414,7 +425,7 @@ export default function Composiciones() {
   const paginatedComposiciones = filteredComposiciones.slice(indexOfFirstItem, indexOfLastItem)
   const totalPages = Math.ceil(filteredComposiciones.length / itemsPerPage)
 
-  // Add pagination controls function
+  // Renderizar paginación con números
   const renderPagination = () => {
     if (totalPages <= 1) return null
 
@@ -423,16 +434,16 @@ export default function Composiciones() {
         <button
           onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
           disabled={currentPage === 1}
-          className="px-3 py-1 bg-gray-900 border border-gray-700 rounded-md text-[#C0C0C0] disabled:opacity-50"
+          className="w-10 h-10 flex items-center justify-center bg-gray-900 border border-gray-700 rounded-md text-[#C0C0C0] disabled:opacity-50"
         >
-          Anterior
+          <ArrowLeft size={18} />
         </button>
 
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
           <button
             key={page}
             onClick={() => setCurrentPage(page)}
-            className={`px-3 py-1 rounded-md ${
+            className={`w-10 h-10 flex items-center justify-center rounded-md ${
               currentPage === page ? "bg-[#C0C0C0] text-black" : "bg-gray-900 border border-gray-700 text-[#C0C0C0]"
             }`}
           >
@@ -443,9 +454,9 @@ export default function Composiciones() {
         <button
           onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
           disabled={currentPage === totalPages}
-          className="px-3 py-1 bg-gray-900 border border-gray-700 rounded-md text-[#C0C0C0] disabled:opacity-50"
+          className="w-10 h-10 flex items-center justify-center bg-gray-900 border border-gray-700 rounded-md text-[#C0C0C0] disabled:opacity-50"
         >
-          Siguiente
+          <ArrowRight size={18} />
         </button>
       </div>
     )
@@ -536,29 +547,36 @@ export default function Composiciones() {
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="text-lg font-medium text-[#C0C0C0] truncate">{composicion.nombre}</h3>
 
-                    {/* Botón de reproducción/YouTube según el tipo */}
-                    {composicion.parsedRuta &&
-                      composicion.parsedRuta.urls &&
-                      composicion.parsedRuta.urls.length > 0 && (
+                    {/* Botones de acción según el contenido disponible */}
+                    <div className="flex space-x-2">
+                      {/* Botón para YouTube si está disponible */}
+                      {composicion.parsedRuta && composicion.parsedRuta.youtube && (
                         <button
-                          onClick={() => handlePlayPause(composicion)}
-                          className={`p-2 rounded-full ${
-                            composicion.parsedRuta.type === "youtube"
-                              ? "bg-red-900/30 text-red-400 hover:bg-red-900/50"
-                              : currentAudio === composicion.id && isPlaying
-                                ? "bg-red-900/30 text-red-400 hover:bg-red-900/50"
-                                : "bg-green-900/30 text-green-400 hover:bg-green-900/50"
-                          }`}
+                          onClick={() => handleOpenYoutube(composicion)}
+                          className="p-2 rounded-full bg-red-900/30 text-red-400 hover:bg-red-900/50"
+                          title="Ver en YouTube"
                         >
-                          {composicion.parsedRuta.type === "youtube" ? (
-                            <Youtube size={16} />
-                          ) : currentAudio === composicion.id && isPlaying ? (
-                            <Pause size={16} />
-                          ) : (
-                            <Play size={16} />
-                          )}
+                          <Youtube size={16} />
                         </button>
                       )}
+
+                      {/* Botón para archivos si están disponibles */}
+                      {composicion.parsedRuta &&
+                        composicion.parsedRuta.files &&
+                        composicion.parsedRuta.files.length > 0 && (
+                          <button
+                            onClick={() => handlePlayAudio(composicion)}
+                            className={`p-2 rounded-full ${
+                              currentAudio === composicion.id && isPlaying
+                                ? "bg-red-900/30 text-red-400 hover:bg-red-900/50"
+                                : "bg-green-900/30 text-green-400 hover:bg-green-900/50"
+                            }`}
+                            title={currentAudio === composicion.id && isPlaying ? "Pausar audio" : "Reproducir audio"}
+                          >
+                            {currentAudio === composicion.id && isPlaying ? <Pause size={16} /> : <File size={16} />}
+                          </button>
+                        )}
+                    </div>
                   </div>
 
                   {composicion.nombre_autor && (
@@ -578,22 +596,26 @@ export default function Composiciones() {
                   )}
 
                   {/* Mostrar tipo de contenido */}
-                  {composicion.parsedRuta &&
-                    composicion.parsedRuta.type === "youtube" &&
-                    composicion.parsedRuta.urls &&
-                    composicion.parsedRuta.urls.length > 0 && (
-                      <div className="flex items-center text-sm text-red-400 mb-4">
-                        <Youtube size={16} className="mr-2" />
-                        <span className="truncate">Enlace de YouTube</span>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {composicion.parsedRuta && composicion.parsedRuta.youtube && (
+                      <div className="flex items-center text-sm text-red-400 bg-red-900/20 px-2 py-1 rounded">
+                        <Youtube size={14} className="mr-1" />
+                        <span className="truncate">Vídeo de YouTube</span>
                       </div>
                     )}
 
-                  {composicion.parsedRuta && composicion.parsedRuta.type === "file" && composicion.parsedRuta.urls && (
-                    <div className="flex items-center text-sm text-gray-400 mb-4">
-                      <FileMusic size={16} className="mr-2" />
-                      <span className="truncate">{composicion.parsedRuta.urls.length} archivo(s)</span>
-                    </div>
-                  )}
+                    {composicion.parsedRuta &&
+                      composicion.parsedRuta.files &&
+                      composicion.parsedRuta.files.length > 0 && (
+                        <div className="flex items-center text-sm text-green-400 bg-green-900/20 px-2 py-1 rounded">
+                          <FileMusic size={14} className="mr-1" />
+                          <span className="truncate">
+                            {composicion.parsedRuta.files.length} archivo
+                            {composicion.parsedRuta.files.length !== 1 ? "s" : ""}
+                          </span>
+                        </div>
+                      )}
+                  </div>
 
                   <div className="flex justify-end space-x-2 mt-4">
                     <button
@@ -732,40 +754,43 @@ export default function Composiciones() {
                 />
               </div>
 
-              {/* Selector de tipo de ruta */}
+              {/* Selector de tipo de contenido */}
               <div className="mt-6 space-y-2">
                 <label className="block text-[#C0C0C0] text-sm font-medium">Tipo de contenido</label>
-                <div className="flex space-x-4">
-                  <button
-                    type="button"
-                    onClick={() => handleRutaTypeChange("youtube")}
-                    className={`px-4 py-2 flex items-center gap-2 rounded-md ${
-                      rutaType === "youtube"
-                        ? "bg-red-900/50 text-red-300 border border-red-700"
-                        : "bg-gray-900/30 text-gray-400 border border-gray-800"
-                    }`}
-                  >
-                    <Youtube size={18} />
-                    YouTube
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleRutaTypeChange("file")}
-                    className={`px-4 py-2 flex items-center gap-2 rounded-md ${
-                      rutaType === "file"
-                        ? "bg-green-900/50 text-green-300 border border-green-700"
-                        : "bg-gray-900/30 text-gray-400 border border-gray-800"
-                    }`}
-                  >
-                    <FileMusic size={18} />
-                    Archivos
-                  </button>
+                <div className="flex flex-wrap gap-4">
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="includeYoutube"
+                      checked={includeYoutube}
+                      onChange={() => setIncludeYoutube(!includeYoutube)}
+                      className="w-4 h-4 bg-gray-900 border border-gray-700 rounded"
+                    />
+                    <label htmlFor="includeYoutube" className="text-[#C0C0C0] flex items-center">
+                      <Youtube size={18} className="mr-2 text-red-400" />
+                      Incluir vídeo de YouTube
+                    </label>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="includeFiles"
+                      checked={includeFiles}
+                      onChange={() => setIncludeFiles(!includeFiles)}
+                      className="w-4 h-4 bg-gray-900 border border-gray-700 rounded"
+                    />
+                    <label htmlFor="includeFiles" className="text-[#C0C0C0] flex items-center">
+                      <FileMusic size={18} className="mr-2 text-green-400" />
+                      Incluir archivos
+                    </label>
+                  </div>
                 </div>
               </div>
 
-              {/* Formulario según tipo */}
-              {rutaType === "youtube" ? (
-                <div className="mt-4 space-y-2">
+              {/* Formulario de YouTube */}
+              {includeYoutube && (
+                <div className="mt-4 space-y-2 p-4 border border-red-900/30 bg-red-900/10 rounded-md">
                   <label htmlFor="youtubeUrl" className="block text-[#C0C0C0] text-sm font-medium">
                     URL de YouTube
                   </label>
@@ -800,8 +825,11 @@ export default function Composiciones() {
                     </div>
                   )}
                 </div>
-              ) : (
-                <div className="mt-4 space-y-2">
+              )}
+
+              {/* Formulario de archivos */}
+              {includeFiles && (
+                <div className="mt-4 space-y-2 p-4 border border-green-900/30 bg-green-900/10 rounded-md">
                   <label className="block text-[#C0C0C0] text-sm font-medium">Archivos (MP3 y partituras)</label>
                   <div className="space-y-4">
                     {/* Input de archivo */}
