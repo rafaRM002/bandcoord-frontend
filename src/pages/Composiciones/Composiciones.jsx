@@ -8,7 +8,6 @@ import {
   Search,
   Music,
   FileMusic,
-  Pause,
   Youtube,
   ImageIcon,
   X,
@@ -17,7 +16,7 @@ import {
   ArrowRight,
   File,
 } from "lucide-react"
-import api from "../../api/axios"
+import api, { IMAGES_URL } from "../../api/axios"
 import { toast } from "react-toastify"
 
 export default function Composiciones() {
@@ -50,7 +49,10 @@ export default function Composiciones() {
   const [fileUrls, setFileUrls] = useState([])
   const fileInputRef = useRef(null)
 
-  
+  // Estado para el modal de archivos
+  const [showFilesModal, setShowFilesModal] = useState(false)
+  const [selectedComposicion, setSelectedComposicion] = useState(null)
+
   useEffect(() => {
     const fetchComposiciones = async () => {
       try {
@@ -305,7 +307,7 @@ export default function Composiciones() {
       // Simular carga de archivos (en una implementación real, aquí subirías el archivo)
       Array.from(e.target.files).forEach((file) => {
         const fileName = file.name.replace(/\s+/g, "_").toLowerCase()
-        const newPath = `/composiciones/${fileName}`
+        const newPath = `/${fileName}`
         if (!newUrls.includes(newPath)) {
           newUrls.push(newPath)
         }
@@ -355,14 +357,16 @@ export default function Composiciones() {
       const finalRuta = JSON.stringify(rutaData)
 
       // Preparar datos para el envío
-      const composicionData = {
-        ...formData,
-        ruta: finalRuta,
-      }
+      const composicionData = new FormData()
+      composicionData.append("nombre", formData.nombre)
+      composicionData.append("descripcion", formData.descripcion)
+      composicionData.append("nombre_autor", formData.nombre_autor)
+      composicionData.append("ruta", finalRuta)
 
       if (editingComposicion) {
-        // Actualizar composición existente
-        await api.put(`/composiciones/${editingComposicion.id}`, composicionData)
+        // Para editar, añadir el método PUT como parámetro
+        composicionData.append("_method", "PUT")
+        await api.post(`/composiciones/${editingComposicion.id}`, composicionData)
         toast.success("Composición actualizada correctamente")
 
         // Actualizar estado local
@@ -371,7 +375,8 @@ export default function Composiciones() {
             comp.id === editingComposicion.id
               ? {
                   ...comp,
-                  ...composicionData,
+                  ...formData,
+                  ruta: finalRuta,
                   parsedRuta: rutaData,
                 }
               : comp,
@@ -390,7 +395,7 @@ export default function Composiciones() {
           ...prev,
           {
             ...newComposicion,
-            ...composicionData,
+            ...formData,
             parsedRuta: rutaData,
           },
         ])
@@ -404,6 +409,20 @@ export default function Composiciones() {
       console.error("Error al guardar composición:", error)
       toast.error("Error al guardar la composición")
     }
+  }
+
+  // Función para abrir archivos en una nueva pestaña
+  const handleOpenFile = (fileName) => {
+    if (fileName) {
+      const fileUrl = `${IMAGES_URL}/${fileName}`
+      window.open(fileUrl, "_blank")
+    }
+  }
+
+  // Función para mostrar el modal de archivos
+  const handleShowFilesModal = (composicion) => {
+    setSelectedComposicion(composicion)
+    setShowFilesModal(true)
   }
 
   const filteredComposiciones = composiciones.filter((composicion) => {
@@ -563,15 +582,11 @@ export default function Composiciones() {
                         composicion.parsedRuta.files &&
                         composicion.parsedRuta.files.length > 0 && (
                           <button
-                            onClick={() => handlePlayAudio(composicion)}
-                            className={`p-2 rounded-full ${
-                              currentAudio === composicion.id && isPlaying
-                                ? "bg-red-900/30 text-red-400 hover:bg-red-900/50"
-                                : "bg-green-900/30 text-green-400 hover:bg-green-900/50"
-                            }`}
-                            title={currentAudio === composicion.id && isPlaying ? "Pausar audio" : "Reproducir audio"}
+                            onClick={() => handleShowFilesModal(composicion)}
+                            className="p-2 rounded-full bg-green-900/30 text-green-400 hover:bg-green-900/50"
+                            title="Ver archivos"
                           >
-                            {currentAudio === composicion.id && isPlaying ? <Pause size={16} /> : <File size={16} />}
+                            <File size={16} />
                           </button>
                         )}
                     </div>
@@ -878,6 +893,90 @@ export default function Composiciones() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal para mostrar archivos */}
+      {showFilesModal && selectedComposicion && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-4xl m-4">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-semibold text-[#C0C0C0]">Archivos de {selectedComposicion.nombre}</h3>
+              <button
+                onClick={() => setShowFilesModal(false)}
+                className="p-2 text-gray-400 hover:text-[#C0C0C0] rounded-full hover:bg-gray-900/50"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {selectedComposicion.parsedRuta &&
+                selectedComposicion.parsedRuta.files &&
+                selectedComposicion.parsedRuta.files.map((fileName, index) => {
+                  const fileExtension = fileName.split(".").pop().toLowerCase()
+                  const isPDF = fileExtension === "pdf"
+                  const isImage = ["jpg", "jpeg", "png", "gif", "webp"].includes(fileExtension)
+                  const isVideo = ["mp4", "webm", "mov"].includes(fileExtension)
+                  const isAudio = ["mp3", "wav", "ogg"].includes(fileExtension)
+
+                  return (
+                    <div
+                      key={index}
+                      className="bg-gray-900/30 border border-gray-800 rounded-lg overflow-hidden cursor-pointer hover:border-[#C0C0C0] transition-colors"
+                      onClick={() => handleOpenFile(fileName)}
+                    >
+                      <div className="p-4 flex flex-col items-center">
+                        {isImage && (
+                          <div className="w-full h-32 mb-2 flex items-center justify-center overflow-hidden">
+                            <img
+                              src={`${IMAGES_URL}/${fileName}`}
+                              alt={fileName}
+                              className="max-h-full object-contain"
+                            />
+                          </div>
+                        )}
+
+                        {isPDF && (
+                          <div className="w-full h-32 mb-2 flex items-center justify-center bg-red-900/20 text-red-400">
+                            <File size={48} />
+                          </div>
+                        )}
+
+                        {isVideo && (
+                          <div className="w-full h-32 mb-2 flex items-center justify-center bg-blue-900/20 text-blue-400">
+                            <File size={48} />
+                          </div>
+                        )}
+
+                        {isAudio && (
+                          <div className="w-full h-32 mb-2 flex items-center justify-center bg-green-900/20 text-green-400">
+                            <FileMusic size={48} />
+                          </div>
+                        )}
+
+                        {!isImage && !isPDF && !isVideo && !isAudio && (
+                          <div className="w-full h-32 mb-2 flex items-center justify-center bg-gray-900/50 text-gray-400">
+                            <File size={48} />
+                          </div>
+                        )}
+
+                        <p className="text-sm text-gray-400 truncate w-full text-center">{fileName.split("/").pop()}</p>
+                      </div>
+                    </div>
+                  )
+                })}
+            </div>
+
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={() => setShowFilesModal(false)}
+                className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+              >
+                Cerrar
+              </button>
+            </div>
           </div>
         </div>
       )}
