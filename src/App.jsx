@@ -18,7 +18,7 @@ import Eventos from "./pages/Eventos/Eventos"
 import FormularioEvento from "./pages/Eventos/FormularioEvento"
 import MinimosEvento from "./pages/MinimosEvento/MinimosEvento"
 import Composiciones from "./pages/Composiciones/Composiciones"
-import FormularioComposicion from "./pages/Composiciones/FormularioComposicion"
+
 import Prestamos from "./pages/Prestamos/Prestamos"
 import Mensajes from "./pages/Mensajes/Mensajes"
 import FormularioMensaje from "./pages/Mensajes/FormularioMensaje"
@@ -144,15 +144,6 @@ function AppContent() {
             path="/composiciones"
             element={user && user.role === "admin" ? <Composiciones /> : <Navigate to="/login" replace />}
           />
-          <Route
-            path="/composiciones/nueva"
-            element={user && user.role === "admin" ? <FormularioComposicion /> : <Navigate to="/login" replace />}
-          />
-          <Route
-            path="/composiciones/editar/:id"
-            element={user && user.role === "admin" ? <FormularioComposicion /> : <Navigate to="/login" replace />}
-          />
-
           {/* Mensajes routes */}
           <Route
             path="/mensajes"
