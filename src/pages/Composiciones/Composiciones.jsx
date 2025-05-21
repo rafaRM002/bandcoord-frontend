@@ -13,7 +13,6 @@ import {
   ImageIcon,
   X,
   Save,
-  Calendar,
   ArrowLeft,
   ArrowRight,
   File,
@@ -42,7 +41,6 @@ export default function Composiciones() {
     descripcion: "",
     nombre_autor: "",
     ruta: "",
-    anio: "",
   })
 
   // Estado para el tipo de ruta (YouTube y/o archivo)
@@ -255,7 +253,6 @@ export default function Composiciones() {
       descripcion: "",
       nombre_autor: "",
       ruta: "",
-      anio: "",
     })
     setIncludeYoutube(false)
     setIncludeFiles(false)
@@ -282,7 +279,6 @@ export default function Composiciones() {
       descripcion: composicion.descripcion || "",
       nombre_autor: composicion.nombre_autor || "",
       ruta: composicion.ruta || "",
-      anio: composicion.anio || "",
     })
 
     setShowModal(true)
@@ -585,12 +581,6 @@ export default function Composiciones() {
                     </p>
                   )}
 
-                  {composicion.anio && (
-                    <p className="text-sm text-gray-400 mb-2">
-                      <span className="font-medium">Año:</span> {composicion.anio}
-                    </p>
-                  )}
-
                   {composicion.descripcion && (
                     <p className="text-sm text-gray-400 mb-4 line-clamp-2">{composicion.descripcion}</p>
                   )}
@@ -666,8 +656,8 @@ export default function Composiciones() {
 
       {/* Modal para crear/editar composición */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 overflow-auto py-8">
-          <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-4xl m-4">
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 overflow-y-auto">
+          <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-4xl m-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-semibold text-[#C0C0C0]">
                 {editingComposicion ? "Editar Composición" : "Nueva Composición"}
@@ -714,28 +704,6 @@ export default function Composiciones() {
                     onChange={handleChange}
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                   />
-                </div>
-
-                {/* Año */}
-                <div className="space-y-2">
-                  <label htmlFor="anio" className="block text-[#C0C0C0] text-sm font-medium">
-                    Año
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
-                      <Calendar size={18} />
-                    </div>
-                    <input
-                      id="anio"
-                      name="anio"
-                      type="number"
-                      min="1800"
-                      max={new Date().getFullYear()}
-                      value={formData.anio}
-                      onChange={handleChange}
-                      className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
-                    />
-                  </div>
                 </div>
               </div>
 
