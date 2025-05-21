@@ -84,11 +84,6 @@ export default function Mensajes() {
     }
   }
 
-  const confirmDelete = (id) => {
-    setMensajeToDelete(id)
-    setShowDeleteModal(true)
-  }
-
   const handleSelectMensaje = (id) => {
     if (selectedMensajes.includes(id)) {
       setSelectedMensajes(selectedMensajes.filter((mensajeId) => mensajeId !== id))
