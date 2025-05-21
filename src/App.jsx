@@ -12,7 +12,6 @@ import NotFound from "./pages/NotFound/NotFound"
 import Calendario from "./pages/Calendario/Calendario"
 import Entidades from "./pages/Entidades.jsx/Entidades"
 import Instrumentos from "./pages/Instrumentos/Instrumentos"
-import FormularioInstrumento from "./pages/Instrumentos/FormularioInstrumento"
 import TiposInstrumento from "./pages/TiposInstrumento/TiposInstrumento"
 import Eventos from "./pages/Eventos/Eventos"
 import FormularioEvento from "./pages/Eventos/FormularioEvento"
@@ -95,14 +94,6 @@ function AppContent() {
           <Route
             path="/instrumentos"
             element={user && user.role === "admin" ? <Instrumentos /> : <Navigate to="/login" replace />}
-          />
-          <Route
-            path="/instrumentos/nuevo"
-            element={user && user.role === "admin" ? <FormularioInstrumento /> : <Navigate to="/login" replace />}
-          />
-          <Route
-            path="/instrumentos/editar/:id"
-            element={user && user.role === "admin" ? <FormularioInstrumento /> : <Navigate to="/login" replace />}
           />
           <Route
             path="/tipos-instrumentos"
@@ -189,10 +180,6 @@ function AppContent() {
             path="/usuarios"
             element={user && user.role === "admin" ? <GestionUsuarios /> : <Navigate to="/" replace />}
           />
-
-          {/* Admin routes - Instrumentos */}
-          <Route path="/admin/instrumentos/nuevo" element={<FormularioInstrumento />} />
-          <Route path="/admin/instrumentos/editar/:id" element={<FormularioInstrumento />} />
 
           <Route
             path="/usuarios-eventos"
