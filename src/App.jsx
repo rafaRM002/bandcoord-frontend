@@ -14,10 +14,8 @@ import Entidades from "./pages/Entidades.jsx/Entidades"
 import Instrumentos from "./pages/Instrumentos/Instrumentos"
 import TiposInstrumento from "./pages/TiposInstrumento/TiposInstrumento"
 import Eventos from "./pages/Eventos/Eventos"
-import FormularioEvento from "./pages/Eventos/FormularioEvento"
 import MinimosEvento from "./pages/MinimosEvento/MinimosEvento"
 import Composiciones from "./pages/Composiciones/Composiciones"
-
 import Prestamos from "./pages/Prestamos/Prestamos"
 import Mensajes from "./pages/Mensajes/Mensajes"
 import FormularioMensaje from "./pages/Mensajes/FormularioMensaje"
@@ -104,14 +102,6 @@ function AppContent() {
           <Route
             path="/eventos"
             element={user && user.role === "admin" ? <Eventos /> : <Navigate to="/login" replace />}
-          />
-          <Route
-            path="/eventos/nuevo"
-            element={user && user.role === "admin" ? <FormularioEvento /> : <Navigate to="/login" replace />}
-          />
-          <Route
-            path="/eventos/editar/:id"
-            element={user && user.role === "admin" ? <FormularioEvento /> : <Navigate to="/login" replace />}
           />
           <Route
             path="/minimos-eventos"
