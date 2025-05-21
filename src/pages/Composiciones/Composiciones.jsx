@@ -50,6 +50,7 @@ export default function Composiciones() {
   const [fileUrls, setFileUrls] = useState([])
   const fileInputRef = useRef(null)
 
+  
   useEffect(() => {
     const fetchComposiciones = async () => {
       try {
@@ -167,6 +168,7 @@ export default function Composiciones() {
         audioElement.src = ""
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleDelete = async () => {
