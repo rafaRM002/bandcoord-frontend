@@ -15,6 +15,8 @@ import {
   ArrowLeft,
   ArrowRight,
   File,
+  Upload,
+  Loader2,
 } from "lucide-react"
 import api, { IMAGES_URL } from "../../api/axios"
 import { toast } from "react-toastify"
@@ -31,6 +33,8 @@ export default function Composiciones() {
   const [audioElement, setAudioElement] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage] = useState(9)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [isUploading, setIsUploading] = useState(false)
 
   // Estados para el modal de composición
   const [showModal, setShowModal] = useState(false)
@@ -39,14 +43,17 @@ export default function Composiciones() {
     nombre: "",
     descripcion: "",
     nombre_autor: "",
-    ruta: "",
   })
 
   // Estado para el tipo de ruta (YouTube y/o archivo)
   const [includeYoutube, setIncludeYoutube] = useState(false)
   const [includeFiles, setIncludeFiles] = useState(false)
   const [youtubeUrl, setYoutubeUrl] = useState("")
-  const [fileUrls, setFileUrls] = useState([])
+
+  // Nuevo estado para manejar archivos
+  const [newFiles, setNewFiles] = useState([])
+  const [existingFiles, setExistingFiles] = useState([])
+
   const fileInputRef = useRef(null)
 
   // Estado para el modal de archivos
@@ -218,6 +225,7 @@ export default function Composiciones() {
 
     // Crear nuevo elemento de audio
     const audio = new Audio(`${api.defaults.baseURL}${audioUrl}`)
+
     audio.onended = () => {
       setIsPlaying(false)
       setCurrentAudio(null)
@@ -256,12 +264,12 @@ export default function Composiciones() {
       nombre: "",
       descripcion: "",
       nombre_autor: "",
-      ruta: "",
     })
     setIncludeYoutube(false)
     setIncludeFiles(false)
     setYoutubeUrl("")
-    setFileUrls([])
+    setNewFiles([])
+    setExistingFiles([])
     setShowModal(true)
   }
 
@@ -276,13 +284,15 @@ export default function Composiciones() {
     setIncludeYoutube(hasYoutube)
     setIncludeFiles(hasFiles)
     setYoutubeUrl(hasYoutube ? composicion.parsedRuta.youtube : "")
-    setFileUrls(hasFiles ? composicion.parsedRuta.files : [])
+
+    // Separar archivos existentes
+    setNewFiles([])
+    setExistingFiles(hasFiles ? composicion.parsedRuta.files : [])
 
     setFormData({
       nombre: composicion.nombre || "",
       descripcion: composicion.descripcion || "",
       nombre_autor: composicion.nombre_autor || "",
-      ruta: composicion.ruta || "",
     })
 
     setShowModal(true)
@@ -299,29 +309,74 @@ export default function Composiciones() {
     setYoutubeUrl(e.target.value)
   }
 
-  // Agregar URL de archivo
-  const handleAddFileUrl = (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const newUrls = [...fileUrls]
+  // Validar tipo de archivo
+  const isValidFileType = (file) => {
+    const acceptedTypes = [
+      "audio/mpeg",
+      "audio/mp3",
+      "audio/wav",
+      "audio/ogg",
+      "application/pdf",
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "video/mp4",
+      "video/webm",
+      "video/quicktime",
+    ]
+    return acceptedTypes.includes(file.type)
+  }
 
-      // Simular carga de archivos (en una implementación real, aquí subirías el archivo)
-      Array.from(e.target.files).forEach((file) => {
-        const fileName = file.name.replace(/\s+/g, "_").toLowerCase()
-        const newPath = `/${fileName}`
-        if (!newUrls.includes(newPath)) {
-          newUrls.push(newPath)
+  // Validar tamaño de archivo (máximo 20MB)
+  const isValidFileSize = (file) => {
+    const maxSize = 20 * 1024 * 1024 // 20MB en bytes
+    return file.size <= maxSize
+  }
+
+  // Agregar archivos
+  const handleAddFiles = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selectedFiles = Array.from(e.target.files)
+      const validFiles = []
+
+      // Validar archivos
+      selectedFiles.forEach((file) => {
+        if (!isValidFileType(file)) {
+          toast.error(`Tipo de archivo no válido: ${file.name}`)
+          return
+        }
+
+        if (!isValidFileSize(file)) {
+          toast.error(`Archivo demasiado grande (máx. 20MB): ${file.name}`)
+          return
+        }
+
+        // Verificar duplicados
+        const isDuplicate = newFiles.some(
+          (existingFile) => existingFile.name === file.name && existingFile.size === file.size,
+        )
+
+        if (!isDuplicate) {
+          validFiles.push(file)
         }
       })
 
-      setFileUrls(newUrls)
+      if (validFiles.length > 0) {
+        setNewFiles((prev) => [...prev, ...validFiles])
+      }
     }
   }
 
-  // Eliminar URL de archivo
-  const handleRemoveFileUrl = (index) => {
-    const newUrls = [...fileUrls]
-    newUrls.splice(index, 1)
-    setFileUrls(newUrls)
+  // Eliminar archivo nuevo
+  const handleRemoveNewFile = (index) => {
+    setNewFiles((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  // Eliminar archivo existente
+  const handleRemoveExistingFile = (index) => {
+    setExistingFiles((prev) => prev.filter((_, i) => i !== index))
   }
 
   // Enviar formulario de composición
@@ -329,85 +384,132 @@ export default function Composiciones() {
     e.preventDefault()
 
     try {
-      // Verificar que al menos se ha seleccionado una opción
       if (!includeYoutube && !includeFiles) {
         toast.error("Debes incluir al menos un vídeo de YouTube o archivos")
         return
       }
 
-      // Verificar que si se ha seleccionado YouTube, se ha proporcionado una URL
       if (includeYoutube && !youtubeUrl) {
         toast.error("Debes proporcionar una URL de YouTube")
         return
       }
 
-      // Verificar que si se han seleccionado archivos, se ha añadido al menos uno
-      if (includeFiles && fileUrls.length === 0) {
+      if (includeFiles && newFiles.length === 0 && existingFiles.length === 0) {
         toast.error("Debes agregar al menos un archivo")
         return
       }
 
-      // Preparar la ruta en el nuevo formato
-      const rutaData = {
-        youtube: includeYoutube ? youtubeUrl : null,
-        files: includeFiles ? fileUrls : [],
-      }
+      setIsUploading(true)
+      setUploadProgress(0)
 
-      // Convertir a JSON
-      const finalRuta = JSON.stringify(rutaData)
-
-      // Preparar datos para el envío
       const composicionData = new FormData()
       composicionData.append("nombre", formData.nombre)
       composicionData.append("descripcion", formData.descripcion)
       composicionData.append("nombre_autor", formData.nombre_autor)
-      composicionData.append("ruta", finalRuta)
+
+      // Agregar iframe (URL de YouTube) si está incluido
+      if (includeYoutube && youtubeUrl) {
+        composicionData.append("iframe", youtubeUrl)
+      }
+
+      // Agregar archivos existentes si hay
+      if (includeFiles && existingFiles.length > 0) {
+        existingFiles.forEach((filePath) => {
+          composicionData.append("existing_files[]", filePath)
+        })
+      }
+
+      // Agregar nuevos archivos si hay
+      if (includeFiles && newFiles.length > 0) {
+        newFiles.forEach((file) => {
+          composicionData.append("files[]", file)
+        })
+      }
+
+      // Configurar opciones para seguimiento de progreso
+      const config = {
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+          setUploadProgress(percentCompleted)
+        },
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+
+      // LOG del contenido que se manda
+      console.log("Datos a enviar:")
+      console.log("nombre:", formData.nombre)
+      console.log("descripcion:", formData.descripcion)
+      console.log("nombre_autor:", formData.nombre_autor)
+      if (includeYoutube) console.log("iframe:", youtubeUrl)
+      if (includeFiles && existingFiles.length > 0) console.log("existing_files[]:", existingFiles)
+      if (includeFiles && newFiles.length > 0) {
+        console.log(
+          "files[]:",
+          newFiles.map((file) => `File: ${file.name} (${file.size} bytes)`),
+        )
+      }
+
+      let response
 
       if (editingComposicion) {
-        // Para editar, añadir el método PUT como parámetro
         composicionData.append("_method", "PUT")
-        await api.post(`/composiciones/${editingComposicion.id}`, composicionData)
+        response = await api.post(`/composiciones/${editingComposicion.id}`, composicionData, config)
         toast.success("Composición actualizada correctamente")
+      } else {
+        response = await api.post("/composiciones", composicionData, config)
+        toast.success("Composición creada correctamente")
+      }
 
-        // Actualizar estado local
+      console.log("Respuesta del servidor:", response.data)
+
+      // Actualizar la lista de composiciones
+      const updatedComposicion = response.data.data || response.data
+
+      // Crear estructura parsedRuta para mantener compatibilidad con el resto del código
+      const fileNames = newFiles.map((file) => file.name)
+      const allFiles = [...existingFiles, ...fileNames]
+
+      const parsedRuta = {
+        youtube: includeYoutube ? youtubeUrl : null,
+        files: includeFiles ? allFiles : [],
+      }
+
+      if (editingComposicion) {
         setComposiciones((prev) =>
           prev.map((comp) =>
             comp.id === editingComposicion.id
               ? {
                   ...comp,
                   ...formData,
-                  ruta: finalRuta,
-                  parsedRuta: rutaData,
+                  parsedRuta: parsedRuta,
                 }
               : comp,
           ),
         )
       } else {
-        // Crear nueva composición
-        const response = await api.post("/composiciones", composicionData)
-        console.log("Respuesta al crear composición:", response.data)
-
-        // Obtener el ID de la nueva composición
-        const newComposicion = response.data.data || response.data
-
-        // Agregar a estado local
         setComposiciones((prev) => [
           ...prev,
           {
-            ...newComposicion,
+            ...updatedComposicion,
             ...formData,
-            parsedRuta: rutaData,
+            parsedRuta: parsedRuta,
           },
         ])
-
-        toast.success("Composición creada correctamente")
       }
 
-      // Cerrar modal
       setShowModal(false)
     } catch (error) {
       console.error("Error al guardar composición:", error)
-      toast.error("Error al guardar la composición")
+      toast.error(`Error al guardar la composición: ${error.message || "Error desconocido"}`)
+
+      if (error.response) {
+        console.error("Respuesta del servidor:", error.response.status, error.response.data)
+      }
+    } finally {
+      setIsUploading(false)
+      setUploadProgress(0)
     }
   }
 
@@ -497,6 +599,25 @@ export default function Composiciones() {
     }
 
     return youtubeUrl // Si no se pudo procesar, devolver la URL original
+  }
+
+  // Obtener icono según tipo de archivo
+  const getFileIcon = (fileName) => {
+    if (!fileName) return <File size={16} className="mr-2 text-gray-400" />
+
+    const fileExtension = fileName.split(".").pop().toLowerCase()
+
+    if (["mp3", "wav", "ogg"].includes(fileExtension)) {
+      return <FileMusic size={16} className="mr-2 text-green-400" />
+    } else if (["jpg", "jpeg", "png", "gif", "webp"].includes(fileExtension)) {
+      return <ImageIcon size={16} className="mr-2 text-blue-400" />
+    } else if (fileExtension === "pdf") {
+      return <File size={16} className="mr-2 text-red-400" />
+    } else if (["mp4", "webm", "mov"].includes(fileExtension)) {
+      return <File size={16} className="mr-2 text-purple-400" />
+    }
+
+    return <File size={16} className="mr-2 text-gray-400" />
   }
 
   return (
@@ -826,7 +947,7 @@ export default function Composiciones() {
                             type="file"
                             ref={fileInputRef}
                             accept=".mp3,audio/mpeg,.pdf,.jpg,.jpeg,.png, .mp4, .webm"
-                            onChange={handleAddFileUrl}
+                            onChange={handleAddFiles}
                             className="hidden"
                             multiple
                           />
@@ -834,35 +955,65 @@ export default function Composiciones() {
                             htmlFor="archivo"
                             className="flex items-center justify-center w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] cursor-pointer hover:bg-gray-800/50 transition-colors"
                           >
-                            <Plus size={18} className="mr-2" />
+                            <Upload size={18} className="mr-2" />
                             Seleccionar archivos
                           </label>
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">Archivos aceptados: MP3, PDF, JPG, PNG, MP4, WEBM</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          Archivos aceptados: MP3, PDF, JPG, PNG, MP4, WEBM (máx. 20MB)
+                        </p>
                       </div>
                     </div>
 
-                    {/* Lista de archivos */}
-                    {fileUrls.length > 0 && (
+                    {/* Lista de archivos existentes */}
+                    {existingFiles.length > 0 && (
                       <div className="p-3 bg-gray-900/30 border border-gray-800 rounded-md">
-                        <p className="text-sm text-gray-400 mb-2">Archivos seleccionados:</p>
+                        <p className="text-sm text-gray-400 mb-2">Archivos existentes:</p>
                         <ul className="space-y-2">
-                          {fileUrls.map((url, index) => (
+                          {existingFiles.map((filePath, index) => {
+                            const fileName = filePath.split("/").pop()
+
+                            return (
+                              <li
+                                key={`existing-${index}`}
+                                className="flex items-center justify-between text-sm text-gray-400 p-2 bg-gray-900/50 rounded"
+                              >
+                                <div className="flex items-center">
+                                  {getFileIcon(fileName)}
+                                  <span className="truncate">{fileName}</span>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveExistingFile(index)}
+                                  className="p-1 text-gray-500 hover:text-red-500 transition-colors"
+                                >
+                                  <X size={16} />
+                                </button>
+                              </li>
+                            )
+                          })}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Lista de archivos nuevos */}
+                    {newFiles.length > 0 && (
+                      <div className="p-3 bg-gray-900/30 border border-gray-800 rounded-md">
+                        <p className="text-sm text-gray-400 mb-2">Nuevos archivos:</p>
+                        <ul className="space-y-2">
+                          {newFiles.map((file, index) => (
                             <li
-                              key={index}
+                              key={`new-${index}`}
                               className="flex items-center justify-between text-sm text-gray-400 p-2 bg-gray-900/50 rounded"
                             >
                               <div className="flex items-center">
-                                {url.endsWith(".mp3") ? (
-                                  <FileMusic size={16} className="mr-2 text-green-400" />
-                                ) : (
-                                  <ImageIcon size={16} className="mr-2 text-blue-400" />
-                                )}
-                                <span className="truncate">{url.split("/").pop()}</span>
+                                {getFileIcon(file.name)}
+                                <span className="truncate">{file.name}</span>
+                                <span className="ml-2 text-xs text-gray-500">({Math.round(file.size / 1024)} KB)</span>
                               </div>
                               <button
                                 type="button"
-                                onClick={() => handleRemoveFileUrl(index)}
+                                onClick={() => handleRemoveNewFile(index)}
                                 className="p-1 text-gray-500 hover:text-red-500 transition-colors"
                               >
                                 <X size={16} />
@@ -876,20 +1027,44 @@ export default function Composiciones() {
                 </div>
               )}
 
+              {/* Barra de progreso para la subida */}
+              {isUploading && (
+                <div className="mt-4">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-sm text-gray-400">Subiendo archivos...</p>
+                    <p className="text-sm text-gray-400">{uploadProgress}%</p>
+                  </div>
+                  <div className="w-full bg-gray-900 rounded-full h-2.5">
+                    <div className="bg-green-600 h-2.5 rounded-full" style={{ width: `${uploadProgress}%` }}></div>
+                  </div>
+                </div>
+              )}
+
               <div className="mt-8 flex justify-end">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
                   className="mr-4 px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+                  disabled={isUploading}
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors flex items-center gap-2"
+                  disabled={isUploading}
                 >
-                  <Save size={18} />
-                  Guardar
+                  {isUploading ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      Subiendo...
+                    </>
+                  ) : (
+                    <>
+                      <Save size={18} />
+                      Guardar
+                    </>
+                  )}
                 </button>
               </div>
             </form>
@@ -931,7 +1106,7 @@ export default function Composiciones() {
                         {isImage && (
                           <div className="w-full h-32 mb-2 flex items-center justify-center overflow-hidden">
                             <img
-                              src={`${IMAGES_URL}/${fileName}`}
+                              src={`${IMAGES_URL || "/placeholder.svg"}/${fileName}`}
                               alt={fileName}
                               className="max-h-full object-contain"
                             />
