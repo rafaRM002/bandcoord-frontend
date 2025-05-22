@@ -17,6 +17,7 @@ import {
   File,
   Upload,
   Loader2,
+  RefreshCw,
 } from "lucide-react"
 import api, { IMAGES_URL } from "../../api/axios"
 import { toast } from "react-toastify"
@@ -35,6 +36,7 @@ export default function Composiciones() {
   const [itemsPerPage] = useState(9)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [isUploading, setIsUploading] = useState(false)
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
 
   // Estados para el modal de composición
   const [showModal, setShowModal] = useState(false)
@@ -60,114 +62,116 @@ export default function Composiciones() {
   const [showFilesModal, setShowFilesModal] = useState(false)
   const [selectedComposicion, setSelectedComposicion] = useState(null)
 
-  useEffect(() => {
-    const fetchComposiciones = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        console.log("Intentando conectar a:", `${api.defaults.baseURL}/composiciones`)
+  // Función para cargar las composiciones
+  const fetchComposiciones = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      console.log("Intentando conectar a:", `${api.defaults.baseURL}/composiciones`)
 
-        const response = await api.get("/composiciones")
-        console.log("Respuesta completa de composiciones:", response)
+      const response = await api.get("/composiciones")
+      console.log("Respuesta completa de composiciones:", response)
 
-        // Verificar la estructura de la respuesta
-        let composicionesData = []
+      // Verificar la estructura de la respuesta
+      let composicionesData = []
 
-        // Primero tratamos de obtener los datos directamente de response.data
-        if (response.data && Array.isArray(response.data)) {
-          composicionesData = response.data
-        }
-        // Si response.data no es un array, pero response.data.data lo es
-        else if (response.data && response.data.data && Array.isArray(response.data.data)) {
-          composicionesData = response.data.data
-        }
-        // Si response.data.originalData.data es un array (estructura vista en la respuesta que mostraste)
-        else if (
-          response.data &&
-          response.data.originalData &&
-          response.data.originalData.data &&
-          Array.isArray(response.data.originalData.data)
-        ) {
-          composicionesData = response.data.originalData.data
-        } else {
-          console.warn("Formato de respuesta inesperado para composiciones:", response.data)
-          setError("Formato de respuesta inesperado. Verifica la consola para más detalles.")
-        }
-
-        // Ordenar composiciones alfabéticamente por nombre
-        composicionesData.sort((a, b) => {
-          const nombreA = a.nombre || a.titulo || ""
-          const nombreB = b.nombre || b.titulo || ""
-          return nombreA.localeCompare(nombreB)
-        })
-
-        // Procesar las rutas para identificar YouTube vs imágenes
-        composicionesData = composicionesData.map((comp) => {
-          const ruta = comp.ruta || ""
-          let parsedRuta = { youtube: null, files: [] }
-
-          try {
-            // Intentar parsear la ruta como JSON si es un string
-            if (ruta && typeof ruta === "string" && (ruta.startsWith("[") || ruta.startsWith("{"))) {
-              const parsed = JSON.parse(ruta)
-
-              // Nuevo formato con youtube y files separados
-              if (parsed.youtube !== undefined || parsed.files !== undefined) {
-                parsedRuta = {
-                  youtube: parsed.youtube || null,
-                  files: Array.isArray(parsed.files) ? parsed.files : [],
-                }
-              }
-              // Formato anterior con type y urls
-              else if (parsed.type && parsed.urls) {
-                if (parsed.type === "youtube" && parsed.urls.length > 0) {
-                  parsedRuta = { youtube: parsed.urls[0], files: [] }
-                } else if (parsed.type === "file") {
-                  parsedRuta = { youtube: null, files: parsed.urls || [] }
-                }
-              }
-            }
-            // Si es una URL de YouTube (formato simple)
-            else if (ruta && typeof ruta === "string" && (ruta.includes("youtube.com") || ruta.includes("youtu.be"))) {
-              parsedRuta = { youtube: ruta, files: [] }
-            }
-            // Si es una ruta de archivo (formato simple)
-            else if (ruta) {
-              parsedRuta = { youtube: null, files: [ruta] }
-            }
-          } catch (e) {
-            console.warn("Error al parsear ruta:", e)
-            // Si hay error, mantener la ruta original como una sola URL
-            parsedRuta = { youtube: null, files: ruta ? [ruta] : [] }
-          }
-
-          return {
-            ...comp,
-            parsedRuta: parsedRuta,
-          }
-        })
-
-        console.log("Datos de composiciones procesados:", composicionesData)
-        setComposiciones(composicionesData)
-      } catch (error) {
-        console.error("Error al cargar composiciones:", error)
-        setError(`Error al cargar composiciones: ${error.message}`)
-
-        if (error.response) {
-          console.error("Respuesta del servidor:", error.response.status, error.response.data)
-          setError(`Error del servidor: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
-        } else if (error.request) {
-          console.error("No se recibió respuesta del servidor")
-          setError("No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.")
-        } else {
-          console.error("Error de configuración:", error.message)
-          setError(`Error de configuración: ${error.message}`)
-        }
-      } finally {
-        setLoading(false)
+      // Primero tratamos de obtener los datos directamente de response.data
+      if (response.data && Array.isArray(response.data)) {
+        composicionesData = response.data
       }
-    }
+      // Si response.data no es un array, pero response.data.data lo es
+      else if (response.data && response.data.data && Array.isArray(response.data.data)) {
+        composicionesData = response.data.data
+      }
+      // Si response.data.originalData.data es un array (estructura vista en la respuesta que mostraste)
+      else if (
+        response.data &&
+        response.data.originalData &&
+        response.data.originalData.data &&
+        Array.isArray(response.data.originalData.data)
+      ) {
+        composicionesData = response.data.originalData.data
+      } else {
+        console.warn("Formato de respuesta inesperado para composiciones:", response.data)
+        setError("Formato de respuesta inesperado. Verifica la consola para más detalles.")
+      }
 
+      // Ordenar composiciones alfabéticamente por nombre
+      composicionesData.sort((a, b) => {
+        const nombreA = a.nombre || a.titulo || ""
+        const nombreB = b.nombre || b.titulo || ""
+        return nombreA.localeCompare(nombreB)
+      })
+
+      // Procesar las rutas para identificar YouTube vs imágenes
+      composicionesData = composicionesData.map((comp) => {
+        const ruta = comp.ruta || ""
+        let parsedRuta = { youtube: null, files: [] }
+
+        try {
+          // Intentar parsear la ruta como JSON si es un string
+          if (ruta && typeof ruta === "string" && (ruta.startsWith("[") || ruta.startsWith("{"))) {
+            const parsed = JSON.parse(ruta)
+
+            // Nuevo formato con youtube y files separados
+            if (parsed.youtube !== undefined || parsed.files !== undefined) {
+              parsedRuta = {
+                youtube: parsed.youtube || null,
+                files: Array.isArray(parsed.files) ? parsed.files : [],
+              }
+            }
+            // Formato anterior con type y urls
+            else if (parsed.type && parsed.urls) {
+              if (parsed.type === "youtube" && parsed.urls.length > 0) {
+                parsedRuta = { youtube: parsed.urls[0], files: [] }
+              } else if (parsed.type === "file") {
+                parsedRuta = { youtube: null, files: parsed.urls || [] }
+              }
+            }
+          }
+          // Si es una URL de YouTube (formato simple)
+          else if (ruta && typeof ruta === "string" && (ruta.includes("youtube.com") || ruta.includes("youtu.be"))) {
+            parsedRuta = { youtube: ruta, files: [] }
+          }
+          // Si es una ruta de archivo (formato simple)
+          else if (ruta) {
+            parsedRuta = { youtube: null, files: [ruta] }
+          }
+        } catch (e) {
+          console.warn("Error al parsear ruta:", e)
+          // Si hay error, mantener la ruta original como una sola URL
+          parsedRuta = { youtube: null, files: ruta ? [ruta] : [] }
+        }
+
+        return {
+          ...comp,
+          parsedRuta: parsedRuta,
+        }
+      })
+
+      console.log("Datos de composiciones procesados:", composicionesData)
+      setComposiciones(composicionesData)
+    } catch (error) {
+      console.error("Error al cargar composiciones:", error)
+      setError(`Error al cargar composiciones: ${error.message}`)
+
+      if (error.response) {
+        console.error("Respuesta del servidor:", error.response.status, error.response.data)
+        setError(`Error del servidor: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+      } else if (error.request) {
+        console.error("No se recibió respuesta del servidor")
+        setError("No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.")
+      } else {
+        console.error("Error de configuración:", error.message)
+        setError(`Error de configuración: ${error.message}`)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Efecto para cargar las composiciones
+  useEffect(() => {
     fetchComposiciones()
 
     // Limpiar audio al desmontar
@@ -178,7 +182,12 @@ export default function Composiciones() {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [refreshTrigger])
+
+  // Función para recargar los datos
+  const refreshData = () => {
+    setRefreshTrigger((prev) => prev + 1)
+  }
 
   const handleDelete = async () => {
     if (!composicionToDelete) return
@@ -456,47 +465,82 @@ export default function Composiciones() {
       if (editingComposicion) {
         composicionData.append("_method", "PUT")
         response = await api.post(`/composiciones/${editingComposicion.id}`, composicionData, config)
-        toast.success("Composición actualizada correctamente")
+        console.log("Respuesta al actualizar composición:", response.data)
+
+        // Actualizar con los datos del servidor
+        if (response.data && (response.data.data || response.data)) {
+          const updatedComposicion = response.data.data || response.data
+
+          // Parsear la ruta devuelta por el servidor
+          let parsedRuta = { youtube: null, files: [] }
+          if (updatedComposicion.ruta) {
+            try {
+              const rutaObj = JSON.parse(updatedComposicion.ruta)
+              parsedRuta = {
+                youtube: rutaObj.youtube || null,
+                files: Array.isArray(rutaObj.files) ? rutaObj.files : [],
+              }
+            } catch (e) {
+              console.warn("Error al parsear ruta devuelta:", e)
+            }
+          }
+
+          // Actualizar la composición en el estado
+          setComposiciones((prev) =>
+            prev.map((comp) =>
+              comp.id === editingComposicion.id
+                ? {
+                    ...comp,
+                    ...updatedComposicion,
+                    parsedRuta: parsedRuta,
+                  }
+                : comp,
+            ),
+          )
+
+          toast.success("Composición actualizada correctamente")
+        } else {
+          // Si no hay datos en la respuesta, recargar todos los datos
+          refreshData()
+          toast.success("Composición actualizada correctamente. Recargando datos...")
+        }
       } else {
         response = await api.post("/composiciones", composicionData, config)
-        toast.success("Composición creada correctamente")
-      }
+        console.log("Respuesta al crear composición:", response.data)
 
-      console.log("Respuesta del servidor:", response.data)
+        // Añadir la nueva composición con los datos del servidor
+        if (response.data && (response.data.data || response.data)) {
+          const newComposicion = response.data.data || response.data
 
-      // Actualizar la lista de composiciones
-      const updatedComposicion = response.data.data || response.data
+          // Parsear la ruta devuelta por el servidor
+          let parsedRuta = { youtube: null, files: [] }
+          if (newComposicion.ruta) {
+            try {
+              const rutaObj = JSON.parse(newComposicion.ruta)
+              parsedRuta = {
+                youtube: rutaObj.youtube || null,
+                files: Array.isArray(rutaObj.files) ? rutaObj.files : [],
+              }
+            } catch (e) {
+              console.warn("Error al parsear ruta devuelta:", e)
+            }
+          }
 
-      // Crear estructura parsedRuta para mantener compatibilidad con el resto del código
-      const fileNames = newFiles.map((file) => file.name)
-      const allFiles = [...existingFiles, ...fileNames]
+          // Añadir la nueva composición al estado
+          setComposiciones((prev) => [
+            ...prev,
+            {
+              ...newComposicion,
+              parsedRuta: parsedRuta,
+            },
+          ])
 
-      const parsedRuta = {
-        youtube: includeYoutube ? youtubeUrl : null,
-        files: includeFiles ? allFiles : [],
-      }
-
-      if (editingComposicion) {
-        setComposiciones((prev) =>
-          prev.map((comp) =>
-            comp.id === editingComposicion.id
-              ? {
-                  ...comp,
-                  ...formData,
-                  parsedRuta: parsedRuta,
-                }
-              : comp,
-          ),
-        )
-      } else {
-        setComposiciones((prev) => [
-          ...prev,
-          {
-            ...updatedComposicion,
-            ...formData,
-            parsedRuta: parsedRuta,
-          },
-        ])
+          toast.success("Composición creada correctamente")
+        } else {
+          // Si no hay datos en la respuesta, recargar todos los datos
+          refreshData()
+          toast.success("Composición creada correctamente. Recargando datos...")
+        }
       }
 
       setShowModal(false)
@@ -624,13 +668,23 @@ export default function Composiciones() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-[#C0C0C0]">Composiciones</h1>
-        <button
-          onClick={handleNewComposicion}
-          className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
-        >
-          <Plus size={18} />
-          Nueva Composición
-        </button>
+        <div className="flex space-x-2">
+          <button
+            onClick={refreshData}
+            className="flex items-center gap-2 bg-gray-900 border border-gray-700 text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-800 transition-colors"
+            disabled={loading}
+          >
+            <RefreshCw size={18} className={loading ? "animate-spin" : ""} />
+            Recargar
+          </button>
+          <button
+            onClick={handleNewComposicion}
+            className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
+          >
+            <Plus size={18} />
+            Nueva Composición
+          </button>
+        </div>
       </div>
 
       {/* Mostrar mensaje de error si existe */}
@@ -663,7 +717,10 @@ export default function Composiciones() {
       <div className="bg-black/30 border border-gray-800 rounded-lg overflow-hidden">
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="text-[#C0C0C0]">Cargando composiciones...</div>
+            <div className="flex flex-col items-center">
+              <Loader2 size={36} className="text-[#C0C0C0] animate-spin mb-4" />
+              <div className="text-[#C0C0C0]">Cargando composiciones...</div>
+            </div>
           </div>
         ) : filteredComposiciones.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-64">
