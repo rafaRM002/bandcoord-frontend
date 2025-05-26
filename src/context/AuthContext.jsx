@@ -3,9 +3,18 @@
 import { createContext, useState, useEffect, useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import api from "../api/axios"
+import axios from "axios"
 import { Bell } from "lucide-react"
 
 const AuthContext = createContext()
+
+// ✅ NUEVA FUNCIÓN PARA OBTENER EL CSRF COOKIE
+const getCsrfCookie = async () => {
+  await axios.get(
+    "https://www.iestrassierra.net/alumnado/curso2425/DAW/daw2425a16/laravel/public/sanctum/csrf-cookie",
+    { withCredentials: true }
+  )
+}
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
@@ -17,7 +26,6 @@ export const AuthProvider = ({ children }) => {
   const [showNotification, setShowNotification] = useState(false)
   const [notificationMessage, setNotificationMessage] = useState("")
 
-  // Verificar autenticación al cargar la aplicación
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -27,40 +35,20 @@ export const AuthProvider = ({ children }) => {
           return
         }
 
-        try {
-          console.log("Verificando autenticación...")
-          const response = await api.get("/me")
-          const userData = response.data
+        const response = await api.get("/me")
+        const userData = response.data
 
-          console.log("Respuesta de /me:", userData)
-
-          if (userData.estado === "pendiente") {
-            localStorage.removeItem("token")
-            setUser(null)
-            navigate("/registro-pendiente")
-          } else if (userData.estado === "bloqueado") {
-            localStorage.removeItem("token")
-            setUser(null)
-            alert("Tu cuenta ha sido bloqueada. Contacta con el administrador.")
-            navigate("/login")
-          } else {
-            setUser(userData)
-            console.log("Usuario autenticado:", userData)
-
-            if (userData.role === "admin") {
-              console.log("El usuario es administrador")
-            } else {
-              console.log("El usuario NO es administrador, su rol es:", userData.role)
-            }
-          }
-        } catch (error) {
-          console.error("Error al verificar token:", error)
-          if (error.message && error.message.includes("Error de conexión")) {
-            alert("Error de conexión con el servidor. Por favor, verifica la configuración de la API.")
-          }
-
+        if (userData.estado === "pendiente") {
           localStorage.removeItem("token")
           setUser(null)
+          navigate("/registro-pendiente")
+        } else if (userData.estado === "bloqueado") {
+          localStorage.removeItem("token")
+          setUser(null)
+          alert("Tu cuenta ha sido bloqueada. Contacta con el administrador.")
+          navigate("/login")
+        } else {
+          setUser(userData)
         }
       } catch (error) {
         console.error("Error al verificar autenticación:", error)
@@ -125,6 +113,9 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
+      console.log("Solicitando CSRF token...")
+      await getCsrfCookie()
+
       console.log("Intentando iniciar sesión...")
       const response = await api.post("/login", { email, password })
 
@@ -142,32 +133,18 @@ export const AuthProvider = ({ children }) => {
           return { success: false, message: "Tu cuenta está pendiente de aprobación." }
         } else if (userData.estado === "bloqueado") {
           localStorage.removeItem("token")
-          return { success: false, message: "Tu cuenta ha sido bloqueada. Contacta con el administrador." }
+          return { success: false, message: "Tu cuenta ha sido bloqueada." }
         }
 
         setUser(userData)
-
-        // ✅ Mostrar notificaciones solo una vez al iniciar sesión
         await checkNotifications(userData)
-
         return { success: true }
       }
     } catch (error) {
       console.error("Error al iniciar sesión:", error)
 
-      if (error.response && error.response.status === 401) {
-        if (error.response.data.message === "Tu cuenta está pendiente de aprobación por un administrador.") {
-          navigate("/registro-pendiente")
-          return { success: false, message: "Tu cuenta está pendiente de aprobación." }
-        } else if (error.response.data.message === "Credenciales incorrectas.") {
-          return { success: false, message: "Email o contraseña incorrectos." }
-        } else if (error.response.data.message === "Usuario no encontrado.") {
-          return { success: false, message: "El usuario no existe. Por favor, regístrate." }
-        }
-      }
-
-      if (error.message && error.message.includes("Error de conexión")) {
-        return { success: false, message: "Error de conexión con el servidor. Por favor, inténtalo de nuevo." }
+      if (error.response?.status === 401) {
+        return { success: false, message: "Credenciales incorrectas." }
       }
 
       return { success: false, message: "Error al iniciar sesión. Inténtalo de nuevo." }
@@ -176,6 +153,9 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
+      console.log("Solicitando CSRF token para registro...")
+      await getCsrfCookie()
+
       console.log("Intentando registrar usuario con datos:", userData)
       const response = await api.post("/register", userData)
 
@@ -183,22 +163,15 @@ export const AuthProvider = ({ children }) => {
         navigate("/registro-pendiente")
         return { success: true }
       } else {
-        return { success: false, message: "Error al registrarse. Inténtalo de nuevo." }
+        return { success: false, message: "Error al registrarse." }
       }
     } catch (error) {
       console.error("Error al registrarse:", error)
 
-      if (error.response && error.response.status === 422) {
+      if (error.response?.status === 422) {
         if (error.response.data.errors?.email) {
           return { success: false, message: "El email ya está en uso." }
         }
-        if (error.response.data.errors?.fecha_nac) {
-          return { success: false, message: "Formato de fecha de nacimiento incorrecto." }
-        }
-      }
-
-      if (error.message && error.message.includes("Error de conexión")) {
-        return { success: false, message: "Error de conexión con el servidor. Por favor, inténtalo de nuevo." }
       }
 
       return { success: false, message: "Error al registrarse. Inténtalo de nuevo." }

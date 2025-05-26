@@ -6,6 +6,7 @@ export const IMAGES_URL=URL_SERVER+"storage/app/public/files";
 // Crear una instancia de axios con la URL base
 const api = axios.create({
   baseURL: VITE_API_URL,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",

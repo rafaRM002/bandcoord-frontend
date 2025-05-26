@@ -11,7 +11,7 @@ export default function Footer() {
           {/* Logo y descripción */}
           <div className="col-span-1 sm:col-span-2 lg:col-span-1 my-2 flex flex-col items-center sm:items-start">
             <Link to="/" className="flex items-center text-[#C0C0C0] font-bold text-xl mb-4">
-              <img src="/1-removebg-preview.png" alt="Logo BandCoord" className="mx-2 h-10 w-auto" />
+              <img src={`${import.meta.env.BASE_URL}1-removebg-preview.png`} alt="Logo BandCoord" className="mx-2 h-10 w-auto" />
               BandCoord
             </Link>
             <p className="text-gray-400 text-sm mb-4 text-center sm:text-left">
