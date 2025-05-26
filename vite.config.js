@@ -5,10 +5,11 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/alumnado/curso2425/DAW/daw2425a16/', // 👈 base path absoluta para despliegue
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'), // <-- Aquí defines que "@" apunta a "src"
+      '@': path.resolve(__dirname, 'src'),
     },
   },
 })

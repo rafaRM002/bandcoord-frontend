@@ -46,7 +46,7 @@ export default function Login() {
           {/* Header */}
           <div className="space-y-3 text-center border-b border-gray-800 p-6">
             <Link to="/">
-              <img src="/1-removebg-preview.png" alt="Logo BandCoord" className="mx-auto h-16 sm:h-20 w-auto" />
+              <img src={`${import.meta.env.BASE_URL}1-removebg-preview.png`} alt="Logo BandCoord" className="mx-auto h-16 sm:h-20 w-auto" />
             </Link>
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#C0C0C0]">Iniciar Sesión</h2>
             <p className="text-gray-400 text-sm sm:text-base">Accede a tu cuenta de BandCoord</p>

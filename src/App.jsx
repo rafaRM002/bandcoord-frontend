@@ -1,6 +1,6 @@
 "use client"
 
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
+import { HashRouter as Router, Routes, Route, Navigate } from "react-router-dom"
 import { AuthProvider, useAuth } from "./context/AuthContext"
 import Navbar from "./components/Navigation/Navbar"
 import Footer from "./components/Navigation/Footer"
@@ -45,7 +45,7 @@ function AppContent() {
 
   // Determinar si la ruta actual es pública
   const isPublicRoute = () => {
-    const path = window.location.pathname
+    const path = window.location.hash.replace(/^#/, '')
     return publicRoutes.includes(path)
   }
 

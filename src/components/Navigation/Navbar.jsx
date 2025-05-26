@@ -68,7 +68,7 @@ export default function Navbar() {
             className="flex items-center space-x-2 min-w-[150px] whitespace-nowrap"
           >
             <img
-              src="/1-removebg-preview.png"
+              src={`${import.meta.env.BASE_URL}1-removebg-preview.png`}
               alt="BandCoord logo"
               className="h-8 w-auto"
             />
@@ -211,14 +211,14 @@ export default function Navbar() {
             <div className="flex items-center space-x-2 ml-2">
               <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-700 hover:border-[#C0C0C0] transition-colors flex items-center justify-center">
                 <img
-                  src="/flags/es.png"
+                  src={`${import.meta.env.BASE_URL}flags/es.png`}
                   alt="Español"
                   className="w-full h-full object-contain"
                 />
               </div>
               <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-700 hover:border-[#C0C0C0] transition-colors flex items-center justify-center">
                 <img
-                  src="/flags/gb.png"
+                  src={`${import.meta.env.BASE_URL}flags/gb.png`}
                   alt="English"
                   className="w-full h-full object-contain"
                 />
@@ -336,14 +336,14 @@ export default function Navbar() {
             <div className="flex items-center space-x-4 px-3 py-2">
               <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-700 hover:border-[#C0C0C0] transition-colors flex items-center justify-center">
                 <img
-                  src="/flags/es.png"
+                  src={`${import.meta.env.BASE_URL}flags/es.png`}
                   alt="Español"
                   className="w-full h-full object-contain"
                 />
               </div>
               <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-700 hover:border-[#C0C0C0] transition-colors flex items-center justify-center">
                 <img
-                  src="/flags/gb.png"
+                  src={`${import.meta.env.BASE_URL}flags/gb.png`}
                   alt="English"
                   className="w-full h-full object-contain"
                 />

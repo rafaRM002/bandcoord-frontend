@@ -26,7 +26,7 @@ function PublicHome() {
       {/* Hero section */}
       <section className="py-16 px-4 md:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="flex justify-center">
-          <img src="/1-removebg-preview.png" alt="Logo BandCoord" className="h-40 w-auto" />
+          <img src={`${import.meta.env.BASE_URL}/1-removebg-preview.png`} alt="Logo BandCoord" className="h-40 w-auto" />
         </div>
         <div className="text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#C0C0C0] mb-6">
