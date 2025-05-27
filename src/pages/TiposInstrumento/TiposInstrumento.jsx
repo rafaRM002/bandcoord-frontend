@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Plus, Edit, Trash2, Search, Music, ChevronLeft, ChevronRight } from "lucide-react"
 import api from "../../api/axios"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export default function TiposInstrumento() {
   const [tipos, setTipos] = useState([])
@@ -18,6 +19,8 @@ export default function TiposInstrumento() {
   // Pagination
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage] = useState(5)
+
+  const { t } = useTranslation()
 
   useEffect(() => {
     fetchTipos()
@@ -145,13 +148,13 @@ export default function TiposInstrumento() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-[#C0C0C0]">Tipos de Instrumentos</h1>
+        <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("instrumentTypes.title")}</h1>
         <button
           onClick={() => handleOpenModal("create")}
           className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
         >
           <Plus size={18} />
-          Nuevo Tipo
+          {t("instrumentTypes.newType")}
         </button>
       </div>
 
@@ -178,7 +181,7 @@ export default function TiposInstrumento() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
           <input
             type="text"
-            placeholder="Buscar por nombre..."
+            placeholder={t("common.searchByName")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -190,7 +193,7 @@ export default function TiposInstrumento() {
       <div className="bg-black/30 border border-gray-800 rounded-lg overflow-hidden">
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="text-[#C0C0C0]">Cargando tipos de instrumento...</div>
+            <div className="text-[#C0C0C0]">{t("common.loading")}</div>
           </div>
         ) : filteredTipos.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-64">
@@ -198,13 +201,13 @@ export default function TiposInstrumento() {
             <p className="text-gray-400 text-center">
               {searchTerm
                 ? "No se encontraron tipos de instrumento con la búsqueda aplicada."
-                : "No hay tipos de instrumento registrados."}
+                : t("instrumentTypes.noTypes")}
             </p>
             <button
               onClick={() => handleOpenModal("create")}
               className="mt-4 text-[#C0C0C0] hover:text-white underline"
             >
-              Añadir el primer tipo de instrumento
+              {t("instrumentTypes.addFirstType")}
             </button>
           </div>
         ) : (
@@ -212,13 +215,13 @@ export default function TiposInstrumento() {
             <thead className="bg-gray-900/50 border-b border-gray-800">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                  Instrumento
+                  {t("instrumentTypes.instrumentName")}
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                  Cantidad
+                  {t("instrumentTypes.quantity")}
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                  Acciones
+                  {t("common.actions")}
                 </th>
               </tr>
             </thead>
@@ -308,13 +311,13 @@ export default function TiposInstrumento() {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
             <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">
-              {modalMode === "create" ? "Nuevo Tipo de Instrumento" : "Editar Tipo de Instrumento"}
+              {modalMode === "create" ? t("instrumentTypes.newType") : t("instrumentTypes.editType")}
             </h3>
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div className="space-y-2">
                   <label htmlFor="instrumento" className="block text-[#C0C0C0] text-sm font-medium">
-                    Nombre del Instrumento *
+                    {t("instrumentTypes.instrumentName")} *
                   </label>
                   <input
                     id="instrumento"
@@ -326,12 +329,12 @@ export default function TiposInstrumento() {
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] disabled:opacity-60 disabled:cursor-not-allowed"
                   />
                   {modalMode === "edit" && (
-                    <p className="text-xs text-gray-500">El nombre del instrumento no se puede modificar.</p>
+                    <p className="text-xs text-gray-500">{t("instrumentTypes.nameCannotBeModified")}</p>
                   )}
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="cantidad" className="block text-[#C0C0C0] text-sm font-medium">
-                    Cantidad *
+                    {t("instrumentTypes.quantity")} *
                   </label>
                   <input
                     id="cantidad"
@@ -351,13 +354,13 @@ export default function TiposInstrumento() {
                   onClick={handleCloseModal}
                   className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
                 >
-                  Cancelar
+                  {t("common.cancel")}
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors"
                 >
-                  {modalMode === "create" ? "Crear" : "Guardar"}
+                  {modalMode === "create" ? t("common.create") : t("common.save")}
                 </button>
               </div>
             </form>
@@ -369,17 +372,14 @@ export default function TiposInstrumento() {
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">Confirmar eliminación</h3>
-            <p className="text-gray-400 mb-6">
-              ¿Estás seguro de que deseas eliminar el tipo de instrumento "{tipoToDelete}"? Esta acción no se puede
-              deshacer.
-            </p>
+            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("instrumentTypes.confirmDelete")}</h3>
+            <p className="text-gray-400 mb-6">{t("instrumentTypes.deleteConfirmText", { tipoToDelete })}</p>
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
                 className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
               >
-                Cancelar
+                {t("common.cancel")}
               </button>
               <button onClick={handleDelete} className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800">
                 Eliminar

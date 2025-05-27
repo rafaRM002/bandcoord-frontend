@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Plus, Edit, Trash2, Filter, Search, ChevronDown, ChevronUp, AlertCircle } from "lucide-react"
 import api from "../../api/axios"
 import { toast } from "react-toastify"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export default function MinimosEvento() {
   const [minimos, setMinimos] = useState([])
@@ -26,6 +27,8 @@ export default function MinimosEvento() {
   const [expandedEventos, setExpandedEventos] = useState({})
   const [currentPage, setCurrentPage] = useState(1)
   const [eventosPerPage] = useState(2) // Mostrar solo 2 eventos por página
+
+  const { t } = useTranslation()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -319,13 +322,13 @@ export default function MinimosEvento() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-[#C0C0C0]">Mínimos en Eventos</h1>
+        <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("eventMinimums.title")}</h1>
         <button
           onClick={() => handleOpenModal("create")}
           className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
         >
           <Plus size={18} />
-          Nuevo Mínimo
+          {t("eventMinimums.newMinimum")}
         </button>
       </div>
 
@@ -353,7 +356,7 @@ export default function MinimosEvento() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
             <input
               type="text"
-              placeholder="Buscar por nombre de evento..."
+              placeholder={t("eventMinimums.searchByEvent")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -366,7 +369,7 @@ export default function MinimosEvento() {
               onChange={(e) => setEventoFilter(e.target.value)}
               className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
             >
-              <option value="">Todos los eventos</option>
+              <option value="">{t("eventMinimums.allEvents")}</option>
               {eventos.map((evento) => (
                 <option key={evento.id} value={evento.id.toString()}>
                   {evento.nombre}
@@ -381,7 +384,7 @@ export default function MinimosEvento() {
               onChange={(e) => setTipoFilter(e.target.value)}
               className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
             >
-              <option value="">Todos los tipos de instrumento</option>
+              <option value="">{t("eventMinimums.allInstrumentTypes")}</option>
               {/* Extraer tipos únicos de los mínimos para asegurar que mostramos los que realmente existen */}
               {Array.from(new Set(minimos.map((m) => m.instrumento_tipo_id))).map((tipoId) => (
                 <option key={tipoId} value={tipoId.toString()}>
@@ -397,20 +400,20 @@ export default function MinimosEvento() {
       <div className="space-y-6">
         {loading ? (
           <div className="flex justify-center items-center h-64 bg-black/30 border border-gray-800 rounded-lg">
-            <div className="text-[#C0C0C0]">Cargando datos...</div>
+            <div className="text-[#C0C0C0]">{t("common.loading")}</div>
           </div>
         ) : filteredEventos.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-64 bg-black/30 border border-gray-800 rounded-lg">
             <p className="text-gray-400 text-center">
               {eventoFilter || tipoFilter || searchTerm
                 ? "No se encontraron eventos con los filtros aplicados."
-                : "No hay mínimos de instrumentos registrados."}
+                : t("eventMinimums.noMinimums")}
             </p>
             <button
               onClick={() => handleOpenModal("create")}
               className="mt-4 text-[#C0C0C0] hover:text-white underline"
             >
-              Añadir el primer mínimo
+              {t("eventMinimums.addFirstMinimum")}
             </button>
           </div>
         ) : (
@@ -438,7 +441,9 @@ export default function MinimosEvento() {
                     </p>
                   </div>
                   <div className="flex items-center">
-                    <span className="text-sm text-gray-400 mr-3">{eventosMinimos.length} instrumentos</span>
+                    <span className="text-sm text-gray-400 mr-3">
+                      {eventosMinimos.length} {t("eventMinimums.instruments")}
+                    </span>
                     <button className="text-gray-400">
                       {expandedEventos[evento.id] ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                     </button>
@@ -463,9 +468,9 @@ export default function MinimosEvento() {
                     ) : (
                       <div>
                         <div className="grid grid-cols-12 gap-4 py-2 border-b border-gray-800 text-xs font-medium text-gray-400 uppercase">
-                          <div className="col-span-5">Tipo de Instrumento</div>
-                          <div className="col-span-3">Cantidad Mínima</div>
-                          <div className="col-span-4 text-right">Acciones</div>
+                          <div className="col-span-5">{t("eventMinimums.instrumentType")}</div>
+                          <div className="col-span-3">{t("eventMinimums.minimumQuantity")}</div>
+                          <div className="col-span-4 text-right">{t("common.actions")}</div>
                         </div>
 
                         {/* Lista de mínimos para este evento */}
@@ -504,7 +509,7 @@ export default function MinimosEvento() {
                             className="flex items-center gap-1 text-sm text-gray-400 hover:text-[#C0C0C0]"
                           >
                             <Plus size={16} />
-                            Añadir instrumento
+                            {t("eventMinimums.addInstrument")}
                           </button>
                         </div>
                       </div>

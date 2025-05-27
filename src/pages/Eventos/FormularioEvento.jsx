@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react"
 import { Save, MapPin, Calendar, Clock, Info, X } from "lucide-react"
 import api from "../../api/axios"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export default function FormularioEvento({ evento = null, onClose }) {
   const isEditing = !!evento
+  const { t } = useTranslation()
 
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -28,7 +30,6 @@ export default function FormularioEvento({ evento = null, onClose }) {
       try {
         setLoading(true)
 
-        // Cargar entidades para el selector
         const entidadesRes = await api.get("/entidades")
         if (entidadesRes.data && Array.isArray(entidadesRes.data)) {
           setEntidades(entidadesRes.data)
@@ -36,7 +37,6 @@ export default function FormularioEvento({ evento = null, onClose }) {
           setEntidades(entidadesRes.data.entidades)
         }
 
-        // Si estamos editando, cargar los datos del evento
         if (isEditing) {
           setFormData({
             nombre: evento.nombre || "",
@@ -81,7 +81,7 @@ export default function FormularioEvento({ evento = null, onClose }) {
         console.log("Respuesta de creación:", response)
       }
 
-      onClose(true) // Cerrar modal y refrescar datos
+      onClose(true)
     } catch (error) {
       console.error("Error al guardar evento:", error)
 
@@ -100,7 +100,7 @@ export default function FormularioEvento({ evento = null, onClose }) {
       <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
         <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-3xl">
           <div className="flex justify-center items-center h-64">
-            <div className="text-[#C0C0C0]">Cargando...</div>
+            <div className="text-[#C0C0C0]">{t("common.loading")}</div>
           </div>
         </div>
       </div>
@@ -111,7 +111,9 @@ export default function FormularioEvento({ evento = null, onClose }) {
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
       <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-[#C0C0C0]">{isEditing ? "Editar Evento" : "Nuevo Evento"}</h2>
+          <h2 className="text-xl font-bold text-[#C0C0C0]">
+            {isEditing ? t("events.editEvent") : t("events.newEvent")}
+          </h2>
           <button
             onClick={() => onClose(false)}
             className="p-2 text-gray-400 hover:text-[#C0C0C0] rounded-full hover:bg-gray-900/50"
@@ -129,7 +131,7 @@ export default function FormularioEvento({ evento = null, onClose }) {
             {/* Nombre del evento */}
             <div className="space-y-2">
               <label htmlFor="nombre" className="block text-[#C0C0C0] text-sm font-medium">
-                Nombre del evento *
+                {t("events.name")} *
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -149,7 +151,7 @@ export default function FormularioEvento({ evento = null, onClose }) {
             {/* Tipo de evento */}
             <div className="space-y-2">
               <label htmlFor="tipo" className="block text-[#C0C0C0] text-sm font-medium">
-                Tipo de evento *
+                {t("events.type")} *
               </label>
               <select
                 id="tipo"
@@ -159,18 +161,18 @@ export default function FormularioEvento({ evento = null, onClose }) {
                 required
                 className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
               >
-                <option value="concierto">Concierto</option>
-                <option value="ensayo">Ensayo</option>
-                <option value="procesion">Procesión</option>
-                <option value="pasacalles">Pasacalles</option>
-                <option value="otro">Otro</option>
+                <option value="concierto">{t("events.concert")}</option>
+                <option value="ensayo">{t("events.rehearsal")}</option>
+                <option value="procesion">{t("events.procession")}</option>
+                <option value="pasacalles">{t("events.parade")}</option>
+                <option value="otro">{t("events.other")}</option>
               </select>
             </div>
 
             {/* Fecha */}
             <div className="space-y-2">
               <label htmlFor="fecha" className="block text-[#C0C0C0] text-sm font-medium">
-                Fecha *
+                {t("events.date")} *
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -191,7 +193,7 @@ export default function FormularioEvento({ evento = null, onClose }) {
             {/* Hora */}
             <div className="space-y-2">
               <label htmlFor="hora" className="block text-[#C0C0C0] text-sm font-medium">
-                Hora
+                {t("events.time")}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -211,7 +213,7 @@ export default function FormularioEvento({ evento = null, onClose }) {
             {/* Lugar */}
             <div className="space-y-2">
               <label htmlFor="lugar" className="block text-[#C0C0C0] text-sm font-medium">
-                Lugar *
+                {t("events.location")} *
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -231,7 +233,7 @@ export default function FormularioEvento({ evento = null, onClose }) {
             {/* Estado */}
             <div className="space-y-2">
               <label htmlFor="estado" className="block text-[#C0C0C0] text-sm font-medium">
-                Estado *
+                {t("events.status")} *
               </label>
               <select
                 id="estado"
@@ -241,16 +243,16 @@ export default function FormularioEvento({ evento = null, onClose }) {
                 required
                 className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
               >
-                <option value="planificado">Planificado</option>
-                <option value="en progreso">En progreso</option>
-                <option value="finalizado">Finalizado</option>
+                <option value="planificado">{t("events.planned")}</option>
+                <option value="en progreso">{t("events.inProgress")}</option>
+                <option value="finalizado">{t("events.finished")}</option>
               </select>
             </div>
 
             {/* Entidad */}
             <div className="space-y-2">
               <label htmlFor="entidad_id" className="block text-[#C0C0C0] text-sm font-medium">
-                Entidad
+                {t("events.entity")}
               </label>
               <select
                 id="entidad_id"
@@ -272,7 +274,7 @@ export default function FormularioEvento({ evento = null, onClose }) {
           {/* Descripción */}
           <div className="mt-6 space-y-2">
             <label htmlFor="descripcion" className="block text-[#C0C0C0] text-sm font-medium">
-              Descripción
+              {t("events.description")}
             </label>
             <textarea
               id="descripcion"
@@ -290,7 +292,7 @@ export default function FormularioEvento({ evento = null, onClose }) {
               onClick={() => onClose(false)}
               className="mr-4 px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
             >
-              Cancelar
+              {t("common.cancel")}
             </button>
             <button
               type="submit"
@@ -298,7 +300,7 @@ export default function FormularioEvento({ evento = null, onClose }) {
               className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               <Save size={18} />
-              {saving ? "Guardando..." : "Guardar"}
+              {saving ? t("events.saving") : t("common.save")}
             </button>
           </div>
         </form>

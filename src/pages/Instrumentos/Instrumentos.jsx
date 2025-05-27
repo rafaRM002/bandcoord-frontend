@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Plus, Edit, Trash2, Search, Music, Filter, ChevronLeft, ChevronRight, Save, X } from "lucide-react"
 import api from "../../api/axios"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export default function Instrumentos() {
   const [instrumentos, setInstrumentos] = useState([])
@@ -13,6 +14,7 @@ export default function Instrumentos() {
   const [tiposInstrumento, setTiposInstrumento] = useState([])
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [instrumentoToDelete, setInstrumentoToDelete] = useState(null)
+  const { t } = useTranslation()
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1)
@@ -20,7 +22,7 @@ export default function Instrumentos() {
 
   // Modal para crear/editar instrumento
   const [showModal, setShowModal] = useState(false)
-  const [modalMode, setModalMode] = useState("create") // "create" o "edit"
+  const [modalMode, setModalMode] = useState("create")
   const [currentInstrumento, setCurrentInstrumento] = useState({
     numero_serie: "",
     instrumento_tipo_id: "",
@@ -36,36 +38,28 @@ export default function Instrumentos() {
       setLoading(true)
       setError(null)
 
-      // Prueba de conexión básica
       console.log("Intentando conectar a:", `${api.defaults.baseURL}/instrumentos`)
 
-      // Realizar peticiones
       const instrumentosRes = await api.get("/instrumentos")
       console.log("Respuesta de instrumentos:", instrumentosRes)
 
-      // Según las capturas de Postman, la API devuelve directamente el array de instrumentos
       setInstrumentos(instrumentosRes.data)
 
       const tiposRes = await api.get("/tipo-instrumentos")
       console.log("Respuesta de tipos:", tiposRes)
 
-      // Según la estructura observada, asumimos que la API devuelve directamente el array de tipos
       setTiposInstrumento(tiposRes.data)
     } catch (error) {
       console.error("Error al cargar datos:", error)
       setError(`Error al cargar datos: ${error.message}`)
 
-      // Intentar determinar el tipo de error
       if (error.response) {
-        // El servidor respondió con un código de estado fuera del rango 2xx
         console.error("Respuesta del servidor:", error.response.status, error.response.data)
         setError(`Error del servidor: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
       } else if (error.request) {
-        // La petición fue hecha pero no se recibió respuesta
         console.error("No se recibió respuesta del servidor")
         setError("No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.")
       } else {
-        // Algo ocurrió al configurar la petición
         console.error("Error de configuración:", error.message)
         setError(`Error de configuración: ${error.message}`)
       }
@@ -78,7 +72,6 @@ export default function Instrumentos() {
     if (!instrumentoToDelete) return
 
     try {
-      // Usar la ruta exacta que se muestra en Postman
       await api.delete(`/instrumentos/${instrumentoToDelete}`)
       setInstrumentos(instrumentos.filter((item) => item.numero_serie !== instrumentoToDelete))
       setShowDeleteModal(false)
@@ -93,7 +86,6 @@ export default function Instrumentos() {
     setShowDeleteModal(true)
   }
 
-  // Funciones para el modal de crear/editar
   const handleOpenModal = (mode, instrumento = null) => {
     setModalMode(mode)
     if (mode === "edit" && instrumento) {
@@ -146,7 +138,7 @@ export default function Instrumentos() {
       }
 
       handleCloseModal()
-      fetchData() // Recargar datos para asegurar que tenemos la información actualizada
+      fetchData()
     } catch (error) {
       console.error("Error al guardar instrumento:", error)
     }
@@ -164,7 +156,6 @@ export default function Instrumentos() {
     return matchesSearch && matchesTipo
   })
 
-  // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
   const currentInstrumentos = filteredInstrumentos.slice(indexOfFirstItem, indexOfLastItem)
@@ -179,13 +170,13 @@ export default function Instrumentos() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-[#C0C0C0]">Gestión de Instrumentos</h1>
+        <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("instruments.title")}</h1>
         <button
           onClick={() => handleOpenModal("create")}
           className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
         >
           <Plus size={18} />
-          Nuevo Instrumento
+          {t("instruments.newInstrument")}
         </button>
       </div>
 
@@ -194,15 +185,6 @@ export default function Instrumentos() {
         <div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md mb-6">
           <h3 className="font-semibold">Error de conexión</h3>
           <p>{error}</p>
-          <p className="mt-2 text-sm">
-            Verifica que:
-            <ul className="list-disc pl-5 mt-1">
-              <li>El servidor Laravel esté en ejecución en http://localhost:8000</li>
-              <li>La configuración CORS en Laravel permita peticiones desde http://localhost:5173</li>
-              <li>Las rutas de la API estén correctamente definidas</li>
-              <li>Estés autenticado con un token válido</li>
-            </ul>
-          </p>
         </div>
       )}
 
@@ -214,7 +196,7 @@ export default function Instrumentos() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
               <input
                 type="text"
-                placeholder="Buscar por número de serie o tipo..."
+                placeholder={t("instruments.search")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -229,7 +211,7 @@ export default function Instrumentos() {
                 onChange={(e) => setTipoFilter(e.target.value)}
                 className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
               >
-                <option value="">Todos los tipos</option>
+                <option value="">{t("instruments.allTypes")}</option>
                 {tiposInstrumento.map((tipo) => (
                   <option key={tipo.instrumento} value={tipo.instrumento}>
                     {tipo.instrumento}
@@ -245,7 +227,7 @@ export default function Instrumentos() {
       <div className="bg-black/30 border border-gray-800 rounded-lg overflow-hidden">
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="text-[#C0C0C0]">Cargando instrumentos...</div>
+            <div className="text-[#C0C0C0]">{t("common.loading")}</div>
           </div>
         ) : filteredInstrumentos.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-64">
@@ -253,13 +235,13 @@ export default function Instrumentos() {
             <p className="text-gray-400 text-center">
               {searchTerm || tipoFilter
                 ? "No se encontraron instrumentos con los filtros aplicados."
-                : "No hay instrumentos registrados."}
+                : t("instruments.noInstruments")}
             </p>
             <button
               onClick={() => handleOpenModal("create")}
               className="mt-4 text-[#C0C0C0] hover:text-white underline"
             >
-              Añadir el primer instrumento
+              {t("instruments.addFirstInstrument")}
             </button>
           </div>
         ) : (
@@ -270,16 +252,16 @@ export default function Instrumentos() {
                   <thead className="bg-gray-900/50 border-b border-gray-800">
                     <tr>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        Nº Serie
+                        {t("instruments.serialNumber")}
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                         Tipo
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        Estado
+                        {t("instruments.status")}
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        Acciones
+                        {t("common.actions")}
                       </th>
                     </tr>
                   </thead>
@@ -334,8 +316,9 @@ export default function Instrumentos() {
         {filteredInstrumentos.length > 0 && (
           <div className="px-4 py-3 flex items-center justify-between border-t border-gray-800">
             <div className="text-sm text-gray-400">
-              Mostrando {indexOfFirstItem + 1} a {Math.min(indexOfLastItem, filteredInstrumentos.length)} de{" "}
-              {filteredInstrumentos.length} instrumentos
+              {t("common.showing")} {indexOfFirstItem + 1} {t("common.to")}{" "}
+              {Math.min(indexOfLastItem, filteredInstrumentos.length)} {t("common.of")} {filteredInstrumentos.length}{" "}
+              instrumentos
             </div>
             <div className="flex space-x-1">
               <button
@@ -346,7 +329,6 @@ export default function Instrumentos() {
                 <ChevronLeft size={16} />
               </button>
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                // Show pages around current page
                 let pageNum
                 if (totalPages <= 5) {
                   pageNum = i + 1
@@ -390,7 +372,7 @@ export default function Instrumentos() {
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold text-[#C0C0C0]">
-                {modalMode === "create" ? "Nuevo Instrumento" : "Editar Instrumento"}
+                {modalMode === "create" ? t("instruments.newInstrument") : t("instruments.editInstrument")}
               </h3>
               <button onClick={handleCloseModal} className="text-gray-400 hover:text-white">
                 <X size={20} />
@@ -400,24 +382,24 @@ export default function Instrumentos() {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <label htmlFor="numero_serie" className="block text-[#C0C0C0] text-sm font-medium">
-                    Número de Serie *
+                    {t("instruments.serialNumber")} *
                   </label>
                   <input
                     id="numero_serie"
                     name="numero_serie"
                     value={currentInstrumento.numero_serie}
                     onChange={handleInputChange}
-                    disabled={modalMode === "edit"} // No permitir cambiar el número de serie en modo edición
+                    disabled={modalMode === "edit"}
                     required
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] disabled:opacity-60 disabled:cursor-not-allowed"
                   />
                   {modalMode === "edit" && (
-                    <p className="text-xs text-gray-500">El número de serie no se puede modificar.</p>
+                    <p className="text-xs text-gray-500">{t("instruments.serialNumberCannotBeModified")}</p>
                   )}
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="instrumento_tipo_id" className="block text-[#C0C0C0] text-sm font-medium">
-                    Tipo de Instrumento *
+                    {t("instruments.instrumentType")} *
                   </label>
                   <select
                     id="instrumento_tipo_id"
@@ -437,7 +419,7 @@ export default function Instrumentos() {
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="estado" className="block text-[#C0C0C0] text-sm font-medium">
-                    Estado *
+                    {t("instruments.status")} *
                   </label>
                   <select
                     id="estado"
@@ -447,9 +429,9 @@ export default function Instrumentos() {
                     required
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                   >
-                    <option value="disponible">Disponible</option>
-                    <option value="prestado">Prestado</option>
-                    <option value="reparacion">En reparación</option>
+                    <option value="disponible">{t("instruments.available")}</option>
+                    <option value="prestado">{t("instruments.loaned")}</option>
+                    <option value="reparacion">{t("instruments.repair")}</option>
                   </select>
                 </div>
               </div>
@@ -459,14 +441,14 @@ export default function Instrumentos() {
                   onClick={handleCloseModal}
                   className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
                 >
-                  Cancelar
+                  {t("common.cancel")}
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors flex items-center gap-2"
                 >
                   <Save size={18} />
-                  {modalMode === "create" ? "Crear" : "Guardar"}
+                  {modalMode === "create" ? t("instruments.create") : t("common.save")}
                 </button>
               </div>
             </form>
@@ -478,19 +460,17 @@ export default function Instrumentos() {
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">Confirmar eliminación</h3>
-            <p className="text-gray-400 mb-6">
-              ¿Estás seguro de que deseas eliminar este instrumento? Esta acción no se puede deshacer.
-            </p>
+            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("instruments.confirmDelete")}</h3>
+            <p className="text-gray-400 mb-6">{t("instruments.deleteConfirmText")}</p>
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
                 className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
               >
-                Cancelar
+                {t("common.cancel")}
               </button>
               <button onClick={handleDelete} className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800">
-                Eliminar
+                {t("common.delete")}
               </button>
             </div>
           </div>
