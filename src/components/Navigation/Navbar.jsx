@@ -1,84 +1,82 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { ChevronDown, User, LogOut, Menu, X, Shield } from "lucide-react";
-import { useAuth } from "../../context/AuthContext";
+import { useState, useEffect } from "react"
+import { Link, useLocation } from "react-router-dom"
+import { ChevronDown, User, LogOut, Menu, X, Shield } from "lucide-react"
+import { useAuth } from "../../context/AuthContext"
+import { useLanguage } from "../../context/LanguageContext"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export default function Navbar() {
-  const [loading, setLoading] = useState(true);
-  const [hoveredMenu, setHoveredMenu] = useState(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const location = useLocation();
-  const { user, logout, isAdmin } = useAuth();
+  const [loading, setLoading] = useState(true)
+  const [hoveredMenu, setHoveredMenu] = useState(null)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const location = useLocation()
+  const { user, logout, isAdmin } = useAuth()
+  const { language, changeLanguage } = useLanguage()
+  const { t } = useTranslation()
 
   const buttonClass =
-    "inline-flex items-center text-[#C0C0C0] hover:text-white border border-gray-800 rounded-md px-3 py-1 transition-colors hover:bg-gray-900/50 whitespace-nowrap";
+    "inline-flex items-center text-[#C0C0C0] hover:text-white border border-gray-800 rounded-md px-3 py-1 transition-colors hover:bg-gray-900/50 whitespace-nowrap"
 
   const mobileButtonClass =
-    "flex items-center w-full text-left text-[#C0C0C0] hover:text-white border border-gray-800 rounded-md px-3 py-2 transition-colors hover:bg-gray-900/50";
+    "flex items-center w-full text-left text-[#C0C0C0] hover:text-white border border-gray-800 rounded-md px-3 py-2 transition-colors hover:bg-gray-900/50"
 
   const handleMenuHover = (menuName) => {
-    setHoveredMenu(menuName);
-  };
+    setHoveredMenu(menuName)
+  }
 
   const handleMenuLeave = () => {
-    setHoveredMenu(null);
-  };
+    setHoveredMenu(null)
+  }
 
   const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
+    setMobileMenuOpen(!mobileMenuOpen)
+  }
+
+  const handleLanguageChange = (newLanguage) => {
+    changeLanguage(newLanguage)
+  }
 
   useEffect(() => {
-    setHoveredMenu(null);
-    setMobileMenuOpen(false);
-  }, [location.pathname]);
+    setHoveredMenu(null)
+    setMobileMenuOpen(false)
+  }, [location.pathname])
 
   useEffect(() => {
-    // Simplemente establecer loading a false ya que ahora usamos el contexto de autenticación
-    setLoading(false);
-
-    // Log para depuración
-    console.log("Navbar - isAdmin:", isAdmin);
-    console.log("Navbar - user:", user);
-  }, [isAdmin, user]);
+    setLoading(false)
+    console.log("Navbar - isAdmin:", isAdmin)
+    console.log("Navbar - user:", user)
+  }, [isAdmin, user])
 
   const handleLogout = async () => {
-    await logout();
-  };
+    await logout()
+  }
 
   if (loading) {
     return (
       <header className="bg-black border-b border-gray-800 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <div className="text-[#C0C0C0] font-bold text-xl">BandCoord</div>
-          <div className="text-[#C0C0C0]">Cargando...</div>
+          <div className="text-[#C0C0C0]">{t("loading")}</div>
         </div>
       </header>
-    );
+    )
   }
 
   return (
     <header className="bg-black border-b border-gray-800 sticky top-0 z-50 overflow-visible">
       <div className="w-full px-4">
         <div className="flex items-center h-16 justify-between overflow-visible w-full">
-          <Link
-            to="/"
-            className="flex items-center space-x-2 min-w-[150px] whitespace-nowrap"
-          >
+          <Link to="/" className="flex items-center space-x-2 min-w-[150px] whitespace-nowrap">
             <img
               src={`${import.meta.env.BASE_URL}1-removebg-preview.png`}
               alt="BandCoord logo"
               className="h-8 w-auto"
             />
-            <span className="text-[#C0C0C0] font-bold text-xl whitespace-nowrap">
-              BandCoord
-            </span>
+            <span className="text-[#C0C0C0] font-bold text-xl whitespace-nowrap">BandCoord</span>
             {isAdmin && (
-              <span className="bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-full ml-2">
-                ADMIN
-              </span>
+              <span className="bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-full ml-2">ADMIN</span>
             )}
           </Link>
 
@@ -99,7 +97,7 @@ export default function Navbar() {
               onMouseLeave={handleMenuLeave}
             >
               <Link to="/instrumentos" className={buttonClass}>
-                Instrumentos
+                {t("instruments")}
                 <ChevronDown size={16} className="ml-1" />
               </Link>
               {hoveredMenu === "instrumentos" && (
@@ -108,20 +106,16 @@ export default function Navbar() {
                     to="/tipos-instrumentos"
                     className="block px-4 py-2 hover:bg-gray-900/50 text-[#C0C0C0] whitespace-nowrap"
                   >
-                    Tipos de Instrumentos
+                    {t("instrumentTypes")}
                   </Link>
                 </div>
               )}
             </div>
 
             {/* Eventos */}
-            <div
-              className="relative"
-              onMouseEnter={() => handleMenuHover("eventos")}
-              onMouseLeave={handleMenuLeave}
-            >
+            <div className="relative" onMouseEnter={() => handleMenuHover("eventos")} onMouseLeave={handleMenuLeave}>
               <Link to="/eventos" className={buttonClass}>
-                Eventos
+                {t("events")}
                 <ChevronDown size={16} className="ml-1" />
               </Link>
               {hoveredMenu === "eventos" && (
@@ -130,19 +124,19 @@ export default function Navbar() {
                     to="/minimos-eventos"
                     className="block px-4 py-2 hover:bg-gray-900/50 text-[#C0C0C0] whitespace-nowrap"
                   >
-                    Mínimos en Eventos
+                    {t("eventMinimums")}
                   </Link>
                   <Link
                     to="/usuarios-eventos"
                     className="block px-4 py-2 hover:bg-gray-900/50 text-[#C0C0C0] whitespace-nowrap"
                   >
-                    Eventos de Usuarios
+                    {t("userEvents")}
                   </Link>
                   <Link
                     to="/confirmacion-eventos"
                     className="block px-4 py-2 hover:bg-gray-900/50 text-[#C0C0C0] whitespace-nowrap"
                   >
-                    Confirmación de Eventos
+                    {t("eventConfirmation")}
                   </Link>
                 </div>
               )}
@@ -150,12 +144,12 @@ export default function Navbar() {
 
             {/* Préstamos */}
             <Link to="/prestamos" className={buttonClass}>
-              Préstamos
+              {t("loans")}
             </Link>
 
             {/* Entidades */}
             <Link to="/entidades" className={buttonClass}>
-              Entidades
+              {t("entities")}
             </Link>
 
             {/* Composiciones */}
@@ -165,7 +159,7 @@ export default function Navbar() {
               onMouseLeave={handleMenuLeave}
             >
               <Link to="/composiciones" className={buttonClass}>
-                Composiciones
+                {t("compositions")}
                 <ChevronDown size={16} className="ml-1" />
               </Link>
               {hoveredMenu === "composiciones" && (
@@ -174,20 +168,16 @@ export default function Navbar() {
                     to="/composiciones-interpretadas"
                     className="block px-4 py-2 hover:bg-gray-900/50 text-[#C0C0C0] whitespace-nowrap"
                   >
-                    Composiciones Interpretadas
+                    {t("interpretedCompositions")}
                   </Link>
                 </div>
               )}
             </div>
 
             {/* Mensajes */}
-            <div
-              className="relative"
-              onMouseEnter={() => handleMenuHover("mensajes")}
-              onMouseLeave={handleMenuLeave}
-            >
+            <div className="relative" onMouseEnter={() => handleMenuHover("mensajes")} onMouseLeave={handleMenuLeave}>
               <Link to="/mensajes" className={buttonClass}>
-                Mensajes
+                {t("messages")}
                 <ChevronDown size={16} className="ml-1" />
               </Link>
               {hoveredMenu === "mensajes" && (
@@ -196,7 +186,7 @@ export default function Navbar() {
                     to="/mensajes-usuarios"
                     className="block px-4 py-2 hover:bg-gray-900/50 text-[#C0C0C0] whitespace-nowrap"
                   >
-                    Mensajes de Usuarios
+                    {t("userMessages")}
                   </Link>
                 </div>
               )}
@@ -204,35 +194,45 @@ export default function Navbar() {
 
             {/* Calendario */}
             <Link to="/calendario" className={buttonClass}>
-              Calendario
+              {t("calendar")}
             </Link>
 
             {/* Banderas idioma */}
             <div className="flex items-center space-x-2 ml-2">
-              <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-700 hover:border-[#C0C0C0] transition-colors flex items-center justify-center">
+              <button
+                onClick={() => handleLanguageChange("es")}
+                className={`w-8 h-8 rounded-full overflow-hidden border transition-colors flex items-center justify-center ${
+                  language === "es"
+                    ? "border-yellow-500 ring-2 ring-yellow-500"
+                    : "border-gray-700 hover:border-[#C0C0C0]"
+                }`}
+              >
                 <img
                   src={`${import.meta.env.BASE_URL}flags/es.png`}
                   alt="Español"
                   className="w-full h-full object-contain"
                 />
-              </div>
-              <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-700 hover:border-[#C0C0C0] transition-colors flex items-center justify-center">
+              </button>
+              <button
+                onClick={() => handleLanguageChange("en")}
+                className={`w-8 h-8 rounded-full overflow-hidden border transition-colors flex items-center justify-center ${
+                  language === "en"
+                    ? "border-yellow-500 ring-2 ring-yellow-500"
+                    : "border-gray-700 hover:border-[#C0C0C0]"
+                }`}
+              >
                 <img
                   src={`${import.meta.env.BASE_URL}flags/gb.png`}
                   alt="English"
                   className="w-full h-full object-contain"
                 />
-              </div>
+              </button>
             </div>
 
             {/* Usuario */}
-            <div
-              className="relative"
-              onMouseEnter={() => handleMenuHover("usuario")}
-              onMouseLeave={handleMenuLeave}
-            >
+            <div className="relative" onMouseEnter={() => handleMenuHover("usuario")} onMouseLeave={handleMenuLeave}>
               <Link to="/perfil" className={buttonClass}>
-                Usuario
+                {t("user")}
                 <ChevronDown size={16} className="ml-1" />
               </Link>
               {hoveredMenu === "usuario" && (
@@ -241,7 +241,7 @@ export default function Navbar() {
                     to="/perfil"
                     className="flex items-center px-3 py-2 text-[#C0C0C0] hover:text-white hover:bg-gray-900/50 transition-colors duration-300 rounded-md whitespace-nowrap"
                   >
-                    <User size={18} className="mr-2" /> Mi Perfil
+                    <User size={18} className="mr-2" /> {t("myProfile")}
                   </Link>
 
                   {isAdmin && (
@@ -249,7 +249,7 @@ export default function Navbar() {
                       to="/usuarios"
                       className="flex items-center px-3 py-2 text-[#C0C0C0] hover:text-white hover:bg-gray-900/50 transition-colors duration-300 rounded-md whitespace-nowrap"
                     >
-                      <Shield size={18} className="mr-2" /> Gestión de usuarios
+                      <Shield size={18} className="mr-2" /> {t("userManagement")}
                     </Link>
                   )}
 
@@ -258,7 +258,7 @@ export default function Navbar() {
                     onClick={handleLogout}
                     className="flex items-center px-3 py-2 text-[#C0C0C0] hover:text-white hover:bg-gray-900/50 transition-colors duration-300 rounded-md whitespace-nowrap w-full text-left"
                   >
-                    <LogOut size={18} className="mr-2" /> Cerrar Sesión
+                    <LogOut size={18} className="mr-2" /> {t("logout")}
                   </Link>
                 </div>
               )}
@@ -270,100 +270,90 @@ export default function Navbar() {
         {mobileMenuOpen && (
           <div className="md:hidden bg-black border-t border-gray-800 py-4 px-2 space-y-3">
             <Link to="/instrumentos" className={mobileButtonClass}>
-              Instrumentos
+              {t("instruments")}
             </Link>
-            <Link
-              to="/tipos-instrumentos"
-              className={`${mobileButtonClass} ml-4 text-sm`}
-            >
-              Tipos de Instrumentos
+            <Link to="/tipos-instrumentos" className={`${mobileButtonClass} ml-4 text-sm`}>
+              {t("instrumentTypes")}
             </Link>
 
             <Link to="/eventos" className={mobileButtonClass}>
-              Eventos
+              {t("events")}
             </Link>
-            <Link
-              to="/minimos-eventos"
-              className={`${mobileButtonClass} ml-4 text-sm`}
-            >
-              Mínimos en Eventos
+            <Link to="/minimos-eventos" className={`${mobileButtonClass} ml-4 text-sm`}>
+              {t("eventMinimums")}
             </Link>
-            <Link
-              to="/usuarios-eventos"
-              className={`${mobileButtonClass} ml-4 text-sm`}
-            >
-              Eventos de Usuarios
+            <Link to="/usuarios-eventos" className={`${mobileButtonClass} ml-4 text-sm`}>
+              {t("userEvents")}
             </Link>
-            <Link
-              to="/confirmacion-eventos"
-              className={`${mobileButtonClass} ml-4 text-sm`}
-            >
-              Confirmación de Eventos
+            <Link to="/confirmacion-eventos" className={`${mobileButtonClass} ml-4 text-sm`}>
+              {t("eventConfirmation")}
             </Link>
 
             <Link to="/prestamos" className={mobileButtonClass}>
-              Préstamos
+              {t("loans")}
             </Link>
 
             <Link to="/entidades" className={mobileButtonClass}>
-              Entidades
+              {t("entities")}
             </Link>
 
             <Link to="/composiciones" className={mobileButtonClass}>
-              Composiciones
+              {t("compositions")}
             </Link>
-            <Link
-              to="/composiciones-interpretadas"
-              className={`${mobileButtonClass} ml-4 text-sm`}
-            >
-              Composiciones Interpretadas
+            <Link to="/composiciones-interpretadas" className={`${mobileButtonClass} ml-4 text-sm`}>
+              {t("interpretedCompositions")}
             </Link>
 
             <Link to="/mensajes" className={mobileButtonClass}>
-              Mensajes
+              {t("messages")}
             </Link>
-            <Link
-              to="/mensajes-usuarios"
-              className={`${mobileButtonClass} ml-4 text-sm`}
-            >
-              Mensajes de Usuarios
+            <Link to="/mensajes-usuarios" className={`${mobileButtonClass} ml-4 text-sm`}>
+              {t("userMessages")}
             </Link>
 
             <Link to="/calendario" className={mobileButtonClass}>
-              Calendario
+              {t("calendar")}
             </Link>
 
             <div className="flex items-center space-x-4 px-3 py-2">
-              <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-700 hover:border-[#C0C0C0] transition-colors flex items-center justify-center">
+              <button
+                onClick={() => handleLanguageChange("es")}
+                className={`w-8 h-8 rounded-full overflow-hidden border transition-colors flex items-center justify-center ${
+                  language === "es"
+                    ? "border-yellow-500 ring-2 ring-yellow-500"
+                    : "border-gray-700 hover:border-[#C0C0C0]"
+                }`}
+              >
                 <img
                   src={`${import.meta.env.BASE_URL}flags/es.png`}
                   alt="Español"
                   className="w-full h-full object-contain"
                 />
-              </div>
-              <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-700 hover:border-[#C0C0C0] transition-colors flex items-center justify-center">
+              </button>
+              <button
+                onClick={() => handleLanguageChange("en")}
+                className={`w-8 h-8 rounded-full overflow-hidden border transition-colors flex items-center justify-center ${
+                  language === "en"
+                    ? "border-yellow-500 ring-2 ring-yellow-500"
+                    : "border-gray-700 hover:border-[#C0C0C0]"
+                }`}
+              >
                 <img
                   src={`${import.meta.env.BASE_URL}flags/gb.png`}
                   alt="English"
                   className="w-full h-full object-contain"
                 />
-              </div>
+              </button>
             </div>
 
             <div className="border-t border-gray-800 pt-3">
-              <Link
-                to="/perfil"
-                className="flex items-center px-3 py-2 text-[#C0C0C0] hover:text-white"
-              >
-                <User size={18} className="mr-2" /> Mi Perfil
+              <Link to="/perfil" className="flex items-center px-3 py-2 text-[#C0C0C0] hover:text-white">
+                <User size={18} className="mr-2" /> {t("myProfile")}
               </Link>
 
               {isAdmin && (
-                <Link
-                  to="/usuarios"
-                  className="flex items-center px-3 py-2 text-[#C0C0C0] hover:text-white"
-                >
-                  <Shield size={18} className="mr-2" /> Gestión de usuarios
+                <Link to="/usuarios" className="flex items-center px-3 py-2 text-[#C0C0C0] hover:text-white">
+                  <Shield size={18} className="mr-2" /> {t("userManagement")}
                 </Link>
               )}
 
@@ -371,12 +361,12 @@ export default function Navbar() {
                 onClick={handleLogout}
                 className="flex items-center w-full text-left px-3 py-2 text-[#C0C0C0] hover:text-white hover:bg-gray-900/50 transition-colors duration-300 rounded-md"
               >
-                <LogOut size={18} className="mr-2" /> Cerrar Sesión
+                <LogOut size={18} className="mr-2" /> {t("logout")}
               </button>
             </div>
           </div>
         )}
       </div>
     </header>
-  );
+  )
 }

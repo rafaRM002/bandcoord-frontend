@@ -2,6 +2,7 @@
 
 import { HashRouter as Router, Routes, Route, Navigate } from "react-router-dom"
 import { AuthProvider, useAuth } from "./context/AuthContext"
+import { LanguageProvider } from "./context/LanguageContext"
 import Navbar from "./components/Navigation/Navbar"
 import Footer from "./components/Navigation/Footer"
 import Register from "./pages/Register/Register"
@@ -32,9 +33,11 @@ import MensajesUsuario from "./pages/MensajesUsuario/MensajesUsuario"
 function App() {
   return (
     <Router>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </LanguageProvider>
     </Router>
   )
 }
@@ -45,7 +48,7 @@ function AppContent() {
 
   // Determinar si la ruta actual es pública
   const isPublicRoute = () => {
-    const path = window.location.hash.replace(/^#/, '')
+    const path = window.location.hash.replace(/^#/, "")
     return publicRoutes.includes(path)
   }
 
