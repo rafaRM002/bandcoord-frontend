@@ -4,8 +4,10 @@ import { useState, useEffect } from "react"
 import { Plus, Edit, Trash2, Search, Building2, ArrowLeft, ArrowRight, Save, Phone, Mail, User } from "lucide-react"
 import api from "../../api/axios"
 import { toast } from "react-toastify"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export default function Entidades() {
+  const { t } = useTranslation()
   const [entidades, setEntidades] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
@@ -156,11 +158,11 @@ export default function Entidades() {
   const getTipoEntidad = (tipo) => {
     switch (tipo) {
       case "hermandad":
-        return "Hermandad"
+        return t("entities.brotherhood")
       case "ayuntamiento":
-        return "Ayuntamiento"
+        return t("entities.cityHall")
       case "otro":
-        return "Otro"
+        return t("entities.other")
       default:
         return tipo
     }
@@ -169,13 +171,13 @@ export default function Entidades() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-[#C0C0C0]">Gestión de Entidades</h1>
+        <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("entities.title")}</h1>
         <button
           onClick={() => handleOpenModal("create")}
           className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
         >
           <Plus size={18} />
-          Nueva Entidad
+          {t("entities.newEntity")}
         </button>
       </div>
 
@@ -185,7 +187,7 @@ export default function Entidades() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
           <input
             type="text"
-            placeholder="Buscar por nombre, tipo o persona de contacto..."
+            placeholder={t("entities.searchByNameTypeOrContact")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -203,13 +205,13 @@ export default function Entidades() {
           <div className="flex flex-col justify-center items-center h-64">
             <Building2 size={48} className="text-gray-600 mb-4" />
             <p className="text-gray-400 text-center">
-              {searchTerm ? "No se encontraron entidades con la búsqueda aplicada." : "No hay entidades registradas."}
+              {searchTerm ? t("entities.noEntitiesWithFilters") : t("entities.noEntities")}
             </p>
             <button
               onClick={() => handleOpenModal("create")}
               className="mt-4 text-[#C0C0C0] hover:text-white underline"
             >
-              Añadir la primera entidad
+              {t("entities.addFirstEntity")}
             </button>
           </div>
         ) : (
@@ -218,19 +220,19 @@ export default function Entidades() {
               <thead className="bg-gray-900/50 border-b border-gray-800">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Nombre
+                    {t("common.name")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Tipo
+                    {t("entities.type")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Persona de Contacto
+                    {t("entities.contactPerson")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Teléfono
+                    {t("entities.phone")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Acciones
+                    {t("common.actions")}
                   </th>
                 </tr>
               </thead>
@@ -300,7 +302,7 @@ export default function Entidades() {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
             <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">
-              {modalMode === "create" ? "Nueva Entidad" : "Editar Entidad"}
+              {modalMode === "create" ? t("entities.newEntity") : t("entities.editEntity")}
             </h3>
 
             {error && (
@@ -312,7 +314,7 @@ export default function Entidades() {
                 {/* Nombre */}
                 <div className="space-y-2">
                   <label htmlFor="nombre" className="block text-[#C0C0C0] text-sm font-medium">
-                    Nombre *
+                    {t("common.name")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -332,7 +334,7 @@ export default function Entidades() {
                 {/* Tipo */}
                 <div className="space-y-2">
                   <label htmlFor="tipo" className="block text-[#C0C0C0] text-sm font-medium">
-                    Tipo *
+                    {t("entities.type")} *
                   </label>
                   <select
                     id="tipo"
@@ -342,16 +344,16 @@ export default function Entidades() {
                     required
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                   >
-                    <option value="hermandad">Hermandad</option>
-                    <option value="ayuntamiento">Ayuntamiento</option>
-                    <option value="otro">Otro</option>
+                    <option value="hermandad">{t("entities.brotherhood")}</option>
+                    <option value="ayuntamiento">{t("entities.cityHall")}</option>
+                    <option value="otro">{t("entities.other")}</option>
                   </select>
                 </div>
 
                 {/* Persona de contacto */}
                 <div className="space-y-2">
                   <label htmlFor="persona_contacto" className="block text-[#C0C0C0] text-sm font-medium">
-                    Persona de contacto *
+                    {t("entities.contactPerson")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -371,7 +373,7 @@ export default function Entidades() {
                 {/* Teléfono */}
                 <div className="space-y-2">
                   <label htmlFor="telefono" className="block text-[#C0C0C0] text-sm font-medium">
-                    Teléfono *
+                    {t("entities.phone")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -391,7 +393,7 @@ export default function Entidades() {
                 {/* Email de contacto */}
                 <div className="space-y-2">
                   <label htmlFor="email_contacto" className="block text-[#C0C0C0] text-sm font-medium">
-                    Email de contacto *
+                    {t("entities.contactEmail")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -416,7 +418,7 @@ export default function Entidades() {
                   onClick={handleCloseModal}
                   className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
                 >
-                  Cancelar
+                  {t("common.cancel")}
                 </button>
                 <button
                   type="submit"
@@ -424,7 +426,7 @@ export default function Entidades() {
                   className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   <Save size={18} />
-                  {saving ? "Guardando..." : "Guardar"}
+                  {saving ? "Guardando..." : t("common.save")}
                 </button>
               </div>
             </form>
@@ -436,19 +438,17 @@ export default function Entidades() {
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">Confirmar eliminación</h3>
-            <p className="text-gray-400 mb-6">
-              ¿Estás seguro de que deseas eliminar esta entidad? Esta acción no se puede deshacer.
-            </p>
+            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("entities.confirmDelete")}</h3>
+            <p className="text-gray-400 mb-6">{t("entities.deleteConfirmText")}</p>
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
                 className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
               >
-                Cancelar
+                {t("common.cancel")}
               </button>
               <button onClick={handleDelete} className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800">
-                Eliminar
+                {t("common.delete")}
               </button>
             </div>
           </div>

@@ -5,8 +5,10 @@ import { AuthContext } from "../../context/AuthContext"
 import { Check, X, Calendar, MapPin, Clock, Info, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react"
 import api from "../../api/axios"
 import { toast } from "react-toastify"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export default function ConfirmacionEventos() {
+  const { t } = useTranslation()
   const [eventosUsuario, setEventosUsuario] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -88,7 +90,7 @@ export default function ConfirmacionEventos() {
   const confirmarAsistencia = async (eventoId, confirmado) => {
     try {
       if (!user || !user.id) {
-        toast.error("Debes iniciar sesión para confirmar asistencia")
+        toast.error("Debes iniciar sesión para confirmar eventos")
         return
       }
 
@@ -106,10 +108,12 @@ export default function ConfirmacionEventos() {
         }),
       )
 
-      toast.success(confirmado ? "Has confirmado tu asistencia al evento" : "Has cancelado tu asistencia al evento")
+      toast.success(
+        confirmado ? t("eventConfirmation.attendanceConfirmed") : t("eventConfirmation.attendanceCancelled"),
+      )
     } catch (error) {
       console.error("Error al actualizar asistencia:", error)
-      toast.error("Error al actualizar la asistencia")
+      toast.error(t("eventConfirmation.errorUpdatingAttendance"))
     }
   }
 
@@ -195,7 +199,7 @@ export default function ConfirmacionEventos() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-[#C0C0C0] mb-6">Confirmación de Eventos</h1>
+      <h1 className="text-2xl font-bold text-[#C0C0C0] mb-6">{t("eventConfirmation.title")}</h1>
 
       {/* Filtros y búsqueda */}
       <div className="bg-black/30 border border-gray-800 rounded-lg p-4 mb-6">
@@ -204,7 +208,7 @@ export default function ConfirmacionEventos() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
             <input
               type="text"
-              placeholder="Buscar por nombre o lugar..."
+              placeholder={t("eventConfirmation.searchByNameOrLocation")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -217,11 +221,11 @@ export default function ConfirmacionEventos() {
               onChange={(e) => setTipoFilter(e.target.value)}
               className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
             >
-              <option value="">Todos los tipos</option>
-              <option value="concierto">Concierto</option>
-              <option value="ensayo">Ensayo</option>
-              <option value="procesion">Procesión</option>
-              <option value="pasacalles">Pasacalles</option>
+              <option value="">{t("eventConfirmation.allTypes")}</option>
+              <option value="concierto">{t("eventConfirmation.concert")}</option>
+              <option value="ensayo">{t("eventConfirmation.rehearsal")}</option>
+              <option value="procesion">{t("eventConfirmation.procession")}</option>
+              <option value="pasacalles">{t("eventConfirmation.parade")}</option>
             </select>
           </div>
           <div className="relative">
@@ -231,9 +235,9 @@ export default function ConfirmacionEventos() {
               onChange={(e) => setConfirmadoFilter(e.target.value)}
               className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
             >
-              <option value="">Todos</option>
-              <option value="true">Confirmados</option>
-              <option value="false">Pendientes</option>
+              <option value="">{t("eventConfirmation.allStatuses")}</option>
+              <option value="true">{t("eventConfirmation.confirmed")}</option>
+              <option value="false">{t("eventConfirmation.pending")}</option>
             </select>
           </div>
         </div>
@@ -242,7 +246,7 @@ export default function ConfirmacionEventos() {
       {currentEventos.length === 0 ? (
         <div className="bg-black/30 border border-gray-800 rounded-lg p-8 text-center">
           <Calendar size={48} className="mx-auto text-gray-600 mb-4" />
-          <p className="text-gray-400 text-lg">No tienes eventos pendientes de confirmación.</p>
+          <p className="text-gray-400 text-lg">{t("eventConfirmation.noEventsToConfirm")}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -303,7 +307,7 @@ export default function ConfirmacionEventos() {
                       className="flex-1 flex items-center justify-center gap-2 bg-red-900/30 border border-red-800 text-red-400 px-4 py-2 rounded-md hover:bg-red-900/50 transition-colors"
                     >
                       <X size={18} />
-                      Cancelar asistencia
+                      {t("eventConfirmation.cancelAttendance")}
                     </button>
                   ) : (
                     <button
@@ -311,7 +315,7 @@ export default function ConfirmacionEventos() {
                       className="flex-1 flex items-center justify-center gap-2 bg-green-900/30 border border-green-800 text-green-400 px-4 py-2 rounded-md hover:bg-green-900/50 transition-colors"
                     >
                       <Check size={18} />
-                      Confirmar asistencia
+                      {t("eventConfirmation.confirmAttendance")}
                     </button>
                   )}
                 </div>

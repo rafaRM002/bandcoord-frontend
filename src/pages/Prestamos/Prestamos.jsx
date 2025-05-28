@@ -4,8 +4,10 @@ import { useState, useEffect } from "react"
 import { Plus, ArrowLeft, ArrowRight, Trash2, Search, Filter, Package, Calendar, User, Check } from "lucide-react"
 import api from "../../api/axios"
 import { toast } from "react-toastify"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export default function Prestamos() {
+  const { t } = useTranslation()
   const [prestamos, setPrestamos] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -130,12 +132,12 @@ export default function Prestamos() {
       )
 
       if (existePrestamo) {
-        toast.error("Ya existe un préstamo para este instrumento y usuario.")
+        toast.error(t("loans.loanAlreadyExists"))
         return
       }
 
       await api.post("/prestamos", currentPrestamo)
-      toast.success("Préstamo creado correctamente")
+      toast.success(t("loans.loanCreatedSuccessfully"))
 
       // Recargar los datos
       const response = await api.get("/prestamos")
@@ -152,7 +154,7 @@ export default function Prestamos() {
       handleCloseModal()
     } catch (error) {
       console.error("Error al guardar préstamo:", error)
-      toast.error("Error al guardar el préstamo")
+      toast.error(t("loans.errorSavingLoan"))
     }
   }
 
@@ -165,7 +167,7 @@ export default function Prestamos() {
         fecha_devolucion: fechaActual,
       })
 
-      toast.success("Préstamo devuelto correctamente")
+      toast.success(t("loans.loanReturnedSuccessfully"))
 
       // Actualizar el préstamo en el estado local
       setPrestamos(
@@ -178,7 +180,7 @@ export default function Prestamos() {
       )
     } catch (error) {
       console.error("Error al devolver el préstamo:", error)
-      toast.error("Error al devolver el préstamo")
+      toast.error(t("loans.errorReturningLoan"))
     }
   }
 
@@ -200,10 +202,10 @@ export default function Prestamos() {
       )
       setShowDeleteModal(false)
       setPrestamoToDelete(null)
-      toast.success("Préstamo eliminado correctamente")
+      toast.success(t("loans.loanDeletedSuccessfully"))
     } catch (error) {
       console.error("Error al eliminar préstamo:", error)
-      toast.error("Error al eliminar el préstamo")
+      toast.error(t("loans.errorDeletingLoan"))
     }
   }
 
@@ -253,13 +255,13 @@ export default function Prestamos() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-[#C0C0C0]">Gestión de Préstamos</h1>
+        <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("loans.title")}</h1>
         <button
           onClick={handleOpenModal}
           className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
         >
           <Plus size={18} />
-          Nuevo Préstamo
+          {t("loans.newLoan")}
         </button>
       </div>
 
@@ -287,7 +289,7 @@ export default function Prestamos() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
             <input
               type="text"
-              placeholder="Buscar por instrumento, tipo o usuario..."
+              placeholder={t("loans.searchByInstrumentOrUser")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -300,7 +302,7 @@ export default function Prestamos() {
               onChange={(e) => setUsuarioFilter(e.target.value)}
               className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
             >
-              <option value="">Todos los usuarios</option>
+              <option value="">{t("loans.allUsers")}</option>
               {usuarios.map((usuario) => (
                 <option key={usuario.id} value={usuario.id.toString()}>
                   {usuario.nombre} {usuario.apellido1}
@@ -315,9 +317,9 @@ export default function Prestamos() {
               onChange={(e) => setEstadoFilter(e.target.value)}
               className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
             >
-              <option value="">Todos los estados</option>
-              <option value="activo">Activo</option>
-              <option value="devuelto">Devuelto</option>
+              <option value="">{t("loans.allStatuses")}</option>
+              <option value="activo">{t("loans.active")}</option>
+              <option value="devuelto">{t("loans.returned")}</option>
             </select>
           </div>
         </div>
@@ -333,12 +335,10 @@ export default function Prestamos() {
           <div className="flex flex-col justify-center items-center h-64">
             <Package size={48} className="text-gray-600 mb-4" />
             <p className="text-gray-400 text-center">
-              {searchTerm || usuarioFilter || estadoFilter
-                ? "No se encontraron préstamos con los filtros aplicados."
-                : "No hay préstamos registrados."}
+              {searchTerm || usuarioFilter || estadoFilter ? t("loans.noLoansWithFilters") : t("loans.noLoans")}
             </p>
             <button onClick={handleOpenModal} className="mt-4 text-[#C0C0C0] hover:text-white underline">
-              Añadir el primer préstamo
+              {t("loans.addFirstLoan")}
             </button>
           </div>
         ) : (
@@ -347,22 +347,22 @@ export default function Prestamos() {
               <thead className="bg-gray-900/50 border-b border-gray-800">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Instrumento
+                    {t("loans.instrument")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Usuario
+                    {t("loans.user")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Fecha Préstamo
+                    {t("loans.loanDate")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Fecha Devolución
+                    {t("loans.returnDate")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Estado
+                    {t("common.status")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Acciones
+                    {t("common.actions")}
                   </th>
                 </tr>
               </thead>
@@ -391,7 +391,7 @@ export default function Prestamos() {
                               : "bg-green-900/30 text-green-400 border border-green-800"
                           }`}
                         >
-                          {estado.charAt(0).toUpperCase() + estado.slice(1)}
+                          {estado === "activo" ? t("loans.active") : t("loans.returned")}
                         </span>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
@@ -400,7 +400,7 @@ export default function Prestamos() {
                             <button
                               onClick={() => handleDevolver(prestamo)}
                               className="p-1 text-gray-400 hover:text-green-400"
-                              title="Devolver préstamo"
+                              title={t("loans.returnLoan")}
                             >
                               <Check size={18} />
                             </button>
@@ -408,7 +408,7 @@ export default function Prestamos() {
                           <button
                             onClick={() => confirmDelete(prestamo.num_serie, prestamo.usuario_id)}
                             className="p-1 text-gray-400 hover:text-red-400"
-                            title="Eliminar préstamo"
+                            title={t("loans.deleteLoan")}
                           >
                             <Trash2 size={18} />
                           </button>
@@ -453,12 +453,12 @@ export default function Prestamos() {
       {showModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">Nuevo Préstamo</h3>
+            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("loans.newLoan")}</h3>
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div className="space-y-2">
                   <label htmlFor="num_serie" className="block text-[#C0C0C0] text-sm font-medium">
-                    Instrumento *
+                    {t("loans.instrument")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -472,7 +472,7 @@ export default function Prestamos() {
                       required
                       className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                     >
-                      <option value="">Selecciona un instrumento</option>
+                      <option value="">{t("loans.selectInstrument")}</option>
                       {instrumentos
                         .filter((instrumento) => instrumento.estado === "disponible")
                         .map((instrumento) => (
@@ -485,7 +485,7 @@ export default function Prestamos() {
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="usuario_id" className="block text-[#C0C0C0] text-sm font-medium">
-                    Usuario *
+                    {t("loans.user")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -499,7 +499,7 @@ export default function Prestamos() {
                       required
                       className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                     >
-                      <option value="">Selecciona un usuario</option>
+                      <option value="">{t("loans.selectUser")}</option>
                       {usuarios.map((usuario) => (
                         <option key={usuario.id} value={usuario.id}>
                           {usuario.nombre} {usuario.apellido1}
@@ -510,7 +510,7 @@ export default function Prestamos() {
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="fecha_prestamo" className="block text-[#C0C0C0] text-sm font-medium">
-                    Fecha de préstamo *
+                    {t("loans.loanDate")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -534,13 +534,13 @@ export default function Prestamos() {
                   onClick={handleCloseModal}
                   className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
                 >
-                  Cancelar
+                  {t("common.cancel")}
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors"
                 >
-                  Crear
+                  {t("common.create")}
                 </button>
               </div>
             </form>
@@ -552,19 +552,17 @@ export default function Prestamos() {
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">Confirmar eliminación</h3>
-            <p className="text-gray-400 mb-6">
-              ¿Estás seguro de que deseas eliminar este préstamo? Esta acción no se puede deshacer.
-            </p>
+            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("loans.confirmDelete")}</h3>
+            <p className="text-gray-400 mb-6">{t("loans.deleteConfirmText")}</p>
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
                 className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
               >
-                Cancelar
+                {t("common.cancel")}
               </button>
               <button onClick={handleDelete} className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800">
-                Eliminar
+                {t("common.delete")}
               </button>
             </div>
           </div>
