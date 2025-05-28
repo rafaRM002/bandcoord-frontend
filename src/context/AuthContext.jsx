@@ -8,7 +8,7 @@ import { Bell } from "lucide-react"
 
 const AuthContext = createContext()
 
-// ✅ NUEVA FUNCIÓN PARA OBTENER EL CSRF COOKIE
+// Funcion para obtener el csrf
 const getCsrfCookie = async () => {
   await axios.get(
     "https://www.iestrassierra.net/alumnado/curso2425/DAW/daw2425a16/laravel/public/sanctum/csrf-cookie",
