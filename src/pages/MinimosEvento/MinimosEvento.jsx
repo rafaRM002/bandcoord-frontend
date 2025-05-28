@@ -576,13 +576,13 @@ export default function MinimosEvento() {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
             <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">
-              {modalMode === "create" ? "Nuevo Mínimo de Instrumento" : "Editar Mínimo de Instrumento"}
+              {modalMode === "create" ? t("eventMinimums.newMinimum") : t("eventMinimums.editMinimum")}
             </h3>
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div className="space-y-2">
                   <label htmlFor="evento_id" className="block text-[#C0C0C0] text-sm font-medium">
-                    Evento *
+                    {t("eventMinimums.event")} *
                   </label>
                   <select
                     id="evento_id"
@@ -593,7 +593,7 @@ export default function MinimosEvento() {
                     disabled={modalMode === "edit"}
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] disabled:opacity-70"
                   >
-                    <option value="">Selecciona un evento</option>
+                    <option value="">{t("eventMinimums.selectEvent")}</option>
                     {eventos.map((evento) => (
                       <option key={evento.id} value={evento.id}>
                         {evento.nombre}
@@ -603,7 +603,7 @@ export default function MinimosEvento() {
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="instrumento_tipo_id" className="block text-[#C0C0C0] text-sm font-medium">
-                    Tipo de Instrumento *
+                    {t("eventMinimums.instrumentType")} *
                   </label>
                   <select
                     id="instrumento_tipo_id"
@@ -614,7 +614,7 @@ export default function MinimosEvento() {
                     disabled={modalMode === "edit"}
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] disabled:opacity-70"
                   >
-                    <option value="">Selecciona un tipo</option>
+                    <option value="">{t("eventMinimums.selectType")}</option>
                     {tiposInstrumento.map((tipo) => (
                       <option key={tipo.id} value={tipo.id}>
                         {tipo.nombre || tipo.instrumento}
@@ -640,7 +640,7 @@ export default function MinimosEvento() {
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="cantidad" className="block text-[#C0C0C0] text-sm font-medium">
-                    Cantidad Mínima *
+                    {t("eventMinimums.minimumQuantity")} *
                   </label>
                   <input
                     id="cantidad"
@@ -660,7 +660,7 @@ export default function MinimosEvento() {
                   onClick={handleCloseModal}
                   className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
                 >
-                  Cancelar
+                  {t("common.cancel")}
                 </button>
                 <button
                   type="submit"
@@ -676,7 +676,7 @@ export default function MinimosEvento() {
                     )
                   }
                 >
-                  {modalMode === "create" ? "Crear" : "Guardar"}
+                  {modalMode === "create" ? t("common.create") : t("common.save")}
                 </button>
               </div>
             </form>
@@ -688,19 +688,17 @@ export default function MinimosEvento() {
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">Confirmar eliminación</h3>
-            <p className="text-gray-400 mb-6">
-              ¿Estás seguro de que deseas eliminar este mínimo de instrumento? Esta acción no se puede deshacer.
-            </p>
+            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("eventMinimums.confirmDelete")}</h3>
+            <p className="text-gray-400 mb-6">{t("eventMinimums.deleteConfirmText")}</p>
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
                 className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
               >
-                Cancelar
+                {t("common.cancel")}
               </button>
               <button onClick={handleDelete} className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800">
-                Eliminar
+                {t("common.delete")}
               </button>
             </div>
           </div>

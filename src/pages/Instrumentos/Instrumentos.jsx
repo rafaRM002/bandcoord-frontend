@@ -255,7 +255,7 @@ export default function Instrumentos() {
                         {t("instruments.serialNumber")}
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        Tipo
+                        {t("instruments.type")}
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                         {t("instruments.status")}

@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom"
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Youtube } from "lucide-react"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
+  const { t } = useTranslation()
 
   return (
     <footer className="bg-black border-t border-gray-800 w-full mt-6">
@@ -11,12 +13,14 @@ export default function Footer() {
           {/* Logo y descripción */}
           <div className="col-span-1 sm:col-span-2 lg:col-span-1 my-2 flex flex-col items-center sm:items-start">
             <Link to="/" className="flex items-center text-[#C0C0C0] font-bold text-xl mb-4">
-              <img src={`${import.meta.env.BASE_URL}1-removebg-preview.png`} alt="Logo BandCoord" className="mx-2 h-10 w-auto" />
+              <img
+                src={`${import.meta.env.BASE_URL}1-removebg-preview.png`}
+                alt="Logo BandCoord"
+                className="mx-2 h-10 w-auto"
+              />
               BandCoord
             </Link>
-            <p className="text-gray-400 text-sm mb-4 text-center sm:text-left">
-              La plataforma integral para la gestión y coordinación de bandas musicales.
-            </p>
+            <p className="text-gray-400 text-sm mb-4 text-center sm:text-left">{t("footer.description")}</p>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-[#C0C0C0] transition-colors duration-300">
                 <Facebook size={20} />
@@ -39,36 +43,36 @@ export default function Footer() {
 
           {/* Enlaces rápidos */}
           <div className="col-span-1 my-4 flex flex-col items-center">
-            <h3 className="text-[#C0C0C0] font-semibold mb-4 text-center">Enlaces rápidos</h3>
+            <h3 className="text-[#C0C0C0] font-semibold mb-4 text-center">{t("footer.quickLinks")}</h3>
 
             <div className="flex flex-col sm:flex-row sm:justify-center mb-4 w-full">
               <div className="flex flex-col space-y-2 mb-4 sm:mb-0 items-center sm:mr-8">
                 <Link to="/" className="text-gray-400 hover:text-[#C0C0C0] transition-colors duration-300">
-                  Inicio
+                  {t("footer.home")}
                 </Link>
                 <Link to="/eventos" className="text-gray-400 hover:text-[#C0C0C0] transition-colors duration-300">
-                  Eventos
+                  {t("footer.events")}
                 </Link>
                 <Link to="/composiciones" className="text-gray-400 hover:text-[#C0C0C0] transition-colors duration-300">
-                  Composiciones
+                  {t("footer.compositions")}
                 </Link>
                 <Link to="/mensajes" className="text-gray-400 hover:text-[#C0C0C0] transition-colors duration-300">
-                  Mensajes
+                  {t("footer.messages")}
                 </Link>
               </div>
 
               <div className="flex flex-col space-y-2 items-center">
                 <Link to="/prestamos" className="text-gray-400 hover:text-[#C0C0C0] transition-colors duration-300">
-                  Préstamos
+                  {t("footer.loans")}
                 </Link>
                 <Link to="/entidades" className="text-gray-400 hover:text-[#C0C0C0] transition-colors duration-300">
-                  Entidades
+                  {t("footer.entities")}
                 </Link>
                 <Link to="/calendario" className="text-gray-400 hover:text-[#C0C0C0] transition-colors duration-300">
-                  Calendario
+                  {t("footer.calendar")}
                 </Link>
                 <Link to="/instrumentos" className="text-gray-400 hover:text-[#C0C0C0] transition-colors duration-300">
-                  Intrumentos
+                  {t("footer.instruments")}
                 </Link>
               </div>
             </div>
@@ -76,26 +80,26 @@ export default function Footer() {
 
           {/* Recursos */}
           <div className="col-span-1 my-4 flex flex-col items-center">
-            <h3 className="text-[#C0C0C0] font-semibold mb-4 text-center">Recursos</h3>
+            <h3 className="text-[#C0C0C0] font-semibold mb-4 text-center">{t("footer.resources")}</h3>
             <ul className="space-y-2 flex flex-col items-center">
               <li>
                 <a href="#" className="text-gray-400 hover:text-[#C0C0C0] transition-colors duration-300">
-                  Guía de usuario
+                  {t("footer.userGuide")}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-[#C0C0C0] transition-colors duration-300">
-                  Preguntas frecuentes
+                  {t("footer.faq")}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-[#C0C0C0] transition-colors duration-300">
-                  Política de privacidad
+                  {t("footer.privacyPolicy")}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-[#C0C0C0] transition-colors duration-300">
-                  Términos de servicio
+                  {t("footer.termsOfService")}
                 </a>
               </li>
             </ul>
@@ -103,7 +107,7 @@ export default function Footer() {
 
           {/* Contacto */}
           <div className="col-span-1 my-4 flex flex-col items-center sm:items-start">
-            <h3 className="text-[#C0C0C0] font-semibold mb-4 text-center sm:text-left">Contacto</h3>
+            <h3 className="text-[#C0C0C0] font-semibold mb-4 text-center sm:text-left">{t("footer.contact")}</h3>
             <ul className="space-y-3 flex flex-col items-center sm:items-start">
               <li className="flex items-start">
                 <MapPin size={18} className="text-gray-400 mr-2 mt-0.5 flex-shrink-0" />
@@ -131,7 +135,9 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="text-center text-gray-400 text-sm">
-          <p>&copy; {currentYear} BandCoord. Todos los derechos reservados.</p>
+          <p>
+            &copy; {currentYear} BandCoord. {t("footer.allRightsReserved")}
+          </p>
         </div>
       </div>
     </footer>

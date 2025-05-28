@@ -2,11 +2,27 @@
 
 import { useState, useEffect, useContext } from "react"
 import { AuthContext } from "../../context/AuthContext"
-import {Plus, Edit, Trash2, Search, Filter, Calendar, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Clock, MapPin, Info} from "lucide-react"
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Search,
+  Filter,
+  Calendar,
+  ChevronDown,
+  ChevronUp,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  MapPin,
+  Info,
+} from "lucide-react"
 import api from "../../api/axios"
 import { toast } from "react-toastify"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export default function EventoUsuario() {
+  const { t } = useTranslation()
   const [eventosUsuario, setEventosUsuario] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -192,12 +208,12 @@ export default function EventoUsuario() {
           usuario_id: currentEventoUsuario.usuario_id,
           confirmacion: currentEventoUsuario.confirmacion,
         })
-        toast.success("Asignación creada correctamente")
+        toast.success(t("userEvents.assignmentCreatedSuccessfully"))
       } else {
         await api.put(`/evento-usuario/${currentEventoUsuario.evento_id}/${currentEventoUsuario.usuario_id}`, {
           confirmacion: currentEventoUsuario.confirmacion,
         })
-        toast.success("Asignación actualizada correctamente")
+        toast.success(t("userEvents.assignmentUpdatedSuccessfully"))
       }
 
       // Recargar los datos
@@ -205,7 +221,7 @@ export default function EventoUsuario() {
       handleCloseModal()
     } catch (error) {
       console.error("Error al guardar asignación de evento:", error)
-      toast.error("Error al guardar la asignación")
+      toast.error(t("userEvents.errorSavingAssignment"))
     }
   }
 
@@ -227,10 +243,10 @@ export default function EventoUsuario() {
       )
       setShowDeleteModal(false)
       setEventoUsuarioToDelete(null)
-      toast.success("Asignación eliminada correctamente")
+      toast.success(t("userEvents.assignmentDeletedSuccessfully"))
     } catch (error) {
       console.error("Error al eliminar asignación de evento:", error)
-      toast.error("Error al eliminar la asignación")
+      toast.error(t("userEvents.errorDeletingAssignment"))
     }
   }
 
@@ -264,7 +280,7 @@ export default function EventoUsuario() {
 
     // Si no, buscar en la lista de usuarios
     const usuario = usuarios.find((u) => u.id === usuarioId)
-    return usuario ? `${usuario.nombre} ${usuario.apellido1 || ""}` : "Desconocido"
+    return usuario ? `${usuario.nombre} ${usuario.apellido1 || ""}` : t("userEvents.unknownUser")
   }
 
   // Formatear fecha para mostrar
@@ -305,6 +321,21 @@ export default function EventoUsuario() {
   const getEventoTipo = (eventoId) => {
     const evento = eventos.find((e) => e.id === eventoId)
     return evento && evento.tipo ? evento.tipo : ""
+  }
+
+  const getEventoTipoTranslated = (tipo) => {
+    switch (tipo) {
+      case "concierto":
+        return t("events.concert")
+      case "ensayo":
+        return t("events.rehearsal")
+      case "procesion":
+        return t("events.procession")
+      case "pasacalles":
+        return t("events.parade")
+      default:
+        return tipo ? tipo.charAt(0).toUpperCase() + tipo.slice(1) : ""
+    }
   }
 
   // Obtener asignaciones por evento
@@ -360,7 +391,7 @@ export default function EventoUsuario() {
 
   const getTipoInstrumentoNombre = (tipoId) => {
     const tipo = tiposInstrumento.find((t) => t.id === tipoId || t.instrumento === tipoId)
-    return tipo ? tipo.nombre || tipo.instrumento : "Desconocido"
+    return tipo ? tipo.nombre || tipo.instrumento : t("userEvents.unknownInstrument")
   }
 
   // Agrupar asignaciones por evento para la vista de lista
@@ -400,7 +431,7 @@ export default function EventoUsuario() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-[#C0C0C0]">Asignación de Eventos</h1>
+        <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("userEvents.title")}</h1>
         <div className="flex space-x-3">
           <div className="flex border border-gray-800 rounded-md overflow-hidden">
             <button
@@ -411,7 +442,7 @@ export default function EventoUsuario() {
                   : "bg-gray-900/50 text-gray-400 hover:bg-gray-900"
               }`}
             >
-              Lista
+              {t("userEvents.list")}
             </button>
             <button
               onClick={() => setViewMode("stats")}
@@ -419,7 +450,7 @@ export default function EventoUsuario() {
                 viewMode === "stats" ? "bg-black text-[#C0C0C0]" : "bg-gray-900/50 text-gray-400 hover:bg-gray-900"
               }`}
             >
-              Estadísticas
+              {t("userEvents.statistics")}
             </button>
           </div>
           <button
@@ -427,7 +458,7 @@ export default function EventoUsuario() {
             className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
           >
             <Plus size={18} />
-            Nueva Asignación
+            {t("userEvents.newAssignment")}
           </button>
         </div>
       </div>
@@ -435,15 +466,15 @@ export default function EventoUsuario() {
       {/* Mensaje de error */}
       {error && (
         <div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md mb-6">
-          <h3 className="font-semibold">Error de conexión</h3>
+          <h3 className="font-semibold">{t("userEvents.connectionError")}</h3>
           <p>{error}</p>
           <p className="mt-2 text-sm">
-            Verifica que:
+            {t("userEvents.verifyThat")}:
             <ul className="list-disc pl-5 mt-1">
-              <li>El servidor Laravel esté en ejecución en http://localhost:8000</li>
-              <li>La configuración CORS en Laravel permita peticiones desde http://localhost:5173</li>
-              <li>Las rutas de la API estén correctamente definidas</li>
-              <li>Estés autenticado con un token válido</li>
+              <li>{t("userEvents.serverRunning")}</li>
+              <li>{t("userEvents.corsConfiguration")}</li>
+              <li>{t("userEvents.apiRoutesCorrect")}</li>
+              <li>{t("userEvents.authenticatedWithToken")}</li>
             </ul>
           </p>
         </div>
@@ -456,7 +487,7 @@ export default function EventoUsuario() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
             <input
               type="text"
-              placeholder="Buscar por evento o usuario..."
+              placeholder={t("userEvents.searchByEventOrUser")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -469,7 +500,7 @@ export default function EventoUsuario() {
               onChange={(e) => setEventoFilter(e.target.value)}
               className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
             >
-              <option value="">Todos los eventos</option>
+              <option value="">{t("eventMinimums.allEvents")}</option>
               {eventos.map((evento) => (
                 <option key={evento.id} value={evento.id.toString()}>
                   {evento.nombre}
@@ -486,7 +517,7 @@ export default function EventoUsuario() {
                   onChange={(e) => setUsuarioFilter(e.target.value)}
                   className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
                 >
-                  <option value="">Todos los usuarios</option>
+                  <option value="">{t("userEvents.allUsers")}</option>
                   {usuarios.map((usuario) => (
                     <option key={usuario.id} value={usuario.id.toString()}>
                       {usuario.nombre} {usuario.apellido1 || ""}
@@ -501,9 +532,9 @@ export default function EventoUsuario() {
                   onChange={(e) => setConfirmadoFilter(e.target.value)}
                   className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
                 >
-                  <option value="">Todos los estados</option>
-                  <option value="true">Confirmados</option>
-                  <option value="false">Pendientes</option>
+                  <option value="">{t("userEvents.allStatuses")}</option>
+                  <option value="true">{t("userEvents.confirmed")}</option>
+                  <option value="false">{t("userEvents.pending")}</option>
                 </select>
               </div>
             </>
@@ -514,7 +545,7 @@ export default function EventoUsuario() {
       {/* Contenido según el modo de vista */}
       {loading ? (
         <div className="flex justify-center items-center h-64 bg-black/30 border border-gray-800 rounded-lg">
-          <div className="text-[#C0C0C0]">Cargando datos...</div>
+          <div className="text-[#C0C0C0]">{t("common.loading")}</div>
         </div>
       ) : viewMode === "list" ? (
         /* Vista de lista agrupada por evento */
@@ -524,14 +555,14 @@ export default function EventoUsuario() {
               <Calendar size={48} className="text-gray-600 mb-4" />
               <p className="text-gray-400 text-center">
                 {searchTerm || eventoFilter || usuarioFilter || confirmadoFilter
-                  ? "No se encontraron asignaciones con los filtros aplicados."
-                  : "No hay asignaciones de eventos registradas."}
+                  ? t("userEvents.noAssignmentsWithFilters")
+                  : t("userEvents.noAssignments")}
               </p>
               <button
                 onClick={() => handleOpenModal("create")}
                 className="mt-4 text-[#C0C0C0] hover:text-white underline"
               >
-                Añadir la primera asignación
+                {t("userEvents.addFirstAssignment")}
               </button>
             </div>
           ) : (
@@ -577,7 +608,7 @@ export default function EventoUsuario() {
                                       : "bg-gray-900/30 text-gray-400 border border-gray-800"
                             }`}
                           >
-                            {getEventoTipo(evento.id).charAt(0).toUpperCase() + getEventoTipo(evento.id).slice(1)}
+                            {getEventoTipoTranslated(getEventoTipo(evento.id))}
                           </span>
                         </div>
                       )}
@@ -596,13 +627,13 @@ export default function EventoUsuario() {
                         <thead className="bg-gray-900/30 border-b border-gray-800">
                           <tr>
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                              Usuario
+                              {t("userEvents.user")}
                             </th>
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                              Confirmado
+                              {t("userEvents.confirmed")}
                             </th>
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                              Acciones
+                              {t("common.actions")}
                             </th>
                           </tr>
                         </thead>
@@ -620,7 +651,7 @@ export default function EventoUsuario() {
                                       : "bg-yellow-900/30 text-yellow-400 border border-yellow-800"
                                   }`}
                                 >
-                                  {item.confirmacion ? "Confirmado" : "Pendiente"}
+                                  {item.confirmacion ? t("userEvents.confirmed") : t("userEvents.pending")}
                                 </span>
                               </td>
                               <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
@@ -628,14 +659,14 @@ export default function EventoUsuario() {
                                   <button
                                     onClick={() => handleOpenModal("edit", item)}
                                     className="p-1 text-gray-400 hover:text-[#C0C0C0]"
-                                    title="Editar"
+                                    title={t("common.edit")}
                                   >
                                     <Edit size={18} />
                                   </button>
                                   <button
                                     onClick={() => confirmDelete(item.evento_id, item.usuario_id)}
                                     className="p-1 text-gray-400 hover:text-red-400"
-                                    title="Eliminar"
+                                    title={t("common.delete")}
                                   >
                                     <Trash2 size={18} />
                                   </button>
@@ -660,7 +691,7 @@ export default function EventoUsuario() {
                         className="flex items-center gap-1 text-sm text-gray-400 hover:text-[#C0C0C0]"
                       >
                         <Plus size={16} />
-                        Añadir asignación
+                        {t("userEvents.addAssignment")}
                       </button>
                     </div>
                   </>
@@ -673,8 +704,8 @@ export default function EventoUsuario() {
           {totalPages > 1 && (
             <div className="flex justify-between items-center bg-gray-900/50 px-4 py-3 rounded-md">
               <div className="text-sm text-gray-400">
-                Mostrando {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, eventosAgrupados.length)} de{" "}
-                {eventosAgrupados.length} eventos
+                {t("common.showing")} {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, eventosAgrupados.length)}{" "}
+                {t("common.of")} {eventosAgrupados.length} {t("events.events")}
               </div>
               <div className="flex space-x-1">
                 <button
@@ -716,14 +747,14 @@ export default function EventoUsuario() {
               <Calendar size={48} className="text-gray-600 mb-4" />
               <p className="text-gray-400 text-center">
                 {searchTerm || eventoFilter
-                  ? "No se encontraron eventos con los filtros aplicados."
-                  : "No hay eventos con asignaciones registradas."}
+                  ? t("userEvents.noEventsWithFilters")
+                  : t("userEvents.noEventsWithAssignments")}
               </p>
               <button
                 onClick={() => handleOpenModal("create")}
                 className="mt-4 text-[#C0C0C0] hover:text-white underline"
               >
-                Añadir la primera asignación
+                {t("userEvents.addFirstAssignment")}
               </button>
             </div>
           ) : (
@@ -741,16 +772,18 @@ export default function EventoUsuario() {
                       <h2 className="text-lg font-semibold text-[#C0C0C0]">{evento.nombre}</h2>
                       <p className="text-sm text-gray-400">
                         {evento.fecha && `${formatDate(evento.fecha)} · `}
-                        {evento.tipo && evento.tipo.charAt(0).toUpperCase() + evento.tipo.slice(1)}
+                        {evento.tipo && getEventoTipoTranslated(evento.tipo)}
                         {evento.lugar && ` · ${evento.lugar}`}
                       </p>
                     </div>
                     <div className="flex items-center">
                       <div className="mr-4 text-right">
                         <div className="text-sm font-medium text-[#C0C0C0]">
-                          {estadisticas.totalConfirmados} / {estadisticas.totalAsignados} confirmados
+                          {estadisticas.totalConfirmados} / {estadisticas.totalAsignados} {t("userEvents.confirmed")}
                         </div>
-                        <div className="text-xs text-gray-400">{estadisticas.porcentajeConfirmados}% de asistencia</div>
+                        <div className="text-xs text-gray-400">
+                          {estadisticas.porcentajeConfirmados}% {t("userEvents.attendance")}
+                        </div>
                       </div>
                       <button className="text-gray-400">
                         {expandedEventos[evento.id] ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
@@ -765,19 +798,19 @@ export default function EventoUsuario() {
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <div className="bg-gray-900/30 border border-gray-800 rounded-lg p-4">
                           <div className="flex items-center justify-between">
-                            <div className="text-gray-400 text-sm">Total asignados</div>
+                            <div className="text-gray-400 text-sm">{t("userEvents.totalAssigned")}</div>
                             <div className="text-[#C0C0C0] text-xl font-semibold">{estadisticas.totalAsignados}</div>
                           </div>
                         </div>
                         <div className="bg-gray-900/30 border border-gray-800 rounded-lg p-4">
                           <div className="flex items-center justify-between">
-                            <div className="text-gray-400 text-sm">Confirmados</div>
+                            <div className="text-gray-400 text-sm">{t("userEvents.confirmed")}</div>
                             <div className="text-green-400 text-xl font-semibold">{estadisticas.totalConfirmados}</div>
                           </div>
                         </div>
                         <div className="bg-gray-900/30 border border-gray-800 rounded-lg p-4">
                           <div className="flex items-center justify-between">
-                            <div className="text-gray-400 text-sm">Porcentaje de asistencia</div>
+                            <div className="text-gray-400 text-sm">{t("userEvents.attendancePercentage")}</div>
                             <div className="text-[#C0C0C0] text-xl font-semibold">
                               {estadisticas.porcentajeConfirmados}%
                             </div>
@@ -786,12 +819,10 @@ export default function EventoUsuario() {
                       </div>
 
                       {/* Estadísticas por tipo de instrumento */}
-                      <h3 className="text-[#C0C0C0] font-medium mb-3">Asistencia por tipo de instrumento</h3>
+                      <h3 className="text-[#C0C0C0] font-medium mb-3">{t("userEvents.attendanceByInstrument")}</h3>
 
                       {Object.keys(estadisticas.porTipoInstrumento).length === 0 ? (
-                        <p className="text-gray-400 text-center py-4">
-                          No hay datos disponibles por tipo de instrumento.
-                        </p>
+                        <p className="text-gray-400 text-center py-4">{t("userEvents.noInstrumentData")}</p>
                       ) : (
                         <div className="space-y-3">
                           {Object.entries(estadisticas.porTipoInstrumento).map(([tipoId, datos]) => (
@@ -799,7 +830,7 @@ export default function EventoUsuario() {
                               <div className="flex justify-between items-center mb-2">
                                 <div className="text-[#C0C0C0]">{datos.nombre}</div>
                                 <div className="text-gray-400 text-sm">
-                                  {datos.confirmados} / {datos.total} confirmados
+                                  {datos.confirmados} / {datos.total} {t("userEvents.confirmed")}
                                 </div>
                               </div>
                               <div className="w-full bg-gray-800 rounded-full h-2.5">
@@ -816,7 +847,7 @@ export default function EventoUsuario() {
                       {/* Lista de asignaciones */}
                       <div className="mt-6">
                         <div className="flex justify-between items-center mb-3">
-                          <h3 className="text-[#C0C0C0] font-medium">Listado de asignaciones</h3>
+                          <h3 className="text-[#C0C0C0] font-medium">{t("userEvents.assignmentList")}</h3>
                           <button
                             onClick={() =>
                               handleOpenModal("create", {
@@ -828,7 +859,7 @@ export default function EventoUsuario() {
                             className="flex items-center gap-1 text-sm text-gray-400 hover:text-[#C0C0C0]"
                           >
                             <Plus size={16} />
-                            Añadir asignación
+                            {t("userEvents.addAssignment")}
                           </button>
                         </div>
 
@@ -837,13 +868,13 @@ export default function EventoUsuario() {
                             <thead className="bg-gray-900/50 border-b border-gray-800">
                               <tr>
                                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                                  Usuario
+                                  {t("userEvents.user")}
                                 </th>
                                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                                  Estado
+                                  {t("common.status")}
                                 </th>
                                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                                  Acciones
+                                  {t("common.actions")}
                                 </th>
                               </tr>
                             </thead>
@@ -861,7 +892,7 @@ export default function EventoUsuario() {
                                           : "bg-yellow-900/30 text-yellow-400 border border-yellow-800"
                                       }`}
                                     >
-                                      {item.confirmacion ? "Confirmado" : "Pendiente"}
+                                      {item.confirmacion ? t("userEvents.confirmed") : t("userEvents.pending")}
                                     </span>
                                   </td>
                                   <td className="px-4 py-2 whitespace-nowrap text-sm">
@@ -869,14 +900,14 @@ export default function EventoUsuario() {
                                       <button
                                         onClick={() => handleOpenModal("edit", item)}
                                         className="p-1 text-gray-400 hover:text-[#C0C0C0]"
-                                        title="Editar"
+                                        title={t("common.edit")}
                                       >
                                         <Edit size={16} />
                                       </button>
                                       <button
                                         onClick={() => confirmDelete(item.evento_id, item.usuario_id)}
                                         className="p-1 text-gray-400 hover:text-red-400"
-                                        title="Eliminar"
+                                        title={t("common.delete")}
                                       >
                                         <Trash2 size={16} />
                                       </button>
@@ -898,8 +929,8 @@ export default function EventoUsuario() {
           {totalStatsPages > 1 && (
             <div className="flex justify-between items-center bg-gray-900/50 px-4 py-3 rounded-md">
               <div className="text-sm text-gray-400">
-                Mostrando {indexOfFirstStat + 1}-{Math.min(indexOfLastStat, filteredEventos.length)} de{" "}
-                {filteredEventos.length} eventos
+                {t("common.showing")} {indexOfFirstStat + 1}-{Math.min(indexOfLastStat, filteredEventos.length)}{" "}
+                {t("common.of")} {filteredEventos.length} {t("events.events")}
               </div>
               <div className="flex space-x-1">
                 <button
@@ -940,13 +971,13 @@ export default function EventoUsuario() {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
             <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">
-              {modalMode === "create" ? "Nueva Asignación de Evento" : "Editar Asignación de Evento"}
+              {modalMode === "create" ? t("userEvents.newAssignment") : t("userEvents.editAssignment")}
             </h3>
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div className="space-y-2">
                   <label htmlFor="evento_id" className="block text-[#C0C0C0] text-sm font-medium">
-                    Evento *
+                    {t("events.name")} *
                   </label>
                   <select
                     id="evento_id"
@@ -957,7 +988,7 @@ export default function EventoUsuario() {
                     disabled={modalMode === "edit"}
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] disabled:opacity-70"
                   >
-                    <option value="">Selecciona un evento</option>
+                    <option value="">{t("eventMinimums.selectEvent")}</option>
                     {eventos.map((evento) => (
                       <option key={evento.id} value={evento.id}>
                         {evento.nombre} ({formatDate(evento.fecha)})
@@ -967,7 +998,7 @@ export default function EventoUsuario() {
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="usuario_id" className="block text-[#C0C0C0] text-sm font-medium">
-                    Usuario *
+                    {t("userEvents.user")} *
                   </label>
                   <select
                     id="usuario_id"
@@ -978,7 +1009,7 @@ export default function EventoUsuario() {
                     disabled={modalMode === "edit"}
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] disabled:opacity-70"
                   >
-                    <option value="">Selecciona un usuario</option>
+                    <option value="">{t("userEvents.selectUser")}</option>
                     {usuarios.map((usuario) => (
                       <option key={usuario.id} value={usuario.id}>
                         {usuario.nombre} {usuario.apellido1 || ""}
@@ -996,7 +1027,7 @@ export default function EventoUsuario() {
                     className="h-4 w-4 text-[#C0C0C0] focus:ring-[#C0C0C0] border-gray-800 rounded"
                   />
                   <label htmlFor="confirmacion" className="ml-2 block text-[#C0C0C0] text-sm">
-                    Confirmado
+                    {t("userEvents.confirmed")}
                   </label>
                 </div>
               </div>
@@ -1006,13 +1037,13 @@ export default function EventoUsuario() {
                   onClick={handleCloseModal}
                   className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
                 >
-                  Cancelar
+                  {t("common.cancel")}
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors"
                 >
-                  {modalMode === "create" ? "Crear" : "Guardar"}
+                  {modalMode === "create" ? t("common.create") : t("common.save")}
                 </button>
               </div>
             </form>
@@ -1024,19 +1055,17 @@ export default function EventoUsuario() {
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">Confirmar eliminación</h3>
-            <p className="text-gray-400 mb-6">
-              ¿Estás seguro de que deseas eliminar esta asignación de evento? Esta acción no se puede deshacer.
-            </p>
+            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("userEvents.confirmDelete")}</h3>
+            <p className="text-gray-400 mb-6">{t("userEvents.deleteConfirmText")}</p>
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
                 className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
               >
-                Cancelar
+                {t("common.cancel")}
               </button>
               <button onClick={handleDelete} className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800">
-                Eliminar
+                {t("common.delete")}
               </button>
             </div>
           </div>
