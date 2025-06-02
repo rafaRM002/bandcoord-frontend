@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { Music, Calendar, MessageSquare, Users, Package, Shield, Award, User, BookOpen } from "lucide-react"
+import { Music, Calendar, MessageSquare, Users, Package, Shield, Award, User } from "lucide-react"
 import { useTranslation } from "../../hooks/useTranslation"
 
 export default function Home({ user, loading }) {
@@ -287,22 +287,22 @@ function UserDashboard({ user }) {
             <AdminCard
               icon={<Users className="h-8 w-8 text-[#C0C0C0]" />}
               title={t("home.userManagement")}
-              link="/admin/usuarios"
+              link="/usuarios"
             />
             <AdminCard
               icon={<Package className="h-8 w-8 text-[#C0C0C0]" />}
               title={t("home.instrumentManagement")}
-              link="/admin/instrumentos"
+              link="/instrumentos"
+            />
+            <AdminCard
+              icon={<Users className="h-8 w-8 text-[#C0C0C0]" />}
+              title={t("home.entityManagement")}
+              link="/entidades"
             />
             <AdminCard
               icon={<Calendar className="h-8 w-8 text-[#C0C0C0]" />}
-              title={t("home.eventManagementAdmin")}
-              link="/admin/eventos"
-            />
-            <AdminCard
-              icon={<BookOpen className="h-8 w-8 text-[#C0C0C0]" />}
-              title={t("home.compositionManagement")}
-              link="/admin/composiciones"
+              title={t("home.calendarManagement")}
+              link="/calendario"
             />
           </div>
         </section>
