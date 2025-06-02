@@ -183,11 +183,17 @@ export default function Perfil() {
       const fechaNac = formData.fecha_nac ? new Date(formData.fecha_nac).toISOString().split("T")[0] : null
 
       const userData = {
-        ...formData,
+        nombre: formData.nombre,
+        apellido1: formData.apellido1,
+        apellido2: formData.apellido2,
+        email: formData.email,
+        telefono: formData.telefono,
         fecha_nac: fechaNac,
       }
 
+      // Actualizar datos del perfil
       await api.put(`/usuarios/${user.id}`, userData)
+
       setSuccess(t("profile.dataUpdatedSuccessfully", "Datos actualizados correctamente"))
 
       // Configurar el temporizador para ocultar el mensaje después de 3 segundos
@@ -195,13 +201,21 @@ export default function Perfil() {
         setSuccess("")
         setShowSpinner(false)
       }, 3000)
-
-      // Actualizar los datos del usuario en el contexto
-      // Esto normalmente requeriría recargar los datos del usuario desde el backend
-      // o actualizar el contexto de autenticación
     } catch (error) {
       console.error("Error al actualizar perfil:", error)
-      setError(t("profile.errorUpdatingProfile", "Error al actualizar los datos. Por favor, inténtalo de nuevo."))
+
+      if (error.response && error.response.status === 422) {
+        // Error de validación
+        const validationErrors = error.response.data.errors || error.response.data.message
+        if (typeof validationErrors === "object") {
+          const firstError = Object.values(validationErrors)[0]
+          setError(Array.isArray(firstError) ? firstError[0] : firstError)
+        } else {
+          setError(validationErrors || "Error de validación")
+        }
+      } else {
+        setError(t("profile.errorUpdatingProfile", "Error al actualizar los datos. Por favor, inténtalo de nuevo."))
+      }
       setShowSpinner(false)
     } finally {
       setSaving(false)
@@ -232,10 +246,22 @@ export default function Perfil() {
         return
       }
 
-      await api.put(`/usuarios/${user.id}/password`, {
+      // Cambiar la contraseña
+      await api.put(`/usuarios/${user.id}/`, {
         current_password: passwordData.current_password,
         new_password: passwordData.new_password,
       })
+
+      // Enviar email de confirmación
+      try {
+        await api.post("/mailTo", {
+          email: user.email,
+          mensaje: `Hola ${user.nombre},\n\nTu contraseña ha sido cambiada correctamente en BandCoord.\n\nSi no fuiste tú quien realizó este cambio, por favor contacta con el administrador inmediatamente.\n\nSaludos,\nEquipo BandCoord`,
+        })
+      } catch (emailError) {
+        console.warn("Error al enviar email de confirmación:", emailError)
+        // No mostramos error al usuario por el email, solo por consola
+      }
 
       setSuccess(t("profile.passwordUpdatedSuccessfully", "Contraseña actualizada correctamente"))
       setPasswordData({
@@ -254,6 +280,15 @@ export default function Perfil() {
 
       if (error.response && error.response.status === 401) {
         setError(t("profile.incorrectCurrentPassword", "La contraseña actual es incorrecta"))
+      } else if (error.response && error.response.status === 422) {
+        // Error de validación
+        const validationErrors = error.response.data.errors || error.response.data.message
+        if (typeof validationErrors === "object") {
+          const firstError = Object.values(validationErrors)[0]
+          setError(Array.isArray(firstError) ? firstError[0] : firstError)
+        } else {
+          setError(validationErrors || "Error de validación")
+        }
       } else {
         setError(t("profile.errorChangingPassword", "Error al cambiar la contraseña. Por favor, inténtalo de nuevo."))
       }
