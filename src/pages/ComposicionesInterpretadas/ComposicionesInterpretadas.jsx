@@ -21,6 +21,8 @@ import {
   X,
 } from "lucide-react"
 import { useTranslation } from "../../hooks/useTranslation"
+// Importar useAuth
+import { useAuth } from "../../context/AuthContext"
 
 const ComposicionesInterpretadas = () => {
   const [composiciones, setComposiciones] = useState([])
@@ -43,6 +45,8 @@ const ComposicionesInterpretadas = () => {
   const [selectedUsuarioId, setSelectedUsuarioId] = useState("")
 
   const { t } = useTranslation()
+  // Dentro del componente:
+  const { user, isAdmin } = useAuth()
 
   // Configuración de paginación
   const composicionesPorPagina = 2
@@ -146,10 +150,18 @@ const ComposicionesInterpretadas = () => {
       const composicionesArray = Object.values(composicionesAgrupadas)
 
       // 8. Parsear rutas y ordenar alfabéticamente
-      const composicionesConRutasParsed = composicionesArray.map((comp) => ({
-        ...comp,
-        parsedRuta: parseRuta(comp.ruta),
-      }))
+      const composicionesConRutasParsed = composicionesArray
+        .map((comp) => ({
+          ...comp,
+          parsedRuta: parseRuta(comp.ruta),
+        }))
+        .filter((comp) => {
+          // Si no es admin, solo mostrar composiciones que interpreta el usuario actual
+          if (!isAdmin) {
+            return comp.usuarios.some((usuario) => usuario.usuario_id === user.id)
+          }
+          return true
+        })
 
       // 9. Ordenar alfabéticamente por nombre
       composicionesConRutasParsed.sort((a, b) => a.nombre.localeCompare(b.nombre))
@@ -443,13 +455,15 @@ const ComposicionesInterpretadas = () => {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("interpretedCompositions.title")}</h1>
-        <Link
-          to="/composiciones"
-          className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
-        >
-          <Music size={18} />
-          {t("interpretedCompositions.manageCompositions")}
-        </Link>
+        {isAdmin && (
+          <Link
+            to="/composiciones"
+            className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
+          >
+            <Music size={18} />
+            {t("interpretedCompositions.manageCompositions")}
+          </Link>
+        )}
       </div>
 
       {/* Buscador */}
@@ -510,13 +524,15 @@ const ComposicionesInterpretadas = () => {
 
                   <div className="flex items-center space-x-2">
                     {/* Botón para asignar usuario */}
-                    <button
-                      onClick={() => handleOpenAssignModal(composicion)}
-                      className="p-2 bg-gray-800 text-gray-400 rounded-full hover:bg-blue-900/50 hover:text-blue-400"
-                      title={t("interpretedCompositions.assignToUser")}
-                    >
-                      <UserPlus size={16} />
-                    </button>
+                    {isAdmin && (
+                      <button
+                        onClick={() => handleOpenAssignModal(composicion)}
+                        className="p-2 bg-gray-800 text-gray-400 rounded-full hover:bg-blue-900/50 hover:text-blue-400"
+                        title={t("interpretedCompositions.assignToUser")}
+                      >
+                        <UserPlus size={16} />
+                      </button>
+                    )}
 
                     {/* Botón de reproducción según el tipo */}
                     {composicion.parsedRuta &&
@@ -646,15 +662,17 @@ const ComposicionesInterpretadas = () => {
                             </div>
 
                             {/* Botón para eliminar asignación */}
-                            <button
-                              onClick={() =>
-                                handleDeleteUserComposicion(composicion.composicion_id, usuario.usuario_id)
-                              }
-                              className="p-1.5 text-gray-400 hover:text-red-400 transition-colors"
-                              title={t("interpretedCompositions.deleteAssignment")}
-                            >
-                              <X size={14} />
-                            </button>
+                            {isAdmin && (
+                              <button
+                                onClick={() =>
+                                  handleDeleteUserComposicion(composicion.composicion_id, usuario.usuario_id)
+                                }
+                                className="p-1.5 text-gray-400 hover:text-red-400 transition-colors"
+                                title={t("interpretedCompositions.deleteAssignment")}
+                              >
+                                <X size={14} />
+                              </button>
+                            )}
                           </div>
                         </div>
                       ))}

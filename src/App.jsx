@@ -29,6 +29,7 @@ import EventoUsuario from "./pages/EventoUsuario/EventoUsuario"
 import ConfirmacionEventos from "./pages/ConfirmacionEventos/ConfirmacionEventos"
 import ComposicionesInterpretadas from "./pages/ComposicionesInterpretadas/ComposicionesInterpretadas"
 import MensajesUsuario from "./pages/MensajesUsuario/MensajesUsuario"
+import MemberRoute from "./components/MemberRoute"
 
 function App() {
   return (
@@ -85,49 +86,85 @@ function AppContent() {
           <Route path="/" element={<Home user={user} loading={loading} />} />
 
           {/* Perfil de usuario */}
-          <Route path="/perfil" element={user ? <Perfil /> : <Navigate to="/login" replace />} />
+          <Route
+            path="/perfil"
+            element={
+              <ProtectedRoute>
+                <Perfil />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Rutas para restablecer contraseña */}
           <Route path="/restablecer-password" element={<RestablecerPassword />} />
           <Route path="/nueva-password" element={<NuevaPassword />} />
 
-          {/* Admin routes - Instrumentos */}
+          {/* Admin routes - Instrumentos - Ahora accesible para miembros */}
           <Route
             path="/instrumentos"
-            element={user && user.role === "admin" ? <Instrumentos /> : <Navigate to="/login" replace />}
+            element={
+              <MemberRoute>
+                <Instrumentos />
+              </MemberRoute>
+            }
           />
           <Route
             path="/tipos-instrumentos"
-            element={user && user.role === "admin" ? <TiposInstrumento /> : <Navigate to="/login" replace />}
+            element={
+              <MemberRoute>
+                <TiposInstrumento />
+              </MemberRoute>
+            }
           />
 
-          {/* Admin routes - Eventos */}
+          {/* Admin routes - Eventos - Ahora accesible para miembros */}
           <Route
             path="/eventos"
-            element={user && user.role === "admin" ? <Eventos /> : <Navigate to="/login" replace />}
+            element={
+              <MemberRoute>
+                <Eventos />
+              </MemberRoute>
+            }
           />
           <Route
             path="/minimos-eventos"
-            element={user && user.role === "admin" ? <MinimosEvento /> : <Navigate to="/login" replace />}
+            element={
+              <MemberRoute>
+                <MinimosEvento />
+              </MemberRoute>
+            }
           />
 
-          {/* Admin routes - Préstamos */}
+          {/* Admin routes - Préstamos - Ahora accesible para miembros */}
           <Route
             path="/prestamos"
-            element={user && user.role === "admin" ? <Prestamos /> : <Navigate to="/login" replace />}
+            element={
+              <MemberRoute>
+                <Prestamos />
+              </MemberRoute>
+            }
           />
 
-          {/* Admin routes - Entidades */}
+          {/* Admin routes - Entidades - Ahora accesible para miembros */}
           <Route
             path="/entidades"
-            element={user && user.role === "admin" ? <Entidades /> : <Navigate to="/login" replace />}
+            element={
+              <MemberRoute>
+                <Entidades />
+              </MemberRoute>
+            }
           />
 
-          {/* Admin routes - Composiciones */}
+          {/* Admin routes - Composiciones - Ahora accesible para miembros */}
           <Route
             path="/composiciones"
-            element={user && user.role === "admin" ? <Composiciones /> : <Navigate to="/login" replace />}
+            element={
+              <MemberRoute>
+                <Composiciones />
+              </MemberRoute>
+            }
           />
+
           {/* Mensajes routes */}
           <Route
             path="/mensajes"
@@ -162,13 +199,17 @@ function AppContent() {
             }
           />
 
-          {/* Admin routes - Calendario */}
+          {/* Admin routes - Calendario - Ahora accesible para miembros */}
           <Route
             path="/calendario"
-            element={user && user.role === "admin" ? <Calendario /> : <Navigate to="/login" replace />}
+            element={
+              <MemberRoute>
+                <Calendario />
+              </MemberRoute>
+            }
           />
 
-          {/* Admin routes - Gestión de Usuarios */}
+          {/* Admin routes - Gestión de Usuarios - Solo admin */}
           <Route
             path="/usuarios"
             element={user && user.role === "admin" ? <GestionUsuarios /> : <Navigate to="/" replace />}

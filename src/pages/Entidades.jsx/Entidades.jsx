@@ -5,6 +5,8 @@ import { Plus, Edit, Trash2, Search, Building2, ArrowLeft, ArrowRight, Save, Pho
 import api from "../../api/axios"
 import { toast } from "react-toastify"
 import { useTranslation } from "../../hooks/useTranslation"
+// Importar useAuth
+import { useAuth } from "../../context/AuthContext"
 
 export default function Entidades() {
   const { t } = useTranslation()
@@ -30,6 +32,9 @@ export default function Entidades() {
     telefono: "",
     email_contacto: "",
   })
+
+  // Dentro del componente:
+  const { isAdmin } = useAuth()
 
   useEffect(() => {
     const fetchEntidades = async () => {
@@ -172,13 +177,15 @@ export default function Entidades() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("entities.title")}</h1>
-        <button
-          onClick={() => handleOpenModal("create")}
-          className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
-        >
-          <Plus size={18} />
-          {t("entities.newEntity")}
-        </button>
+        {isAdmin && (
+          <button
+            onClick={() => handleOpenModal("create")}
+            className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
+          >
+            <Plus size={18} />
+            {t("entities.newEntity")}
+          </button>
+        )}
       </div>
 
       {/* Búsqueda */}
@@ -207,12 +214,14 @@ export default function Entidades() {
             <p className="text-gray-400 text-center">
               {searchTerm ? t("entities.noEntitiesWithFilters") : t("entities.noEntities")}
             </p>
-            <button
-              onClick={() => handleOpenModal("create")}
-              className="mt-4 text-[#C0C0C0] hover:text-white underline"
-            >
-              {t("entities.addFirstEntity")}
-            </button>
+            {isAdmin && (
+              <button
+                onClick={() => handleOpenModal("create")}
+                className="mt-4 text-[#C0C0C0] hover:text-white underline"
+              >
+                {t("entities.addFirstEntity")}
+              </button>
+            )}
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -232,7 +241,7 @@ export default function Entidades() {
                     {t("entities.phone")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    {t("common.actions")}
+                    {isAdmin ? t("common.actions") : ""}
                   </th>
                 </tr>
               </thead>
@@ -248,20 +257,22 @@ export default function Entidades() {
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{entidad.telefono || "-"}</td>
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => handleOpenModal("edit", entidad)}
-                          className="p-1 text-gray-400 hover:text-[#C0C0C0]"
-                        >
-                          <Edit size={18} />
-                        </button>
-                        <button
-                          onClick={() => confirmDelete(entidad.id)}
-                          className="p-1 text-gray-400 hover:text-red-400"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
+                      {isAdmin && (
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleOpenModal("edit", entidad)}
+                            className="p-1 text-gray-400 hover:text-[#C0C0C0]"
+                          >
+                            <Edit size={18} />
+                          </button>
+                          <button
+                            onClick={() => confirmDelete(entidad.id)}
+                            className="p-1 text-gray-400 hover:text-red-400"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))}

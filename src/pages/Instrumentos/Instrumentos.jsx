@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { Plus, Edit, Trash2, Search, Music, Filter, ChevronLeft, ChevronRight, Save, X } from "lucide-react"
 import api from "../../api/axios"
 import { useTranslation } from "../../hooks/useTranslation"
+// Corregir la importación de useAuth
+import { useAuth } from "../../context/AuthContext"
 
 export default function Instrumentos() {
   const [instrumentos, setInstrumentos] = useState([])
@@ -28,6 +30,9 @@ export default function Instrumentos() {
     instrumento_tipo_id: "",
     estado: "disponible",
   })
+
+  // Dentro del componente, después de las declaraciones de estado:
+  const { isAdmin } = useAuth()
 
   useEffect(() => {
     fetchData()
@@ -169,15 +174,18 @@ export default function Instrumentos() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Modificar el botón "Nuevo Instrumento" para que solo aparezca para admins: */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("instruments.title")}</h1>
-        <button
-          onClick={() => handleOpenModal("create")}
-          className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
-        >
-          <Plus size={18} />
-          {t("instruments.newInstrument")}
-        </button>
+        {isAdmin && (
+          <button
+            onClick={() => handleOpenModal("create")}
+            className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
+          >
+            <Plus size={18} />
+            {t("instruments.newInstrument")}
+          </button>
+        )}
       </div>
 
       {/* Mensaje de error */}
@@ -232,17 +240,20 @@ export default function Instrumentos() {
         ) : filteredInstrumentos.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-64">
             <Music size={48} className="text-gray-600 mb-4" />
+            {/* Modificar el mensaje cuando no hay instrumentos para que no muestre el botón de añadir para miembros: */}
             <p className="text-gray-400 text-center">
               {searchTerm || tipoFilter
                 ? "No se encontraron instrumentos con los filtros aplicados."
                 : t("instruments.noInstruments")}
             </p>
-            <button
-              onClick={() => handleOpenModal("create")}
-              className="mt-4 text-[#C0C0C0] hover:text-white underline"
-            >
-              {t("instruments.addFirstInstrument")}
-            </button>
+            {isAdmin && (
+              <button
+                onClick={() => handleOpenModal("create")}
+                className="mt-4 text-[#C0C0C0] hover:text-white underline"
+              >
+                {t("instruments.addFirstInstrument")}
+              </button>
+            )}
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -260,8 +271,9 @@ export default function Instrumentos() {
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                         {t("instruments.status")}
                       </th>
+                      {/* Modificar la columna de acciones en la tabla para que solo aparezca para admins: */}
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        {t("common.actions")}
+                        {isAdmin ? t("common.actions") : ""}
                       </th>
                     </tr>
                   </thead>
@@ -287,21 +299,24 @@ export default function Instrumentos() {
                             {instrumento.estado.charAt(0).toUpperCase() + instrumento.estado.slice(1)}
                           </span>
                         </td>
+                        {/* Y en el tbody: */}
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => handleOpenModal("edit", instrumento)}
-                              className="p-1 text-gray-400 hover:text-[#C0C0C0]"
-                            >
-                              <Edit size={18} />
-                            </button>
-                            <button
-                              onClick={() => confirmDelete(instrumento.numero_serie)}
-                              className="p-1 text-gray-400 hover:text-red-400"
-                            >
-                              <Trash2 size={18} />
-                            </button>
-                          </div>
+                          {isAdmin && (
+                            <div className="flex space-x-2">
+                              <button
+                                onClick={() => handleOpenModal("edit", instrumento)}
+                                className="p-1 text-gray-400 hover:text-[#C0C0C0]"
+                              >
+                                <Edit size={18} />
+                              </button>
+                              <button
+                                onClick={() => confirmDelete(instrumento.numero_serie)}
+                                className="p-1 text-gray-400 hover:text-red-400"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                            </div>
+                          )}
                         </td>
                       </tr>
                     ))}

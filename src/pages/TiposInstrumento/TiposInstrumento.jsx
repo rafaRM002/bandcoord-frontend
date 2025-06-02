@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { Plus, Edit, Trash2, Search, Music, ChevronLeft, ChevronRight } from "lucide-react"
 import api from "../../api/axios"
 import { useTranslation } from "../../hooks/useTranslation"
+// Importar useAuth
+import { useAuth } from "../../context/AuthContext"
 
 export default function TiposInstrumento() {
   const [tipos, setTipos] = useState([])
@@ -21,6 +23,8 @@ export default function TiposInstrumento() {
   const [itemsPerPage] = useState(5)
 
   const { t } = useTranslation()
+  // Dentro del componente:
+  const { isAdmin } = useAuth()
 
   useEffect(() => {
     fetchTipos()
@@ -149,13 +153,15 @@ export default function TiposInstrumento() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("instrumentTypes.title")}</h1>
-        <button
-          onClick={() => handleOpenModal("create")}
-          className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
-        >
-          <Plus size={18} />
-          {t("instrumentTypes.newType")}
-        </button>
+        {isAdmin && (
+          <button
+            onClick={() => handleOpenModal("create")}
+            className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
+          >
+            <Plus size={18} />
+            {t("instrumentTypes.newType")}
+          </button>
+        )}
       </div>
 
       {/* Mensaje de error */}
@@ -203,12 +209,14 @@ export default function TiposInstrumento() {
                 ? "No se encontraron tipos de instrumento con la búsqueda aplicada."
                 : t("instrumentTypes.noTypes")}
             </p>
-            <button
-              onClick={() => handleOpenModal("create")}
-              className="mt-4 text-[#C0C0C0] hover:text-white underline"
-            >
-              {t("instrumentTypes.addFirstType")}
-            </button>
+            {isAdmin && (
+              <button
+                onClick={() => handleOpenModal("create")}
+                className="mt-4 text-[#C0C0C0] hover:text-white underline"
+              >
+                {t("instrumentTypes.addFirstType")}
+              </button>
+            )}
           </div>
         ) : (
           <table className="w-full">
@@ -221,7 +229,7 @@ export default function TiposInstrumento() {
                   {t("instrumentTypes.quantity")}
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                  {t("common.actions")}
+                  {isAdmin ? t("common.actions") : ""}
                 </th>
               </tr>
             </thead>
@@ -231,20 +239,22 @@ export default function TiposInstrumento() {
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{tipo.instrumento}</td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{tipo.cantidad}</td>
                   <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => handleOpenModal("edit", tipo)}
-                        className="p-1 text-gray-400 hover:text-[#C0C0C0]"
-                      >
-                        <Edit size={18} />
-                      </button>
-                      <button
-                        onClick={() => confirmDelete(tipo.instrumento)}
-                        className="p-1 text-gray-400 hover:text-red-400"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
+                    {isAdmin && (
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => handleOpenModal("edit", tipo)}
+                          className="p-1 text-gray-400 hover:text-[#C0C0C0]"
+                        >
+                          <Edit size={18} />
+                        </button>
+                        <button
+                          onClick={() => confirmDelete(tipo.instrumento)}
+                          className="p-1 text-gray-400 hover:text-red-400"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}

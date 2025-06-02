@@ -5,6 +5,8 @@ import { Plus, Edit, Trash2, Search, Calendar, Filter, MapPin, ChevronLeft, Chev
 import api from "../../api/axios"
 import FormularioEvento from "./FormularioEvento"
 import { useTranslation } from "../../hooks/useTranslation"
+// Importar useAuth
+import { useAuth } from "../../context/AuthContext"
 
 export default function Eventos() {
   const [eventos, setEventos] = useState([])
@@ -18,6 +20,8 @@ export default function Eventos() {
   const [showFormModal, setShowFormModal] = useState(false)
   const [currentEvento, setCurrentEvento] = useState(null)
   const { t } = useTranslation()
+  // Dentro del componente:
+  const { isAdmin } = useAuth()
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1)
@@ -139,13 +143,15 @@ export default function Eventos() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("events.title")}</h1>
-        <button
-          onClick={() => handleOpenFormModal()}
-          className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
-        >
-          <Plus size={18} />
-          {t("events.newEvent")}
-        </button>
+        {isAdmin && (
+          <button
+            onClick={() => handleOpenFormModal()}
+            className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
+          >
+            <Plus size={18} />
+            {t("events.newEvent")}
+          </button>
+        )}
       </div>
 
       {/* Mensaje de error */}
@@ -214,9 +220,11 @@ export default function Eventos() {
                 ? "No se encontraron eventos con los filtros aplicados."
                 : t("events.noEvents")}
             </p>
-            <button onClick={() => handleOpenFormModal()} className="mt-4 text-[#C0C0C0] hover:text-white underline">
-              {t("events.addFirstEvent")}
-            </button>
+            {isAdmin && (
+              <button onClick={() => handleOpenFormModal()} className="mt-4 text-[#C0C0C0] hover:text-white underline">
+                {t("events.addFirstEvent")}
+              </button>
+            )}
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -229,7 +237,7 @@ export default function Eventos() {
                         {t("common.name")}
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                       {t("events.type")}
+                        {t("events.type")}
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                         {t("events.date")}
@@ -244,7 +252,7 @@ export default function Eventos() {
                         {t("common.status")}
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        {t("common.actions")}
+                        {isAdmin ? t("common.actions") : ""}
                       </th>
                     </tr>
                   </thead>
@@ -297,20 +305,22 @@ export default function Eventos() {
                           </span>
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => handleOpenFormModal(evento)}
-                              className="p-1 text-gray-400 hover:text-[#C0C0C0]"
-                            >
-                              <Edit size={18} />
-                            </button>
-                            <button
-                              onClick={() => confirmDelete(evento.id)}
-                              className="p-1 text-gray-400 hover:text-red-400"
-                            >
-                              <Trash2 size={18} />
-                            </button>
-                          </div>
+                          {isAdmin && (
+                            <div className="flex space-x-2">
+                              <button
+                                onClick={() => handleOpenFormModal(evento)}
+                                className="p-1 text-gray-400 hover:text-[#C0C0C0]"
+                              >
+                                <Edit size={18} />
+                              </button>
+                              <button
+                                onClick={() => confirmDelete(evento.id)}
+                                className="p-1 text-gray-400 hover:text-red-400"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                            </div>
+                          )}
                         </td>
                       </tr>
                     ))}

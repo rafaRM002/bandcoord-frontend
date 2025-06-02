@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight, CalendarIcon, Clock, MapPin, Music, X, AlertTriangle, Check } from "lucide-react"
 import api from "../../api/axios"
 import { useTranslation } from "../../hooks/useTranslation"
+// Importar useAuth
+import { useAuth } from "../../context/AuthContext"
 
 export default function Calendario() {
   const { t } = useTranslation()
@@ -26,6 +28,9 @@ export default function Calendario() {
 
   // Estado para notificaciones
   const [notification, setNotification] = useState({ show: false, message: "", type: "" })
+
+  // Dentro del componente:
+  const { isAdmin } = useAuth()
 
   useEffect(() => {
     const fetchEventos = async () => {
@@ -576,33 +581,37 @@ export default function Calendario() {
 
               {/* Botones de acción */}
               <div className="mt-6">
-                {!showDeleteConfirm ? (
-                  <button
-                    onClick={handleShowDeleteConfirm}
-                    className="w-full py-2 !bg-red-800 hover:!bg-red-900 text-white rounded-md transition-colors"
-                    style={{ backgroundColor: "#dc2626" }}
-                  >
-                    {t("calendar.cancelEvent")}
-                  </button>
-                ) : (
-                  <div className="space-y-3">
-                    <p className="text-red-400 text-sm">{t("calendar.confirmDelete")}</p>
-                    <div className="flex space-x-3">
+                {isAdmin && (
+                  <>
+                    {!showDeleteConfirm ? (
                       <button
-                        onClick={() => setShowDeleteConfirm(false)}
-                        className="flex-1 py-2 bg-gray-800 hover:bg-gray-700 text-[#C0C0C0] rounded-md transition-colors"
-                      >
-                        {t("calendar.keep")}
-                      </button>
-                      <button
-                        onClick={handleDeleteEvent}
-                        className="flex-1 py-2 !bg-red-800 hover:!bg-red-900 text-white rounded-md transition-colors"
+                        onClick={handleShowDeleteConfirm}
+                        className="w-full py-2 !bg-red-800 hover:!bg-red-900 text-white rounded-md transition-colors"
                         style={{ backgroundColor: "#dc2626" }}
                       >
-                        {t("calendar.delete")}
+                        {t("calendar.cancelEvent")}
                       </button>
-                    </div>
-                  </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <p className="text-red-400 text-sm">{t("calendar.confirmDelete")}</p>
+                        <div className="flex space-x-3">
+                          <button
+                            onClick={() => setShowDeleteConfirm(false)}
+                            className="flex-1 py-2 bg-gray-800 hover:bg-gray-700 text-[#C0C0C0] rounded-md transition-colors"
+                          >
+                            {t("calendar.keep")}
+                          </button>
+                          <button
+                            onClick={handleDeleteEvent}
+                            className="flex-1 py-2 !bg-red-800 hover:!bg-red-900 text-white rounded-md transition-colors"
+                            style={{ backgroundColor: "#dc2626" }}
+                          >
+                            {t("calendar.delete")}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>

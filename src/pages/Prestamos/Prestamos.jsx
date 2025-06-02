@@ -5,6 +5,8 @@ import { Plus, ArrowLeft, ArrowRight, Trash2, Search, Filter, Package, Calendar,
 import api from "../../api/axios"
 import { toast } from "react-toastify"
 import { useTranslation } from "../../hooks/useTranslation"
+// Importar useAuth
+import { useAuth } from "../../context/AuthContext"
 
 export default function Prestamos() {
   const { t } = useTranslation()
@@ -29,6 +31,9 @@ export default function Prestamos() {
   // Paginación
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
+
+  // Dentro del componente:
+  const { isAdmin } = useAuth()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -256,13 +261,15 @@ export default function Prestamos() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("loans.title")}</h1>
-        <button
-          onClick={handleOpenModal}
-          className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
-        >
-          <Plus size={18} />
-          {t("loans.newLoan")}
-        </button>
+        {isAdmin && (
+          <button
+            onClick={handleOpenModal}
+            className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
+          >
+            <Plus size={18} />
+            {t("loans.newLoan")}
+          </button>
+        )}
       </div>
 
       {/* Mensaje de error */}
@@ -337,9 +344,11 @@ export default function Prestamos() {
             <p className="text-gray-400 text-center">
               {searchTerm || usuarioFilter || estadoFilter ? t("loans.noLoansWithFilters") : t("loans.noLoans")}
             </p>
-            <button onClick={handleOpenModal} className="mt-4 text-[#C0C0C0] hover:text-white underline">
-              {t("loans.addFirstLoan")}
-            </button>
+            {isAdmin && (
+              <button onClick={handleOpenModal} className="mt-4 text-[#C0C0C0] hover:text-white underline">
+                {t("loans.addFirstLoan")}
+              </button>
+            )}
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -362,7 +371,7 @@ export default function Prestamos() {
                     {t("common.status")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    {t("common.actions")}
+                    {isAdmin ? t("common.actions") : ""}
                   </th>
                 </tr>
               </thead>
@@ -395,24 +404,26 @@ export default function Prestamos() {
                         </span>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                        <div className="flex space-x-2">
-                          {estado === "activo" && (
+                        {isAdmin && (
+                          <div className="flex space-x-2">
+                            {estado === "activo" && (
+                              <button
+                                onClick={() => handleDevolver(prestamo)}
+                                className="p-1 text-gray-400 hover:text-green-400"
+                                title={t("loans.returnLoan")}
+                              >
+                                <Check size={18} />
+                              </button>
+                            )}
                             <button
-                              onClick={() => handleDevolver(prestamo)}
-                              className="p-1 text-gray-400 hover:text-green-400"
-                              title={t("loans.returnLoan")}
+                              onClick={() => confirmDelete(prestamo.num_serie, prestamo.usuario_id)}
+                              className="p-1 text-gray-400 hover:text-red-400"
+                              title={t("loans.deleteLoan")}
                             >
-                              <Check size={18} />
+                              <Trash2 size={18} />
                             </button>
-                          )}
-                          <button
-                            onClick={() => confirmDelete(prestamo.num_serie, prestamo.usuario_id)}
-                            className="p-1 text-gray-400 hover:text-red-400"
-                            title={t("loans.deleteLoan")}
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                        </div>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   )

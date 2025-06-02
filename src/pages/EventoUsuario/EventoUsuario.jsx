@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useContext } from "react"
-import { AuthContext } from "../../context/AuthContext"
+import { AuthContext, useAuth } from "../../context/AuthContext"
 import {
   Plus,
   Edit,
@@ -49,6 +49,8 @@ export default function EventoUsuario() {
   const [currentPage, setCurrentPage] = useState(1)
   const [currentStatsPage, setCurrentStatsPage] = useState(1)
   const [statsPerPage] = useState(2)
+
+  const { user: loggedInUser, isAdmin } = useAuth()
 
   useEffect(() => {
     fetchData()
@@ -266,7 +268,14 @@ export default function EventoUsuario() {
     const matchesEvento = eventoFilter === "" || evento.id.toString() === eventoFilter
 
     // Verificar si el evento tiene al menos una asignación
-    const tieneAsignaciones = eventosUsuario.some((item) => item.evento_id === evento.id)
+    let tieneAsignaciones = eventosUsuario.some((item) => item.evento_id === evento.id)
+
+    // Si no es admin, solo mostrar eventos donde el usuario actual está asignado
+    if (!isAdmin) {
+      tieneAsignaciones = eventosUsuario.some(
+        (item) => item.evento_id === evento.id && item.usuario_id === loggedInUser.id,
+      )
+    }
 
     return matchesSearch && matchesEvento && tieneAsignaciones
   })
@@ -338,9 +347,15 @@ export default function EventoUsuario() {
     }
   }
 
-  // Obtener asignaciones por evento
   const getAsignacionesPorEvento = (eventoId) => {
-    return eventosUsuario.filter((item) => item.evento_id === eventoId)
+    let asignaciones = eventosUsuario.filter((item) => item.evento_id === eventoId)
+
+    // Si no es admin, solo mostrar la asignación del usuario actual
+    if (!isAdmin) {
+      asignaciones = asignaciones.filter((item) => item.usuario_id === loggedInUser.id)
+    }
+
+    return asignaciones
   }
 
   // Calcular estadísticas para un evento
@@ -453,13 +468,15 @@ export default function EventoUsuario() {
               {t("userEvents.statistics")}
             </button>
           </div>
-          <button
-            onClick={() => handleOpenModal("create")}
-            className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
-          >
-            <Plus size={18} />
-            {t("userEvents.newAssignment")}
-          </button>
+          {isAdmin && (
+            <button
+              onClick={() => handleOpenModal("create")}
+              className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
+            >
+              <Plus size={18} />
+              {t("userEvents.newAssignment")}
+            </button>
+          )}
         </div>
       </div>
 
@@ -558,12 +575,14 @@ export default function EventoUsuario() {
                   ? t("userEvents.noAssignmentsWithFilters")
                   : t("userEvents.noAssignments")}
               </p>
-              <button
-                onClick={() => handleOpenModal("create")}
-                className="mt-4 text-[#C0C0C0] hover:text-white underline"
-              >
-                {t("userEvents.addFirstAssignment")}
-              </button>
+              {isAdmin && (
+                <button
+                  onClick={() => handleOpenModal("create")}
+                  className="mt-4 text-[#C0C0C0] hover:text-white underline"
+                >
+                  {t("userEvents.addFirstAssignment")}
+                </button>
+              )}
             </div>
           ) : (
             currentEventosAgrupados.map(({ evento, asignaciones }) => (
@@ -633,7 +652,7 @@ export default function EventoUsuario() {
                               {t("userEvents.confirmed")}
                             </th>
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                              {t("common.actions")}
+                              {isAdmin ? t("common.actions") : ""}
                             </th>
                           </tr>
                         </thead>
@@ -655,22 +674,24 @@ export default function EventoUsuario() {
                                 </span>
                               </td>
                               <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                                <div className="flex space-x-2">
-                                  <button
-                                    onClick={() => handleOpenModal("edit", item)}
-                                    className="p-1 text-gray-400 hover:text-[#C0C0C0]"
-                                    title={t("common.edit")}
-                                  >
-                                    <Edit size={18} />
-                                  </button>
-                                  <button
-                                    onClick={() => confirmDelete(item.evento_id, item.usuario_id)}
-                                    className="p-1 text-gray-400 hover:text-red-400"
-                                    title={t("common.delete")}
-                                  >
-                                    <Trash2 size={18} />
-                                  </button>
-                                </div>
+                                {isAdmin && (
+                                  <div className="flex space-x-2">
+                                    <button
+                                      onClick={() => handleOpenModal("edit", item)}
+                                      className="p-1 text-gray-400 hover:text-[#C0C0C0]"
+                                      title={t("common.edit")}
+                                    >
+                                      <Edit size={18} />
+                                    </button>
+                                    <button
+                                      onClick={() => confirmDelete(item.evento_id, item.usuario_id)}
+                                      className="p-1 text-gray-400 hover:text-red-400"
+                                      title={t("common.delete")}
+                                    >
+                                      <Trash2 size={18} />
+                                    </button>
+                                  </div>
+                                )}
                               </td>
                             </tr>
                           ))}
@@ -679,21 +700,23 @@ export default function EventoUsuario() {
                     </div>
 
                     {/* Botón para añadir asignación a este evento */}
-                    <div className="bg-gray-900/20 px-4 py-3 flex justify-end">
-                      <button
-                        onClick={() =>
-                          handleOpenModal("create", {
-                            evento_id: evento.id,
-                            usuario_id: "",
-                            confirmacion: false,
-                          })
-                        }
-                        className="flex items-center gap-1 text-sm text-gray-400 hover:text-[#C0C0C0]"
-                      >
-                        <Plus size={16} />
-                        {t("userEvents.addAssignment")}
-                      </button>
-                    </div>
+                    {isAdmin && (
+                      <div className="bg-gray-900/20 px-4 py-3 flex justify-end">
+                        <button
+                          onClick={() =>
+                            handleOpenModal("create", {
+                              evento_id: evento.id,
+                              usuario_id: "",
+                              confirmacion: false,
+                            })
+                          }
+                          className="flex items-center gap-1 text-sm text-gray-400 hover:text-[#C0C0C0]"
+                        >
+                          <Plus size={16} />
+                          {t("userEvents.addAssignment")}
+                        </button>
+                      </div>
+                    )}
                   </>
                 )}
               </div>
@@ -750,12 +773,14 @@ export default function EventoUsuario() {
                   ? t("userEvents.noEventsWithFilters")
                   : t("userEvents.noEventsWithAssignments")}
               </p>
-              <button
-                onClick={() => handleOpenModal("create")}
-                className="mt-4 text-[#C0C0C0] hover:text-white underline"
-              >
-                {t("userEvents.addFirstAssignment")}
-              </button>
+              {isAdmin && (
+                <button
+                  onClick={() => handleOpenModal("create")}
+                  className="mt-4 text-[#C0C0C0] hover:text-white underline"
+                >
+                  {t("userEvents.addFirstAssignment")}
+                </button>
+              )}
             </div>
           ) : (
             currentStatsEventos.map((evento) => {
@@ -848,19 +873,21 @@ export default function EventoUsuario() {
                       <div className="mt-6">
                         <div className="flex justify-between items-center mb-3">
                           <h3 className="text-[#C0C0C0] font-medium">{t("userEvents.assignmentList")}</h3>
-                          <button
-                            onClick={() =>
-                              handleOpenModal("create", {
-                                evento_id: evento.id,
-                                usuario_id: "",
-                                confirmacion: false,
-                              })
-                            }
-                            className="flex items-center gap-1 text-sm text-gray-400 hover:text-[#C0C0C0]"
-                          >
-                            <Plus size={16} />
-                            {t("userEvents.addAssignment")}
-                          </button>
+                          {isAdmin && (
+                            <button
+                              onClick={() =>
+                                handleOpenModal("create", {
+                                  evento_id: evento.id,
+                                  usuario_id: "",
+                                  confirmacion: false,
+                                })
+                              }
+                              className="flex items-center gap-1 text-sm text-gray-400 hover:text-[#C0C0C0]"
+                            >
+                              <Plus size={16} />
+                              {t("userEvents.addAssignment")}
+                            </button>
+                          )}
                         </div>
 
                         <div className="bg-gray-900/20 border border-gray-800 rounded-lg overflow-hidden">

@@ -5,6 +5,8 @@ import { Plus, Edit, Trash2, Filter, Search, ChevronDown, ChevronUp, AlertCircle
 import api from "../../api/axios"
 import { toast } from "react-toastify"
 import { useTranslation } from "../../hooks/useTranslation"
+// Importar useAuth
+import { useAuth } from "../../context/AuthContext"
 
 export default function MinimosEvento() {
   const [minimos, setMinimos] = useState([])
@@ -29,6 +31,8 @@ export default function MinimosEvento() {
   const [eventosPerPage] = useState(2) // Mostrar solo 2 eventos por página
 
   const { t } = useTranslation()
+  // Dentro del componente:
+  const { isAdmin } = useAuth()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -323,13 +327,15 @@ export default function MinimosEvento() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("eventMinimums.title")}</h1>
-        <button
-          onClick={() => handleOpenModal("create")}
-          className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
-        >
-          <Plus size={18} />
-          {t("eventMinimums.newMinimum")}
-        </button>
+        {isAdmin && (
+          <button
+            onClick={() => handleOpenModal("create")}
+            className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
+          >
+            <Plus size={18} />
+            {t("eventMinimums.newMinimum")}
+          </button>
+        )}
       </div>
 
       {/* Mensaje de error */}
@@ -409,12 +415,14 @@ export default function MinimosEvento() {
                 ? "No se encontraron eventos con los filtros aplicados."
                 : t("eventMinimums.noMinimums")}
             </p>
-            <button
-              onClick={() => handleOpenModal("create")}
-              className="mt-4 text-[#C0C0C0] hover:text-white underline"
-            >
-              {t("eventMinimums.addFirstMinimum")}
-            </button>
+            {isAdmin && (
+              <button
+                onClick={() => handleOpenModal("create")}
+                className="mt-4 text-[#C0C0C0] hover:text-white underline"
+              >
+                {t("eventMinimums.addFirstMinimum")}
+              </button>
+            )}
           </div>
         ) : (
           currentEventos.map((evento) => {
@@ -456,21 +464,23 @@ export default function MinimosEvento() {
                     {eventosMinimos.length === 0 ? (
                       <div className="py-4 text-center text-gray-400">
                         No hay mínimos de instrumentos registrados para este evento.
-                        <button
-                          onClick={() =>
-                            handleOpenModal("create", { evento_id: evento.id, instrumento_tipo_id: "", cantidad: 1 })
-                          }
-                          className="ml-2 text-[#C0C0C0] hover:text-white underline"
-                        >
-                          Añadir
-                        </button>
+                        {isAdmin && (
+                          <button
+                            onClick={() =>
+                              handleOpenModal("create", { evento_id: evento.id, instrumento_tipo_id: "", cantidad: 1 })
+                            }
+                            className="ml-2 text-[#C0C0C0] hover:text-white underline"
+                          >
+                            Añadir
+                          </button>
+                        )}
                       </div>
                     ) : (
                       <div>
                         <div className="grid grid-cols-12 gap-4 py-2 border-b border-gray-800 text-xs font-medium text-gray-400 uppercase">
                           <div className="col-span-5">{t("eventMinimums.instrumentType")}</div>
                           <div className="col-span-3">{t("eventMinimums.minimumQuantity")}</div>
-                          <div className="col-span-4 text-right">{t("common.actions")}</div>
+                          <div className="col-span-4 text-right">{isAdmin ? t("common.actions") : ""}</div>
                         </div>
 
                         {/* Lista de mínimos para este evento */}
@@ -482,36 +492,46 @@ export default function MinimosEvento() {
                             <div className="col-span-5 text-[#C0C0C0]">{getTipoNombre(minimo.instrumento_tipo_id)}</div>
                             <div className="col-span-3 text-[#C0C0C0]">{minimo.cantidad || 0}</div>
                             <div className="col-span-4 flex justify-end space-x-2">
-                              <button
-                                onClick={() => handleOpenModal("edit", minimo)}
-                                className="p-1 text-gray-400 hover:text-[#C0C0C0]"
-                                title="Editar"
-                              >
-                                <Edit size={18} />
-                              </button>
-                              <button
-                                onClick={() => confirmDelete(minimo.evento_id, minimo.instrumento_tipo_id)}
-                                className="p-1 text-gray-400 hover:text-red-400"
-                                title="Eliminar"
-                              >
-                                <Trash2 size={18} />
-                              </button>
+                              {isAdmin && (
+                                <>
+                                  <button
+                                    onClick={() => handleOpenModal("edit", minimo)}
+                                    className="p-1 text-gray-400 hover:text-[#C0C0C0]"
+                                    title="Editar"
+                                  >
+                                    <Edit size={18} />
+                                  </button>
+                                  <button
+                                    onClick={() => confirmDelete(minimo.evento_id, minimo.instrumento_tipo_id)}
+                                    className="p-1 text-gray-400 hover:text-red-400"
+                                    title="Eliminar"
+                                  >
+                                    <Trash2 size={18} />
+                                  </button>
+                                </>
+                              )}
                             </div>
                           </div>
                         ))}
 
                         {/* Botón para añadir nuevo mínimo para este evento */}
-                        <div className="py-3 flex justify-center">
-                          <button
-                            onClick={() =>
-                              handleOpenModal("create", { evento_id: evento.id, instrumento_tipo_id: "", cantidad: 1 })
-                            }
-                            className="flex items-center gap-1 text-sm text-gray-400 hover:text-[#C0C0C0]"
-                          >
-                            <Plus size={16} />
-                            {t("eventMinimums.addInstrument")}
-                          </button>
-                        </div>
+                        {isAdmin && (
+                          <div className="py-3 flex justify-center">
+                            <button
+                              onClick={() =>
+                                handleOpenModal("create", {
+                                  evento_id: evento.id,
+                                  instrumento_tipo_id: "",
+                                  cantidad: 1,
+                                })
+                              }
+                              className="flex items-center gap-1 text-sm text-gray-400 hover:text-[#C0C0C0]"
+                            >
+                              <Plus size={16} />
+                              {t("eventMinimums.addInstrument")}
+                            </button>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

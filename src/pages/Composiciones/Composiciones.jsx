@@ -22,6 +22,8 @@ import {
 import api, { IMAGES_URL } from "../../api/axios"
 import { toast } from "react-toastify"
 import { useTranslation } from "../../hooks/useTranslation"
+// Importar useAuth
+import { useAuth } from "../../context/AuthContext"
 
 export default function Composiciones() {
   const [composiciones, setComposiciones] = useState([])
@@ -40,6 +42,8 @@ export default function Composiciones() {
   const [refreshTrigger, setRefreshTrigger] = useState(0)
 
   const { t } = useTranslation()
+  // Dentro del componente:
+  const { isAdmin } = useAuth()
 
   // Estados para el modal de composición
   const [showModal, setShowModal] = useState(false)
@@ -671,6 +675,7 @@ export default function Composiciones() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("compositions.title")}</h1>
+        {/* Modificar los botones en la cabecera: */}
         <div className="flex space-x-2">
           <button
             onClick={refreshData}
@@ -680,13 +685,15 @@ export default function Composiciones() {
             <RefreshCw size={18} className={loading ? "animate-spin" : ""} />
             {t("compositions.reload")}
           </button>
-          <button
-            onClick={handleNewComposicion}
-            className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
-          >
-            <Plus size={18} />
-            {t("compositions.newComposition")}
-          </button>
+          {isAdmin && (
+            <button
+              onClick={handleNewComposicion}
+              className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
+            >
+              <Plus size={18} />
+              {t("compositions.newComposition")}
+            </button>
+          )}
         </div>
       </div>
 
@@ -731,9 +738,12 @@ export default function Composiciones() {
             <p className="text-gray-400 text-center">
               {searchTerm ? t("compositions.noCompositionsWithFilters") : t("compositions.noRegisteredCompositions")}
             </p>
-            <button onClick={handleNewComposicion} className="mt-4 text-[#C0C0C0] hover:text-white underline">
-              {t("compositions.addFirstComposition")}
-            </button>
+            {/* Modificar el mensaje cuando no hay composiciones: */}
+            {isAdmin && (
+              <button onClick={handleNewComposicion} className="mt-4 text-[#C0C0C0] hover:text-white underline">
+                {t("compositions.addFirstComposition")}
+              </button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
@@ -803,19 +813,24 @@ export default function Composiciones() {
                       )}
                   </div>
 
+                  {/* Modificar los botones de acción en cada composición: */}
                   <div className="flex justify-end space-x-2 mt-4">
-                    <button
-                      onClick={() => handleEditComposicion(composicion)}
-                      className="p-2 bg-gray-800 text-gray-400 rounded-md hover:bg-gray-700 hover:text-[#C0C0C0]"
-                    >
-                      <Edit size={16} />
-                    </button>
-                    <button
-                      onClick={() => confirmDelete(composicion.id)}
-                      className="p-2 bg-gray-800 text-gray-400 rounded-md hover:bg-red-900/50 hover:text-red-400"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                    {isAdmin && (
+                      <>
+                        <button
+                          onClick={() => handleEditComposicion(composicion)}
+                          className="p-2 bg-gray-800 text-gray-400 rounded-md hover:bg-gray-700 hover:text-[#C0C0C0]"
+                        >
+                          <Edit size={16} />
+                        </button>
+                        <button
+                          onClick={() => confirmDelete(composicion.id)}
+                          className="p-2 bg-gray-800 text-gray-400 rounded-md hover:bg-red-900/50 hover:text-red-400"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
