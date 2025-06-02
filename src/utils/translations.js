@@ -629,12 +629,13 @@ export const translations = {
       viewFiles: "Ver archivos",
       youtubeVideo: "Vídeo de YouTube",
       file: "archivo",
-      files: "archivos",
       filesOf: "Archivos de",
       close: "Cerrar",
       mustIncludeContent: "Debes incluir al menos un vídeo de YouTube o archivos",
       mustProvideYoutubeUrl: "Debes proporcionar una URL de YouTube",
       mustAddFiles: "Debes agregar al menos un archivo",
+      isRequired: "es obligatorio",
+      bothOptions: "Ambas opciones son requeridas"
     },
 
     // Interpreted Compositions
@@ -670,9 +671,9 @@ export const translations = {
       noAudioFileAvailable: "No hay archivo de audio disponible",
       errorPlayingAudio: "Error al reproducir el audio",
       couldNotPlayAudio: "No se pudo reproducir el audio",
-      couldNotPlayAudio: "No se pudo reproducir el audio",
       usersWhoInterpretThisComposition: "Usuarios que interpretan esta composición",
       cancel: "Cancelar",
+      userAlreadyAssignedWarning: "Este usuario ya está asignado a esta composición. Por favor, selecciona otro usuario."
     },
 
     // Add calendar translations to both language objects
@@ -1393,7 +1394,6 @@ export const translations = {
       includeFiles: "Include files",
       youtubeUrl: "YouTube URL",
       preview: "Preview",
-      files: "Files (MP3 and sheet music)",
       selectFiles: "Select files",
       acceptedFiles: "Accepted files: MP3, PDF, JPG, PNG, MP4, WEBM (max. 20MB)",
       existingFiles: "Existing files",
@@ -1418,6 +1418,8 @@ export const translations = {
       noYoutubeLinkAvailable: "No YouTube link available",
       cancel: "Cancel",
       save: "Save",
+      isRequired: "is required",
+      bothOptions: "Both options are required"
     },
 
     // Interpreted Compositions
@@ -1453,6 +1455,7 @@ export const translations = {
       errorPlayingAudio: "Error playing audio",
       couldNotPlayAudio: "Could not play audio",
       usersWhoInterpretThisComposition: "Users who interpret this composition",
+      userAlreadyAssignedWarning: "This user is already assigned to this composition. Please select another user."
     },
 
     // Add calendar translations to both language objects

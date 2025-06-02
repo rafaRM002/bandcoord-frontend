@@ -43,6 +43,7 @@ const ComposicionesInterpretadas = () => {
   const [selectedComposicionForAssign, setSelectedComposicionForAssign] = useState(null)
   const [usuarios, setUsuarios] = useState([])
   const [selectedUsuarioId, setSelectedUsuarioId] = useState("")
+  const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
 
   const { t } = useTranslation()
   // Dentro del componente:
@@ -344,6 +345,7 @@ const ComposicionesInterpretadas = () => {
   const handleOpenAssignModal = (composicion) => {
     setSelectedComposicionForAssign(composicion)
     setSelectedUsuarioId("")
+    setShowDuplicateWarning(false)
     setShowAssignModal(true)
   }
 
@@ -351,16 +353,6 @@ const ComposicionesInterpretadas = () => {
   const handleAssignToUser = async () => {
     if (!selectedComposicionForAssign || !selectedUsuarioId) {
       toast.error(t("interpretedCompositions.selectUser"))
-      return
-    }
-
-    // Verificar si el usuario ya está asignado a esta composición
-    const yaAsignado = selectedComposicionForAssign.usuarios.some(
-      (usuario) => usuario.usuario_id === Number.parseInt(selectedUsuarioId),
-    )
-
-    if (yaAsignado) {
-      toast.error(t("interpretedCompositions.assignmentAlreadyExists"))
       return
     }
 
@@ -373,6 +365,7 @@ const ComposicionesInterpretadas = () => {
       console.log("Respuesta al asignar composición:", response.data)
       toast.success(t("interpretedCompositions.assignmentCreatedSuccessfully"))
       setShowAssignModal(false)
+      setShowDuplicateWarning(false)
 
       // Recargar datos para mostrar la nueva asignación
       fetchComposicionesInterpretadas()
@@ -385,7 +378,9 @@ const ComposicionesInterpretadas = () => {
         error.response.data &&
         (error.response.data.message?.includes("duplicate") || error.response.status === 422)
       ) {
-        toast.error(t("interpretedCompositions.assignmentAlreadyExists"))
+        const usuarioNombre = usuarios.find((u) => u.id === Number.parseInt(selectedUsuarioId))
+        const nombreCompleto = usuarioNombre ? `${usuarioNombre.nombre} ${usuarioNombre.apellido1}` : "Este usuario"
+        toast.error(`${nombreCompleto} ya está asignado a esta composición.`)
       } else {
         toast.error(t("interpretedCompositions.errorAssigningComposition"))
       }
@@ -440,6 +435,21 @@ const ComposicionesInterpretadas = () => {
     const indexOfFirstUsuario = indexOfLastUsuario - usuariosPorPagina
 
     return composicion.usuarios.slice(indexOfFirstUsuario, indexOfLastUsuario)
+  }
+
+  // Manejar selección de usuario y verificar duplicados
+  const handleUsuarioSelection = (usuarioId) => {
+    setSelectedUsuarioId(usuarioId)
+
+    if (usuarioId && selectedComposicionForAssign) {
+      // Verificar si el usuario ya está asignado a esta composición
+      const yaAsignado = selectedComposicionForAssign.usuarios.some(
+        (usuario) => usuario.usuario_id === Number.parseInt(usuarioId),
+      )
+      setShowDuplicateWarning(yaAsignado)
+    } else {
+      setShowDuplicateWarning(false)
+    }
   }
 
   if (loading)
@@ -737,6 +747,22 @@ const ComposicionesInterpretadas = () => {
               </button>
             </div>
 
+            {/* Warning message for duplicate assignment */}
+            {showDuplicateWarning && (
+              <div className="mb-4 p-3 bg-yellow-900/30 border border-yellow-600 rounded-md flex items-start">
+                <div className="flex-shrink-0 mr-3 mt-0.5">
+                  <svg className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fillRule="evenodd"
+                      d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div className="text-yellow-200 text-sm">{t("interpretedCompositions.userAlreadyAssignedWarning")}</div>
+              </div>
+            )}
+
             <div className="mb-4">
               <p className="text-gray-400 mb-2">
                 {t("interpretedCompositions.composition")}:{" "}
@@ -751,7 +777,7 @@ const ComposicionesInterpretadas = () => {
               <select
                 id="usuario"
                 value={selectedUsuarioId}
-                onChange={(e) => setSelectedUsuarioId(e.target.value)}
+                onChange={(e) => handleUsuarioSelection(e.target.value)}
                 className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
               >
                 <option value="">{t("interpretedCompositions.selectUserPlaceholder")}</option>
@@ -772,7 +798,7 @@ const ComposicionesInterpretadas = () => {
               </button>
               <button
                 onClick={handleAssignToUser}
-                disabled={!selectedUsuarioId}
+                disabled={!selectedUsuarioId || showDuplicateWarning}
                 className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {t("interpretedCompositions.assign")}

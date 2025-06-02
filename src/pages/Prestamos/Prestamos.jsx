@@ -207,7 +207,21 @@ export default function Prestamos() {
     if (!prestamoToDelete) return
 
     try {
+      // Eliminar el préstamo
       await api.delete(`/prestamos/${prestamoToDelete.numSerie}/${prestamoToDelete.usuarioId}`)
+
+      // Actualizar el estado del instrumento a disponible
+      try {
+        await api.put(`/instrumentos/${prestamoToDelete.numSerie}`, {
+          estado: "disponible",
+          instrumento_tipo_id:
+            instrumentos.find((i) => i.numero_serie === prestamoToDelete.numSerie)?.instrumento_tipo_id || "",
+        })
+      } catch (instrumentError) {
+        console.error("Error al actualizar estado del instrumento:", instrumentError)
+        // No mostramos error al usuario porque el préstamo ya se eliminó correctamente
+      }
+
       setPrestamos(
         prestamos.filter(
           (prestamo) =>

@@ -400,9 +400,19 @@ export default function Composiciones() {
     e.preventDefault()
 
     try {
-      // Validaciones con mensajes más claros
+      // Validaciones mejoradas con mensajes más específicos
       if (!formData.nombre.trim()) {
-        toast.error("El nombre de la composición es obligatorio")
+        toast.error(t("compositions.name") + " " + t("compositions.isRequired"))
+        return
+      }
+
+      if (!formData.descripcion.trim()) {
+        toast.error(t("compositions.description") + " " + t("compositions.isRequired"))
+        return
+      }
+
+      if (!formData.nombre_autor.trim()) {
+        toast.error(t("compositions.author") + " " + t("compositions.isRequired"))
         return
       }
 
@@ -421,6 +431,7 @@ export default function Composiciones() {
         return
       }
 
+      // Resto del código permanece igual...
       setIsUploading(true)
       setUploadProgress(0)
 
@@ -919,7 +930,7 @@ export default function Composiciones() {
                 {/* Autor */}
                 <div className="space-y-2">
                   <label htmlFor="nombre_autor" className="block text-[#C0C0C0] text-sm font-medium">
-                    {t("compositions.author")}
+                    {t("compositions.author")} *
                   </label>
                   <input
                     id="nombre_autor"
@@ -927,6 +938,7 @@ export default function Composiciones() {
                     value={formData.nombre_autor}
                     onChange={handleChange}
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    required
                   />
                 </div>
               </div>
@@ -934,7 +946,7 @@ export default function Composiciones() {
               {/* Descripción */}
               <div className="mt-6 space-y-2">
                 <label htmlFor="descripcion" className="block text-[#C0C0C0] text-sm font-medium">
-                  {t("compositions.description")}
+                  {t("compositions.description")} *
                 </label>
                 <textarea
                   id="descripcion"
@@ -943,12 +955,16 @@ export default function Composiciones() {
                   onChange={handleChange}
                   rows={3}
                   className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                  required
                 />
               </div>
 
               {/* Selector de tipo de contenido */}
               <div className="mt-6 space-y-2">
-                <label className="block text-[#C0C0C0] text-sm font-medium">{t("compositions.contentType")}</label>
+                <label className="block text-[#C0C0C0] text-sm font-medium">
+                  {t("compositions.contentType")} *{" "}
+                  <span className="text-xs text-gray-500">{t("(compositions.bothOptions)")}</span>
+                </label>
                 <div className="flex flex-wrap gap-4">
                   <div className="flex items-center space-x-2">
                     <input
@@ -984,7 +1000,7 @@ export default function Composiciones() {
               {includeYoutube && (
                 <div className="mt-4 space-y-2 p-4 border border-red-900/30 bg-red-900/10 rounded-md">
                   <label htmlFor="youtubeUrl" className="block text-[#C0C0C0] text-sm font-medium">
-                    {t("compositions.youtubeUrl")}
+                    {t("compositions.youtubeUrl")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-red-500">
@@ -998,6 +1014,7 @@ export default function Composiciones() {
                       onChange={handleYoutubeUrlChange}
                       placeholder="https://www.youtube.com/watch?v=..."
                       className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-red-700 focus:border-red-700"
+                      required={includeYoutube}
                     />
                   </div>
 
@@ -1023,7 +1040,7 @@ export default function Composiciones() {
               {includeFiles && (
                 <div className="mt-4 space-y-2 p-4 border border-green-900/30 bg-green-900/10 rounded-md">
                   <label className="block text-[#C0C0C0] text-sm font-medium">
-                    {t("compositions.files")} (MP3 y partituras)
+                    {t("compositions.files")} (MP3 y partituras) *
                   </label>
                   <div className="space-y-4">
                     {/* Input de archivo */}
