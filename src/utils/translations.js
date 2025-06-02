@@ -128,6 +128,8 @@ export const translations = {
       noEventsWithAssignments: "No hay eventos con asignaciones registradas.",
       noInstrumentData: "No hay datos disponibles por tipo de instrumento.",
       attendance: "de asistencia",
+      assignmentAlreadyExists: "Ya existe una asignación para este evento y usuario",
+      assignmentAlreadyExistsWarning: "Esta asignación ya existe para este evento. Por favor, edita la existente o selecciona otro usuario.",
     },
 
     // Event Confirmation
@@ -393,6 +395,7 @@ export const translations = {
       replyMessage: "Responder Mensaje",
       replyRecipientInfo: "Estás respondiendo a un mensaje. El destinatario no puede ser modificado.",
       noUsersAvailable: "No hay usuarios disponibles",
+      loadingMessage: "Cargando mensaje...",
     },
 
     // Common
@@ -555,6 +558,8 @@ export const translations = {
       corsConfiguration: "La configuración CORS en Laravel permita peticiones desde http://localhost:5173",
       apiRoutesCorrect: "Las rutas de la API estén correctamente definidas",
       authenticatedWithToken: "Estés autenticado con un token válido",
+      instrumentAlreadyLoaned: "Este instrumento ya está prestado a otro usuario",
+      instrumentAlreadyLoanedWarning: "Este instrumento ya está prestado. Por favor, selecciona otro instrumento o espera a que sea devuelto.",
     },
 
     // Entities
@@ -630,14 +635,6 @@ export const translations = {
       mustIncludeContent: "Debes incluir al menos un vídeo de YouTube o archivos",
       mustProvideYoutubeUrl: "Debes proporcionar una URL de YouTube",
       mustAddFiles: "Debes agregar al menos un archivo",
-      invalidFileType: "Tipo de archivo no válido",
-      fileTooLarge: "Archivo demasiado grande (máx. 20MB)",
-      noAudioAvailable: "No hay archivos de audio disponibles",
-      errorPlayingAudio: "Error al reproducir el audio",
-      couldNotPlayAudio: "No se pudo reproducir el audio",
-      noYoutubeLinkAvailable: "No hay enlace de YouTube disponible",
-      cancel: "Cancelar",
-      save: "Guardar",
     },
 
     // Interpreted Compositions
@@ -675,6 +672,7 @@ export const translations = {
       couldNotPlayAudio: "No se pudo reproducir el audio",
       couldNotPlayAudio: "No se pudo reproducir el audio",
       usersWhoInterpretThisComposition: "Usuarios que interpretan esta composición",
+      cancel: "Cancelar",
     },
 
     // Add calendar translations to both language objects
@@ -909,6 +907,7 @@ export const translations = {
       noEventsWithAssignments: "No events with assignments registered.",
       noInstrumentData: "No data available by instrument type.",
       attendance: "attendance",
+      assignmentAlreadyExistsWarning: "This assignment already exists for this event. Please edit the existing one or select another user.",
     },
 
     // Event Confirmation
@@ -1335,6 +1334,7 @@ export const translations = {
       corsConfiguration: "The CORS configuration in Laravel allows requests from http://localhost:5173",
       apiRoutesCorrect: "The API routes are correctly defined",
       authenticatedWithToken: "You are authenticated with a valid token",
+      instrumentAlreadyLoanedWarning: "This instrument is already loaned. Please select another instrument or wait for it to be returned.",
     },
 
     // Entities

@@ -187,7 +187,6 @@ export default function Eventos() {
               <option value="ensayo">{t("events.rehearsal")}</option>
               <option value="procesion">{t("events.procession")}</option>
               <option value="pasacalles">{t("events.parade")}</option>
-              <option value="otro">{t("events.other")}</option>
             </select>
           </div>
           <div className="relative">

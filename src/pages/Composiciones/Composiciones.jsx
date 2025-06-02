@@ -400,18 +400,24 @@ export default function Composiciones() {
     e.preventDefault()
 
     try {
-      if (!includeYoutube && !includeFiles) {
-        toast.error(t("compositions.includeYoutubeOrFiles"))
+      // Validaciones con mensajes más claros
+      if (!formData.nombre.trim()) {
+        toast.error("El nombre de la composición es obligatorio")
         return
       }
 
-      if (includeYoutube && !youtubeUrl) {
-        toast.error(t("compositions.provideYoutubeUrl"))
+      if (!includeYoutube && !includeFiles) {
+        toast.error(t("compositions.mustIncludeContent"))
+        return
+      }
+
+      if (includeYoutube && !youtubeUrl.trim()) {
+        toast.error(t("compositions.mustProvideYoutubeUrl"))
         return
       }
 
       if (includeFiles && newFiles.length === 0 && existingFiles.length === 0) {
-        toast.error(t("compositions.addAtLeastOneFile"))
+        toast.error(t("compositions.mustAddFiles"))
         return
       }
 
@@ -419,9 +425,9 @@ export default function Composiciones() {
       setUploadProgress(0)
 
       const composicionData = new FormData()
-      composicionData.append("nombre", formData.nombre)
-      composicionData.append("descripcion", formData.descripcion)
-      composicionData.append("nombre_autor", formData.nombre_autor)
+      composicionData.append("nombre", formData.nombre.trim())
+      composicionData.append("descripcion", formData.descripcion.trim())
+      composicionData.append("nombre_autor", formData.nombre_autor.trim())
 
       // Agregar iframe (URL de YouTube) si está incluido
       if (includeYoutube && youtubeUrl) {
@@ -553,11 +559,20 @@ export default function Composiciones() {
       setShowModal(false)
     } catch (error) {
       console.error("Error al guardar composición:", error)
-      toast.error(`${t("compositions.errorSavingComposition")}: ${error.message || t("compositions.unknownError")}`)
 
-      if (error.response) {
-        console.error("Respuesta del servidor:", error.response.status, error.response.data)
+      // Mejorar el manejo de errores
+      let errorMessage = t("compositions.errorSavingComposition")
+
+      if (error.response && error.response.data) {
+        if (error.response.data.message) {
+          errorMessage = error.response.data.message
+        } else if (error.response.data.errors) {
+          const errors = Object.values(error.response.data.errors).flat()
+          errorMessage = errors.join(", ")
+        }
       }
+
+      toast.error(errorMessage)
     } finally {
       setIsUploading(false)
       setUploadProgress(0)
@@ -846,8 +861,8 @@ export default function Composiciones() {
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("compositions.confirmDeletion")}</h3>
-            <p className="text-gray-400 mb-6">{t("compositions.deletionConfirmationMessage")}</p>
+            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("compositions.confirmDelete")}</h3>
+            <p className="text-gray-400 mb-6">{t("compositions.deleteConfirmText")}</p>
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
@@ -1118,7 +1133,7 @@ export default function Composiciones() {
                   className="mr-4 px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
                   disabled={isUploading}
                 >
-                  {t("compositions.cancel")}
+                  {t("common.cancel")}
                 </button>
                 <button
                   type="submit"
@@ -1133,7 +1148,7 @@ export default function Composiciones() {
                   ) : (
                     <>
                       <Save size={18} />
-                      {t("compositions.save")}
+                      {t("common.save")}
                     </>
                   )}
                 </button>

@@ -354,6 +354,16 @@ const ComposicionesInterpretadas = () => {
       return
     }
 
+    // Verificar si el usuario ya está asignado a esta composición
+    const yaAsignado = selectedComposicionForAssign.usuarios.some(
+      (usuario) => usuario.usuario_id === Number.parseInt(selectedUsuarioId),
+    )
+
+    if (yaAsignado) {
+      toast.error(t("interpretedCompositions.assignmentAlreadyExists"))
+      return
+    }
+
     try {
       const response = await axios.post("/composicion-usuario", {
         composicion_id: selectedComposicionForAssign.composicion_id,
@@ -361,7 +371,7 @@ const ComposicionesInterpretadas = () => {
       })
 
       console.log("Respuesta al asignar composición:", response.data)
-      toast.success(t("interpretedCompositions.compositionAssignedSuccessfully"))
+      toast.success(t("interpretedCompositions.assignmentCreatedSuccessfully"))
       setShowAssignModal(false)
 
       // Recargar datos para mostrar la nueva asignación
@@ -375,9 +385,9 @@ const ComposicionesInterpretadas = () => {
         error.response.data &&
         (error.response.data.message?.includes("duplicate") || error.response.status === 422)
       ) {
-        toast.error(t("interpretedCompositions.compositionAlreadyAssignedToUser"))
+        toast.error(t("interpretedCompositions.assignmentAlreadyExists"))
       } else {
-        toast.error(t("interpretedCompositions.errorAssigningCompositionToUser"))
+        toast.error(t("interpretedCompositions.errorAssigningComposition"))
       }
     }
   }

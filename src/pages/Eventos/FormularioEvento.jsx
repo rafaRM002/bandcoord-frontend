@@ -71,13 +71,19 @@ export default function FormularioEvento({ evento = null, onClose }) {
     setError("")
 
     try {
-      console.log("Enviando datos:", formData)
+      // Formatear la hora para que coincida con el formato H:i esperado por el backend
+      const formDataToSend = {
+        ...formData,
+        hora: formData.hora ? formData.hora.substring(0, 5) : "", // Convertir de HH:MM:SS a HH:MM
+      }
+
+      console.log("Enviando datos:", formDataToSend)
 
       if (isEditing) {
-        const response = await api.put(`/eventos/${evento.id}`, formData)
+        const response = await api.put(`/eventos/${evento.id}`, formDataToSend)
         console.log("Respuesta de actualización:", response)
       } else {
-        const response = await api.post("/eventos", formData)
+        const response = await api.post("/eventos", formDataToSend)
         console.log("Respuesta de creación:", response)
       }
 
@@ -85,9 +91,18 @@ export default function FormularioEvento({ evento = null, onClose }) {
     } catch (error) {
       console.error("Error al guardar evento:", error)
 
-      if (error.response) {
-        console.error("Respuesta del servidor:", error.response.status, error.response.data)
-        setError(`Error del servidor: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+      if (error.response && error.response.data) {
+        // Extraer mensajes de error más legibles
+        let errorMessage = "Error al guardar el evento."
+
+        if (error.response.data.message) {
+          errorMessage = error.response.data.message
+        } else if (error.response.data.errors) {
+          const errors = Object.values(error.response.data.errors).flat()
+          errorMessage = errors.join(", ")
+        }
+
+        setError(errorMessage)
       } else {
         setError("Error al guardar los datos. Por favor, verifica la información e inténtalo de nuevo.")
       }
@@ -165,7 +180,6 @@ export default function FormularioEvento({ evento = null, onClose }) {
                 <option value="ensayo">{t("events.rehearsal")}</option>
                 <option value="procesion">{t("events.procession")}</option>
                 <option value="pasacalles">{t("events.parade")}</option>
-                <option value="otro">{t("events.other")}</option>
               </select>
             </div>
 

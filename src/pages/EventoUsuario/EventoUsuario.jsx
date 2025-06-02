@@ -49,6 +49,7 @@ export default function EventoUsuario() {
   const [currentPage, setCurrentPage] = useState(1)
   const [currentStatsPage, setCurrentStatsPage] = useState(1)
   const [statsPerPage] = useState(2)
+  const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
 
   const { user: loggedInUser, isAdmin } = useAuth()
 
@@ -183,27 +184,38 @@ export default function EventoUsuario() {
     setShowModal(true)
   }
 
-  const handleCloseModal = () => {
-    setShowModal(false)
-    setCurrentEventoUsuario({
-      evento_id: "",
-      usuario_id: user ? user.id : "",
-      confirmacion: false,
-    })
-  }
-
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target
-    setCurrentEventoUsuario((prev) => ({
-      ...prev,
+    const newEventoUsuario = {
+      ...currentEventoUsuario,
       [name]: type === "checkbox" ? checked : value,
-    }))
+    }
+
+    setCurrentEventoUsuario(newEventoUsuario)
+
+    // Verificar duplicados solo en modo crear y cuando ambos campos están llenos
+    if (modalMode === "create" && newEventoUsuario.evento_id && newEventoUsuario.usuario_id) {
+      const existeAsignacion = eventosUsuario.some(
+        (item) =>
+          item.evento_id === Number.parseInt(newEventoUsuario.evento_id) &&
+          item.usuario_id === Number.parseInt(newEventoUsuario.usuario_id),
+      )
+      setShowDuplicateWarning(existeAsignacion)
+    } else {
+      setShowDuplicateWarning(false)
+    }
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
     try {
+      // Si hay advertencia de duplicado, no permitir envío
+      if (showDuplicateWarning) {
+        toast.error(t("userEvents.assignmentAlreadyExists"))
+        return
+      }
+
       if (modalMode === "create") {
         await api.post("/evento-usuario", {
           evento_id: currentEventoUsuario.evento_id,
@@ -441,6 +453,16 @@ export default function EventoUsuario() {
     if (pageNumber > 0 && pageNumber <= totalStatsPages) {
       setCurrentStatsPage(pageNumber)
     }
+  }
+
+  const handleCloseModal = () => {
+    setShowModal(false)
+    setShowDuplicateWarning(false)
+    setCurrentEventoUsuario({
+      evento_id: "",
+      usuario_id: user ? user.id : "",
+      confirmacion: false,
+    })
   }
 
   return (
@@ -1002,6 +1024,23 @@ export default function EventoUsuario() {
             </h3>
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
+                {/* Mensaje de advertencia para duplicados */}
+                {showDuplicateWarning && (
+                  <div className="bg-yellow-900/20 border border-yellow-800 text-yellow-100 px-4 py-3 rounded-md flex items-start">
+                    <div className="flex-shrink-0 mr-3 mt-0.5">
+                      <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                          fillRule="evenodd"
+                          d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm">{t("userEvents.assignmentAlreadyExistsWarning")}</p>
+                    </div>
+                  </div>
+                )}
                 <div className="space-y-2">
                   <label htmlFor="evento_id" className="block text-[#C0C0C0] text-sm font-medium">
                     {t("events.name")} *

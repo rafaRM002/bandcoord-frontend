@@ -27,6 +27,7 @@ export default function Prestamos() {
   })
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [prestamoToDelete, setPrestamoToDelete] = useState(null)
+  const [showInstrumentWarning, setShowInstrumentWarning] = useState(false)
 
   // Paginación
   const [currentPage, setCurrentPage] = useState(1)
@@ -114,30 +115,38 @@ export default function Prestamos() {
       fecha_prestamo: new Date().toISOString().split("T")[0],
       fecha_devolucion: "",
     })
+    setShowInstrumentWarning(false)
     setShowModal(true)
   }
 
   const handleCloseModal = () => {
     setShowModal(false)
+    setShowInstrumentWarning(false)
   }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
-    setCurrentPrestamo((prev) => ({ ...prev, [name]: value }))
+    const newPrestamo = { ...currentPrestamo, [name]: value }
+    setCurrentPrestamo(newPrestamo)
+
+    // Verificar si el instrumento ya está prestado cuando se selecciona
+    if (name === "num_serie" && value) {
+      const instrumentoYaPrestado = prestamos.some(
+        (prestamo) => prestamo.num_serie === value && !prestamo.fecha_devolucion,
+      )
+      setShowInstrumentWarning(instrumentoYaPrestado)
+    } else if (name === "num_serie" && !value) {
+      setShowInstrumentWarning(false)
+    }
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
     try {
-      // Verificar si ya existe un préstamo para este instrumento y usuario
-      const existePrestamo = prestamos.some(
-        (prestamo) =>
-          prestamo.num_serie === currentPrestamo.num_serie && prestamo.usuario_id === currentPrestamo.usuario_id,
-      )
-
-      if (existePrestamo) {
-        toast.error(t("loans.loanAlreadyExists"))
+      // Si hay advertencia de instrumento prestado, no permitir envío
+      if (showInstrumentWarning) {
+        toast.error(t("loans.instrumentAlreadyLoaned"))
         return
       }
 
@@ -467,6 +476,23 @@ export default function Prestamos() {
             <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("loans.newLoan")}</h3>
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
+                {/* Mensaje de advertencia para instrumento ya prestado */}
+                {showInstrumentWarning && (
+                  <div className="bg-yellow-900/20 border border-yellow-800 text-yellow-100 px-4 py-3 rounded-md flex items-start">
+                    <div className="flex-shrink-0 mr-3 mt-0.5">
+                      <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                          fillRule="evenodd"
+                          d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm">{t("loans.instrumentAlreadyLoanedWarning")}</p>
+                    </div>
+                  </div>
+                )}
                 <div className="space-y-2">
                   <label htmlFor="num_serie" className="block text-[#C0C0C0] text-sm font-medium">
                     {t("loans.instrument")} *
