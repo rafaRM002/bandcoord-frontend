@@ -1,11 +1,13 @@
-"\"use client"
+"use client"
 
 import { useState, useEffect } from "react"
 import { Link, useNavigate, useLocation } from "react-router-dom"
 import { Lock, Eye, EyeOff, CheckCircle, AlertCircle } from "lucide-react"
 import api from "../../api/axios"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export default function NuevaPassword() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
   const [token, setToken] = useState("")
@@ -56,14 +58,14 @@ export default function NuevaPassword() {
 
     // Validar que las contraseñas coincidan
     if (password !== passwordConfirmation) {
-      setError("Las contraseñas no coinciden")
+      setError(t("newPassword.passwordsDoNotMatch", "Las contraseñas no coinciden"))
       setIsLoading(false)
       return
     }
 
     // Validar longitud mínima
     if (password.length < 8) {
-      setError("La contraseña debe tener al menos 8 caracteres")
+      setError(t("newPassword.passwordMinLength", "La contraseña debe tener al menos 8 caracteres"))
       setIsLoading(false)
       return
     }
@@ -86,9 +88,9 @@ export default function NuevaPassword() {
       console.error("Error al restablecer contraseña:", error)
 
       if (error.response && error.response.status === 401) {
-        setError("El enlace ha expirado o no es válido")
+        setError(t("newPassword.linkExpired", "El enlace ha expirado o no es válido"))
       } else {
-        setError("Error al restablecer la contraseña. Por favor, inténtalo de nuevo.")
+        setError(t("newPassword.errorResetting", "Error al restablecer la contraseña. Por favor, inténtalo de nuevo."))
       }
     } finally {
       setIsLoading(false)
@@ -106,13 +108,20 @@ export default function NuevaPassword() {
                   <AlertCircle size={40} className="text-red-400" />
                 </div>
               </div>
-              <h3 className="text-xl font-semibold text-[#C0C0C0] mb-2">Enlace inválido</h3>
-              <p className="text-gray-400 mb-6">El enlace para restablecer la contraseña no es válido o ha expirado.</p>
+              <h3 className="text-xl font-semibold text-[#C0C0C0] mb-2">
+                {t("newPassword.invalidLink", "Enlace inválido")}
+              </h3>
+              <p className="text-gray-400 mb-6">
+                {t(
+                  "newPassword.invalidLinkMessage",
+                  "El enlace para restablecer la contraseña no es válido o ha expirado.",
+                )}
+              </p>
               <Link
                 to="/restablecer-password"
                 className="px-4 py-2 bg-gradient-to-r from-[#C0C0C0] to-gray-400 text-black font-medium rounded-md hover:from-gray-300 hover:to-[#C0C0C0] transition-all duration-300 inline-block"
               >
-                Solicitar nuevo enlace
+                {t("newPassword.requestNewLink", "Solicitar nuevo enlace")}
               </Link>
             </div>
           </div>
@@ -130,8 +139,12 @@ export default function NuevaPassword() {
             <Link to="/login" className="inline-block">
               <img src="/1-removebg-preview.png" alt="Logo BandCoord" className="mx-auto h-16 sm:h-20 w-auto" />
             </Link>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#C0C0C0]">Nueva contraseña</h2>
-            <p className="text-gray-400 text-sm sm:text-base">Establece una nueva contraseña para tu cuenta</p>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#C0C0C0]">
+              {t("newPassword.title", "Nueva contraseña")}
+            </h2>
+            <p className="text-gray-400 text-sm sm:text-base">
+              {t("newPassword.subtitle", "Establece una nueva contraseña para tu cuenta")}
+            </p>
           </div>
 
           {/* Contenido */}
@@ -143,14 +156,20 @@ export default function NuevaPassword() {
                     <CheckCircle size={40} className="text-green-400" />
                   </div>
                 </div>
-                <h3 className="text-xl font-semibold text-[#C0C0C0] mb-2">¡Contraseña actualizada!</h3>
-                <p className="text-gray-400 mb-6">Tu contraseña ha sido restablecida correctamente.</p>
-                <p className="text-gray-400 mb-6">Serás redirigido al inicio de sesión en unos segundos...</p>
+                <h3 className="text-xl font-semibold text-[#C0C0C0] mb-2">
+                  {t("newPassword.passwordUpdated", "¡Contraseña actualizada!")}
+                </h3>
+                <p className="text-gray-400 mb-6">
+                  {t("newPassword.passwordUpdatedMessage", "Tu contraseña ha sido restablecida correctamente.")}
+                </p>
+                <p className="text-gray-400 mb-6">
+                  {t("newPassword.redirectingMessage", "Serás redirigido al inicio de sesión en unos segundos...")}
+                </p>
                 <Link
                   to="/login"
                   className="px-4 py-2 bg-gradient-to-r from-[#C0C0C0] to-gray-400 text-black font-medium rounded-md hover:from-gray-300 hover:to-[#C0C0C0] transition-all duration-300 inline-block"
                 >
-                  Ir al inicio de sesión
+                  {t("newPassword.goToLogin", "Ir al inicio de sesión")}
                 </Link>
               </div>
             ) : (
@@ -158,7 +177,7 @@ export default function NuevaPassword() {
                 {/* Email (solo lectura) */}
                 <div className="space-y-2 mb-6">
                   <label htmlFor="email" className="block text-[#C0C0C0] text-sm font-medium">
-                    Email
+                    {t("newPassword.email", "Email")}
                   </label>
                   <input
                     id="email"
@@ -172,7 +191,7 @@ export default function NuevaPassword() {
                 {/* Nueva contraseña */}
                 <div className="space-y-2 mb-6">
                   <label htmlFor="password" className="block text-[#C0C0C0] text-sm font-medium">
-                    Nueva contraseña *
+                    {t("newPassword.newPassword", "Nueva contraseña")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -195,13 +214,15 @@ export default function NuevaPassword() {
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
-                  <p className="text-xs text-gray-400">La contraseña debe tener al menos 8 caracteres</p>
+                  <p className="text-xs text-gray-400">
+                    {t("newPassword.passwordMinLength", "La contraseña debe tener al menos 8 caracteres")}
+                  </p>
                 </div>
 
                 {/* Confirmar contraseña */}
                 <div className="space-y-2 mb-6">
                   <label htmlFor="passwordConfirmation" className="block text-[#C0C0C0] text-sm font-medium">
-                    Confirmar contraseña *
+                    {t("newPassword.confirmPassword", "Confirmar contraseña")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -239,14 +260,16 @@ export default function NuevaPassword() {
                     className="w-full py-2 px-4 bg-gradient-to-r from-[#C0C0C0] to-gray-400 text-black font-medium rounded-md hover:from-gray-300 hover:to-[#C0C0C0] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={isLoading}
                   >
-                    {isLoading ? "Procesando..." : "Restablecer contraseña"}
+                    {isLoading
+                      ? t("newPassword.processing", "Procesando...")
+                      : t("newPassword.resetPassword", "Restablecer contraseña")}
                   </button>
 
                   <Link
                     to="/login"
                     className="text-center text-sm text-[#C0C0C0] hover:text-white underline underline-offset-4"
                   >
-                    Volver al inicio de sesión
+                    {t("newPassword.backToLogin", "Volver al inicio de sesión")}
                   </Link>
                 </div>
               </form>

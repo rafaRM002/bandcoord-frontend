@@ -3,8 +3,11 @@
 import { useState, useEffect } from "react"
 import api from "../../api/axios"
 import { CheckCircle, XCircle, Trash2, RefreshCw, Search, Filter, Bell, AlertCircle } from "lucide-react"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export default function GestionUsuarios() {
+  // Importamos la función de traducción pero NO la usamos como dependencia en useEffect
+  const { t } = useTranslation()
   const [usuarios, setUsuarios] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -14,7 +17,7 @@ export default function GestionUsuarios() {
   const [modalConfirmacion, setModalConfirmacion] = useState({ visible: false, accion: null, usuario: null })
   const [actualizando, setActualizando] = useState(false)
 
-  // Cargar usuarios
+  // Cargar usuarios - Mantenemos exactamente igual que el original
   const cargarUsuarios = async () => {
     try {
       setLoading(true)
@@ -39,6 +42,7 @@ export default function GestionUsuarios() {
     }
   }
 
+  // Mantenemos el useEffect exactamente igual que el original, sin dependencias
   useEffect(() => {
     const cargarUsuarios = async () => {
       try {
@@ -65,7 +69,7 @@ export default function GestionUsuarios() {
     }
 
     cargarUsuarios()
-  }, [])
+  }, []) // Mantenemos el array de dependencias vacío
 
   // Filtrar usuarios
   const usuariosFiltrados = usuarios.filter((usuario) => {
@@ -201,16 +205,19 @@ export default function GestionUsuarios() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">Gestión de Usuarios</h1>
-          <p className="text-[#C0C0C0]">Administra los usuarios de la plataforma</p>
+          <h1 className="text-2xl font-bold text-white">{t("userManagement.title", "Gestión de Usuarios")}</h1>
+          <p className="text-[#C0C0C0]">{t("userManagement.subtitle", "Administra los usuarios de la plataforma")}</p>
         </div>
 
         {usuariosPendientes > 0 && (
           <div className="bg-yellow-500/80 text-black px-4 py-2 rounded-md flex items-center">
             <Bell className="mr-2" size={20} />
             <span className="font-bold">
-              {usuariosPendientes} usuario{usuariosPendientes !== 1 ? "s" : ""} pendiente
-              {usuariosPendientes !== 1 ? "s" : ""} de aprobación
+              {usuariosPendientes}{" "}
+              {t(
+                "userManagement.pendingApprovalNotification",
+                `usuario${usuariosPendientes !== 1 ? "s" : ""} pendiente${usuariosPendientes !== 1 ? "s" : ""} de aprobación`,
+              )}
             </span>
           </div>
         )}
@@ -225,11 +232,11 @@ export default function GestionUsuarios() {
             onChange={(e) => setFiltroEstado(e.target.value)}
             className="bg-gray-900 border border-gray-700 rounded-md px-3 py-2 text-[#C0C0C0] focus:outline-none focus:ring-2 focus:ring-gray-600"
           >
-            <option value="todos">Todos los estados</option>
-            <option value="activo">Activos</option>
-            <option value="pendiente">Pendientes</option>
-            <option value="bloqueado">Bloqueados</option>
-            <option value="suspendido">Suspendidos</option>
+            <option value="todos">{t("userManagement.allStatuses", "Todos los estados")}</option>
+            <option value="activo">{t("userManagement.active", "Activos")}</option>
+            <option value="pendiente">{t("userManagement.pending", "Pendientes")}</option>
+            <option value="bloqueado">{t("userManagement.blocked", "Bloqueados")}</option>
+            <option value="suspendido">{t("userManagement.suspended", "Suspendidos")}</option>
           </select>
         </div>
 
@@ -238,7 +245,7 @@ export default function GestionUsuarios() {
             <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#C0C0C0]" />
             <input
               type="text"
-              placeholder="Buscar por nombre o email..."
+              placeholder={t("userManagement.searchByNameOrEmail", "Buscar por nombre o email...")}
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
               className="bg-gray-900 border border-gray-700 rounded-md pl-10 pr-3 py-2 w-full text-[#C0C0C0] focus:outline-none focus:ring-2 focus:ring-gray-600"
@@ -251,7 +258,7 @@ export default function GestionUsuarios() {
             disabled={loading}
           >
             <RefreshCw size={20} className={`mr-2 ${loading ? "animate-spin" : ""}`} />
-            Actualizar
+            {t("userManagement.update", "Actualizar")}
           </button>
         </div>
       </div>
@@ -269,7 +276,7 @@ export default function GestionUsuarios() {
           <div className="bg-yellow-900/20 border border-yellow-800 rounded-lg overflow-hidden">
             <div className="px-4 py-3 bg-yellow-900/30 border-b border-yellow-800">
               <h2 className="text-lg font-semibold text-yellow-300">
-                Usuarios pendientes de aprobación ({usuariosPendientes})
+                {t("userManagement.pendingUsers", "Usuarios pendientes de aprobación")} ({usuariosPendientes})
               </h2>
             </div>
             <div className="overflow-x-auto">
@@ -277,19 +284,19 @@ export default function GestionUsuarios() {
                 <thead className="bg-yellow-900/20">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
-                      Nombre
+                      {t("userManagement.name", "Nombre")}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
-                      Email
+                      {t("userManagement.email", "Email")}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
-                      Teléfono
+                      {t("userManagement.phone", "Teléfono")}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
-                      Fecha Registro
+                      {t("userManagement.registrationDate", "Fecha Registro")}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
-                      Acciones
+                      {t("userManagement.actions", "Acciones")}
                     </th>
                   </tr>
                 </thead>
@@ -311,14 +318,14 @@ export default function GestionUsuarios() {
                             <button
                               onClick={() => mostrarConfirmacion("aprobar", usuario)}
                               className="text-green-400 hover:text-green-300"
-                              title="Activar usuario"
+                              title={t("userManagement.activateUser", "Activar usuario")}
                             >
                               <CheckCircle size={20} />
                             </button>
                             <button
                               onClick={() => mostrarConfirmacion("eliminar", usuario)}
                               className="text-gray-400 hover:text-gray-300"
-                              title="Eliminar usuario"
+                              title={t("userManagement.deleteUser", "Eliminar usuario")}
                             >
                               <Trash2 size={20} />
                             </button>
@@ -336,30 +343,34 @@ export default function GestionUsuarios() {
       {/* Tabla de usuarios */}
       <div className="bg-gray-900/50 border border-gray-800 rounded-lg overflow-hidden">
         <div className="px-4 py-3 bg-gray-900 border-b border-gray-800">
-          <h2 className="text-lg font-semibold text-[#C0C0C0]">Usuarios registrados</h2>
+          <h2 className="text-lg font-semibold text-[#C0C0C0]">
+            {t("userManagement.registeredUsers", "Usuarios registrados")}
+          </h2>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-800">
             <thead className="bg-gray-900">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
-                  Nombre
+                  {t("userManagement.name", "Nombre")}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
-                  Email
+                  {t("userManagement.email", "Email")}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
-                  Teléfono
+                  {t("userManagement.phone", "Teléfono")}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
-                  Estado
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">Rol</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
-                  Fecha Registro
+                  {t("userManagement.status", "Estado")}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
-                  Acciones
+                  {t("userManagement.role", "Rol")}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
+                  {t("userManagement.registrationDate", "Fecha Registro")}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
+                  {t("userManagement.actions", "Acciones")}
                 </th>
               </tr>
             </thead>
@@ -367,13 +378,13 @@ export default function GestionUsuarios() {
               {loading ? (
                 <tr>
                   <td colSpan="7" className="px-6 py-4 text-center text-[#C0C0C0]">
-                    Cargando usuarios...
+                    {t("userManagement.loadingUsers", "Cargando usuarios...")}
                   </td>
                 </tr>
               ) : usuariosFiltradosRegistrados.length === 0 ? (
                 <tr>
                   <td colSpan="7" className="px-6 py-4 text-center text-[#C0C0C0]">
-                    No se encontraron usuarios
+                    {t("userManagement.noUsersFound", "No se encontraron usuarios")}
                   </td>
                 </tr>
               ) : (
@@ -405,7 +416,9 @@ export default function GestionUsuarios() {
                           usuario.role === "admin" ? "bg-purple-900/50 text-purple-300" : "bg-blue-900/50 text-blue-300"
                         }`}
                       >
-                        {usuario.role === "admin" ? "Administrador" : "Miembro"}
+                        {usuario.role === "admin"
+                          ? t("userManagement.administrator", "Administrador")
+                          : t("userManagement.member", "Miembro")}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-[#C0C0C0]">
@@ -419,7 +432,7 @@ export default function GestionUsuarios() {
                           <button
                             onClick={() => mostrarConfirmacion("aprobar", usuario)}
                             className="text-green-400 hover:text-green-300"
-                            title="Activar usuario"
+                            title={t("userManagement.activateUser", "Activar usuario")}
                           >
                             <CheckCircle size={20} />
                           </button>
@@ -430,14 +443,14 @@ export default function GestionUsuarios() {
                             <button
                               onClick={() => mostrarConfirmacion("bloquear", usuario)}
                               className="text-red-400 hover:text-red-300"
-                              title="Bloquear usuario"
+                              title={t("userManagement.blockUser", "Bloquear usuario")}
                             >
                               <XCircle size={20} />
                             </button>
                             <button
                               onClick={() => mostrarConfirmacion("suspender", usuario)}
                               className="text-yellow-400 hover:text-yellow-300"
-                              title="Suspender usuario"
+                              title={t("userManagement.suspendUser", "Suspender usuario")}
                             >
                               <AlertCircle size={20} />
                             </button>
@@ -447,7 +460,7 @@ export default function GestionUsuarios() {
                         <button
                           onClick={() => mostrarConfirmacion("eliminar", usuario)}
                           className="text-gray-400 hover:text-gray-300"
-                          title="Eliminar usuario"
+                          title={t("userManagement.deleteUser", "Eliminar usuario")}
                         >
                           <Trash2 size={20} />
                         </button>
@@ -467,22 +480,34 @@ export default function GestionUsuarios() {
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 max-w-md w-full">
             <h3 className="text-xl font-bold text-white mb-4">
               {modalConfirmacion.accion === "aprobar"
-                ? "Activar usuario"
+                ? t("userManagement.activateUser", "Activar usuario")
                 : modalConfirmacion.accion === "bloquear"
-                  ? "Bloquear usuario"
+                  ? t("userManagement.blockUser", "Bloquear usuario")
                   : modalConfirmacion.accion === "suspender"
-                    ? "Suspender usuario"
-                    : "Eliminar usuario"}
+                    ? t("userManagement.suspendUser", "Suspender usuario")
+                    : t("userManagement.deleteUser", "Eliminar usuario")}
             </h3>
 
             <p className="text-[#C0C0C0] mb-6">
               {modalConfirmacion.accion === "aprobar"
-                ? "¿Estás seguro de que deseas activar a este usuario? Podrá acceder a la plataforma."
+                ? t(
+                    "userManagement.confirmActivation",
+                    "¿Estás seguro de que deseas activar a este usuario? Podrá acceder a la plataforma.",
+                  )
                 : modalConfirmacion.accion === "bloquear"
-                  ? "¿Estás seguro de que deseas bloquear a este usuario? No podrá acceder a la plataforma."
+                  ? t(
+                      "userManagement.confirmBlocking",
+                      "¿Estás seguro de que deseas bloquear a este usuario? No podrá acceder a la plataforma.",
+                    )
                   : modalConfirmacion.accion === "suspender"
-                    ? "¿Estás seguro de que deseas suspender a este usuario? No podrá acceder a la plataforma temporalmente."
-                    : "¿Estás seguro de que deseas eliminar a este usuario? Esta acción no se puede deshacer."}
+                    ? t(
+                        "userManagement.confirmSuspension",
+                        "¿Estás seguro de que deseas suspender a este usuario? No podrá acceder a la plataforma temporalmente.",
+                      )
+                    : t(
+                        "userManagement.confirmDeletion",
+                        "¿Estás seguro de que deseas eliminar a este usuario? Esta acción no se puede deshacer.",
+                      )}
             </p>
 
             <div className="flex justify-end space-x-3">
@@ -491,7 +516,7 @@ export default function GestionUsuarios() {
                 className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
                 disabled={actualizando}
               >
-                Cancelar
+                {t("userManagement.cancel", "Cancelar")}
               </button>
 
               <button
@@ -508,14 +533,14 @@ export default function GestionUsuarios() {
                 disabled={actualizando}
               >
                 {actualizando
-                  ? "Procesando..."
+                  ? t("userManagement.processing", "Procesando...")
                   : modalConfirmacion.accion === "aprobar"
-                    ? "Aprobar"
+                    ? t("userManagement.approve", "Aprobar")
                     : modalConfirmacion.accion === "bloquear"
-                      ? "Bloquear"
+                      ? t("userManagement.block", "Bloquear")
                       : modalConfirmacion.accion === "suspender"
-                        ? "Suspender"
-                        : "Eliminar"}
+                        ? t("userManagement.suspend", "Suspender")
+                        : t("userManagement.delete", "Eliminar")}
               </button>
             </div>
           </div>

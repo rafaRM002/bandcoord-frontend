@@ -6,11 +6,13 @@ import { ArrowLeft, Save, Users, MessageSquare } from "lucide-react"
 import api from "../../api/axios"
 import { toast } from "react-toastify"
 import { useAuth } from "../../context/AuthContext"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export default function FormularioMensaje() {
   const navigate = useNavigate()
   const location = useLocation()
   const { user } = useAuth()
+  const { t } = useTranslation()
 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -123,7 +125,7 @@ export default function FormularioMensaje() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-center items-center h-64">
-          <div className="text-[#C0C0C0]">Cargando...</div>
+          <div className="text-[#C0C0C0]">{t("common.loading")}</div>
         </div>
       </div>
     )
@@ -138,7 +140,9 @@ export default function FormularioMensaje() {
         >
           <ArrowLeft size={20} />
         </button>
-        <h1 className="text-2xl font-bold text-[#C0C0C0]">{esRespuesta ? "Responder Mensaje" : "Nuevo Mensaje"}</h1>
+        <h1 className="text-2xl font-bold text-[#C0C0C0]">
+          {esRespuesta ? t("messages.replyMessage") : t("messages.newMessage")}
+        </h1>
       </div>
 
       {error && (
@@ -150,7 +154,7 @@ export default function FormularioMensaje() {
           {/* Asunto */}
           <div className="space-y-2 mb-6">
             <label htmlFor="asunto" className="block text-[#C0C0C0] text-sm font-medium">
-              Asunto *
+              {t("messages.subject")} *
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -170,7 +174,7 @@ export default function FormularioMensaje() {
           {/* Contenido */}
           <div className="space-y-2 mb-6">
             <label htmlFor="contenido" className="block text-[#C0C0C0] text-sm font-medium">
-              Contenido *
+              {t("messages.content")} *
             </label>
             <textarea
               id="contenido"
@@ -187,7 +191,7 @@ export default function FormularioMensaje() {
           <div className="space-y-2 mb-6">
             <label className="block text-[#C0C0C0] text-sm font-medium flex items-center">
               <Users size={18} className="mr-2" />
-              Destinatarios *
+              {t("messages.recipients")} *
             </label>
 
             {esRespuesta && location.state?.destinatarioNombre ? (
@@ -204,14 +208,12 @@ export default function FormularioMensaje() {
                     {location.state.destinatarioEmail && ` (${location.state.destinatarioEmail})`}
                   </label>
                 </div>
-                <p className="text-gray-400 text-xs mt-2">
-                  Estás respondiendo a un mensaje. El destinatario no puede ser modificado.
-                </p>
+                <p className="text-gray-400 text-xs mt-2">{t("messages.replyRecipientInfo")}</p>
               </div>
             ) : (
               <div className="bg-gray-900/50 border border-gray-800 rounded-md p-4 max-h-60 overflow-y-auto">
                 {usuarios.length === 0 ? (
-                  <p className="text-gray-400">No hay usuarios disponibles</p>
+                  <p className="text-gray-400">{t("messages.noUsersAvailable")}</p>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {usuarios.map((usuario) => (
@@ -235,7 +237,7 @@ export default function FormularioMensaje() {
             )}
 
             {formData.receptores.length === 0 && !esRespuesta && (
-              <p className="text-red-400 text-xs">Debes seleccionar al menos un destinatario</p>
+              <p className="text-red-400 text-xs">{t("messages.formMessage.selectRecipients")}</p>
             )}
           </div>
 
@@ -245,7 +247,7 @@ export default function FormularioMensaje() {
               onClick={() => navigate("/mensajes")}
               className="mr-4 px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
             >
-              Cancelar
+              {t("common.cancel")}
             </button>
             <button
               type="submit"
@@ -253,7 +255,7 @@ export default function FormularioMensaje() {
               className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               <Save size={18} />
-              {saving ? "Enviando..." : "Enviar mensaje"}
+              {saving ? t("messages.sending") : t("messages.send")}
             </button>
           </div>
         </form>

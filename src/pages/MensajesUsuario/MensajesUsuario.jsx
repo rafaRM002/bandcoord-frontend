@@ -14,10 +14,10 @@ import {
   Inbox,
   Mail,
   CheckCircle,
-  Archive,
   Square,
   CheckSquare,
 } from "lucide-react"
+import { useTranslation } from "../../hooks/useTranslation"
 
 const MensajesUsuario = () => {
   const [mensajes, setMensajes] = useState([])
@@ -27,13 +27,15 @@ const MensajesUsuario = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [, setTotalPages] = useState(1)
-  const [filtroActual, setFiltroActual] = useState("todos") // todos, leidos, no-leidos, archivados
+  const [filtroActual, setFiltroActual] = useState("todos") // todos, leidos, no-leidos
   const { user } = useContext(AuthContext)
   const itemsPerPage = 6
 
   // Add these state variables
   const [selectedMensajes, setSelectedMensajes] = useState([])
   const [selectAll, setSelectAll] = useState(false)
+
+  const { t } = useTranslation()
 
   useEffect(() => {
     const fetchMensajesUsuario = async () => {
@@ -120,28 +122,6 @@ const MensajesUsuario = () => {
     }
   }
 
-  const archivarMensaje = async (mensajeId) => {
-    try {
-      await axios.put(`/mensaje-usuarios/${mensajeId}/${user.id}`, {
-        archivado: true,
-      })
-
-      // Actualizar el estado del mensaje en la lista
-      setMensajes(
-        mensajes.map((mensaje) =>
-          mensaje.mensaje_id === mensajeId && mensaje.usuario_id_receptor === user.id
-            ? { ...mensaje, archivado: true }
-            : mensaje,
-        ),
-      )
-
-      toast.success("Mensaje archivado")
-    } catch (err) {
-      console.error("Error al archivar mensaje:", err)
-      toast.error("Error al archivar el mensaje")
-    }
-  }
-
   // Obtener el nombre del remitente
   const getNombreRemitente = (usuarioId) => {
     // Aquí podrías implementar una lógica para obtener el nombre del remitente
@@ -210,8 +190,6 @@ const MensajesUsuario = () => {
       return matchesSearch && mensaje.leido && !mensaje.archivado
     } else if (filtroActual === "no-leidos") {
       return matchesSearch && !mensaje.leido && !mensaje.archivado
-    } else if (filtroActual === "archivados") {
-      return matchesSearch && mensaje.archivado
     }
 
     // Si es "todos", mostrar todos excepto archivados
@@ -227,7 +205,7 @@ const MensajesUsuario = () => {
 
   // Formatear fecha para mostrar
   const formatDate = (dateString) => {
-    if (!dateString) return "Fecha desconocida"
+    if (!dateString) return t("common.unknownDate")
 
     const options = { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }
     return new Date(dateString).toLocaleDateString("es-ES", options)
@@ -245,7 +223,7 @@ const MensajesUsuario = () => {
           disabled={currentPage === 1}
           className="px-3 py-1 bg-gray-900 border border-gray-700 rounded-md text-[#C0C0C0] disabled:opacity-50"
         >
-          Anterior
+          {t("common.previous")}
         </button>
 
         {Array.from({ length: totalFilteredPages }, (_, i) => i + 1).map((page) => (
@@ -265,13 +243,13 @@ const MensajesUsuario = () => {
           disabled={currentPage === totalFilteredPages}
           className="px-3 py-1 bg-gray-900 border border-gray-700 rounded-md text-[#C0C0C0] disabled:opacity-50"
         >
-          Siguiente
+          {t("common.next")}
         </button>
       </div>
     )
   }
 
-  if (loading) return <div className="container mx-auto p-4">Cargando tus mensajes...</div>
+  if (loading) return <div className="container mx-auto p-4">{t("messages.loadingMessages")}</div>
   if (error) return <div className="container mx-auto p-4 text-red-500">{error}</div>
 
   const mensajesNoLeidos = mensajes.filter((m) => !m.leido).length
@@ -279,13 +257,13 @@ const MensajesUsuario = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-[#C0C0C0]">Bandeja de entrada</h1>
+        <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("messages.receivedMessages")}</h1>
         {/* Reemplazar el botón "Responder" en la parte superior */}
         <div className="flex items-center">
           <div className="mr-4">
             {mensajesNoLeidos > 0 && (
               <div className="bg-yellow-500 text-black px-2 py-1 rounded-full text-xs font-bold">
-                {mensajesNoLeidos} sin leer
+                {mensajesNoLeidos} {t("messages.unread")}
               </div>
             )}
           </div>
@@ -295,7 +273,7 @@ const MensajesUsuario = () => {
               className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
             >
               <CheckCircle size={18} />
-              Marcar como leídos ({selectedMensajes.length})
+              {t("messages.markAsRead")} ({selectedMensajes.length})
             </button>
           ) : null}
         </div>
@@ -305,7 +283,7 @@ const MensajesUsuario = () => {
         {/* Sidebar */}
         <div className="md:col-span-1">
           <div className="bg-black/30 border border-gray-800 rounded-lg p-4">
-            <h2 className="text-lg font-medium text-[#C0C0C0] mb-4">Filtros</h2>
+            <h2 className="text-lg font-medium text-[#C0C0C0] mb-4">{t("common.filter")}</h2>
 
             <ul className="space-y-2">
               <li>
@@ -319,7 +297,7 @@ const MensajesUsuario = () => {
                   }`}
                 >
                   <Inbox size={18} className="mr-2" />
-                  <span>Todos</span>
+                  <span>{t("common.all")}</span>
                   <span className="ml-auto bg-gray-700 text-xs px-2 py-1 rounded-full">{mensajes.length}</span>
                 </button>
               </li>
@@ -334,7 +312,7 @@ const MensajesUsuario = () => {
                   }`}
                 >
                   <Mail size={18} className="mr-2" />
-                  <span>No leídos</span>
+                  <span>{t("messages.unread")}</span>
                   <span className="ml-auto bg-yellow-500 text-black text-xs px-2 py-1 rounded-full">
                     {mensajesNoLeidos}
                   </span>
@@ -351,26 +329,9 @@ const MensajesUsuario = () => {
                   }`}
                 >
                   <CheckCircle size={18} className="mr-2" />
-                  <span>Leídos</span>
+                  <span>{t("messages.read")}</span>
                   <span className="ml-auto bg-gray-700 text-xs px-2 py-1 rounded-full">
                     {mensajes.length - mensajesNoLeidos}
-                  </span>
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => {
-                    setFiltroActual("archivados")
-                    setCurrentPage(1)
-                  }}
-                  className={`flex items-center w-full px-3 py-2 rounded-md ${
-                    filtroActual === "archivados" ? "bg-gray-800 text-white" : "text-gray-400 hover:bg-gray-900/50"
-                  }`}
-                >
-                  <Archive size={18} className="mr-2" />
-                  <span>Archivados</span>
-                  <span className="ml-auto bg-gray-700 text-xs px-2 py-1 rounded-full">
-                    {mensajes.filter((m) => m.archivado).length}
                   </span>
                 </button>
               </li>
@@ -386,7 +347,7 @@ const MensajesUsuario = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
               <input
                 type="text"
-                placeholder="Buscar por remitente, asunto o contenido..."
+                placeholder={t("messages.searchBySubjectOrContent")}
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value)
@@ -404,12 +365,14 @@ const MensajesUsuario = () => {
               <button
                 onClick={handleSelectAll}
                 className="p-1 text-gray-400 hover:text-[#C0C0C0]"
-                title={selectAll ? "Deseleccionar todos" : "Seleccionar todos"}
+                title={selectAll ? t("common.deselectAll") : t("common.selectAll")}
               >
                 {selectAll ? <CheckSquare size={18} /> : <Square size={18} />}
               </button>
               <span className="ml-2 text-sm text-gray-400">
-                {selectedMensajes.length > 0 ? `${selectedMensajes.length} seleccionado(s)` : "Seleccionar"}
+                {selectedMensajes.length > 0
+                  ? `${selectedMensajes.length} ${t("common.selected")}`
+                  : t("common.select")}
               </span>
             </div>
             {paginatedMensajes.length === 0 ? (
@@ -417,12 +380,12 @@ const MensajesUsuario = () => {
                 <MessageSquare size={48} className="text-gray-600 mb-4" />
                 <p className="text-gray-400 text-center">
                   {searchTerm
-                    ? "No se encontraron mensajes con la búsqueda aplicada."
+                    ? t("messages.noMessagesWithSearch")
                     : filtroActual === "no-leidos"
-                      ? "No tienes mensajes sin leer."
+                      ? t("messages.noUnreadMessages")
                       : filtroActual === "leidos"
-                        ? "No tienes mensajes leídos."
-                        : "No tienes mensajes."}
+                        ? t("messages.noReadMessages")
+                        : t("messages.noMessages")}
                 </p>
               </div>
             ) : (
@@ -468,20 +431,13 @@ const MensajesUsuario = () => {
                             </div>
                             <div className="flex items-center mt-1 text-sm text-gray-400">
                               <User size={14} className="mr-1" />
-                              <span>De: {getNombreRemitente(mensaje.usuario_id_emisor)}</span>
+                              <span>
+                                {t("messages.from")}: {getNombreRemitente(mensaje.usuario_id_emisor)}
+                              </span>
                               <span className="mx-2">•</span>
                               <Calendar size={14} className="mr-1" />
                               <span>{formatDate(mensaje.created_at)}</span>
                             </div>
-                          </div>
-                          <div className="flex">
-                            <button
-                              onClick={() => archivarMensaje(mensaje.mensaje_id)}
-                              className="p-1 text-gray-400 hover:text-[#C0C0C0] bg-gray-900/50 rounded-full"
-                              title="Archivar mensaje"
-                            >
-                              <Archive size={18} />
-                            </button>
                           </div>
                         </div>
                         <Link

@@ -3,8 +3,10 @@
 import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight, CalendarIcon, Clock, MapPin, Music, X, AlertTriangle, Check } from "lucide-react"
 import api from "../../api/axios"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export default function Calendario() {
+  const { t } = useTranslation()
   const [eventos, setEventos] = useState([])
   const [loading, setLoading] = useState(true)
   const [currentDate, setCurrentDate] = useState(new Date())
@@ -174,7 +176,7 @@ export default function Calendario() {
       // Mostrar notificación de éxito
       setNotification({
         show: true,
-        message: "Evento eliminado correctamente",
+        message: t("calendar.eventDeleted"),
         type: "success",
       })
 
@@ -191,7 +193,7 @@ export default function Calendario() {
       // Mostrar notificación de error
       setNotification({
         show: true,
-        message: "Error al eliminar el evento",
+        message: t("calendar.errorDeletingEvent"),
         type: "error",
       })
 
@@ -243,8 +245,8 @@ export default function Calendario() {
                   className={`text-[9px] sm:text-[10px] p-1 mb-1 rounded-full truncate ${
                     getTipoColor(evento.tipo).bg
                   } ${getTipoColor(evento.tipo).text} ${getTipoColor(evento.tipo).border} font-medium`}
-                  title={`${evento.nombre} - ${evento.hora ? formatTime(evento.hora) : "Sin hora"} - ${
-                    evento.lugar || "Sin lugar"
+                  title={`${evento.nombre} - ${evento.hora ? formatTime(evento.hora) : t("calendar.noTimeSpecified")} - ${
+                    evento.lugar || t("calendar.noLocationSpecified")
                   }`}
                 >
                   {evento.nombre}
@@ -252,7 +254,7 @@ export default function Calendario() {
               ))}
               {eventosDelDia.length > 3 && (
                 <div className="text-[9px] sm:text-[10px] text-gray-400 text-center">
-                  +{eventosDelDia.length - 3} más
+                  +{eventosDelDia.length - 3} {t("calendar.moreEvents")}
                 </div>
               )}
             </div>
@@ -282,7 +284,7 @@ export default function Calendario() {
       Number.parseInt(fechaPartes[2]),
     )
 
-    // Formatear la fecha
+    // Formatear la fecha según el idioma actual
     return fecha.toLocaleDateString("es-ES", {
       weekday: "long",
       year: "numeric",
@@ -306,22 +308,9 @@ export default function Calendario() {
     }
   }
 
-  const monthNames = [
-    "Enero",
-    "Febrero",
-    "Marzo",
-    "Abril",
-    "Mayo",
-    "Junio",
-    "Julio",
-    "Agosto",
-    "Septiembre",
-    "Octubre",
-    "Noviembre",
-    "Diciembre",
-  ]
-
-  const dayNames = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"]
+  // Use translated month and day names
+  const monthNames = t("calendar.months")
+  const dayNames = t("calendar.days")
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -342,7 +331,7 @@ export default function Calendario() {
       )}
 
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold text-[#C0C0C0]">Calendario de Eventos</h1>
+        <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("calendar.title")}</h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -350,7 +339,7 @@ export default function Calendario() {
         <div className="lg:col-span-2 bg-black/30 border border-gray-800 rounded-lg p-4">
           {loading ? (
             <div className="flex justify-center items-center h-64">
-              <div className="text-[#C0C0C0]">Cargando eventos...</div>
+              <div className="text-[#C0C0C0]">{t("calendar.loading")}</div>
             </div>
           ) : (
             <>
@@ -393,16 +382,16 @@ export default function Calendario() {
           {/* Leyenda de tipos de eventos */}
           <div className="flex flex-wrap items-center justify-center gap-2 mb-4">
             <div className="px-3 py-1 rounded-full bg-blue-900/30 text-blue-400 border border-blue-800">
-              <span className="text-xs">Ensayo</span>
+              <span className="text-xs">{t("calendar.rehearsal")}</span>
             </div>
             <div className="px-3 py-1 rounded-full bg-purple-900/30 text-purple-400 border border-purple-800">
-              <span className="text-xs">Concierto</span>
+              <span className="text-xs">{t("calendar.concert")}</span>
             </div>
             <div className="px-3 py-1 rounded-full bg-green-900/30 text-green-400 border border-green-800">
-              <span className="text-xs">Procesión</span>
+              <span className="text-xs">{t("calendar.procession")}</span>
             </div>
             <div className="px-3 py-1 rounded-full bg-yellow-900/30 text-yellow-400 border border-yellow-800">
-              <span className="text-xs">Pasacalles</span>
+              <span className="text-xs">{t("calendar.parade")}</span>
             </div>
           </div>
 
@@ -411,15 +400,18 @@ export default function Calendario() {
               <CalendarIcon size={20} className="text-[#C0C0C0] mr-2" />
               <h2 className="text-lg font-semibold text-[#C0C0C0]">
                 {selectedDate
-                  ? `Eventos del ${selectedDate.getDate()} de ${monthNames[selectedDate.getMonth()]}`
-                  : "Selecciona una fecha"}
+                  ? `${t("events.events")} ${t("common.of")} ${selectedDate.getDate()} ${t("common.of")} ${
+                      monthNames[selectedDate.getMonth()]
+                    }`
+                  : t("calendar.selectDate")}
               </h2>
             </div>
 
             {/* Contador de eventos */}
             {eventosDelDia.length > eventsPerPage && (
               <div className="text-xs text-gray-400">
-                {indexOfFirstEvent + 1}-{Math.min(indexOfLastEvent, eventosDelDia.length)} de {eventosDelDia.length}
+                {t("calendar.showing")} {indexOfFirstEvent + 1}-{Math.min(indexOfLastEvent, eventosDelDia.length)}{" "}
+                {t("calendar.of")} {eventosDelDia.length}
               </div>
             )}
           </div>
@@ -447,11 +439,13 @@ export default function Calendario() {
                       <div className="mt-3 space-y-2">
                         <div className="flex items-center text-sm">
                           <Clock size={16} className="text-gray-400 mr-2" />
-                          <span className="text-[#C0C0C0]">{formatTime(evento.hora) || "Sin hora especificada"}</span>
+                          <span className="text-[#C0C0C0]">
+                            {formatTime(evento.hora) || t("calendar.noTimeSpecified")}
+                          </span>
                         </div>
                         <div className="flex items-center text-sm">
                           <MapPin size={16} className="text-gray-400 mr-2" />
-                          <span className="text-[#C0C0C0]">{evento.lugar || "Sin ubicación especificada"}</span>
+                          <span className="text-[#C0C0C0]">{evento.lugar || t("calendar.noLocationSpecified")}</span>
                         </div>
                       </div>
                     </div>
@@ -507,13 +501,13 @@ export default function Calendario() {
             ) : (
               <div className="flex flex-col items-center justify-center h-40 text-gray-400">
                 <Music size={32} className="mb-2 text-gray-600" />
-                <p>No hay eventos programados para esta fecha</p>
+                <p>{t("calendar.noEvents")}</p>
               </div>
             )
           ) : (
             <div className="flex flex-col items-center justify-center h-40 text-gray-400">
               <CalendarIcon size={32} className="mb-2 text-gray-600" />
-              <p>Selecciona una fecha para ver los eventos</p>
+              <p>{t("calendar.selectDate")}</p>
             </div>
           )}
         </div>
@@ -525,7 +519,7 @@ export default function Calendario() {
           <div className="bg-gray-900 border border-gray-700 rounded-lg w-full max-w-lg overflow-hidden">
             {/* Cabecera del modal */}
             <div className="flex items-center justify-between p-4 border-b border-gray-700">
-              <h3 className="text-xl font-semibold text-[#C0C0C0]">Detalles del evento</h3>
+              <h3 className="text-xl font-semibold text-[#C0C0C0]">{t("calendar.eventDetails")}</h3>
               <button
                 onClick={handleCloseEventModal}
                 className="text-gray-400 hover:text-[#C0C0C0] rounded-full p-1 hover:bg-gray-800/50"
@@ -555,12 +549,14 @@ export default function Calendario() {
 
                 <div className="flex items-center">
                   <Clock size={18} className="text-gray-400 mr-3" />
-                  <span className="text-[#C0C0C0]">{formatTime(selectedEvent.hora) || "Sin hora especificada"}</span>
+                  <span className="text-[#C0C0C0]">
+                    {formatTime(selectedEvent.hora) || t("calendar.noTimeSpecified")}
+                  </span>
                 </div>
 
                 <div className="flex items-center">
                   <MapPin size={18} className="text-gray-400 mr-3" />
-                  <span className="text-[#C0C0C0]">{selectedEvent.lugar || "Sin ubicación especificada"}</span>
+                  <span className="text-[#C0C0C0]">{selectedEvent.lugar || t("calendar.noLocationSpecified")}</span>
                 </div>
 
                 {selectedEvent.estado && (
@@ -573,7 +569,7 @@ export default function Calendario() {
 
               {selectedEvent.descripcion && (
                 <div className="mb-6">
-                  <h4 className="text-sm font-medium text-gray-400 mb-2">Descripción</h4>
+                  <h4 className="text-sm font-medium text-gray-400 mb-2">{t("calendar.description")}</h4>
                   <p className="text-[#C0C0C0] bg-black/30 p-3 rounded-md">{selectedEvent.descripcion}</p>
                 </div>
               )}
@@ -586,26 +582,24 @@ export default function Calendario() {
                     className="w-full py-2 !bg-red-800 hover:!bg-red-900 text-white rounded-md transition-colors"
                     style={{ backgroundColor: "#dc2626" }}
                   >
-                    Cancelar evento
+                    {t("calendar.cancelEvent")}
                   </button>
                 ) : (
                   <div className="space-y-3">
-                    <p className="text-red-400 text-sm">
-                      ¿Estás seguro de que deseas eliminar este evento? Esta acción no se puede deshacer.
-                    </p>
+                    <p className="text-red-400 text-sm">{t("calendar.confirmDelete")}</p>
                     <div className="flex space-x-3">
                       <button
                         onClick={() => setShowDeleteConfirm(false)}
                         className="flex-1 py-2 bg-gray-800 hover:bg-gray-700 text-[#C0C0C0] rounded-md transition-colors"
                       >
-                        No, mantener
+                        {t("calendar.keep")}
                       </button>
                       <button
                         onClick={handleDeleteEvent}
                         className="flex-1 py-2 !bg-red-800 hover:!bg-red-900 text-white rounded-md transition-colors"
                         style={{ backgroundColor: "#dc2626" }}
                       >
-                        Sí, eliminar
+                        {t("calendar.delete")}
                       </button>
                     </div>
                   </div>

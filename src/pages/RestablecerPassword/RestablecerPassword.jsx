@@ -4,8 +4,10 @@ import { useState } from "react"
 import { Link } from "react-router-dom"
 import { ArrowLeft, Mail, Send, CheckCircle } from "lucide-react"
 import api from "../../api/axios"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export default function RestablecerPassword() {
+  const { t } = useTranslation()
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
@@ -24,9 +26,9 @@ export default function RestablecerPassword() {
       console.error("Error al solicitar restablecimiento:", error)
 
       if (error.response && error.response.status === 404) {
-        setError("No existe ninguna cuenta con este email")
+        setError(t("resetPassword.emailNotFound", "No existe ninguna cuenta con este email"))
       } else {
-        setError("Error al procesar la solicitud. Por favor, inténtalo de nuevo.")
+        setError(t("resetPassword.errorProcessing", "Error al procesar la solicitud. Por favor, inténtalo de nuevo."))
       }
     } finally {
       setIsLoading(false)
@@ -40,11 +42,17 @@ export default function RestablecerPassword() {
           {/* Header */}
           <div className="space-y-3 text-center border-b border-gray-800 p-6">
             <Link to="/login" className="inline-block">
-              <img src={`${import.meta.env.BASE_URL}/1-removebg-preview.png`} alt="Logo BandCoord" className="mx-auto h-16 sm:h-20 w-auto" />
+              <img
+                src={`${import.meta.env.BASE_URL}/1-removebg-preview.png`}
+                alt="Logo BandCoord"
+                className="mx-auto h-16 sm:h-20 w-auto"
+              />
             </Link>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#C0C0C0]">Restablecer contraseña</h2>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#C0C0C0]">
+              {t("resetPassword.title", "Restablecer contraseña")}
+            </h2>
             <p className="text-gray-400 text-sm sm:text-base">
-              Introduce tu email para recibir instrucciones de restablecimiento
+              {t("resetPassword.subtitle", "Introduce tu email para recibir instrucciones de restablecimiento")}
             </p>
           </div>
 
@@ -57,14 +65,21 @@ export default function RestablecerPassword() {
                     <CheckCircle size={40} className="text-green-400" />
                   </div>
                 </div>
-                <h3 className="text-xl font-semibold text-[#C0C0C0] mb-2">Solicitud enviada</h3>
+                <h3 className="text-xl font-semibold text-[#C0C0C0] mb-2">
+                  {t("resetPassword.requestSent", "Solicitud enviada")}
+                </h3>
                 <p className="text-gray-400 mb-6">
-                  Hemos enviado un email a <span className="text-[#C0C0C0]">{email}</span> con instrucciones para
-                  restablecer tu contraseña.
+                  {t(
+                    "resetPassword.requestSentMessage",
+                    "Hemos enviado un email a {email} con instrucciones para restablecer tu contraseña.",
+                  ).replace("{email}", email)}
                 </p>
-                <p className="text-gray-400 mb-6">Revisa tu bandeja de entrada y sigue las instrucciones del correo.</p>
+                <p className="text-gray-400 mb-6">
+                  {t("resetPassword.checkInbox", "Revisa tu bandeja de entrada y sigue las instrucciones del correo.")}
+                </p>
                 <Link to="/login" className="inline-flex items-center text-[#C0C0C0] hover:text-white">
-                  <ArrowLeft size={16} className="mr-2" /> Volver al inicio de sesión
+                  <ArrowLeft size={16} className="mr-2" />
+                  {t("resetPassword.backToLogin", "Volver al inicio de sesión")}
                 </Link>
               </div>
             ) : (
@@ -72,7 +87,7 @@ export default function RestablecerPassword() {
                 {/* Email */}
                 <div className="space-y-2 mb-6">
                   <label htmlFor="email" className="block text-[#C0C0C0] text-sm font-medium">
-                    Email
+                    {t("resetPassword.email", "Email")}
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -81,7 +96,7 @@ export default function RestablecerPassword() {
                     <input
                       id="email"
                       type="email"
-                      placeholder="tu@email.com"
+                      placeholder={t("resetPassword.emailPlaceholder", "tu@email.com")}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
@@ -105,10 +120,11 @@ export default function RestablecerPassword() {
                     disabled={isLoading}
                   >
                     {isLoading ? (
-                      "Procesando..."
+                      t("resetPassword.processing", "Procesando...")
                     ) : (
                       <>
-                        <Send size={18} className="mr-2" /> Enviar instrucciones
+                        <Send size={18} className="mr-2" />
+                        {t("resetPassword.sendInstructions", "Enviar instrucciones")}
                       </>
                     )}
                   </button>
@@ -117,7 +133,7 @@ export default function RestablecerPassword() {
                     to="/login"
                     className="text-center text-sm text-[#C0C0C0] hover:text-white underline underline-offset-4"
                   >
-                    Volver al inicio de sesión
+                    {t("resetPassword.backToLogin", "Volver al inicio de sesión")}
                   </Link>
                 </div>
               </form>

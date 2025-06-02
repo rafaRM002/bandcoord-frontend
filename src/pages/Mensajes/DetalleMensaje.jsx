@@ -2,15 +2,17 @@
 
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { ArrowLeft, User, Calendar, Reply, Archive } from "lucide-react"
+import { ArrowLeft, User, Calendar, Reply } from "lucide-react"
 import api from "../../api/axios"
 import { toast } from "react-toastify"
 import { useAuth } from "../../context/AuthContext"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export default function DetalleMensaje() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { user } = useAuth()
+  const { t } = useTranslation()
 
   const [mensaje, setMensaje] = useState(null)
   const [emisor, setEmisor] = useState(null)
@@ -93,7 +95,7 @@ export default function DetalleMensaje() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-center items-center h-64">
-          <div className="text-[#C0C0C0]">Cargando mensaje...</div>
+          <div className="text-[#C0C0C0]">{t("messages.loadingMessage")}</div>
         </div>
       </div>
     )
@@ -109,10 +111,10 @@ export default function DetalleMensaje() {
           >
             <ArrowLeft size={20} />
           </button>
-          <h1 className="text-2xl font-bold text-[#C0C0C0]">Error</h1>
+          <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("common.error")}</h1>
         </div>
         <div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md">
-          {error || "No se pudo encontrar el mensaje solicitado."}
+          {error || t("messages.messageNotFound")}
         </div>
       </div>
     )
@@ -139,7 +141,7 @@ export default function DetalleMensaje() {
               <div className="flex items-center mt-2 text-gray-400">
                 <User size={16} className="mr-2" />
                 <span>
-                  De:{" "}
+                  {t("messages.from")}:{" "}
                   {emisor
                     ? `${emisor.nombre} ${emisor.apellido1} (${emisor.email})`
                     : `Usuario ID: ${mensaje.usuario_id_emisor}`}
@@ -148,7 +150,7 @@ export default function DetalleMensaje() {
               <div className="flex items-center mt-1 text-gray-400">
                 <User size={16} className="mr-2" />
                 <span>
-                  Para:{" "}
+                  {t("messages.to")}:{" "}
                   {receptor
                     ? `${receptor.nombre} ${receptor.apellido1} (${receptor.email})`
                     : "Destinatario no encontrado"}
@@ -168,20 +170,11 @@ export default function DetalleMensaje() {
                   className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-3 py-2 rounded-md hover:bg-gray-900 transition-colors"
                 >
                   <Reply size={16} />
-                  Responder
+                  {t("messages.reply")}
                 </button>
               )}
 
-              <button
-                onClick={() => {
-                  // Implementar función para archivar
-                  navigate("/mensajes")
-                }}
-                className="flex items-center gap-2 bg-gray-800 text-[#C0C0C0] px-3 py-2 rounded-md hover:bg-gray-700 transition-colors"
-              >
-                <Archive size={16} />
-                Archivar
-              </button>
+              {/* Archive button removed as requested */}
             </div>
           </div>
         </div>

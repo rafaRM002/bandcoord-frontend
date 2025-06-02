@@ -20,6 +20,7 @@ import {
   UserPlus,
   X,
 } from "lucide-react"
+import { useTranslation } from "../../hooks/useTranslation"
 
 const ComposicionesInterpretadas = () => {
   const [composiciones, setComposiciones] = useState([])
@@ -40,6 +41,8 @@ const ComposicionesInterpretadas = () => {
   const [selectedComposicionForAssign, setSelectedComposicionForAssign] = useState(null)
   const [usuarios, setUsuarios] = useState([])
   const [selectedUsuarioId, setSelectedUsuarioId] = useState("")
+
+  const { t } = useTranslation()
 
   // Configuración de paginación
   const composicionesPorPagina = 2
@@ -168,8 +171,8 @@ const ComposicionesInterpretadas = () => {
       setError(null)
     } catch (err) {
       console.error("Error al cargar composiciones interpretadas:", err)
-      setError("Error al cargar las composiciones interpretadas. Por favor, inténtelo de nuevo más tarde.")
-      toast.error("Error al cargar las composiciones interpretadas")
+      setError(t("interpretedCompositions.errorLoadingCompositionsMessage"))
+      toast.error(t("interpretedCompositions.errorLoadingCompositions"))
     } finally {
       setLoading(false)
     }
@@ -185,7 +188,7 @@ const ComposicionesInterpretadas = () => {
         setUsuarios(response.data.data || response.data)
       } catch (error) {
         console.error("Error al cargar usuarios:", error)
-        toast.error("Error al cargar la lista de usuarios")
+        toast.error(t("interpretedCompositions.errorLoadingUserList"))
       }
     }
 
@@ -237,7 +240,7 @@ const ComposicionesInterpretadas = () => {
 
     // Si no hay URLs, no hacer nada
     if (!parsedRuta.urls || parsedRuta.urls.length === 0) {
-      toast.error("No hay archivo de audio disponible")
+      toast.error(t("interpretedCompositions.noAudioFileAvailable"))
       return
     }
 
@@ -262,7 +265,7 @@ const ComposicionesInterpretadas = () => {
       setCurrentAudio(null)
     }
     audio.onerror = () => {
-      toast.error("Error al reproducir el audio")
+      toast.error(t("interpretedCompositions.errorPlayingAudio"))
       setIsPlaying(false)
       setCurrentAudio(null)
     }
@@ -276,7 +279,7 @@ const ComposicionesInterpretadas = () => {
       })
       .catch((err) => {
         console.error("Error al reproducir:", err)
-        toast.error("No se pudo reproducir el audio")
+        toast.error(t("interpretedCompositions.couldNotPlayAudio"))
       })
   }
 
@@ -335,7 +338,7 @@ const ComposicionesInterpretadas = () => {
   // Asignar composición a usuario
   const handleAssignToUser = async () => {
     if (!selectedComposicionForAssign || !selectedUsuarioId) {
-      toast.error("Selecciona un usuario")
+      toast.error(t("interpretedCompositions.selectUser"))
       return
     }
 
@@ -346,7 +349,7 @@ const ComposicionesInterpretadas = () => {
       })
 
       console.log("Respuesta al asignar composición:", response.data)
-      toast.success("Composición asignada correctamente al usuario")
+      toast.success(t("interpretedCompositions.compositionAssignedSuccessfully"))
       setShowAssignModal(false)
 
       // Recargar datos para mostrar la nueva asignación
@@ -360,9 +363,9 @@ const ComposicionesInterpretadas = () => {
         error.response.data &&
         (error.response.data.message?.includes("duplicate") || error.response.status === 422)
       ) {
-        toast.error("Esta composición ya está asignada a este usuario")
+        toast.error(t("interpretedCompositions.compositionAlreadyAssignedToUser"))
       } else {
-        toast.error("Error al asignar composición al usuario")
+        toast.error(t("interpretedCompositions.errorAssigningCompositionToUser"))
       }
     }
   }
@@ -371,7 +374,7 @@ const ComposicionesInterpretadas = () => {
   const handleDeleteUserComposicion = async (composicionId, usuarioId) => {
     try {
       await axios.delete(`/composicion-usuario/${composicionId}/${usuarioId}`)
-      toast.success("Asignación eliminada correctamente")
+      toast.success(t("interpretedCompositions.assignmentDeletedSuccessfully"))
 
       // Actualizar composiciones en pantalla eliminando el usuario
       setComposiciones((prevComposiciones) => {
@@ -389,7 +392,7 @@ const ComposicionesInterpretadas = () => {
       })
     } catch (error) {
       console.error("Error al eliminar asignación:", error)
-      toast.error("Error al eliminar la asignación")
+      toast.error(t("interpretedCompositions.errorDeletingAssignment"))
     }
   }
 
@@ -421,7 +424,7 @@ const ComposicionesInterpretadas = () => {
     return (
       <div className="container mx-auto p-4">
         <div className="flex justify-center items-center h-64 bg-black/30 border border-gray-800 rounded-lg">
-          <div className="text-[#C0C0C0]">Cargando composiciones interpretadas...</div>
+          <div className="text-[#C0C0C0]">{t("interpretedCompositions.loadingInterpretedCompositions")}</div>
         </div>
       </div>
     )
@@ -430,7 +433,7 @@ const ComposicionesInterpretadas = () => {
     return (
       <div className="container mx-auto p-4">
         <div className="bg-red-900/30 border border-red-800 text-red-400 p-4 rounded-md">
-          <p className="font-medium">Error:</p>
+          <p className="font-medium">{t("interpretedCompositions.error")}:</p>
           <p>{error}</p>
         </div>
       </div>
@@ -439,13 +442,13 @@ const ComposicionesInterpretadas = () => {
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-[#C0C0C0]">Composiciones Interpretadas</h1>
+        <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("interpretedCompositions.title")}</h1>
         <Link
           to="/composiciones"
           className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
         >
           <Music size={18} />
-          Gestionar Composiciones
+          {t("interpretedCompositions.manageCompositions")}
         </Link>
       </div>
 
@@ -455,7 +458,7 @@ const ComposicionesInterpretadas = () => {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
           <input
             type="text"
-            placeholder="Buscar por título, autor o descripción..."
+            placeholder={t("interpretedCompositions.searchByTitleAuthorDescription")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -468,8 +471,8 @@ const ComposicionesInterpretadas = () => {
           <Music size={48} className="text-gray-600 mb-4" />
           <p className="text-gray-400">
             {searchTerm
-              ? "No se encontraron composiciones con los filtros aplicados."
-              : "No hay composiciones interpretadas registradas."}
+              ? t("interpretedCompositions.noCompositionsFoundWithFilters")
+              : t("interpretedCompositions.noInterpretedCompositionsRegistered")}
           </p>
         </div>
       ) : (
@@ -489,13 +492,17 @@ const ComposicionesInterpretadas = () => {
 
                       {/* Contador de usuarios */}
                       <div className="ml-3 px-2 py-0.5 bg-gray-800 rounded-full text-xs text-gray-400">
-                        {composicion.usuarios.length} {composicion.usuarios.length === 1 ? "usuario" : "usuarios"}
+                        {composicion.usuarios.length}{" "}
+                        {composicion.usuarios.length === 1
+                          ? t("interpretedCompositions.user")
+                          : t("interpretedCompositions.users")}
                       </div>
                     </div>
 
                     {composicion.nombre_autor && (
                       <p className="text-sm text-gray-400 mt-1">
-                        <span className="font-medium">Autor:</span> {composicion.nombre_autor}
+                        <span className="font-medium">{t("interpretedCompositions.author")}:</span>{" "}
+                        {composicion.nombre_autor}
                         {composicion.anio && ` (${composicion.anio})`}
                       </p>
                     )}
@@ -506,7 +513,7 @@ const ComposicionesInterpretadas = () => {
                     <button
                       onClick={() => handleOpenAssignModal(composicion)}
                       className="p-2 bg-gray-800 text-gray-400 rounded-full hover:bg-blue-900/50 hover:text-blue-400"
-                      title="Asignar a usuario"
+                      title={t("interpretedCompositions.assignToUser")}
                     >
                       <UserPlus size={16} />
                     </button>
@@ -558,7 +565,7 @@ const ComposicionesInterpretadas = () => {
                     {composicion.parsedRuta && composicion.parsedRuta.type === "youtube" ? (
                       <>
                         <Youtube size={14} className="mr-1 text-red-400" />
-                        <span>Video de YouTube</span>
+                        <span>{t("interpretedCompositions.youtubeVideo")}</span>
                       </>
                     ) : composicion.parsedRuta &&
                       composicion.parsedRuta.urls &&
@@ -567,8 +574,8 @@ const ComposicionesInterpretadas = () => {
                         <FileMusic size={14} className="mr-1" />
                         <span>
                           {composicion.parsedRuta.urls.length > 1
-                            ? `${composicion.parsedRuta.urls.length} archivos`
-                            : "Archivo adjunto"}
+                            ? `${composicion.parsedRuta.urls.length} ${t("interpretedCompositions.files")}`
+                            : t("interpretedCompositions.attachedFile")}
                         </span>
                       </>
                     ) : null}
@@ -579,7 +586,9 @@ const ComposicionesInterpretadas = () => {
                 {expandedComposiciones[composicion.composicion_id] && (
                   <div className="border-t border-gray-800">
                     <div className="p-3 bg-gray-900/20 border-b border-gray-800 flex justify-between items-center">
-                      <h4 className="text-sm font-medium text-[#C0C0C0]">Usuarios que interpretan esta composición</h4>
+                      <h4 className="text-sm font-medium text-[#C0C0C0]">
+                        {t("interpretedCompositions.usersWhoInterpretThisComposition")}
+                      </h4>
 
                       {/* Paginación de usuarios */}
                       {composicion.usuarios.length > usuariosPorPagina && (
@@ -642,7 +651,7 @@ const ComposicionesInterpretadas = () => {
                                 handleDeleteUserComposicion(composicion.composicion_id, usuario.usuario_id)
                               }
                               className="p-1.5 text-gray-400 hover:text-red-400 transition-colors"
-                              title="Eliminar asignación"
+                              title={t("interpretedCompositions.deleteAssignment")}
                             >
                               <X size={14} />
                             </button>
@@ -692,7 +701,9 @@ const ComposicionesInterpretadas = () => {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-[#C0C0C0]">Asignar composición a usuario</h3>
+              <h3 className="text-xl font-semibold text-[#C0C0C0]">
+                {t("interpretedCompositions.assignCompositionToUser")}
+              </h3>
               <button onClick={() => setShowAssignModal(false)} className="p-1 text-gray-400 hover:text-[#C0C0C0]">
                 <X size={20} />
               </button>
@@ -700,13 +711,14 @@ const ComposicionesInterpretadas = () => {
 
             <div className="mb-4">
               <p className="text-gray-400 mb-2">
-                Composición: <span className="text-[#C0C0C0] font-medium">{selectedComposicionForAssign?.nombre}</span>
+                {t("interpretedCompositions.composition")}:{" "}
+                <span className="text-[#C0C0C0] font-medium">{selectedComposicionForAssign?.nombre}</span>
               </p>
             </div>
 
             <div className="mb-6">
               <label htmlFor="usuario" className="block text-[#C0C0C0] text-sm font-medium mb-2">
-                Seleccionar usuario
+                {t("interpretedCompositions.selectUser")}
               </label>
               <select
                 id="usuario"
@@ -714,7 +726,7 @@ const ComposicionesInterpretadas = () => {
                 onChange={(e) => setSelectedUsuarioId(e.target.value)}
                 className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
               >
-                <option value="">Seleccionar usuario...</option>
+                <option value="">{t("interpretedCompositions.selectUserPlaceholder")}</option>
                 {usuarios.map((usuario) => (
                   <option key={usuario.id} value={usuario.id}>
                     {usuario.nombre} {usuario.apellido1} {usuario.apellido2} - {usuario.email}
@@ -728,14 +740,14 @@ const ComposicionesInterpretadas = () => {
                 onClick={() => setShowAssignModal(false)}
                 className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
               >
-                Cancelar
+                {t("interpretedCompositions.cancel")}
               </button>
               <button
                 onClick={handleAssignToUser}
                 disabled={!selectedUsuarioId}
                 className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Asignar
+                {t("interpretedCompositions.assign")}
               </button>
             </div>
           </div>

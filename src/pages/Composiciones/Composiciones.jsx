@@ -21,6 +21,7 @@ import {
 } from "lucide-react"
 import api, { IMAGES_URL } from "../../api/axios"
 import { toast } from "react-toastify"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export default function Composiciones() {
   const [composiciones, setComposiciones] = useState([])
@@ -35,8 +36,10 @@ export default function Composiciones() {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage] = useState(9)
   const [uploadProgress, setUploadProgress] = useState(0)
-  const [isUploading, setIsUploading] = useState(false)
+  const [isUploading, setIsUploading] = useState(useState(false)[0])
   const [refreshTrigger, setRefreshTrigger] = useState(0)
+
+  const { t } = useTranslation()
 
   // Estados para el modal de composición
   const [showModal, setShowModal] = useState(false)
@@ -93,7 +96,7 @@ export default function Composiciones() {
         composicionesData = response.data.originalData.data
       } else {
         console.warn("Formato de respuesta inesperado para composiciones:", response.data)
-        setError("Formato de respuesta inesperado. Verifica la consola para más detalles.")
+        setError(t("compositions.unexpectedResponseFormat"))
       }
 
       // Ordenar composiciones alfabéticamente por nombre
@@ -153,17 +156,17 @@ export default function Composiciones() {
       setComposiciones(composicionesData)
     } catch (error) {
       console.error("Error al cargar composiciones:", error)
-      setError(`Error al cargar composiciones: ${error.message}`)
+      setError(`${t("compositions.errorLoadingCompositions")}: ${error.message}`)
 
       if (error.response) {
         console.error("Respuesta del servidor:", error.response.status, error.response.data)
-        setError(`Error del servidor: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+        setError(`${t("compositions.serverError")}: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
       } else if (error.request) {
         console.error("No se recibió respuesta del servidor")
-        setError("No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.")
+        setError(t("compositions.noServerResponse"))
       } else {
         console.error("Error de configuración:", error.message)
-        setError(`Error de configuración: ${error.message}`)
+        setError(`${t("compositions.configurationError")}: ${error.message}`)
       }
     } finally {
       setLoading(false)
@@ -197,10 +200,10 @@ export default function Composiciones() {
       setComposiciones(composiciones.filter((comp) => comp.id !== composicionToDelete))
       setShowDeleteModal(false)
       setComposicionToDelete(null)
-      toast.success("Composición eliminada correctamente")
+      toast.success(t("compositions.compositionDeletedSuccessfully"))
     } catch (error) {
       console.error("Error al eliminar composición:", error)
-      toast.error("Error al eliminar la composición")
+      toast.error(t("compositions.errorDeletingComposition"))
     }
   }
 
@@ -212,7 +215,7 @@ export default function Composiciones() {
   const handlePlayAudio = (composicion) => {
     // Si no hay archivos de audio, no hacer nada
     if (!composicion.parsedRuta || !composicion.parsedRuta.files || composicion.parsedRuta.files.length === 0) {
-      toast.error("No hay archivos de audio disponibles")
+      toast.error(t("compositions.noAudioFilesAvailable"))
       return
     }
 
@@ -240,7 +243,7 @@ export default function Composiciones() {
       setCurrentAudio(null)
     }
     audio.onerror = () => {
-      toast.error("Error al reproducir el audio")
+      toast.error(t("compositions.errorPlayingAudio"))
       setIsPlaying(false)
       setCurrentAudio(null)
     }
@@ -254,7 +257,7 @@ export default function Composiciones() {
       })
       .catch((err) => {
         console.error("Error al reproducir:", err)
-        toast.error("No se pudo reproducir el audio")
+        toast.error(t("compositions.audioPlaybackFailed"))
       })
   }
 
@@ -262,7 +265,7 @@ export default function Composiciones() {
     if (composicion.parsedRuta && composicion.parsedRuta.youtube) {
       window.open(composicion.parsedRuta.youtube, "_blank")
     } else {
-      toast.error("No hay enlace de YouTube disponible")
+      toast.error(t("compositions.noYoutubeLinkAvailable"))
     }
   }
 
@@ -353,12 +356,12 @@ export default function Composiciones() {
       // Validar archivos
       selectedFiles.forEach((file) => {
         if (!isValidFileType(file)) {
-          toast.error(`Tipo de archivo no válido: ${file.name}`)
+          toast.error(`${t("compositions.invalidFileType")}: ${file.name}`)
           return
         }
 
         if (!isValidFileSize(file)) {
-          toast.error(`Archivo demasiado grande (máx. 20MB): ${file.name}`)
+          toast.error(`${t("compositions.fileTooLarge")} (máx. 20MB): ${file.name}`)
           return
         }
 
@@ -394,17 +397,17 @@ export default function Composiciones() {
 
     try {
       if (!includeYoutube && !includeFiles) {
-        toast.error("Debes incluir al menos un vídeo de YouTube o archivos")
+        toast.error(t("compositions.includeYoutubeOrFiles"))
         return
       }
 
       if (includeYoutube && !youtubeUrl) {
-        toast.error("Debes proporcionar una URL de YouTube")
+        toast.error(t("compositions.provideYoutubeUrl"))
         return
       }
 
       if (includeFiles && newFiles.length === 0 && existingFiles.length === 0) {
-        toast.error("Debes agregar al menos un archivo")
+        toast.error(t("compositions.addAtLeastOneFile"))
         return
       }
 
@@ -498,11 +501,11 @@ export default function Composiciones() {
             ),
           )
 
-          toast.success("Composición actualizada correctamente")
+          toast.success(t("compositions.compositionUpdatedSuccessfully"))
         } else {
           // Si no hay datos en la respuesta, recargar todos los datos
           refreshData()
-          toast.success("Composición actualizada correctamente. Recargando datos...")
+          toast.success(`${t("compositions.compositionUpdatedSuccessfully")} ${t("compositions.reloadingData")}...`)
         }
       } else {
         response = await api.post("/composiciones", composicionData, config)
@@ -535,18 +538,18 @@ export default function Composiciones() {
             },
           ])
 
-          toast.success("Composición creada correctamente")
+          toast.success(t("compositions.compositionCreatedSuccessfully"))
         } else {
           // Si no hay datos en la respuesta, recargar todos los datos
           refreshData()
-          toast.success("Composición creada correctamente. Recargando datos...")
+          toast.success(`${t("compositions.compositionCreatedSuccessfully")} ${t("compositions.reloadingData")}...`)
         }
       }
 
       setShowModal(false)
     } catch (error) {
       console.error("Error al guardar composición:", error)
-      toast.error(`Error al guardar la composición: ${error.message || "Error desconocido"}`)
+      toast.error(`${t("compositions.errorSavingComposition")}: ${error.message || t("compositions.unknownError")}`)
 
       if (error.response) {
         console.error("Respuesta del servidor:", error.response.status, error.response.data)
@@ -667,7 +670,7 @@ export default function Composiciones() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-[#C0C0C0]">Composiciones</h1>
+        <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("compositions.title")}</h1>
         <div className="flex space-x-2">
           <button
             onClick={refreshData}
@@ -675,14 +678,14 @@ export default function Composiciones() {
             disabled={loading}
           >
             <RefreshCw size={18} className={loading ? "animate-spin" : ""} />
-            Recargar
+            {t("compositions.reload")}
           </button>
           <button
             onClick={handleNewComposicion}
             className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
           >
             <Plus size={18} />
-            Nueva Composición
+            {t("compositions.newComposition")}
           </button>
         </div>
       </div>
@@ -690,7 +693,7 @@ export default function Composiciones() {
       {/* Mostrar mensaje de error si existe */}
       {error && (
         <div className="bg-red-900/30 border border-red-800 text-red-400 p-4 rounded-md mb-6">
-          <p className="font-medium">Error:</p>
+          <p className="font-medium">{t("compositions.error")}:</p>
           <p>{error}</p>
         </div>
       )}
@@ -703,7 +706,7 @@ export default function Composiciones() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
               <input
                 type="text"
-                placeholder="Buscar por título, autor o descripción..."
+                placeholder={t("compositions.searchByTitleAuthorDescription")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -719,19 +722,17 @@ export default function Composiciones() {
           <div className="flex justify-center items-center h-64">
             <div className="flex flex-col items-center">
               <Loader2 size={36} className="text-[#C0C0C0] animate-spin mb-4" />
-              <div className="text-[#C0C0C0]">Cargando composiciones...</div>
+              <div className="text-[#C0C0C0]">{t("compositions.loadingCompositions")}</div>
             </div>
           </div>
         ) : filteredComposiciones.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-64">
             <Music size={48} className="text-gray-600 mb-4" />
             <p className="text-gray-400 text-center">
-              {searchTerm
-                ? "No se encontraron composiciones con los filtros aplicados."
-                : "No hay composiciones registradas."}
+              {searchTerm ? t("compositions.noCompositionsWithFilters") : t("compositions.noRegisteredCompositions")}
             </p>
             <button onClick={handleNewComposicion} className="mt-4 text-[#C0C0C0] hover:text-white underline">
-              Añadir la primera composición
+              {t("compositions.addFirstComposition")}
             </button>
           </div>
         ) : (
@@ -749,7 +750,7 @@ export default function Composiciones() {
                         <button
                           onClick={() => handleOpenYoutube(composicion)}
                           className="p-2 rounded-full bg-red-900/30 text-red-400 hover:bg-red-900/50"
-                          title="Ver en YouTube"
+                          title={t("compositions.viewOnYoutube")}
                         >
                           <Youtube size={16} />
                         </button>
@@ -762,7 +763,7 @@ export default function Composiciones() {
                           <button
                             onClick={() => handleShowFilesModal(composicion)}
                             className="p-2 rounded-full bg-green-900/30 text-green-400 hover:bg-green-900/50"
-                            title="Ver archivos"
+                            title={t("compositions.viewFiles")}
                           >
                             <File size={16} />
                           </button>
@@ -772,7 +773,7 @@ export default function Composiciones() {
 
                   {composicion.nombre_autor && (
                     <p className="text-sm text-gray-400 mb-2">
-                      <span className="font-medium">Autor:</span> {composicion.nombre_autor}
+                      <span className="font-medium">{t("compositions.author")}:</span> {composicion.nombre_autor}
                     </p>
                   )}
 
@@ -785,7 +786,7 @@ export default function Composiciones() {
                     {composicion.parsedRuta && composicion.parsedRuta.youtube && (
                       <div className="flex items-center text-sm text-red-400 bg-red-900/20 px-2 py-1 rounded">
                         <Youtube size={14} className="mr-1" />
-                        <span className="truncate">Vídeo de YouTube</span>
+                        <span className="truncate">{t("compositions.youtubeVideo")}</span>
                       </div>
                     )}
 
@@ -795,8 +796,8 @@ export default function Composiciones() {
                         <div className="flex items-center text-sm text-green-400 bg-green-900/20 px-2 py-1 rounded">
                           <FileMusic size={14} className="mr-1" />
                           <span className="truncate">
-                            {composicion.parsedRuta.files.length} archivo
-                            {composicion.parsedRuta.files.length !== 1 ? "s" : ""}
+                            {composicion.parsedRuta.files.length}{" "}
+                            {t("compositions.file", { count: composicion.parsedRuta.files.length })}
                           </span>
                         </div>
                       )}
@@ -830,19 +831,17 @@ export default function Composiciones() {
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">Confirmar eliminación</h3>
-            <p className="text-gray-400 mb-6">
-              ¿Estás seguro de que deseas eliminar esta composición? Esta acción no se puede deshacer.
-            </p>
+            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("compositions.confirmDeletion")}</h3>
+            <p className="text-gray-400 mb-6">{t("compositions.deletionConfirmationMessage")}</p>
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
                 className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
               >
-                Cancelar
+                {t("compositions.cancel")}
               </button>
               <button onClick={handleDelete} className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800">
-                Eliminar
+                {t("compositions.delete")}
               </button>
             </div>
           </div>
@@ -855,7 +854,7 @@ export default function Composiciones() {
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-4xl m-4 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-semibold text-[#C0C0C0]">
-                {editingComposicion ? "Editar Composición" : "Nueva Composición"}
+                {editingComposicion ? t("compositions.editComposition") : t("compositions.newComposition")}
               </h3>
               <button
                 onClick={() => setShowModal(false)}
@@ -870,7 +869,7 @@ export default function Composiciones() {
                 {/* Nombre */}
                 <div className="space-y-2">
                   <label htmlFor="nombre" className="block text-[#C0C0C0] text-sm font-medium">
-                    Nombre *
+                    {t("compositions.name")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -890,7 +889,7 @@ export default function Composiciones() {
                 {/* Autor */}
                 <div className="space-y-2">
                   <label htmlFor="nombre_autor" className="block text-[#C0C0C0] text-sm font-medium">
-                    Autor
+                    {t("compositions.author")}
                   </label>
                   <input
                     id="nombre_autor"
@@ -905,7 +904,7 @@ export default function Composiciones() {
               {/* Descripción */}
               <div className="mt-6 space-y-2">
                 <label htmlFor="descripcion" className="block text-[#C0C0C0] text-sm font-medium">
-                  Descripción
+                  {t("compositions.description")}
                 </label>
                 <textarea
                   id="descripcion"
@@ -919,7 +918,7 @@ export default function Composiciones() {
 
               {/* Selector de tipo de contenido */}
               <div className="mt-6 space-y-2">
-                <label className="block text-[#C0C0C0] text-sm font-medium">Tipo de contenido</label>
+                <label className="block text-[#C0C0C0] text-sm font-medium">{t("compositions.contentType")}</label>
                 <div className="flex flex-wrap gap-4">
                   <div className="flex items-center space-x-2">
                     <input
@@ -931,7 +930,7 @@ export default function Composiciones() {
                     />
                     <label htmlFor="includeYoutube" className="text-[#C0C0C0] flex items-center">
                       <Youtube size={18} className="mr-2 text-red-400" />
-                      Incluir vídeo de YouTube
+                      {t("compositions.includeYoutubeVideo")}
                     </label>
                   </div>
 
@@ -945,7 +944,7 @@ export default function Composiciones() {
                     />
                     <label htmlFor="includeFiles" className="text-[#C0C0C0] flex items-center">
                       <FileMusic size={18} className="mr-2 text-green-400" />
-                      Incluir archivos
+                      {t("compositions.includeFiles")}
                     </label>
                   </div>
                 </div>
@@ -955,7 +954,7 @@ export default function Composiciones() {
               {includeYoutube && (
                 <div className="mt-4 space-y-2 p-4 border border-red-900/30 bg-red-900/10 rounded-md">
                   <label htmlFor="youtubeUrl" className="block text-[#C0C0C0] text-sm font-medium">
-                    URL de YouTube
+                    {t("compositions.youtubeUrl")}
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-red-500">
@@ -975,7 +974,7 @@ export default function Composiciones() {
                   {/* Previsualización de YouTube */}
                   {youtubeUrl && (
                     <div className="mt-4 p-2 bg-gray-900/50 border border-gray-800 rounded-md">
-                      <p className="text-sm text-gray-400 mb-2">Previsualización:</p>
+                      <p className="text-sm text-gray-400 mb-2">{t("compositions.preview")}:</p>
                       <div className="aspect-video w-full">
                         <iframe
                           src={getYoutubeEmbedUrl(youtubeUrl)}
@@ -993,7 +992,9 @@ export default function Composiciones() {
               {/* Formulario de archivos */}
               {includeFiles && (
                 <div className="mt-4 space-y-2 p-4 border border-green-900/30 bg-green-900/10 rounded-md">
-                  <label className="block text-[#C0C0C0] text-sm font-medium">Archivos (MP3 y partituras)</label>
+                  <label className="block text-[#C0C0C0] text-sm font-medium">
+                    {t("compositions.files")} (MP3 y partituras)
+                  </label>
                   <div className="space-y-4">
                     {/* Input de archivo */}
                     <div className="flex items-center space-x-4">
@@ -1013,19 +1014,17 @@ export default function Composiciones() {
                             className="flex items-center justify-center w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] cursor-pointer hover:bg-gray-800/50 transition-colors"
                           >
                             <Upload size={18} className="mr-2" />
-                            Seleccionar archivos
+                            {t("compositions.selectFiles")}
                           </label>
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">
-                          Archivos aceptados: MP3, PDF, JPG, PNG, MP4, WEBM (máx. 20MB)
-                        </p>
+                        <p className="text-xs text-gray-500 mt-1">{t("compositions.acceptedFiles")}</p>
                       </div>
                     </div>
 
                     {/* Lista de archivos existentes */}
                     {existingFiles.length > 0 && (
                       <div className="p-3 bg-gray-900/30 border border-gray-800 rounded-md">
-                        <p className="text-sm text-gray-400 mb-2">Archivos existentes:</p>
+                        <p className="text-sm text-gray-400 mb-2">{t("compositions.existingFiles")}:</p>
                         <ul className="space-y-2">
                           {existingFiles.map((filePath, index) => {
                             const fileName = filePath.split("/").pop()
@@ -1056,7 +1055,7 @@ export default function Composiciones() {
                     {/* Lista de archivos nuevos */}
                     {newFiles.length > 0 && (
                       <div className="p-3 bg-gray-900/30 border border-gray-800 rounded-md">
-                        <p className="text-sm text-gray-400 mb-2">Nuevos archivos:</p>
+                        <p className="text-sm text-gray-400 mb-2">{t("compositions.newFiles")}:</p>
                         <ul className="space-y-2">
                           {newFiles.map((file, index) => (
                             <li
@@ -1088,7 +1087,7 @@ export default function Composiciones() {
               {isUploading && (
                 <div className="mt-4">
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-sm text-gray-400">Subiendo archivos...</p>
+                    <p className="text-sm text-gray-400">{t("compositions.uploadingFiles")}...</p>
                     <p className="text-sm text-gray-400">{uploadProgress}%</p>
                   </div>
                   <div className="w-full bg-gray-900 rounded-full h-2.5">
@@ -1104,7 +1103,7 @@ export default function Composiciones() {
                   className="mr-4 px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
                   disabled={isUploading}
                 >
-                  Cancelar
+                  {t("compositions.cancel")}
                 </button>
                 <button
                   type="submit"
@@ -1114,12 +1113,12 @@ export default function Composiciones() {
                   {isUploading ? (
                     <>
                       <Loader2 size={18} className="animate-spin" />
-                      Subiendo...
+                      {t("compositions.uploading")}...
                     </>
                   ) : (
                     <>
                       <Save size={18} />
-                      Guardar
+                      {t("compositions.save")}
                     </>
                   )}
                 </button>
@@ -1134,7 +1133,9 @@ export default function Composiciones() {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-4xl m-4">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-semibold text-[#C0C0C0]">Archivos de {selectedComposicion.nombre}</h3>
+              <h3 className="text-xl font-semibold text-[#C0C0C0]">
+                {t("compositions.filesOf")} {selectedComposicion.nombre}
+              </h3>
               <button
                 onClick={() => setShowFilesModal(false)}
                 className="p-2 text-gray-400 hover:text-[#C0C0C0] rounded-full hover:bg-gray-900/50"
@@ -1206,7 +1207,7 @@ export default function Composiciones() {
                 onClick={() => setShowFilesModal(false)}
                 className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
               >
-                Cerrar
+                {t("compositions.close")}
               </button>
             </div>
           </div>

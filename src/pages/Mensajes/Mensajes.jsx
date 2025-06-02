@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
-import { Plus, Trash2, Search, MessageSquare, User, Calendar, Archive, CheckSquare, Square } from "lucide-react"
+import { Plus, Trash2, Search, MessageSquare, User, Calendar, CheckSquare, Square } from "lucide-react"
 import api from "../../api/axios"
 import { toast } from "react-toastify"
 import { useAuth } from "../../context/AuthContext"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export default function Mensajes() {
   const [mensajes, setMensajes] = useState([])
@@ -19,10 +20,11 @@ export default function Mensajes() {
   const { user } = useAuth()
   const itemsPerPage = 6
   const [selectedMensajes, setSelectedMensajes] = useState([])
-  const [filtroActual, setFiltroActual] = useState("enviados") // enviados, archivados
+  const [filtroActual,] = useState("enviados") // enviados, archivados
   const [selectAll, setSelectAll] = useState(false)
   const [showDeleteSelectedModal, setShowDeleteSelectedModal] = useState(false)
   const [mensajeUsuarios, setMensajeUsuarios] = useState([])
+  const { t } = useTranslation()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,12 +45,7 @@ export default function Mensajes() {
         setMensajeUsuarios(mensajeUsuariosData)
 
         // Filtrar solo los mensajes enviados por el usuario actual
-        const mensajesEnviados = mensajesData
-          .filter((mensaje) => mensaje.usuario_id_emisor === user?.id)
-          .map((mensaje) => ({
-            ...mensaje,
-            archivado: mensaje.archivado || false,
-          }))
+        const mensajesEnviados = mensajesData.filter((mensaje) => mensaje.usuario_id_emisor === user?.id)
 
         setMensajes(mensajesEnviados)
         setTotalPages(Math.ceil(mensajesEnviados.length / itemsPerPage))
@@ -121,53 +118,13 @@ export default function Mensajes() {
     }
   }
 
-  const handleArchiveSelected = async () => {
-    if (selectedMensajes.length === 0) return
-
-    try {
-      await Promise.all(selectedMensajes.map((id) => api.put(`/mensajes/${id}`, { archivado: true })))
-
-      setMensajes(
-        mensajes.map((mensaje) => (selectedMensajes.includes(mensaje.id) ? { ...mensaje, archivado: true } : mensaje)),
-      )
-
-      toast.success(`${selectedMensajes.length} mensaje(s) archivado(s) correctamente`)
-      setSelectedMensajes([])
-      setSelectAll(false)
-    } catch (error) {
-      console.error("Error al archivar mensajes:", error)
-      toast.error("Error al archivar los mensajes")
-    }
-  }
-
-  const handleUnarchiveSelected = async () => {
-    if (selectedMensajes.length === 0) return
-
-    try {
-      await Promise.all(selectedMensajes.map((id) => api.put(`/mensajes/${id}`, { archivado: false })))
-
-      setMensajes(
-        mensajes.map((mensaje) => (selectedMensajes.includes(mensaje.id) ? { ...mensaje, archivado: false } : mensaje)),
-      )
-
-      toast.success(`${selectedMensajes.length} mensaje(s) desarchivado(s) correctamente`)
-      setSelectedMensajes([])
-      setSelectAll(false)
-    } catch (error) {
-      console.error("Error al desarchivar mensajes:", error)
-      toast.error("Error al desarchivar los mensajes")
-    }
-  }
-
   const filteredMensajes = mensajes.filter((mensaje) => {
     const matchesSearch =
       mensaje.asunto?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       mensaje.contenido?.toLowerCase().includes(searchTerm.toLowerCase())
 
     if (filtroActual === "enviados") {
-      return matchesSearch && !mensaje.archivado
-    } else if (filtroActual === "archivados") {
-      return matchesSearch && mensaje.archivado
+      return matchesSearch
     }
 
     return matchesSearch
@@ -214,7 +171,7 @@ export default function Mensajes() {
           disabled={currentPage === 1}
           className="px-3 py-1 bg-gray-900 border border-gray-700 rounded-md text-[#C0C0C0] disabled:opacity-50"
         >
-          Anterior
+          {t("common.previous")}
         </button>
 
         {Array.from({ length: totalFilteredPages }, (_, i) => i + 1).map((page) => (
@@ -234,7 +191,7 @@ export default function Mensajes() {
           disabled={currentPage === totalFilteredPages}
           className="px-3 py-1 bg-gray-900 border border-gray-700 rounded-md text-[#C0C0C0] disabled:opacity-50"
         >
-          Siguiente
+          {t("common.next")}
         </button>
       </div>
     )
@@ -244,31 +201,8 @@ export default function Mensajes() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center">
-          <h1 className="text-2xl font-bold text-[#C0C0C0] mr-4">
-            {filtroActual === "enviados" ? "Mensajes Enviados" : "Mensajes Archivados"}
-          </h1>
-          <div className="flex space-x-2">
-            <button
-              onClick={() => setFiltroActual("enviados")}
-              className={`px-3 py-1 rounded-md text-sm ${
-                filtroActual === "enviados"
-                  ? "bg-[#C0C0C0] text-black"
-                  : "bg-gray-900 border border-gray-700 text-[#C0C0C0]"
-              }`}
-            >
-              Enviados
-            </button>
-            <button
-              onClick={() => setFiltroActual("archivados")}
-              className={`px-3 py-1 rounded-md text-sm ${
-                filtroActual === "archivados"
-                  ? "bg-[#C0C0C0] text-black"
-                  : "bg-gray-900 border border-gray-700 text-[#C0C0C0]"
-              }`}
-            >
-              Archivados
-            </button>
-          </div>
+          <h1 className="text-2xl font-bold text-[#C0C0C0] mr-4">{t("messages.sentMessages")}</h1>
+          {/* Filter buttons removed as requested */}
         </div>
         <div className="flex items-center space-x-2">
           {selectedMensajes.length > 0 && (
@@ -279,29 +213,9 @@ export default function Mensajes() {
                 title="Eliminar seleccionados"
               >
                 <Trash2 size={16} />
-                <span className="hidden sm:inline">Eliminar</span>
+                <span className="hidden sm:inline">{t("common.delete")}</span>
                 <span className="bg-red-700 text-xs px-1.5 py-0.5 rounded-full">{selectedMensajes.length}</span>
               </button>
-
-              {filtroActual === "enviados" ? (
-                <button
-                  onClick={handleArchiveSelected}
-                  className="flex items-center gap-1 bg-gray-800 text-[#C0C0C0] px-3 py-1 rounded-md hover:bg-gray-700"
-                  title="Archivar seleccionados"
-                >
-                  <Archive size={16} />
-                  <span className="hidden sm:inline">Archivar</span>
-                </button>
-              ) : (
-                <button
-                  onClick={handleUnarchiveSelected}
-                  className="flex items-center gap-1 bg-gray-800 text-[#C0C0C0] px-3 py-1 rounded-md hover:bg-gray-700"
-                  title="Desarchivar seleccionados"
-                >
-                  <Archive size={16} />
-                  <span className="hidden sm:inline">Desarchivar</span>
-                </button>
-              )}
             </>
           )}
           <Link
@@ -309,7 +223,7 @@ export default function Mensajes() {
             className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
           >
             <Plus size={18} />
-            Nuevo Mensaje
+            {t("messages.newMessage")}
           </Link>
         </div>
       </div>
@@ -320,7 +234,7 @@ export default function Mensajes() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
           <input
             type="text"
-            placeholder="Buscar por asunto o contenido..."
+            placeholder={t("messages.searchBySubjectOrContent")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
@@ -332,16 +246,16 @@ export default function Mensajes() {
       <div className="bg-black/30 border border-gray-800 rounded-lg overflow-hidden">
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="text-[#C0C0C0]">Cargando mensajes...</div>
+            <div className="text-[#C0C0C0]">{t("messages.loadingMessages")}</div>
           </div>
         ) : paginatedMensajes.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-64">
             <MessageSquare size={48} className="text-gray-600 mb-4" />
             <p className="text-gray-400 text-center">
-              {searchTerm ? "No se encontraron mensajes con la búsqueda aplicada." : "No has enviado ningún mensaje."}
+              {searchTerm ? t("messages.noMessagesWithSearch") : t("messages.noSentMessages")}
             </p>
             <Link to="/mensajes/nuevo" className="mt-4 text-[#C0C0C0] hover:text-white underline">
-              Crear un nuevo mensaje
+              {t("messages.createNewMessage")}
             </Link>
           </div>
         ) : (
@@ -350,12 +264,14 @@ export default function Mensajes() {
               <button
                 onClick={handleSelectAll}
                 className="p-1 text-gray-400 hover:text-[#C0C0C0]"
-                title={selectAll ? "Deseleccionar todos" : "Seleccionar todos"}
+                title={selectAll ? t("common.deselectAll") : t("common.selectAll")}
               >
                 {selectAll ? <CheckSquare size={18} /> : <Square size={18} />}
               </button>
               <span className="ml-2 text-sm text-gray-400">
-                {selectedMensajes.length > 0 ? `${selectedMensajes.length} seleccionado(s)` : "Seleccionar"}
+                {selectedMensajes.length > 0
+                  ? `${selectedMensajes.length} ${t("common.selected")}`
+                  : t("common.select")}
               </span>
             </div>
 
@@ -380,7 +296,9 @@ export default function Mensajes() {
                         </Link>
                         <div className="flex items-center mt-1 text-sm text-gray-400">
                           <User size={14} className="mr-1" />
-                          <span>Para: {getUsuarioNombre(mensaje.id)}</span>
+                          <span>
+                            {t("messages.to")}: {getUsuarioNombre(mensaje.id)}
+                          </span>
                           <span className="mx-2">•</span>
                           <Calendar size={14} className="mr-1" />
                           <span>{formatDate(mensaje.created_at || mensaje.fecha_envio)}</span>
@@ -405,19 +323,17 @@ export default function Mensajes() {
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">Confirmar eliminación</h3>
-            <p className="text-gray-400 mb-6">
-              ¿Estás seguro de que deseas eliminar este mensaje? Esta acción no se puede deshacer.
-            </p>
+            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("common.confirmDelete")}</h3>
+            <p className="text-gray-400 mb-6">{t("messages.deleteConfirmText")}</p>
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
                 className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
               >
-                Cancelar
+                {t("common.cancel")}
               </button>
               <button onClick={handleDelete} className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800">
-                Eliminar
+                {t("common.delete")}
               </button>
             </div>
           </div>
@@ -426,23 +342,22 @@ export default function Mensajes() {
       {showDeleteSelectedModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">Confirmar eliminación</h3>
+            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("common.confirmDelete")}</h3>
             <p className="text-gray-400 mb-6">
-              ¿Estás seguro de que deseas eliminar {selectedMensajes.length} mensaje(s)? Esta acción no se puede
-              deshacer.
+              {t("messages.deleteMultipleConfirmText", { count: selectedMensajes.length })}
             </p>
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteSelectedModal(false)}
                 className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
               >
-                Cancelar
+                {t("common.cancel")}
               </button>
               <button
                 onClick={confirmDeleteSelected}
                 className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800"
               >
-                Eliminar
+                {t("common.delete")}
               </button>
             </div>
           </div>

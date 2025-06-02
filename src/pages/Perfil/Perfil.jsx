@@ -20,10 +20,12 @@ import {
 import { useAuth } from "../../context/AuthContext"
 import api from "../../api/axios"
 import { toast } from "react-toastify"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export default function Perfil() {
   const navigate = useNavigate()
   const { user } = useAuth()
+  const { t } = useTranslation()
 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -126,7 +128,7 @@ export default function Perfil() {
   // Modificar la función handleAdminAction para implementar la funcionalidad de cambio de rol
   const handleAdminAction = async () => {
     if (!selectedUserId) {
-      toast.error("Debes seleccionar un usuario")
+      toast.error(t("profile.mustSelectUser", "Debes seleccionar un usuario"))
       return
     }
 
@@ -134,11 +136,13 @@ export default function Perfil() {
       if (adminAction === "add") {
         // Hacer al usuario seleccionado administrador
         await api.put(`/usuarios/${selectedUserId}`, { role: "admin" })
-        toast.success("Usuario promovido a administrador correctamente")
+        toast.success(t("profile.userPromotedSuccessfully", "Usuario promovido a administrador correctamente"))
       } else {
         // Quitar permisos de administrador (cambiar a miembro)
         await api.put(`/usuarios/${selectedUserId}`, { role: "miembro" })
-        toast.success("Permisos de administrador revocados correctamente")
+        toast.success(
+          t("profile.adminPermissionsRevokedSuccessfully", "Permisos de administrador revocados correctamente"),
+        )
       }
 
       // Recargar la lista de usuarios
@@ -153,7 +157,7 @@ export default function Perfil() {
       setShowAdminModal(false)
     } catch (error) {
       console.error("Error al modificar permisos de administrador:", error)
-      toast.error("Error al modificar permisos de administrador")
+      toast.error(t("profile.errorModifyingAdminPermissions", "Error al modificar permisos de administrador"))
     }
   }
 
@@ -168,7 +172,7 @@ export default function Perfil() {
       // Validar formato de teléfono
       const phoneRegex = /^[0-9]{9}$/
       if (!phoneRegex.test(formData.telefono)) {
-        setError("El teléfono debe contener 9 dígitos numéricos")
+        setError(t("profile.phoneValidationError", "El teléfono debe contener 9 dígitos numéricos"))
         setSaving(false)
         setShowSpinner(false)
         return
@@ -184,7 +188,7 @@ export default function Perfil() {
       }
 
       await api.put(`/usuarios/${user.id}`, userData)
-      setSuccess("Datos actualizados correctamente")
+      setSuccess(t("profile.dataUpdatedSuccessfully", "Datos actualizados correctamente"))
 
       // Configurar el temporizador para ocultar el mensaje después de 3 segundos
       setTimeout(() => {
@@ -197,7 +201,7 @@ export default function Perfil() {
       // o actualizar el contexto de autenticación
     } catch (error) {
       console.error("Error al actualizar perfil:", error)
-      setError("Error al actualizar los datos. Por favor, inténtalo de nuevo.")
+      setError(t("profile.errorUpdatingProfile", "Error al actualizar los datos. Por favor, inténtalo de nuevo."))
       setShowSpinner(false)
     } finally {
       setSaving(false)
@@ -214,7 +218,7 @@ export default function Perfil() {
     try {
       // Validar que las contraseñas coincidan
       if (passwordData.new_password !== passwordData.new_password_confirmation) {
-        setError("Las nuevas contraseñas no coinciden")
+        setError(t("profile.passwordMismatchError", "Las nuevas contraseñas no coinciden"))
         setSaving(false)
         setShowSpinner(false)
         return
@@ -222,7 +226,7 @@ export default function Perfil() {
 
       // Validar longitud mínima
       if (passwordData.new_password.length < 8) {
-        setError("La nueva contraseña debe tener al menos 8 caracteres")
+        setError(t("profile.passwordLengthError", "La nueva contraseña debe tener al menos 8 caracteres"))
         setSaving(false)
         setShowSpinner(false)
         return
@@ -233,7 +237,7 @@ export default function Perfil() {
         new_password: passwordData.new_password,
       })
 
-      setSuccess("Contraseña actualizada correctamente")
+      setSuccess(t("profile.passwordUpdatedSuccessfully", "Contraseña actualizada correctamente"))
       setPasswordData({
         current_password: "",
         new_password: "",
@@ -249,9 +253,9 @@ export default function Perfil() {
       console.error("Error al cambiar contraseña:", error)
 
       if (error.response && error.response.status === 401) {
-        setError("La contraseña actual es incorrecta")
+        setError(t("profile.incorrectCurrentPassword", "La contraseña actual es incorrecta"))
       } else {
-        setError("Error al cambiar la contraseña. Por favor, inténtalo de nuevo.")
+        setError(t("profile.errorChangingPassword", "Error al cambiar la contraseña. Por favor, inténtalo de nuevo."))
       }
       setShowSpinner(false)
     } finally {
@@ -278,7 +282,7 @@ export default function Perfil() {
         >
           <ArrowLeft size={20} />
         </button>
-        <h1 className="text-2xl font-bold text-[#C0C0C0]">Mi Perfil</h1>
+        <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("profile.title", "Mi Perfil")}</h1>
       </div>
 
       {/* Pestañas */}
@@ -289,7 +293,7 @@ export default function Perfil() {
           }`}
           onClick={() => setActiveTab("datos")}
         >
-          Datos Personales
+          {t("profile.personalData", "Datos Personales")}
         </button>
         <button
           className={`px-4 py-2 font-medium ${
@@ -299,7 +303,7 @@ export default function Perfil() {
           }`}
           onClick={() => setActiveTab("password")}
         >
-          Cambiar Contraseña
+          {t("profile.changePassword", "Cambiar Contraseña")}
         </button>
         {user && user.role === "admin" && (
           <button
@@ -310,7 +314,7 @@ export default function Perfil() {
             }`}
             onClick={() => setActiveTab("admin")}
           >
-            Gestión de Administradores
+            {t("profile.adminManagement", "Gestión de Administradores")}
           </button>
         )}
       </div>
@@ -338,7 +342,9 @@ export default function Perfil() {
 
       {activeTab === "admin" && user && user.role === "admin" && (
         <div className="bg-black/30 border border-gray-800 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-[#C0C0C0] mb-4">Gestión de Administradores</h2>
+          <h2 className="text-xl font-semibold text-[#C0C0C0] mb-4">
+            {t("profile.adminManagement", "Gestión de Administradores")}
+          </h2>
 
           <div className="flex justify-between mb-6">
             <button
@@ -346,7 +352,7 @@ export default function Perfil() {
               className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
             >
               <UserPlus size={18} />
-              Añadir Administrador
+              {t("profile.addAdministrator", "Añadir Administrador")}
             </button>
 
             <button
@@ -354,7 +360,7 @@ export default function Perfil() {
               className="flex items-center gap-2 bg-gray-800 text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
             >
               <UserMinus size={18} />
-              Revocar Permisos
+              {t("profile.revokePermissions", "Revocar Permisos")}
             </button>
           </div>
 
@@ -363,14 +369,16 @@ export default function Perfil() {
             <div>
               <h3 className="text-lg font-medium text-[#C0C0C0] mb-3 flex items-center">
                 <Shield size={18} className="mr-2" />
-                Administradores Actuales
+                {t("profile.currentAdministrators", "Administradores Actuales")}
               </h3>
 
               <div className="bg-gray-900/30 border border-gray-800 rounded-lg overflow-hidden">
                 {loadingUsers ? (
-                  <div className="p-4 text-center text-gray-400">Cargando usuarios...</div>
+                  <div className="p-4 text-center text-gray-400">{t("common.loading", "Cargando...")}</div>
                 ) : adminUsers.length === 0 ? (
-                  <div className="p-4 text-center text-gray-400">No hay otros administradores</div>
+                  <div className="p-4 text-center text-gray-400">
+                    {t("profile.noOtherAdministrators", "No hay otros administradores")}
+                  </div>
                 ) : (
                   <div className="divide-y divide-gray-800">
                     {adminUsers.map((admin) => (
@@ -396,12 +404,14 @@ export default function Perfil() {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
             <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">
-              {adminAction === "add" ? "Añadir Administrador" : "Revocar Permisos de Administrador"}
+              {adminAction === "add"
+                ? t("profile.addAdministrator", "Añadir Administrador")
+                : t("profile.revokePermissions", "Revocar Permisos de Administrador")}
             </h3>
 
             <div className="mb-6">
               <label htmlFor="usuario" className="block text-[#C0C0C0] text-sm font-medium mb-2">
-                Seleccionar usuario
+                {t("profile.selectUser", "Seleccionar usuario")}
               </label>
               <select
                 id="usuario"
@@ -409,7 +419,7 @@ export default function Perfil() {
                 onChange={(e) => setSelectedUserId(e.target.value)}
                 className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
               >
-                <option value="">Seleccionar usuario...</option>
+                <option value="">{t("profile.selectUserPlaceholder", "Seleccionar usuario...")}</option>
                 {adminAction === "add"
                   ? usuarios.map((usuario) => (
                       <option key={usuario.id} value={usuario.id}>
@@ -429,14 +439,14 @@ export default function Perfil() {
                 onClick={() => setShowAdminModal(false)}
                 className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
               >
-                Cancelar
+                {t("common.cancel", "Cancelar")}
               </button>
               <button
                 onClick={handleAdminAction}
                 disabled={!selectedUserId}
                 className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {adminAction === "add" ? "Añadir" : "Revocar"}
+                {adminAction === "add" ? t("profile.add", "Añadir") : t("profile.revoke", "Revocar")}
               </button>
             </div>
           </div>
@@ -451,7 +461,7 @@ export default function Perfil() {
                 {/* Nombre */}
                 <div className="space-y-2">
                   <label htmlFor="nombre" className="block text-[#C0C0C0] text-sm font-medium">
-                    Nombre *
+                    {t("profile.name", "Nombre")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -471,7 +481,7 @@ export default function Perfil() {
                 {/* Email (solo lectura) */}
                 <div className="space-y-2">
                   <label htmlFor="email" className="block text-[#C0C0C0] text-sm font-medium">
-                    Email
+                    {t("profile.email", "Email")}
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -485,13 +495,15 @@ export default function Perfil() {
                       className="w-full pl-10 py-2 bg-gray-800/50 border border-gray-800 rounded-md text-gray-400 cursor-not-allowed"
                     />
                   </div>
-                  <p className="text-xs text-gray-500">El email no se puede modificar</p>
+                  <p className="text-xs text-gray-500">
+                    {t("profile.emailCannotBeModified", "El email no se puede modificar")}
+                  </p>
                 </div>
 
                 {/* Primer apellido */}
                 <div className="space-y-2">
                   <label htmlFor="apellido1" className="block text-[#C0C0C0] text-sm font-medium">
-                    Primer apellido *
+                    {t("profile.firstSurname", "Primer apellido")} *
                   </label>
                   <input
                     id="apellido1"
@@ -506,7 +518,7 @@ export default function Perfil() {
                 {/* Segundo apellido */}
                 <div className="space-y-2">
                   <label htmlFor="apellido2" className="block text-[#C0C0C0] text-sm font-medium">
-                    Segundo apellido
+                    {t("profile.secondSurname", "Segundo apellido")}
                   </label>
                   <input
                     id="apellido2"
@@ -520,7 +532,7 @@ export default function Perfil() {
                 {/* Teléfono */}
                 <div className="space-y-2">
                   <label htmlFor="telefono" className="block text-[#C0C0C0] text-sm font-medium">
-                    Teléfono *
+                    {t("profile.phone", "Teléfono")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -538,13 +550,15 @@ export default function Perfil() {
                       className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                     />
                   </div>
-                  <p className="text-xs text-gray-400">Introduce 9 dígitos numéricos</p>
+                  <p className="text-xs text-gray-400">
+                    {t("profile.enterNineDigits", "Introduce 9 dígitos numéricos")}
+                  </p>
                 </div>
 
                 {/* Fecha de nacimiento */}
                 <div className="space-y-2">
                   <label htmlFor="fecha_nac" className="block text-[#C0C0C0] text-sm font-medium">
-                    Fecha de nacimiento *
+                    {t("profile.birthDate", "Fecha de nacimiento")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -565,7 +579,7 @@ export default function Perfil() {
                 {/* Fecha de entrada (solo lectura) */}
                 <div className="space-y-2">
                   <label htmlFor="fecha_entrada" className="block text-[#C0C0C0] text-sm font-medium">
-                    Fecha de entrada
+                    {t("profile.entryDate", "Fecha de entrada")}
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -580,7 +594,9 @@ export default function Perfil() {
                       className="w-full pl-10 py-2 bg-gray-800/50 border border-gray-800 rounded-md text-gray-400 cursor-not-allowed"
                     />
                   </div>
-                  <p className="text-xs text-gray-500">La fecha de entrada no se puede modificar</p>
+                  <p className="text-xs text-gray-500">
+                    {t("profile.entryDateCannotBeModified", "La fecha de entrada no se puede modificar")}
+                  </p>
                 </div>
               </div>
 
@@ -591,7 +607,7 @@ export default function Perfil() {
                   className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   <Save size={18} />
-                  {saving ? "Guardando..." : "Guardar cambios"}
+                  {saving ? t("profile.saving", "Guardando...") : t("profile.saveChanges", "Guardar cambios")}
                 </button>
               </div>
             </form>
@@ -601,7 +617,7 @@ export default function Perfil() {
                 {/* Contraseña actual */}
                 <div className="space-y-2">
                   <label htmlFor="current_password" className="block text-[#C0C0C0] text-sm font-medium">
-                    Contraseña actual *
+                    {t("profile.currentPassword", "Contraseña actual")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -629,7 +645,7 @@ export default function Perfil() {
                 {/* Nueva contraseña */}
                 <div className="space-y-2">
                   <label htmlFor="new_password" className="block text-[#C0C0C0] text-sm font-medium">
-                    Nueva contraseña *
+                    {t("profile.newPassword", "Nueva contraseña")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -653,13 +669,15 @@ export default function Perfil() {
                       {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
-                  <p className="text-xs text-gray-400">La contraseña debe tener al menos 8 caracteres</p>
+                  <p className="text-xs text-gray-400">
+                    {t("profile.passwordMinLength", "La contraseña debe tener al menos 8 caracteres")}
+                  </p>
                 </div>
 
                 {/* Confirmar nueva contraseña */}
                 <div className="space-y-2">
                   <label htmlFor="new_password_confirmation" className="block text-[#C0C0C0] text-sm font-medium">
-                    Confirmar nueva contraseña *
+                    {t("profile.confirmPassword", "Confirmar nueva contraseña")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -691,7 +709,9 @@ export default function Perfil() {
                     className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     <Save size={18} />
-                    {saving ? "Guardando..." : "Cambiar contraseña"}
+                    {saving
+                      ? t("profile.saving", "Guardando...")
+                      : t("profile.changePasswordButton", "Cambiar contraseña")}
                   </button>
                 </div>
               </div>
