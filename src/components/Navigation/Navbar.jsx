@@ -83,13 +83,13 @@ export default function Navbar() {
           {/* Mobile menu button */}
           <button
             onClick={toggleMobileMenu}
-            className="md:hidden p-2 text-[#C0C0C0] hover:text-white hover:bg-gray-900/50 rounded-md"
+            className="xl:hidden p-2 text-[#C0C0C0] hover:text-white hover:bg-gray-900/50 rounded-md"
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-4 flex-wrap">
+          <nav className="hidden xl:flex items-center space-x-4 flex-wrap">
             {/* Instrumentos */}
             <div
               className="relative"
@@ -268,7 +268,7 @@ export default function Navbar() {
 
         {/* Mobile Navigation Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-black border-t border-gray-800 py-4 px-2 space-y-3">
+          <div className="xl:hidden bg-black border-t border-gray-800 py-4 px-2 space-y-3">
             <Link to="/instrumentos" className={mobileButtonClass}>
               {t("navbar.instruments")}
             </Link>
