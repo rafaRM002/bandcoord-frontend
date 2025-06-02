@@ -1,17 +1,17 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { ArrowLeft, User, Calendar, Reply } from "lucide-react"
 import api from "../../api/axios"
 import { toast } from "react-toastify"
-import { useAuth } from "../../context/AuthContext"
+import { AuthContext } from "../../context/AuthContext"
 import { useTranslation } from "../../hooks/useTranslation"
 
 export default function DetalleMensaje() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user } = useContext(AuthContext)
   const { t } = useTranslation()
 
   const [mensaje, setMensaje] = useState(null)
@@ -44,17 +44,26 @@ export default function DetalleMensaje() {
           const receptorId = mensajeUsuarioData[0].usuario_id_receptor
           const receptorResponse = await api.get(`/usuarios/${receptorId}`)
           setReceptor(receptorResponse.data.data || receptorResponse.data)
-        }
 
-        // Si el mensaje es recibido por el usuario actual, marcarlo como leído
-        if (mensajeData.usuario_id_receptor === user.id) {
-          try {
-            await api.put(`/mensaje-usuarios/${id}/${user.id}`, {
-              leido: true,
-              estado: 1,
-            })
-          } catch (err) {
-            console.error("Error al marcar como leído:", err)
+          // Si el usuario actual es el receptor, marcar como leído
+          if (receptorId === user.id || receptorId === Number(user.id)) {
+            try {
+              console.log("Marcando mensaje como leído automáticamente:", {
+                mensajeId: id,
+                userId: user.id,
+                url: `/mensaje-usuarios/${id}/${user.id}/`,
+              })
+
+              // CORREGIDO: URL con barra final y payload solo con estado
+              const response = await api.put(`/mensaje-usuarios/${id}/${user.id}/`, {
+                estado: 1, // Solo enviamos el estado
+              })
+
+              console.log("Respuesta de marcar como leído automáticamente:", response.data)
+            } catch (err) {
+              console.error("Error al marcar como leído:", err)
+              console.error("Detalles del error:", err.response?.data)
+            }
           }
         }
       } catch (error) {
@@ -106,7 +115,7 @@ export default function DetalleMensaje() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center mb-6">
           <button
-            onClick={() => navigate("/mensajes")}
+            onClick={() => navigate("/mensajes-usuarios")}
             className="mr-4 p-2 text-gray-400 hover:text-[#C0C0C0] rounded-full hover:bg-gray-900/50"
           >
             <ArrowLeft size={20} />
@@ -124,7 +133,7 @@ export default function DetalleMensaje() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center mb-6">
         <button
-          onClick={() => navigate("/mensajes")}
+          onClick={() => navigate("/mensajes-usuarios")}
           className="mr-4 p-2 text-gray-400 hover:text-[#C0C0C0] rounded-full hover:bg-gray-900/50"
         >
           <ArrowLeft size={20} />
@@ -173,8 +182,6 @@ export default function DetalleMensaje() {
                   {t("messages.reply")}
                 </button>
               )}
-
-              {/* Archive button removed as requested */}
             </div>
           </div>
         </div>

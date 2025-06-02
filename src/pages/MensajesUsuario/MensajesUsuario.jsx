@@ -22,6 +22,7 @@ import { useTranslation } from "../../hooks/useTranslation"
 const MensajesUsuario = () => {
   const [mensajes, setMensajes] = useState([])
   const [, setMensajesCompletos] = useState([])
+  const [usuarios, setUsuarios] = useState({}) // Para almacenar los datos de usuarios
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
@@ -50,6 +51,10 @@ const MensajesUsuario = () => {
         const responseMensajes = await axios.get(`/mensajes`)
         console.log("Respuesta de mensajes:", responseMensajes.data)
 
+        // Obtenemos todos los usuarios para mostrar nombres reales
+        const responseUsuarios = await axios.get(`/usuarios`)
+        console.log("Respuesta de usuarios:", responseUsuarios.data)
+
         // Extraemos los datos de ambas respuestas
         let relacionesMensajeUsuario = Array.isArray(responseMensajeUsuario.data)
           ? responseMensajeUsuario.data
@@ -58,6 +63,17 @@ const MensajesUsuario = () => {
         const mensajesData = Array.isArray(responseMensajes.data)
           ? responseMensajes.data
           : responseMensajes.data.mensajes || responseMensajes.data.data || []
+
+        const usuariosData = Array.isArray(responseUsuarios.data)
+          ? responseUsuarios.data
+          : responseUsuarios.data.data || []
+
+        // Crear un mapa de usuarios para acceso rápido
+        const usuariosMap = {}
+        usuariosData.forEach((usuario) => {
+          usuariosMap[usuario.id] = usuario
+        })
+        setUsuarios(usuariosMap)
 
         // Guardamos todos los mensajes para referencia
         setMensajesCompletos(mensajesData)
@@ -69,21 +85,44 @@ const MensajesUsuario = () => {
           )
         }
 
+        console.log("Relaciones filtradas para el usuario:", relacionesMensajeUsuario)
+
         // Combinamos los datos de ambas tablas
         const mensajesCombinados = relacionesMensajeUsuario.map((relacion) => {
           const mensajeCompleto = mensajesData.find((m) => m.id === relacion.mensaje_id)
+
+          // CORREGIDO: Manejar tanto boolean como numeric para el estado
+          let estadoLeido = false
+
+          if (typeof relacion.estado === "boolean") {
+            // Si viene como boolean: true = leído, false = no leído
+            estadoLeido = relacion.estado
+          } else if (typeof relacion.estado === "number") {
+            // Si viene como número: 1 = leído, 0 = no leído
+            estadoLeido = relacion.estado === 1
+          } else if (typeof relacion.estado === "string") {
+            // Si viene como string: "1" = leído, "0" = no leído
+            estadoLeido = relacion.estado === "1" || relacion.estado === "true"
+          }
+
+          console.log(
+            `Mensaje ${relacion.mensaje_id}: estado=${relacion.estado} (${typeof relacion.estado}), leído=${estadoLeido}`,
+          )
+
           return {
             ...relacion,
             asunto: mensajeCompleto?.asunto || "Sin asunto",
             contenido: mensajeCompleto?.contenido || "Sin contenido",
             usuario_id_emisor: mensajeCompleto?.usuario_id_emisor,
-            // Importante: el estado 0 es no leído, 1 es leído
-            leido: relacion.estado === 1,
+            created_at: mensajeCompleto?.created_at || relacion.created_at,
+            // IMPORTANTE: Usar el estado calculado correctamente
+            leido: estadoLeido,
+            estado: relacion.estado, // Mantener el estado original también
             archivado: relacion.archivado || false,
           }
         })
 
-        console.log("Mensajes combinados:", mensajesCombinados)
+        console.log("Mensajes combinados con estado correcto:", mensajesCombinados)
         setMensajes(mensajesCombinados)
         setTotalPages(Math.ceil(mensajesCombinados.length / itemsPerPage))
         setError(null)
@@ -101,35 +140,69 @@ const MensajesUsuario = () => {
     }
   }, [user])
 
-  // Replace the "marcarComoLeido" function with this version
+  // Función corregida para marcar como leído
   const marcarComoLeido = async (mensajeId) => {
     try {
-      await axios.put(`/mensaje-usuarios/${mensajeId}/${user.id}`, {
-        estado: 1, // Importante: usamos estado 1 para marcar como leído
+      console.log("Intentando marcar mensaje como leído:", {
+        mensajeId,
+        userId: user.id,
+        url: `/mensaje-usuarios/${mensajeId}/${user.id}/`,
       })
 
-      // Actualizar el estado del mensaje en la lista
-      setMensajes(
-        mensajes.map((mensaje) =>
-          mensaje.mensaje_id === mensajeId && mensaje.usuario_id_receptor === user.id
-            ? { ...mensaje, leido: true, estado: 1 }
-            : mensaje,
-        ),
-      )
+      // CORREGIDO: URL con barra final y payload solo con estado
+      const response = await axios.put(`/mensaje-usuarios/${mensajeId}/${user.id}/`, {
+        estado: 1, // Solo enviamos el estado
+      })
+
+      console.log("Respuesta de marcar como leído:", response.data)
+
+      // Verificar que la respuesta sea exitosa (incluso si dice que ya tenía ese valor)
+      if (response.status === 200) {
+        // Actualizar el estado del mensaje en la lista inmediatamente
+        setMensajes((prevMensajes) => {
+          const nuevosMensajes = prevMensajes.map((mensaje) => {
+            if (
+              mensaje.mensaje_id === Number.parseInt(mensajeId) &&
+              (mensaje.usuario_id_receptor === Number.parseInt(user.id) || mensaje.usuario_id_receptor === user.id)
+            ) {
+              console.log("Actualizando mensaje:", mensaje.mensaje_id)
+              return { ...mensaje, leido: true, estado: 1 }
+            }
+            return mensaje
+          })
+          console.log("Mensajes actualizados:", nuevosMensajes)
+          return nuevosMensajes
+        })
+
+        console.log(`Mensaje ${mensajeId} marcado como leído exitosamente`)
+
+        // Solo mostrar toast si realmente se hizo un cambio
+        if (!response.data.message?.includes("ya tiene ese valor")) {
+          toast.success("Mensaje marcado como leído")
+        }
+      } else {
+        console.error("Respuesta no exitosa:", response.status)
+        toast.error("Error al actualizar el estado del mensaje")
+      }
     } catch (err) {
       console.error("Error al marcar mensaje como leído:", err)
+      console.error("Detalles del error:", err.response?.data)
+      console.error("Status del error:", err.response?.status)
+      console.error("URL utilizada:", `/mensaje-usuarios/${mensajeId}/${user.id}/`)
       toast.error("Error al actualizar el estado del mensaje")
     }
   }
 
-  // Obtener el nombre del remitente
+  // Función corregida para obtener el nombre del remitente
   const getNombreRemitente = (usuarioId) => {
-    // Aquí podrías implementar una lógica para obtener el nombre del remitente
-    // Por ahora, devolvemos un valor por defecto
-    return `Usuario ${usuarioId}`
+    const usuario = usuarios[usuarioId]
+    if (usuario) {
+      return `${usuario.nombre} ${usuario.apellido1}${usuario.apellido2 ? ` ${usuario.apellido2}` : ""}`
+    }
+    return `Usuario ${usuarioId}` // Fallback si no se encuentra el usuario
   }
 
-  // Add these functions
+  // Función corregida para seleccionar mensaje
   const handleSelectMensaje = (mensajeId) => {
     if (selectedMensajes.includes(mensajeId)) {
       setSelectedMensajes(selectedMensajes.filter((id) => id !== mensajeId))
@@ -147,32 +220,51 @@ const MensajesUsuario = () => {
     setSelectAll(!selectAll)
   }
 
+  // Función corregida para marcar múltiples mensajes como leídos
   const handleMarcarLeidosSeleccionados = async () => {
     if (selectedMensajes.length === 0) return
 
     try {
-      await Promise.all(
-        selectedMensajes.map((mensajeId) =>
-          axios.put(`/mensaje-usuarios/${mensajeId}/${user.id}`, {
-            estado: 1,
-          }),
-        ),
-      )
+      console.log("Marcando múltiples mensajes como leídos:", selectedMensajes)
 
-      // Actualizar el estado de los mensajes en la lista
-      setMensajes(
-        mensajes.map((mensaje) =>
-          selectedMensajes.includes(mensaje.mensaje_id) && mensaje.usuario_id_receptor === user.id
-            ? { ...mensaje, leido: true, estado: 1 }
-            : mensaje,
-        ),
-      )
+      const promises = selectedMensajes.map((mensajeId) => {
+        console.log(`Marcando mensaje ${mensajeId} para usuario ${user.id}`)
+        // CORREGIDO: URL con barra final y payload solo con estado
+        return axios.put(`/mensaje-usuarios/${mensajeId}/${user.id}/`, {
+          estado: 1, // Solo enviamos el estado
+        })
+      })
 
-      toast.success(`${selectedMensajes.length} mensaje(s) marcado(s) como leído(s)`)
-      setSelectedMensajes([])
-      setSelectAll(false)
+      const responses = await Promise.all(promises)
+      console.log("Respuestas de marcado múltiple:", responses)
+
+      // Verificar que todas las respuestas sean exitosas
+      const allSuccessful = responses.every((response) => response.status === 200)
+
+      if (allSuccessful) {
+        // Actualizar el estado de los mensajes en la lista
+        setMensajes((prevMensajes) => {
+          return prevMensajes.map((mensaje) => {
+            if (
+              selectedMensajes.includes(mensaje.mensaje_id) &&
+              (mensaje.usuario_id_receptor === Number.parseInt(user.id) || mensaje.usuario_id_receptor === user.id)
+            ) {
+              return { ...mensaje, leido: true, estado: 1 }
+            }
+            return mensaje
+          })
+        })
+
+        toast.success(`${selectedMensajes.length} mensaje(s) marcado(s) como leído(s)`)
+        setSelectedMensajes([])
+        setSelectAll(false)
+      } else {
+        console.error("Algunas respuestas no fueron exitosas")
+        toast.error("Error al actualizar algunos mensajes")
+      }
     } catch (error) {
       console.error("Error al marcar mensajes como leídos:", error)
+      console.error("Detalles del error:", error.response?.data)
       toast.error("Error al actualizar el estado de los mensajes")
     }
   }
@@ -420,9 +512,9 @@ const MensajesUsuario = () => {
                                 className={`text-lg ${
                                   !mensaje.leido ? "font-bold text-white" : "font-medium text-[#C0C0C0]"
                                 } hover:text-white`}
-                                onClick={() => {
+                                onClick={async (e) => {
                                   if (!mensaje.leido) {
-                                    marcarComoLeido(mensaje.mensaje_id)
+                                    await marcarComoLeido(mensaje.mensaje_id)
                                   }
                                 }}
                               >
@@ -443,9 +535,9 @@ const MensajesUsuario = () => {
                         <Link
                           to={`/mensajes/${mensaje.mensaje_id}`}
                           className="block"
-                          onClick={() => {
+                          onClick={async (e) => {
                             if (!mensaje.leido) {
-                              marcarComoLeido(mensaje.mensaje_id)
+                              await marcarComoLeido(mensaje.mensaje_id)
                             }
                           }}
                         >
