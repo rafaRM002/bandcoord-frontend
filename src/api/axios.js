@@ -3,7 +3,7 @@ import axios from "axios"
 const URL_SERVER="https://www.iestrassierra.net/alumnado/curso2425/DAW/daw2425a16/laravel/"
 const VITE_API_URL=URL_SERVER+"public/api";
 export const IMAGES_URL=URL_SERVER+"storage/app/public/files";
-// Crear una instancia de axios con la URL base
+// Crear una instancia de axios con la URL
 const api = axios.create({
   baseURL: VITE_API_URL,
   withCredentials: true,
