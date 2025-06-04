@@ -253,13 +253,12 @@ export default function Navbar() {
                     </Link>
                   )}
 
-                  <Link
-                    to="/logout"
+                  <button
                     onClick={handleLogout}
                     className="flex items-center px-3 py-2 text-[#C0C0C0] hover:text-white hover:bg-gray-900/50 transition-colors duration-300 rounded-md whitespace-nowrap w-full text-left"
                   >
                     <LogOut size={18} className="mr-2" /> {t("navbar.logout")}
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>

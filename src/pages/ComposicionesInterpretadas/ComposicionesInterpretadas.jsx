@@ -7,8 +7,6 @@ import { Link } from "react-router-dom"
 import {
   Music,
   FileMusic,
-  Play,
-  Pause,
   Youtube,
   ChevronDown,
   ChevronUp,
@@ -28,9 +26,6 @@ const ComposicionesInterpretadas = () => {
   const [composiciones, setComposiciones] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [currentAudio, setCurrentAudio] = useState(null)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [audioElement, setAudioElement] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
 
   // Estados para expansión y paginación
@@ -206,14 +201,6 @@ const ComposicionesInterpretadas = () => {
     }
 
     fetchUsuarios()
-
-    // Cleanup al desmontar
-    return () => {
-      if (audioElement) {
-        audioElement.pause()
-        audioElement.src = ""
-      }
-    }
   }, [])
 
   // Función para parsear la ruta (JSON o string simple)
@@ -239,61 +226,6 @@ const ComposicionesInterpretadas = () => {
 
     // Por defecto, tratar como archivo único
     return { type: "unknown", urls: [ruta] }
-  }
-
-  // Función para reproducir/pausar audio o abrir YouTube
-  const handlePlayPause = (composicion) => {
-    const parsedRuta = composicion.parsedRuta || parseRuta(composicion.ruta)
-
-    // Si es YouTube, abrir en nueva ventana
-    if (parsedRuta.type === "youtube" && parsedRuta.urls && parsedRuta.urls.length > 0) {
-      window.open(parsedRuta.urls[0], "_blank")
-      return
-    }
-
-    // Si no hay URLs, no hacer nada
-    if (!parsedRuta.urls || parsedRuta.urls.length === 0) {
-      toast.error(t("interpretedCompositions.noAudioFileAvailable"))
-      return
-    }
-
-    // Si ya hay un audio reproduciéndose, detenerlo
-    if (audioElement) {
-      audioElement.pause()
-      audioElement.src = ""
-    }
-
-    // Si estamos reproduciendo la misma composición, solo pausar
-    if (currentAudio === composicion.composicion_id && isPlaying) {
-      setIsPlaying(false)
-      setCurrentAudio(null)
-      return
-    }
-
-    // Crear nuevo elemento de audio
-    const audioUrl = parsedRuta.urls[0]
-    const audio = new Audio(`${axios.defaults.baseURL}${audioUrl}`)
-    audio.onended = () => {
-      setIsPlaying(false)
-      setCurrentAudio(null)
-    }
-    audio.onerror = () => {
-      toast.error(t("interpretedCompositions.errorPlayingAudio"))
-      setIsPlaying(false)
-      setCurrentAudio(null)
-    }
-
-    audio
-      .play()
-      .then(() => {
-        setIsPlaying(true)
-        setCurrentAudio(composicion.composicion_id)
-        setAudioElement(audio)
-      })
-      .catch((err) => {
-        console.error("Error al reproducir:", err)
-        toast.error(t("interpretedCompositions.couldNotPlayAudio"))
-      })
   }
 
   // Función para alternar la expansión de una composición
@@ -554,31 +486,7 @@ const ComposicionesInterpretadas = () => {
                       </button>
                     )}
 
-                    {/* Botón de reproducción según el tipo */}
-                    {composicion.parsedRuta &&
-                      composicion.parsedRuta.urls &&
-                      composicion.parsedRuta.urls.length > 0 && (
-                        <button
-                          onClick={() => handlePlayPause(composicion)}
-                          className={`p-2 rounded-full ${
-                            composicion.parsedRuta.type === "youtube"
-                              ? "bg-red-900/30 text-red-400 hover:bg-red-900/50"
-                              : currentAudio === composicion.composicion_id && isPlaying
-                                ? "bg-red-900/30 text-red-400 hover:bg-red-900/50"
-                                : "bg-green-900/30 text-green-400 hover:bg-green-900/50"
-                          }`}
-                        >
-                          {composicion.parsedRuta.type === "youtube" ? (
-                            <Youtube size={16} />
-                          ) : currentAudio === composicion.composicion_id && isPlaying ? (
-                            <Pause size={16} />
-                          ) : (
-                            <Play size={16} />
-                          )}
-                        </button>
-                      )}
-
-                    {/* Botón para expandir/colapsar */}
+                    {/* Botón para expandir/colapsar - SIEMPRE VISIBLE */}
                     <button
                       onClick={() => toggleExpand(composicion.composicion_id)}
                       className="p-2 bg-gray-800 text-gray-400 rounded-full hover:bg-gray-700 hover:text-[#C0C0C0]"

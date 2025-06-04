@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import {
   ArrowLeft,
   Save,
@@ -16,32 +16,32 @@ import {
   UserPlus,
   UserMinus,
   Shield,
-} from "lucide-react";
-import { useAuth } from "../../context/AuthContext";
-import api from "../../api/axios";
-import { toast } from "react-toastify";
-import { useTranslation } from "../../hooks/useTranslation";
+} from "lucide-react"
+import { useAuth } from "../../context/AuthContext"
+import api from "../../api/axios"
+import { toast } from "react-toastify"
+import { useTranslation } from "../../hooks/useTranslation"
 
 export default function Perfil() {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  const { t, language } = useTranslation();
+  const navigate = useNavigate()
+  const { user } = useAuth()
+  const { t, language } = useTranslation()
 
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [activeTab, setActiveTab] = useState("datos");
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
+  const [showNewPassword, setShowNewPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [activeTab, setActiveTab] = useState("datos")
   // Añadir un nuevo estado para el spinner
-  const [showSpinner, setShowSpinner] = useState(false);
-  const [usuarios, setUsuarios] = useState([]);
-  const [adminUsers, setAdminUsers] = useState([]);
-  const [loadingUsers, setLoadingUsers] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState("");
-  const [showAdminModal, setShowAdminModal] = useState(false);
-  const [adminAction, setAdminAction] = useState("add"); // "add" or "remove"
+  const [showSpinner, setShowSpinner] = useState(false)
+  const [usuarios, setUsuarios] = useState([])
+  const [adminUsers, setAdminUsers] = useState([])
+  const [loadingUsers, setLoadingUsers] = useState(false)
+  const [selectedUserId, setSelectedUserId] = useState("")
+  const [showAdminModal, setShowAdminModal] = useState(false)
+  const [adminAction, setAdminAction] = useState("add") // "add" or "remove"
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -51,12 +51,12 @@ export default function Perfil() {
     telefono: "",
     fecha_nac: "",
     fecha_entrada: "",
-  });
+  })
 
   const [passwordData, setPasswordData] = useState({
     new_password: "",
     new_password_confirmation: "",
-  });
+  })
 
   useEffect(() => {
     if (user) {
@@ -66,155 +66,119 @@ export default function Perfil() {
         apellido2: user.apellido2 || "",
         email: user.email || "",
         telefono: user.telefono || "",
-        fecha_nac: user.fecha_nac
-          ? new Date(user.fecha_nac).toISOString().split("T")[0]
-          : "",
-        fecha_entrada: user.fecha_entrada
-          ? new Date(user.fecha_entrada).toISOString().split("T")[0]
-          : "",
-      });
-      setLoading(false);
+        fecha_nac: user.fecha_nac ? new Date(user.fecha_nac).toISOString().split("T")[0] : "",
+        fecha_entrada: user.fecha_entrada ? new Date(user.fecha_entrada).toISOString().split("T")[0] : "",
+      })
+      setLoading(false)
     }
-  }, [user]);
+  }, [user])
 
   useEffect(() => {
     if (activeTab === "admin" && user && user.role === "admin") {
       const fetchUsuarios = async () => {
         try {
-          setLoadingUsers(true);
-          const response = await api.get("/usuarios");
+          setLoadingUsers(true)
+          const response = await api.get("/usuarios")
 
           // Obtener todos los usuarios
-          const usuariosData = Array.isArray(response.data)
-            ? response.data
-            : response.data.data || [];
+          const usuariosData = Array.isArray(response.data) ? response.data : response.data.data || []
 
           // Filtrar administradores y usuarios normales
-          const admins = usuariosData.filter(
-            (u) => u.role === "admin" && u.id !== user.id
-          );
-          const regularUsers = usuariosData.filter(
-            (u) => u.role !== "admin" && u.estado === "activo"
-          );
+          const admins = usuariosData.filter((u) => u.role === "admin" && u.id !== user.id)
+          const regularUsers = usuariosData.filter((u) => u.role !== "admin" && u.estado === "activo")
 
-          setAdminUsers(admins);
-          setUsuarios(regularUsers);
+          setAdminUsers(admins)
+          setUsuarios(regularUsers)
         } catch (error) {
-          console.error("Error al cargar usuarios:", error);
-          toast.error("Error al cargar la lista de usuarios");
+          console.error("Error al cargar usuarios:", error)
+          toast.error("Error al cargar la lista de usuarios")
         } finally {
-          setLoadingUsers(false);
+          setLoadingUsers(false)
         }
-      };
+      }
 
-      fetchUsuarios();
+      fetchUsuarios()
     }
-  }, [activeTab, user]);
+  }, [activeTab, user])
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handlePasswordChange = (e) => {
-    const { name, value } = e.target;
-    setPasswordData((prev) => ({ ...prev, [name]: value }));
-  };
+    const { name, value } = e.target
+    setPasswordData((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handlePhoneChange = (e) => {
     // Solo permitir números
-    const value = e.target.value.replace(/\D/g, "");
-    setFormData((prev) => ({ ...prev, telefono: value }));
-  };
+    const value = e.target.value.replace(/\D/g, "")
+    setFormData((prev) => ({ ...prev, telefono: value }))
+  }
 
   const handleOpenAdminModal = (action) => {
-    setAdminAction(action);
-    setSelectedUserId("");
-    setShowAdminModal(true);
-  };
+    setAdminAction(action)
+    setSelectedUserId("")
+    setShowAdminModal(true)
+  }
 
   // Modificar la función handleAdminAction para implementar la funcionalidad de cambio de rol
   const handleAdminAction = async () => {
     if (!selectedUserId) {
-      toast.error(t("profile.mustSelectUser", "Debes seleccionar un usuario"));
-      return;
+      toast.error(t("profile.mustSelectUser", "Debes seleccionar un usuario"))
+      return
     }
 
     try {
       if (adminAction === "add") {
         // Hacer al usuario seleccionado administrador
-        await api.put(`/usuarios/${selectedUserId}`, { role: "admin" });
-        toast.success(
-          t(
-            "profile.userPromotedSuccessfully",
-            "Usuario promovido a administrador correctamente"
-          )
-        );
+        await api.put(`/usuarios/${selectedUserId}`, { role: "admin" })
+        toast.success(t("profile.userPromotedSuccessfully", "Usuario promovido a administrador correctamente"))
       } else {
         // Quitar permisos de administrador (cambiar a miembro)
-        await api.put(`/usuarios/${selectedUserId}`, { role: "miembro" });
+        await api.put(`/usuarios/${selectedUserId}`, { role: "miembro" })
         toast.success(
-          t(
-            "profile.adminPermissionsRevokedSuccessfully",
-            "Permisos de administrador revocados correctamente"
-          )
-        );
+          t("profile.adminPermissionsRevokedSuccessfully", "Permisos de administrador revocados correctamente"),
+        )
       }
 
       // Recargar la lista de usuarios
-      const response = await api.get("/usuarios");
-      const usuariosData = Array.isArray(response.data)
-        ? response.data
-        : response.data.data || [];
+      const response = await api.get("/usuarios")
+      const usuariosData = Array.isArray(response.data) ? response.data : response.data.data || []
 
-      const admins = usuariosData.filter(
-        (u) => u.role === "admin" && u.id !== user.id
-      );
-      const regularUsers = usuariosData.filter(
-        (u) => u.role !== "admin" && u.estado === "activo"
-      );
+      const admins = usuariosData.filter((u) => u.role === "admin" && u.id !== user.id)
+      const regularUsers = usuariosData.filter((u) => u.role !== "admin" && u.estado === "activo")
 
-      setAdminUsers(admins);
-      setUsuarios(regularUsers);
-      setShowAdminModal(false);
+      setAdminUsers(admins)
+      setUsuarios(regularUsers)
+      setShowAdminModal(false)
     } catch (error) {
-      console.error("Error al modificar permisos de administrador:", error);
-      toast.error(
-        t(
-          "profile.errorModifyingAdminPermissions",
-          "Error al modificar permisos de administrador"
-        )
-      );
+      console.error("Error al modificar permisos de administrador:", error)
+      toast.error(t("profile.errorModifyingAdminPermissions", "Error al modificar permisos de administrador"))
     }
-  };
+  }
 
   const handleSubmitProfile = async (e) => {
-    e.preventDefault();
-    setSaving(true);
-    setError("");
-    setSuccess("");
-    setShowSpinner(true);
+    e.preventDefault()
+    setSaving(true)
+    setError("")
+    setSuccess("")
+    setShowSpinner(true)
 
     try {
       // Validar formato de teléfono
-      const phoneRegex = /^[0-9]{9}$/;
+      const phoneRegex = /^[0-9]{9}$/
       if (!phoneRegex.test(formData.telefono)) {
-        setError(
-          t(
-            "profile.phoneValidationError",
-            "El teléfono debe contener 9 dígitos numéricos"
-          )
-        );
-        setSaving(false);
-        setShowSpinner(false);
-        return;
+        setError(t("profile.phoneValidationError", "El teléfono debe contener 9 dígitos numéricos"))
+        setSaving(false)
+        setShowSpinner(false)
+        return
       }
 
       // Preparar los datos para enviar al backend
       // Asegurarse de que la fecha tiene el formato correcto (YYYY-MM-DD)
-      const fechaNac = formData.fecha_nac
-        ? new Date(formData.fecha_nac).toISOString().split("T")[0]
-        : null;
+      const fechaNac = formData.fecha_nac ? new Date(formData.fecha_nac).toISOString().split("T")[0] : null
 
       const userData = {
         nombre: formData.nombre,
@@ -223,157 +187,139 @@ export default function Perfil() {
         email: formData.email,
         telefono: formData.telefono,
         fecha_nac: fechaNac,
-      };
+      }
 
       // Actualizar datos del perfil
-      await api.put(`/usuarios/${user.id}`, userData);
+      await api.put(`/usuarios/${user.id}`, userData)
 
-      setSuccess(
-        t("profile.dataUpdatedSuccessfully", "Datos actualizados correctamente")
-      );
+      setSuccess(t("profile.dataUpdatedSuccessfully", "Datos actualizados correctamente"))
 
       // Configurar el temporizador para ocultar el mensaje después de 3 segundos
       setTimeout(() => {
-        setSuccess("");
-        setShowSpinner(false);
-      }, 3000);
+        setSuccess("")
+        setShowSpinner(false)
+      }, 3000)
     } catch (error) {
-      console.error("Error al actualizar perfil:", error);
+      console.error("Error al actualizar perfil:", error)
 
-      if (error.response && error.response.status === 422) {
+      if (error.response && error.response.status === 403) {
+        setError(
+          t("profile.permissionDenied", "No tienes permisos para realizar esta acción. Contacta al administrador."),
+        )
+      } else if (error.response && error.response.status === 401) {
+        setError(t("profile.unauthorized", "Tu sesión ha expirado. Por favor, inicia sesión nuevamente."))
+      } else if (error.response && error.response.status === 422) {
         // Error de validación
-        const validationErrors =
-          error.response.data.errors || error.response.data.message;
+        const validationErrors = error.response.data.errors || error.response.data.message
         if (typeof validationErrors === "object") {
-          const firstError = Object.values(validationErrors)[0];
-          setError(Array.isArray(firstError) ? firstError[0] : firstError);
+          const firstError = Object.values(validationErrors)[0]
+          setError(Array.isArray(firstError) ? firstError[0] : firstError)
         } else {
-          setError(validationErrors || "Error de validación");
+          setError(validationErrors || "Error de validación")
         }
       } else {
-        setError(
-          t(
-            "profile.errorUpdatingProfile",
-            "Error al actualizar los datos. Por favor, inténtalo de nuevo."
-          )
-        );
+        setError(t("profile.errorUpdatingProfile", "Error al actualizar los datos. Por favor, inténtalo de nuevo."))
       }
-      setShowSpinner(false);
+      setShowSpinner(false)
     } finally {
-      setSaving(false);
+      setSaving(false)
     }
-  };
+  }
 
   const handleSubmitPassword = async (e) => {
-    e.preventDefault();
-    setSaving(true);
-    setError("");
-    setSuccess("");
-    setShowSpinner(true);
+    e.preventDefault()
+    setSaving(true)
+    setError("")
+    setSuccess("")
+    setShowSpinner(true)
 
     try {
       // Validar que las contraseñas coincidan
-      if (
-        passwordData.new_password !== passwordData.new_password_confirmation
-      ) {
-        setError(
-          t(
-            "profile.passwordMismatchError",
-            "Las nuevas contraseñas no coinciden"
-          )
-        );
-        setSaving(false);
-        setShowSpinner(false);
-        return;
+      if (passwordData.new_password !== passwordData.new_password_confirmation) {
+        setError(t("profile.passwordMismatchError", "Las nuevas contraseñas no coinciden"))
+        setSaving(false)
+        setShowSpinner(false)
+        return
       }
 
       // Validar longitud mínima
       if (passwordData.new_password.length < 8) {
-        setError(
-          t(
-            "profile.passwordLengthError",
-            "La nueva contraseña debe tener al menos 8 caracteres"
-          )
-        );
-        setSaving(false);
-        setShowSpinner(false);
-        return;
+        setError(t("profile.passwordLengthError", "La nueva contraseña debe tener al menos 8 caracteres"))
+        setSaving(false)
+        setShowSpinner(false)
+        return
       }
 
-      // Cambiar la contraseña
-      await api.put(`/usuarios/${user.id}/`, {
+      // Cambiar la contraseña - Remover la validación de contraseña actual
+      await api.put(`/usuarios/${user.id}`, {
         password: passwordData.new_password,
         password_confirmation: passwordData.new_password_confirmation,
-      });
+      })
 
       // Enviar email de confirmación en el idioma correspondiente
       try {
         const emailMessage =
           language === "en"
             ? `Dear user:\n\nYour password has been successfully changed in BandCoord. If you did not make this change, please contact the administrator immediately.\n\nIf you have any questions or need assistance, do not hesitate to contact us.\n\nThank you for trusting BandCoord.`
-            : `Estimado/a usuario/a:\n\nTu contraseña ha sido cambiada correctamente en BandCoord. Si no fuiste tú quien realizó este cambio, por favor contacta con el administrador inmediatamente.\n\nSi tienes alguna duda o necesitas asistencia, no dudes en contactarnos.\n\nGracias por confiar en BandCoord.`;
+            : `Estimado/a usuario/a:\n\nTu contraseña ha sido cambiada correctamente en BandCoord. Si no fuiste tú quien realizó este cambio, por favor contacta con el administrador inmediatamente.\n\nSi tienes alguna duda o necesitas asistencia, no dudes en contactarnos.\n\nGracias por confiar en BandCoord.`
 
         // Convertir \n a <br> para que se vea en el correo
-        const formattedMessage = emailMessage.replace(/\n/g, "<br>");
+        const formattedMessage = emailMessage.replace(/\n/g, "<br>")
 
         await api.post("/mailTo", {
           email: user.email,
           mensaje: formattedMessage,
-        });
+        })
       } catch (emailError) {
-        console.warn("Error al enviar email de confirmación:", emailError);
+        console.warn("Error al enviar email de confirmación:", emailError)
         // No mostramos error al usuario por el email, solo por consola
       }
 
-      setSuccess(
-        t(
-          "profile.passwordUpdatedSuccessfully",
-          "Contraseña actualizada correctamente"
-        )
-      );
+      setSuccess(t("profile.passwordUpdatedSuccessfully", "Contraseña actualizada correctamente"))
       setPasswordData({
         new_password: "",
         new_password_confirmation: "",
-      });
+      })
 
       // Configurar el temporizador para ocultar el mensaje después de 3 segundos
       setTimeout(() => {
-        setSuccess("");
-        setShowSpinner(false);
-      }, 3000);
+        setSuccess("")
+        setShowSpinner(false)
+      }, 3000)
     } catch (error) {
-      console.error("Error al cambiar contraseña:", error);
+      console.error("Error al cambiar contraseña:", error)
 
-      if (error.response && error.response.status === 401) {
+      if (error.response && error.response.status === 403) {
         setError(
-          t(
-            "profile.incorrectCurrentPassword",
-            "La contraseña actual es incorrecta"
-          )
-        );
+          t("profile.permissionDenied", "No tienes permisos para realizar esta acción. Contacta al administrador."),
+        )
+      } else if (error.response && error.response.status === 401) {
+        setError(t("profile.unauthorized", "Tu sesión ha expirado. Por favor, inicia sesión nuevamente."))
       } else if (error.response && error.response.status === 422) {
         // Error de validación
-        const validationErrors =
-          error.response.data.errors || error.response.data.message;
+        const validationErrors = error.response.data.errors || error.response.data.message
         if (typeof validationErrors === "object") {
-          const firstError = Object.values(validationErrors)[0];
-          setError(Array.isArray(firstError) ? firstError[0] : firstError);
+          const firstError = Object.values(validationErrors)[0]
+          setError(Array.isArray(firstError) ? firstError[0] : firstError)
         } else {
-          setError(validationErrors || "Error de validación");
+          setError(validationErrors || "Error de validación")
         }
       } else {
-        setError(
-          t(
-            "profile.errorChangingPassword",
-            "Error al cambiar la contraseña. Por favor, inténtalo de nuevo."
-          )
-        );
+        setError(t("profile.errorChangingPassword", "Error al cambiar la contraseña. Por favor, inténtalo de nuevo."))
       }
-      setShowSpinner(false);
+      setShowSpinner(false)
     } finally {
-      setSaving(false);
+      setSaving(false)
     }
-  };
+  }
+
+  useEffect(() => {
+    if (user) {
+      console.log("Rol del usuario:", user.role)
+      console.log("ID del usuario:", user.id)
+      console.log("Estado del usuario:", user.estado)
+    }
+  }, [user])
 
   if (loading) {
     return (
@@ -382,7 +328,7 @@ export default function Perfil() {
           <div className="text-[#C0C0C0]">Cargando...</div>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -394,18 +340,14 @@ export default function Perfil() {
         >
           <ArrowLeft size={20} />
         </button>
-        <h1 className="text-2xl font-bold text-[#C0C0C0]">
-          {t("profile.title", "Mi Perfil")}
-        </h1>
+        <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("profile.title", "Mi Perfil")}</h1>
       </div>
 
       {/* Pestañas */}
       <div className="flex border-b border-gray-800 mb-6">
         <button
           className={`px-4 py-2 font-medium ${
-            activeTab === "datos"
-              ? "text-[#C0C0C0] border-b-2 border-[#C0C0C0]"
-              : "text-gray-400 hover:text-[#C0C0C0]"
+            activeTab === "datos" ? "text-[#C0C0C0] border-b-2 border-[#C0C0C0]" : "text-gray-400 hover:text-[#C0C0C0]"
           }`}
           onClick={() => setActiveTab("datos")}
         >
@@ -437,9 +379,7 @@ export default function Perfil() {
 
       {/* Mensajes de error y éxito */}
       {error && (
-        <div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md mb-6">
-          {error}
-        </div>
+        <div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md mb-6">{error}</div>
       )}
 
       {success && (
@@ -492,30 +432,20 @@ export default function Perfil() {
 
               <div className="bg-gray-900/30 border border-gray-800 rounded-lg overflow-hidden">
                 {loadingUsers ? (
-                  <div className="p-4 text-center text-gray-400">
-                    {t("common.loading", "Cargando...")}
-                  </div>
+                  <div className="p-4 text-center text-gray-400">{t("common.loading", "Cargando...")}</div>
                 ) : adminUsers.length === 0 ? (
                   <div className="p-4 text-center text-gray-400">
-                    {t(
-                      "profile.noOtherAdministrators",
-                      "No hay otros administradores"
-                    )}
+                    {t("profile.noOtherAdministrators", "No hay otros administradores")}
                   </div>
                 ) : (
                   <div className="divide-y divide-gray-800">
                     {adminUsers.map((admin) => (
-                      <div
-                        key={admin.id}
-                        className="p-3 flex justify-between items-center"
-                      >
+                      <div key={admin.id} className="p-3 flex justify-between items-center">
                         <div>
                           <div className="text-[#C0C0C0] font-medium">
                             {admin.nombre} {admin.apellido1} {admin.apellido2}
                           </div>
-                          <div className="text-gray-400 text-sm">
-                            {admin.email}
-                          </div>
+                          <div className="text-gray-400 text-sm">{admin.email}</div>
                         </div>
                       </div>
                     ))}
@@ -534,17 +464,11 @@ export default function Perfil() {
             <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">
               {adminAction === "add"
                 ? t("profile.addAdministrator", "Añadir Administrador")
-                : t(
-                    "profile.revokePermissions",
-                    "Revocar Permisos de Administrador"
-                  )}
+                : t("profile.revokePermissions", "Revocar Permisos de Administrador")}
             </h3>
 
             <div className="mb-6">
-              <label
-                htmlFor="usuario"
-                className="block text-[#C0C0C0] text-sm font-medium mb-2"
-              >
+              <label htmlFor="usuario" className="block text-[#C0C0C0] text-sm font-medium mb-2">
                 {t("profile.selectUser", "Seleccionar usuario")}
               </label>
               <select
@@ -553,9 +477,7 @@ export default function Perfil() {
                 onChange={(e) => setSelectedUserId(e.target.value)}
                 className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
               >
-                <option value="">
-                  {t("profile.selectUserPlaceholder", "Seleccionar usuario...")}
-                </option>
+                <option value="">{t("profile.selectUserPlaceholder", "Seleccionar usuario...")}</option>
                 {adminAction === "add"
                   ? usuarios.map((usuario) => (
                       <option key={usuario.id} value={usuario.id}>
@@ -582,9 +504,7 @@ export default function Perfil() {
                 disabled={!selectedUserId}
                 className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {adminAction === "add"
-                  ? t("profile.add", "Añadir")
-                  : t("profile.revoke", "Revocar")}
+                {adminAction === "add" ? t("profile.add", "Añadir") : t("profile.revoke", "Revocar")}
               </button>
             </div>
           </div>
@@ -598,10 +518,7 @@ export default function Perfil() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Nombre */}
                 <div className="space-y-2">
-                  <label
-                    htmlFor="nombre"
-                    className="block text-[#C0C0C0] text-sm font-medium"
-                  >
+                  <label htmlFor="nombre" className="block text-[#C0C0C0] text-sm font-medium">
                     {t("profile.name", "Nombre")} *
                   </label>
                   <div className="relative">
@@ -621,10 +538,7 @@ export default function Perfil() {
 
                 {/* Email (solo lectura) */}
                 <div className="space-y-2">
-                  <label
-                    htmlFor="email"
-                    className="block text-[#C0C0C0] text-sm font-medium"
-                  >
+                  <label htmlFor="email" className="block text-[#C0C0C0] text-sm font-medium">
                     {t("profile.email", "Email")}
                   </label>
                   <div className="relative">
@@ -640,19 +554,13 @@ export default function Perfil() {
                     />
                   </div>
                   <p className="text-xs text-gray-500">
-                    {t(
-                      "profile.emailCannotBeModified",
-                      "El email no se puede modificar"
-                    )}
+                    {t("profile.emailCannotBeModified", "El email no se puede modificar")}
                   </p>
                 </div>
 
                 {/* Primer apellido */}
                 <div className="space-y-2">
-                  <label
-                    htmlFor="apellido1"
-                    className="block text-[#C0C0C0] text-sm font-medium"
-                  >
+                  <label htmlFor="apellido1" className="block text-[#C0C0C0] text-sm font-medium">
                     {t("profile.firstSurname", "Primer apellido")} *
                   </label>
                   <input
@@ -667,10 +575,7 @@ export default function Perfil() {
 
                 {/* Segundo apellido */}
                 <div className="space-y-2">
-                  <label
-                    htmlFor="apellido2"
-                    className="block text-[#C0C0C0] text-sm font-medium"
-                  >
+                  <label htmlFor="apellido2" className="block text-[#C0C0C0] text-sm font-medium">
                     {t("profile.secondSurname", "Segundo apellido")}
                   </label>
                   <input
@@ -684,10 +589,7 @@ export default function Perfil() {
 
                 {/* Teléfono */}
                 <div className="space-y-2">
-                  <label
-                    htmlFor="telefono"
-                    className="block text-[#C0C0C0] text-sm font-medium"
-                  >
+                  <label htmlFor="telefono" className="block text-[#C0C0C0] text-sm font-medium">
                     {t("profile.phone", "Teléfono")} *
                   </label>
                   <div className="relative">
@@ -707,19 +609,13 @@ export default function Perfil() {
                     />
                   </div>
                   <p className="text-xs text-gray-400">
-                    {t(
-                      "profile.enterNineDigits",
-                      "Introduce 9 dígitos numéricos"
-                    )}
+                    {t("profile.enterNineDigits", "Introduce 9 dígitos numéricos")}
                   </p>
                 </div>
 
                 {/* Fecha de nacimiento */}
                 <div className="space-y-2">
-                  <label
-                    htmlFor="fecha_nac"
-                    className="block text-[#C0C0C0] text-sm font-medium"
-                  >
+                  <label htmlFor="fecha_nac" className="block text-[#C0C0C0] text-sm font-medium">
                     {t("profile.birthDate", "Fecha de nacimiento")} *
                   </label>
                   <div className="relative">
@@ -740,10 +636,7 @@ export default function Perfil() {
 
                 {/* Fecha de entrada (solo lectura) */}
                 <div className="space-y-2">
-                  <label
-                    htmlFor="fecha_entrada"
-                    className="block text-[#C0C0C0] text-sm font-medium"
-                  >
+                  <label htmlFor="fecha_entrada" className="block text-[#C0C0C0] text-sm font-medium">
                     {t("profile.entryDate", "Fecha de entrada")}
                   </label>
                   <div className="relative">
@@ -760,10 +653,7 @@ export default function Perfil() {
                     />
                   </div>
                   <p className="text-xs text-gray-500">
-                    {t(
-                      "profile.entryDateCannotBeModified",
-                      "La fecha de entrada no se puede modificar"
-                    )}
+                    {t("profile.entryDateCannotBeModified", "La fecha de entrada no se puede modificar")}
                   </p>
                 </div>
               </div>
@@ -775,9 +665,7 @@ export default function Perfil() {
                   className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   <Save size={18} />
-                  {saving
-                    ? t("profile.saving", "Guardando...")
-                    : t("profile.saveChanges", "Guardar cambios")}
+                  {saving ? t("profile.saving", "Guardando...") : t("profile.saveChanges", "Guardar cambios")}
                 </button>
               </div>
             </form>
@@ -786,10 +674,7 @@ export default function Perfil() {
               <div className="space-y-6 max-w-md mx-auto">
                 {/* Nueva contraseña */}
                 <div className="space-y-2">
-                  <label
-                    htmlFor="new_password"
-                    className="block text-[#C0C0C0] text-sm font-medium"
-                  >
+                  <label htmlFor="new_password" className="block text-[#C0C0C0] text-sm font-medium">
                     {t("profile.newPassword", "Nueva contraseña")} *
                   </label>
                   <div className="relative">
@@ -811,29 +696,18 @@ export default function Perfil() {
                       onClick={() => setShowNewPassword(!showNewPassword)}
                       className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-[#C0C0C0]"
                     >
-                      {showNewPassword ? (
-                        <EyeOff size={18} />
-                      ) : (
-                        <Eye size={18} />
-                      )}
+                      {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                   <p className="text-xs text-gray-400">
-                    {t(
-                      "profile.passwordMinLength",
-                      "La contraseña debe tener al menos 8 caracteres"
-                    )}
+                    {t("profile.passwordMinLength", "La contraseña debe tener al menos 8 caracteres")}
                   </p>
                 </div>
 
                 {/* Confirmar nueva contraseña */}
                 <div className="space-y-2">
-                  <label
-                    htmlFor="new_password_confirmation"
-                    className="block text-[#C0C0C0] text-sm font-medium"
-                  >
-                    {t("profile.confirmPassword", "Confirmar nueva contraseña")}{" "}
-                    *
+                  <label htmlFor="new_password_confirmation" className="block text-[#C0C0C0] text-sm font-medium">
+                    {t("profile.confirmPassword", "Confirmar nueva contraseña")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -850,16 +724,10 @@ export default function Perfil() {
                     />
                     <button
                       type="button"
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-[#C0C0C0]"
                     >
-                      {showConfirmPassword ? (
-                        <EyeOff size={18} />
-                      ) : (
-                        <Eye size={18} />
-                      )}
+                      {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                 </div>
@@ -882,5 +750,5 @@ export default function Perfil() {
         </div>
       )}
     </div>
-  );
+  )
 }

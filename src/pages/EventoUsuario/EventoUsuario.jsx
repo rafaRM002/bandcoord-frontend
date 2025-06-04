@@ -33,7 +33,6 @@ export default function EventoUsuario() {
   const [searchTerm, setSearchTerm] = useState("")
   const [eventoFilter, setEventoFilter] = useState("")
   const [usuarioFilter, setUsuarioFilter] = useState("")
-  const [confirmadoFilter, setConfirmadoFilter] = useState("")
   const [showModal, setShowModal] = useState(false)
   const [modalMode, setModalMode] = useState("create") // "create" o "edit"
   const [currentEventoUsuario, setCurrentEventoUsuario] = useState({
@@ -362,9 +361,15 @@ export default function EventoUsuario() {
   const getAsignacionesPorEvento = (eventoId) => {
     let asignaciones = eventosUsuario.filter((item) => item.evento_id === eventoId)
 
-    // Si no es admin, solo mostrar la asignación del usuario actual
+    // Si no es admin, verificar que el usuario actual esté asignado al evento
     if (!isAdmin) {
-      asignaciones = asignaciones.filter((item) => item.usuario_id === loggedInUser.id)
+      const usuarioAsignado = asignaciones.some((item) => item.usuario_id === loggedInUser.id)
+      // Si el usuario actual está asignado, mostrar todas las asignaciones del evento
+      // Si no está asignado, no mostrar ninguna asignación
+      if (!usuarioAsignado) {
+        asignaciones = []
+      }
+      // Si está asignado, devolver todas las asignaciones (no filtrar)
     }
 
     return asignaciones
@@ -521,7 +526,7 @@ export default function EventoUsuario() {
 
       {/* Filtros y búsqueda */}
       <div className="bg-black/30 border border-gray-800 rounded-lg p-4 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
             <input
@@ -564,18 +569,6 @@ export default function EventoUsuario() {
                   ))}
                 </select>
               </div>
-              <div className="relative">
-                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
-                <select
-                  value={confirmadoFilter}
-                  onChange={(e) => setConfirmadoFilter(e.target.value)}
-                  className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
-                >
-                  <option value="">{t("userEvents.allStatuses")}</option>
-                  <option value="true">{t("userEvents.confirmed")}</option>
-                  <option value="false">{t("userEvents.pending")}</option>
-                </select>
-              </div>
             </>
           )}
         </div>
@@ -593,7 +586,7 @@ export default function EventoUsuario() {
             <div className="flex flex-col justify-center items-center h-64 bg-black/30 border border-gray-800 rounded-lg">
               <Calendar size={48} className="text-gray-600 mb-4" />
               <p className="text-gray-400 text-center">
-                {searchTerm || eventoFilter || usuarioFilter || confirmadoFilter
+                {searchTerm || eventoFilter || usuarioFilter
                   ? t("userEvents.noAssignmentsWithFilters")
                   : t("userEvents.noAssignments")}
               </p>
@@ -923,7 +916,7 @@ export default function EventoUsuario() {
                                   {t("common.status")}
                                 </th>
                                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                                  {t("common.actions")}
+                                  {isAdmin ? t("common.actions") : ""}
                                 </th>
                               </tr>
                             </thead>
@@ -945,22 +938,24 @@ export default function EventoUsuario() {
                                     </span>
                                   </td>
                                   <td className="px-4 py-2 whitespace-nowrap text-sm">
-                                    <div className="flex space-x-2">
-                                      <button
-                                        onClick={() => handleOpenModal("edit", item)}
-                                        className="p-1 text-gray-400 hover:text-[#C0C0C0]"
-                                        title={t("common.edit")}
-                                      >
-                                        <Edit size={16} />
-                                      </button>
-                                      <button
-                                        onClick={() => confirmDelete(item.evento_id, item.usuario_id)}
-                                        className="p-1 text-gray-400 hover:text-red-400"
-                                        title={t("common.delete")}
-                                      >
-                                        <Trash2 size={16} />
-                                      </button>
-                                    </div>
+                                    {isAdmin && (
+                                      <div className="flex space-x-2">
+                                        <button
+                                          onClick={() => handleOpenModal("edit", item)}
+                                          className="p-1 text-gray-400 hover:text-[#C0C0C0]"
+                                          title={t("common.edit")}
+                                        >
+                                          <Edit size={16} />
+                                        </button>
+                                        <button
+                                          onClick={() => confirmDelete(item.evento_id, item.usuario_id)}
+                                          className="p-1 text-gray-400 hover:text-red-400"
+                                          title={t("common.delete")}
+                                        >
+                                          <Trash2 size={16} />
+                                        </button>
+                                      </div>
+                                    )}
                                   </td>
                                 </tr>
                               ))}
