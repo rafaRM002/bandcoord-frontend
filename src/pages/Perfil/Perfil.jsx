@@ -21,6 +21,7 @@ import { useAuth } from "../../context/AuthContext"
 import api from "../../api/axios"
 import { toast } from "react-toastify"
 import { useTranslation } from "../../hooks/useTranslation"
+import PasswordValidator from "../../components/PasswordValidator"
 
 export default function Perfil() {
   const navigate = useNavigate()
@@ -34,14 +35,14 @@ export default function Perfil() {
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [activeTab, setActiveTab] = useState("datos")
-  // Añadir un nuevo estado para el spinner
   const [showSpinner, setShowSpinner] = useState(false)
   const [usuarios, setUsuarios] = useState([])
   const [adminUsers, setAdminUsers] = useState([])
   const [loadingUsers, setLoadingUsers] = useState(false)
   const [selectedUserId, setSelectedUserId] = useState("")
   const [showAdminModal, setShowAdminModal] = useState(false)
-  const [adminAction, setAdminAction] = useState("add") // "add" or "remove"
+  const [adminAction, setAdminAction] = useState("add")
+  const [isPasswordValid, setIsPasswordValid] = useState(false)
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -80,10 +81,8 @@ export default function Perfil() {
           setLoadingUsers(true)
           const response = await api.get("/usuarios")
 
-          // Obtener todos los usuarios
           const usuariosData = Array.isArray(response.data) ? response.data : response.data.data || []
 
-          // Filtrar administradores y usuarios normales
           const admins = usuariosData.filter((u) => u.role === "admin" && u.id !== user.id)
           const regularUsers = usuariosData.filter((u) => u.role !== "admin" && u.estado === "activo")
 
@@ -112,9 +111,19 @@ export default function Perfil() {
   }
 
   const handlePhoneChange = (e) => {
-    // Solo permitir números
-    const value = e.target.value.replace(/\D/g, "")
+    // Permitir números, espacios, guiones, paréntesis y el signo +
+    const value = e.target.value.replace(/[^\d\s\-$$$$+]/g, "")
     setFormData((prev) => ({ ...prev, telefono: value }))
+  }
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  const validatePhone = (phone) => {
+    const cleanPhone = phone.replace(/[^\d]/g, "")
+    return cleanPhone.length >= 7 && cleanPhone.length <= 15
   }
 
   const handleOpenAdminModal = (action) => {
@@ -123,7 +132,6 @@ export default function Perfil() {
     setShowAdminModal(true)
   }
 
-  // Modificar la función handleAdminAction para implementar la funcionalidad de cambio de rol
   const handleAdminAction = async () => {
     if (!selectedUserId) {
       toast.error(t("profile.mustSelectUser", "Debes seleccionar un usuario"))
@@ -132,18 +140,15 @@ export default function Perfil() {
 
     try {
       if (adminAction === "add") {
-        // Hacer al usuario seleccionado administrador
         await api.put(`/usuarios/${selectedUserId}`, { role: "admin" })
         toast.success(t("profile.userPromotedSuccessfully", "Usuario promovido a administrador correctamente"))
       } else {
-        // Quitar permisos de administrador (cambiar a miembro)
         await api.put(`/usuarios/${selectedUserId}`, { role: "miembro" })
         toast.success(
           t("profile.adminPermissionsRevokedSuccessfully", "Permisos de administrador revocados correctamente"),
         )
       }
 
-      // Recargar la lista de usuarios
       const response = await api.get("/usuarios")
       const usuariosData = Array.isArray(response.data) ? response.data : response.data.data || []
 
@@ -167,17 +172,22 @@ export default function Perfil() {
     setShowSpinner(true)
 
     try {
-      // Validar formato de teléfono
-      const phoneRegex = /^[0-9]{9}$/
-      if (!phoneRegex.test(formData.telefono)) {
-        setError(t("profile.phoneValidationError", "El teléfono debe contener 9 dígitos numéricos"))
+      // Validar email
+      if (!validateEmail(formData.email)) {
+        setError(t("profile.invalidEmail", "El email debe tener un formato válido (ejemplo@dominio.com)"))
         setSaving(false)
         setShowSpinner(false)
         return
       }
 
-      // Preparar los datos para enviar al backend
-      // Asegurarse de que la fecha tiene el formato correcto (YYYY-MM-DD)
+      // Validar teléfono
+      if (!validatePhone(formData.telefono)) {
+        setError(t("profile.invalidPhone", "El teléfono debe tener entre 7 y 15 dígitos"))
+        setSaving(false)
+        setShowSpinner(false)
+        return
+      }
+
       const fechaNac = formData.fecha_nac ? new Date(formData.fecha_nac).toISOString().split("T")[0] : null
 
       const userData = {
@@ -189,12 +199,10 @@ export default function Perfil() {
         fecha_nac: fechaNac,
       }
 
-      // Actualizar datos del perfil
       await api.put(`/usuarios/${user.id}`, userData)
 
       setSuccess(t("profile.dataUpdatedSuccessfully", "Datos actualizados correctamente"))
 
-      // Configurar el temporizador para ocultar el mensaje después de 3 segundos
       setTimeout(() => {
         setSuccess("")
         setShowSpinner(false)
@@ -209,7 +217,6 @@ export default function Perfil() {
       } else if (error.response && error.response.status === 401) {
         setError(t("profile.unauthorized", "Tu sesión ha expirado. Por favor, inicia sesión nuevamente."))
       } else if (error.response && error.response.status === 422) {
-        // Error de validación
         const validationErrors = error.response.data.errors || error.response.data.message
         if (typeof validationErrors === "object") {
           const firstError = Object.values(validationErrors)[0]
@@ -242,28 +249,25 @@ export default function Perfil() {
         return
       }
 
-      // Validar longitud mínima
-      if (passwordData.new_password.length < 8) {
-        setError(t("profile.passwordLengthError", "La nueva contraseña debe tener al menos 8 caracteres"))
+      // Validar que la contraseña sea segura
+      if (!isPasswordValid) {
+        setError(t("profile.passwordNotSecure", "La contraseña no cumple con los requisitos de seguridad"))
         setSaving(false)
         setShowSpinner(false)
         return
       }
 
-      // Cambiar la contraseña - Remover la validación de contraseña actual
       await api.put(`/usuarios/${user.id}`, {
         password: passwordData.new_password,
         password_confirmation: passwordData.new_password_confirmation,
       })
 
-      // Enviar email de confirmación en el idioma correspondiente
       try {
         const emailMessage =
           language === "en"
             ? `Dear user:\n\nYour password has been successfully changed in BandCoord. If you did not make this change, please contact the administrator immediately.\n\nIf you have any questions or need assistance, do not hesitate to contact us.\n\nThank you for trusting BandCoord.`
             : `Estimado/a usuario/a:\n\nTu contraseña ha sido cambiada correctamente en BandCoord. Si no fuiste tú quien realizó este cambio, por favor contacta con el administrador inmediatamente.\n\nSi tienes alguna duda o necesitas asistencia, no dudes en contactarnos.\n\nGracias por confiar en BandCoord.`
 
-        // Convertir \n a <br> para que se vea en el correo
         const formattedMessage = emailMessage.replace(/\n/g, "<br>")
 
         await api.post("/mailTo", {
@@ -272,7 +276,6 @@ export default function Perfil() {
         })
       } catch (emailError) {
         console.warn("Error al enviar email de confirmación:", emailError)
-        // No mostramos error al usuario por el email, solo por consola
       }
 
       setSuccess(t("profile.passwordUpdatedSuccessfully", "Contraseña actualizada correctamente"))
@@ -281,7 +284,6 @@ export default function Perfil() {
         new_password_confirmation: "",
       })
 
-      // Configurar el temporizador para ocultar el mensaje después de 3 segundos
       setTimeout(() => {
         setSuccess("")
         setShowSpinner(false)
@@ -296,7 +298,6 @@ export default function Perfil() {
       } else if (error.response && error.response.status === 401) {
         setError(t("profile.unauthorized", "Tu sesión ha expirado. Por favor, inicia sesión nuevamente."))
       } else if (error.response && error.response.status === 422) {
-        // Error de validación
         const validationErrors = error.response.data.errors || error.response.data.message
         if (typeof validationErrors === "object") {
           const firstError = Object.values(validationErrors)[0]
@@ -312,14 +313,6 @@ export default function Perfil() {
       setSaving(false)
     }
   }
-
-  useEffect(() => {
-    if (user) {
-      console.log("Rol del usuario:", user.role)
-      console.log("ID del usuario:", user.id)
-      console.log("Estado del usuario:", user.estado)
-    }
-  }, [user])
 
   if (loading) {
     return (
@@ -423,7 +416,6 @@ export default function Perfil() {
           </div>
 
           <div className="space-y-6">
-            {/* Lista de administradores actuales */}
             <div>
               <h3 className="text-lg font-medium text-[#C0C0C0] mb-3 flex items-center">
                 <Shield size={18} className="mr-2" />
@@ -515,7 +507,7 @@ export default function Perfil() {
         <div className="bg-black/30 border border-gray-800 rounded-lg p-6">
           {activeTab === "datos" ? (
             <form onSubmit={handleSubmitProfile}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Nombre */}
                 <div className="space-y-2">
                   <label htmlFor="nombre" className="block text-[#C0C0C0] text-sm font-medium">
@@ -534,28 +526,6 @@ export default function Perfil() {
                       className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                     />
                   </div>
-                </div>
-
-                {/* Email (solo lectura) */}
-                <div className="space-y-2">
-                  <label htmlFor="email" className="block text-[#C0C0C0] text-sm font-medium">
-                    {t("profile.email", "Email")}
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
-                      <Mail size={18} />
-                    </div>
-                    <input
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      readOnly
-                      className="w-full pl-10 py-2 bg-gray-800/50 border border-gray-800 rounded-md text-gray-400 cursor-not-allowed"
-                    />
-                  </div>
-                  <p className="text-xs text-gray-500">
-                    {t("profile.emailCannotBeModified", "El email no se puede modificar")}
-                  </p>
                 </div>
 
                 {/* Primer apellido */}
@@ -587,6 +557,35 @@ export default function Perfil() {
                   />
                 </div>
 
+                {/* Email (solo lectura para miembros, editable para admin) */}
+                <div className="space-y-2">
+                  <label htmlFor="email" className="block text-[#C0C0C0] text-sm font-medium">
+                    {t("profile.email", "Email")}
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                      <Mail size={18} />
+                    </div>
+                    <input
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={user?.role === "admin" ? handleChange : undefined}
+                      readOnly={user?.role !== "admin"}
+                      className={`w-full pl-10 py-2 border border-gray-800 rounded-md focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] ${
+                        user?.role === "admin"
+                          ? "bg-gray-900/50 text-[#C0C0C0] placeholder:text-gray-500"
+                          : "bg-gray-800/50 text-gray-400 cursor-not-allowed"
+                      }`}
+                    />
+                  </div>
+                  {user?.role !== "admin" && (
+                    <p className="text-xs text-gray-500">
+                      {t("profile.emailCannotBeModified", "El email no se puede modificar")}
+                    </p>
+                  )}
+                </div>
+
                 {/* Teléfono */}
                 <div className="space-y-2">
                   <label htmlFor="telefono" className="block text-[#C0C0C0] text-sm font-medium">
@@ -600,8 +599,6 @@ export default function Perfil() {
                       id="telefono"
                       name="telefono"
                       type="tel"
-                      pattern="[0-9]{9}"
-                      maxLength="9"
                       value={formData.telefono}
                       onChange={handlePhoneChange}
                       required
@@ -609,7 +606,7 @@ export default function Perfil() {
                     />
                   </div>
                   <p className="text-xs text-gray-400">
-                    {t("profile.enterNineDigits", "Introduce 9 dígitos numéricos")}
+                    {t("profile.phoneHelp", "Incluye código de país si es necesario")}
                   </p>
                 </div>
 
@@ -633,8 +630,10 @@ export default function Perfil() {
                     />
                   </div>
                 </div>
+              </div>
 
-                {/* Fecha de entrada (solo lectura) */}
+              {/* Fecha de entrada - separate row */}
+              <div className="mt-6 max-w-md">
                 <div className="space-y-2">
                   <label htmlFor="fecha_entrada" className="block text-[#C0C0C0] text-sm font-medium">
                     {t("profile.entryDate", "Fecha de entrada")}
@@ -688,7 +687,6 @@ export default function Perfil() {
                       value={passwordData.new_password}
                       onChange={handlePasswordChange}
                       required
-                      minLength={8}
                       className="w-full pl-10 pr-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                     />
                     <button
@@ -699,9 +697,7 @@ export default function Perfil() {
                       {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
-                  <p className="text-xs text-gray-400">
-                    {t("profile.passwordMinLength", "La contraseña debe tener al menos 8 caracteres")}
-                  </p>
+                  <PasswordValidator password={passwordData.new_password} onValidationChange={setIsPasswordValid} />
                 </div>
 
                 {/* Confirmar nueva contraseña */}
@@ -735,7 +731,7 @@ export default function Perfil() {
                 <div className="mt-8 flex justify-end">
                   <button
                     type="submit"
-                    disabled={saving}
+                    disabled={saving || !isPasswordValid}
                     className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     <Save size={18} />

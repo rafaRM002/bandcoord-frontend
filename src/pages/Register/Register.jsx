@@ -5,6 +5,7 @@ import { Link } from "react-router-dom"
 import { Eye, EyeOff, UserRound, Mail, Lock, Phone, Calendar, AlertCircle } from "lucide-react"
 import { useAuth } from "../../context/AuthContext"
 import { useTranslation } from "../../hooks/useTranslation"
+import PasswordValidator from "../../components/PasswordValidator"
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -20,27 +21,60 @@ export default function Register() {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
+  const [isPasswordValid, setIsPasswordValid] = useState(false)
   const { register } = useAuth()
   const { t } = useTranslation()
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
+
+  const handlePhoneChange = (e) => {
+    // Permitir números, espacios, guiones, paréntesis y el signo +
+    const value = e.target.value.replace(/[^\d\s\-$$$$+]/g, "")
+    setForm({ ...form, telefono: value })
+  }
+
+  const validateEmail = (email) => {
+    // Validación más estricta: debe tener @ y al menos un punto después del @
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  const validatePhone = (phone) => {
+    // Validación más flexible para teléfonos internacionales
+    // Debe tener al menos 7 dígitos y máximo 15 (estándar internacional)
+    const cleanPhone = phone.replace(/[^\d]/g, "")
+    return cleanPhone.length >= 7 && cleanPhone.length <= 15
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
     setError("")
 
-    // Validar que las contraseñas coincidan
-    if (form.password !== form.password_confirmation) {
-      setError("Las contraseñas no coinciden")
+    // Validar email
+    if (!validateEmail(form.email)) {
+      setError(t("register.invalidEmail", "El email debe tener un formato válido (ejemplo@dominio.com)"))
       setIsLoading(false)
       return
     }
 
-    // Validar formato de teléfono
-    const phoneRegex = /^[0-9]{9}$/
-    if (!phoneRegex.test(form.telefono)) {
-      setError("El teléfono debe contener 9 dígitos numéricos")
+    // Validar teléfono
+    if (!validatePhone(form.telefono)) {
+      setError(t("register.invalidPhone", "El teléfono debe tener entre 7 y 15 dígitos"))
+      setIsLoading(false)
+      return
+    }
+
+    // Validar que las contraseñas coincidan
+    if (form.password !== form.password_confirmation) {
+      setError(t("register.passwordMismatch", "Las contraseñas no coinciden"))
+      setIsLoading(false)
+      return
+    }
+
+    // Validar que la contraseña sea segura
+    if (!isPasswordValid) {
+      setError(t("register.passwordNotSecure", "La contraseña no cumple con los requisitos de seguridad"))
       setIsLoading(false)
       return
     }
@@ -61,7 +95,7 @@ export default function Register() {
       }
     } catch (error) {
       console.error("Error al registrar:", error)
-      setError("Error al registrarse. Inténtalo de nuevo.")
+      setError(t("register.genericError", "Error al registrarse. Inténtalo de nuevo."))
     } finally {
       setIsLoading(false)
     }
@@ -69,7 +103,7 @@ export default function Register() {
 
   return (
     <div className="flex justify-center items-center min-h-[calc(100vh-64px)] py-8 px-4">
-      <div className="w-full max-w-2xl mx-auto">
+      <div className="w-full max-w-4xl mx-auto">
         <div className="border border-gray-800 rounded-lg bg-black/90 backdrop-blur-sm shadow-xl">
           {/* Header */}
           <div className="space-y-1 text-center border-b border-gray-800 p-6">
@@ -80,8 +114,12 @@ export default function Register() {
                 className="mx-auto h-16 sm:h-20 w-auto"
               />
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#C0C0C0]">{t("register.title")}</h2>
-            <p className="text-gray-400 text-sm sm:text-base">{t("register.subtitle")}</p>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#C0C0C0]">
+              {t("register.title", "Crear cuenta")}
+            </h2>
+            <p className="text-gray-400 text-sm sm:text-base">
+              {t("register.subtitle", "Completa el formulario para solicitar acceso")}
+            </p>
           </div>
 
           {/* Mensaje de error */}
@@ -95,11 +133,11 @@ export default function Register() {
           <form onSubmit={handleSubmit}>
             {/* Contenido del formulario */}
             <div className="space-y-4 p-4 sm:p-6">
-              {/* Datos personales */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {/* Datos personales - Primera fila */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="space-y-2">
                   <label htmlFor="nombre" className="block text-[#C0C0C0] text-sm font-medium">
-                    {t("register.name")}
+                    {t("register.name", "Nombre")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -108,7 +146,7 @@ export default function Register() {
                     <input
                       id="nombre"
                       name="nombre"
-                      placeholder={t("register.name")}
+                      placeholder={t("register.name", "Nombre")}
                       value={form.nombre}
                       onChange={handleChange}
                       required
@@ -119,12 +157,12 @@ export default function Register() {
 
                 <div className="space-y-2">
                   <label htmlFor="apellido1" className="block text-[#C0C0C0] text-sm font-medium">
-                    {t("register.firstSurname")}
+                    {t("register.firstSurname", "Primer apellido")} *
                   </label>
                   <input
                     id="apellido1"
                     name="apellido1"
-                    placeholder={t("register.firstSurname")}
+                    placeholder={t("register.firstSurname", "Primer apellido")}
                     value={form.apellido1}
                     onChange={handleChange}
                     required
@@ -134,24 +172,44 @@ export default function Register() {
 
                 <div className="space-y-2">
                   <label htmlFor="apellido2" className="block text-[#C0C0C0] text-sm font-medium">
-                    {t("register.secondSurname")}
+                    {t("register.secondSurname", "Segundo apellido")}
                   </label>
                   <input
                     id="apellido2"
                     name="apellido2"
-                    placeholder={t("register.secondSurname")}
+                    placeholder={t("register.secondSurname", "Segundo apellido")}
                     value={form.apellido2}
                     onChange={handleChange}
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                   />
                 </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="fecha_nac" className="block text-[#C0C0C0] text-sm font-medium">
+                    {t("register.birthDate", "Fecha de nacimiento")} *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                      <Calendar size={18} />
+                    </div>
+                    <input
+                      id="fecha_nac"
+                      name="fecha_nac"
+                      type="date"
+                      value={form.fecha_nac}
+                      onChange={handleChange}
+                      required
+                      className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    />
+                  </div>
+                </div>
               </div>
 
-              {/* Contacto */}
+              {/* Contacto - Segunda fila */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label htmlFor="email" className="block text-[#C0C0C0] text-sm font-medium">
-                    {t("register.email")}
+                    {t("register.email", "Email")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -161,18 +219,21 @@ export default function Register() {
                       id="email"
                       name="email"
                       type="email"
-                      placeholder="tu@email.com"
+                      placeholder="ejemplo@dominio.com"
                       value={form.email}
                       onChange={handleChange}
                       required
                       className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                     />
                   </div>
+                  <p className="text-xs text-gray-400">
+                    {t("register.emailHelp", "Debe incluir @ y un dominio válido")}
+                  </p>
                 </div>
 
                 <div className="space-y-2">
                   <label htmlFor="telefono" className="block text-[#C0C0C0] text-sm font-medium">
-                    {t("register.phone")}
+                    {t("register.phone", "Teléfono")} *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -182,47 +243,23 @@ export default function Register() {
                       id="telefono"
                       name="telefono"
                       type="tel"
-                      pattern="[0-9]{9}"
-                      maxLength="9"
-                      placeholder="Número de teléfono (9 dígitos)"
+                      placeholder="+34 123 456 789"
                       value={form.telefono}
-                      onChange={(e) => {
-                        const value = e.target.value.replace(/\D/g, "")
-                        setForm({ ...form, telefono: value })
-                      }}
+                      onChange={handlePhoneChange}
                       required
                       className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                     />
                   </div>
-                  <p className="text-xs text-gray-400">{t("register.phoneHelp")}</p>
-                </div>
-              </div>
-
-              {/* Fecha de nacimiento */}
-              <div className="space-y-2">
-                <label htmlFor="fecha_nac" className="block text-[#C0C0C0] text-sm font-medium">
-                  {t("register.birthDate")}
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
-                    <Calendar size={18} />
-                  </div>
-                  <input
-                    id="fecha_nac"
-                    name="fecha_nac"
-                    type="date"
-                    value={form.fecha_nac}
-                    onChange={handleChange}
-                    required
-                    className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
-                  />
+                  <p className="text-xs text-gray-400">
+                    {t("register.phoneHelp", "Incluye código de país si es necesario")}
+                  </p>
                 </div>
               </div>
 
               {/* Contraseña */}
               <div className="space-y-2">
                 <label htmlFor="password" className="block text-[#C0C0C0] text-sm font-medium">
-                  {t("register.password")}
+                  {t("register.password", "Contraseña")} *
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -246,13 +283,13 @@ export default function Register() {
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
-                <p className="text-xs text-gray-400 mt-1">{t("register.passwordHelp")}</p>
+                <PasswordValidator password={form.password} onValidationChange={setIsPasswordValid} />
               </div>
 
               {/* Confirmar Contraseña */}
               <div className="space-y-2">
                 <label htmlFor="password_confirmation" className="block text-[#C0C0C0] text-sm font-medium">
-                  {t("register.confirmPassword")}
+                  {t("register.confirmPassword", "Confirmar contraseña")} *
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
@@ -277,15 +314,17 @@ export default function Register() {
               <button
                 type="submit"
                 className="w-full py-2 px-4 bg-gradient-to-r from-[#C0C0C0] to-gray-400 text-black font-medium rounded-md hover:from-gray-300 hover:to-[#C0C0C0] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={isLoading}
+                disabled={isLoading || !isPasswordValid}
               >
-                {isLoading ? t("register.processing") : t("register.requestRegistration")}
+                {isLoading
+                  ? t("register.processing", "Procesando...")
+                  : t("register.requestRegistration", "Solicitar registro")}
               </button>
 
               <div className="text-center text-sm text-gray-400">
-                {t("register.alreadyHaveAccount")}{" "}
+                {t("register.alreadyHaveAccount", "¿Ya tienes una cuenta?")}{" "}
                 <Link to="/login" className="text-[#C0C0C0] hover:text-white underline underline-offset-4">
-                  {t("register.login")}
+                  {t("register.login", "Iniciar sesión")}
                 </Link>
               </div>
             </div>

@@ -21,6 +21,16 @@ export const translations = {
       logout: "Cerrar Sesión",
     },
 
+    // Password validation
+    password: {
+      requirements: "Requisitos de la contraseña:",
+      minLength: "Al menos 8 caracteres",
+      lowercase: "Al menos una minúscula (a-z)",
+      uppercase: "Al menos una mayúscula (A-Z)",
+      number: "Al menos un número (0-9)",
+      special: "Al menos un carácter especial (!@#$%^&*)",
+    },
+
     // Instruments
     instruments: {
       title: "Gestión de Instrumentos",
@@ -129,7 +139,8 @@ export const translations = {
       noInstrumentData: "No hay datos disponibles por tipo de instrumento.",
       attendance: "de asistencia",
       assignmentAlreadyExists: "Ya existe una asignación para este evento y usuario",
-      assignmentAlreadyExistsWarning: "Esta asignación ya existe para este evento. Por favor, edita la existente o selecciona otro usuario.",
+      assignmentAlreadyExistsWarning:
+        "Esta asignación ya existe para este evento. Por favor, edita la existente o selecciona otro usuario.",
     },
 
     // Event Confirmation
@@ -205,6 +216,7 @@ export const translations = {
       firstSurname: "Primer apellido",
       secondSurname: "Segundo apellido",
       phone: "Teléfono",
+      phoneHelp: "Incluye código de país si es necesario",
       birthDate: "Fecha de nacimiento",
       entryDate: "Fecha de entrada",
       saveChanges: "Guardar cambios",
@@ -239,6 +251,10 @@ export const translations = {
       adminPermissionsRevokedSuccessfully: "Permisos de administrador revocados correctamente",
       errorModifyingAdminPermissions: "Error al modificar permisos de administrador",
       mustSelectUser: "Debes seleccionar un usuario",
+      invalidEmail: "El email debe tener un formato válido (ejemplo@dominio.com)",
+      invalidPhone: "El teléfono debe tener entre 7 y 15 dígitos",
+      unauthorized: "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.",
+      passwordNotSecure: "La contraseña no cumple con los requisitos de seguridad",
     },
 
     // Login Page
@@ -264,16 +280,21 @@ export const translations = {
       firstSurname: "Primer apellido",
       secondSurname: "Segundo apellido",
       email: "Email",
+      emailHelp: "Debe incluir @ y un dominio válido",
       phone: "Teléfono",
+      phoneHelp: "Incluye código de país si es necesario",
       birthDate: "Fecha de nacimiento",
       password: "Contraseña",
       confirmPassword: "Confirmar Contraseña",
       requestRegistration: "Solicitar registro",
       alreadyHaveAccount: "¿Ya tienes una cuenta?",
       login: "Iniciar Sesión",
-      phoneHelp: "Introduce 9 dígitos numéricos",
-      passwordHelp: "La contraseña debe tener al menos 8 caracteres",
       processing: "Procesando...",
+      invalidEmail: "El email debe tener un formato válido (ejemplo@dominio.com)",
+      invalidPhone: "El teléfono debe tener entre 7 y 15 dígitos",
+      passwordMismatch: "Las contraseñas no coinciden",
+      passwordNotSecure: "La contraseña no cumple con los requisitos de seguridad",
+      genericError: "Error al registrarse. Inténtalo de nuevo.",
     },
 
     // User Management
@@ -559,7 +580,8 @@ export const translations = {
       apiRoutesCorrect: "Las rutas de la API estén correctamente definidas",
       authenticatedWithToken: "Estés autenticado con un token válido",
       instrumentAlreadyLoaned: "Este instrumento ya está prestado a otro usuario",
-      instrumentAlreadyLoanedWarning: "Este instrumento ya está prestado. Por favor, selecciona otro instrumento o espera a que sea devuelto.",
+      instrumentAlreadyLoanedWarning:
+        "Este instrumento ya está prestado. Por favor, selecciona otro instrumento o espera a que sea devuelto.",
     },
 
     // Entities
@@ -635,7 +657,7 @@ export const translations = {
       mustProvideYoutubeUrl: "Debes proporcionar una URL de YouTube",
       mustAddFiles: "Debes agregar al menos un archivo",
       isRequired: "es obligatorio",
-      bothOptions: "Ambas opciones son requeridas"
+      bothOptions: "Ambas opciones son requeridas",
     },
 
     // Interpreted Compositions
@@ -673,7 +695,8 @@ export const translations = {
       couldNotPlayAudio: "No se pudo reproducir el audio",
       usersWhoInterpretThisComposition: "Usuarios que interpretan esta composición",
       cancel: "Cancelar",
-      userAlreadyAssignedWarning: "Este usuario ya está asignado a esta composición. Por favor, selecciona otro usuario."
+      userAlreadyAssignedWarning:
+        "Este usuario ya está asignado a esta composición. Por favor, selecciona otro usuario.",
     },
 
     // Add calendar translations to both language objects
@@ -804,6 +827,16 @@ export const translations = {
       logout: "Logout",
     },
 
+    // Password validation
+    password: {
+      requirements: "Password requirements:",
+      minLength: "At least 8 characters",
+      lowercase: "At least one lowercase letter (a-z)",
+      uppercase: "At least one uppercase letter (A-Z)",
+      number: "At least one number (0-9)",
+      special: "At least one special character (!@#$%^&*)",
+    },
+
     // Instruments
     instruments: {
       title: "Instrument Management",
@@ -908,7 +941,8 @@ export const translations = {
       noEventsWithAssignments: "No events with assignments registered.",
       noInstrumentData: "No data available by instrument type.",
       attendance: "attendance",
-      assignmentAlreadyExistsWarning: "This assignment already exists for this event. Please edit the existing one or select another user.",
+      assignmentAlreadyExistsWarning:
+        "This assignment already exists for this event. Please edit the existing one or select another user.",
     },
 
     // Event Confirmation
@@ -984,6 +1018,7 @@ export const translations = {
       firstSurname: "First surname",
       secondSurname: "Second surname",
       phone: "Phone",
+      phoneHelp: "Include country code if necessary",
       birthDate: "Birth date",
       entryDate: "Entry date",
       saveChanges: "Save changes",
@@ -1018,6 +1053,10 @@ export const translations = {
       adminPermissionsRevokedSuccessfully: "Administrator permissions revoked successfully",
       errorModifyingAdminPermissions: "Error modifying administrator permissions",
       mustSelectUser: "You must select a user",
+      invalidEmail: "Email must have a valid format (example@domain.com)",
+      invalidPhone: "Phone must have between 7 and 15 digits",
+      unauthorized: "Your session has expired. Please log in again.",
+      passwordNotSecure: "Password does not meet security requirements",
     },
 
     // Login Page
@@ -1043,16 +1082,21 @@ export const translations = {
       firstSurname: "First surname",
       secondSurname: "Second surname",
       email: "Email",
+      emailHelp: "Must include @ and a valid domain",
       phone: "Phone",
+      phoneHelp: "Include country code if necessary",
       birthDate: "Birth date",
       password: "Password",
       confirmPassword: "Confirm Password",
       requestRegistration: "Request registration",
       alreadyHaveAccount: "Already have an account?",
       login: "Sign In",
-      phoneHelp: "Enter 9 numeric digits",
-      passwordHelp: "Password must be at least 8 characters",
       processing: "Processing...",
+      invalidEmail: "Email must have a valid format (example@domain.com)",
+      invalidPhone: "Phone must have between 7 and 15 digits",
+      passwordMismatch: "Passwords do not match",
+      passwordNotSecure: "Password does not meet security requirements",
+      genericError: "Registration error. Please try again.",
     },
 
     // User Management
@@ -1335,7 +1379,8 @@ export const translations = {
       corsConfiguration: "The CORS configuration in Laravel allows requests from http://localhost:5173",
       apiRoutesCorrect: "The API routes are correctly defined",
       authenticatedWithToken: "You are authenticated with a valid token",
-      instrumentAlreadyLoanedWarning: "This instrument is already loaned. Please select another instrument or wait for it to be returned.",
+      instrumentAlreadyLoanedWarning:
+        "This instrument is already loaned. Please select another instrument or wait for it to be returned.",
     },
 
     // Entities
@@ -1419,7 +1464,7 @@ export const translations = {
       cancel: "Cancel",
       save: "Save",
       isRequired: "is required",
-      bothOptions: "Both options are required"
+      bothOptions: "Both options are required",
     },
 
     // Interpreted Compositions
@@ -1455,7 +1500,7 @@ export const translations = {
       errorPlayingAudio: "Error playing audio",
       couldNotPlayAudio: "Could not play audio",
       usersWhoInterpretThisComposition: "Users who interpret this composition",
-      userAlreadyAssignedWarning: "This user is already assigned to this composition. Please select another user."
+      userAlreadyAssignedWarning: "This user is already assigned to this composition. Please select another user.",
     },
 
     // Add calendar translations to both language objects
