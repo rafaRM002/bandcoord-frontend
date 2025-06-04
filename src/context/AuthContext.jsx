@@ -12,7 +12,7 @@ const AuthContext = createContext()
 const getCsrfCookie = async () => {
   await axios.get(
     "https://www.iestrassierra.net/alumnado/curso2425/DAW/daw2425a16/laravel/public/sanctum/csrf-cookie",
-    { withCredentials: true }
+    { withCredentials: true },
   )
 }
 
@@ -64,25 +64,15 @@ export const AuthProvider = ({ children }) => {
 
   const checkNotifications = async (userData) => {
     try {
+      let pendingUsers = 0
       if (userData.role === "admin") {
         const usuariosResponse = await api.get("/usuarios")
         const usuariosData = Array.isArray(usuariosResponse.data)
           ? usuariosResponse.data
           : usuariosResponse.data.data || []
 
-        const pendingUsers = usuariosData.filter((u) => u.estado === "pendiente").length
+        pendingUsers = usuariosData.filter((u) => u.estado === "pendiente").length
         setPendingUsersCount(pendingUsers)
-
-        if (pendingUsers > 0) {
-          setNotificationMessage(
-            `Tienes ${pendingUsers} usuario${pendingUsers !== 1 ? "s" : ""} pendiente${pendingUsers !== 1 ? "s" : ""} de aprobación`
-          )
-          setShowNotification(true)
-
-          setTimeout(() => {
-            setShowNotification(false)
-          }, 5000)
-        }
       }
 
       const mensajesResponse = await api.get("/mensaje-usuarios")
@@ -90,16 +80,29 @@ export const AuthProvider = ({ children }) => {
         ? mensajesResponse.data
         : mensajesResponse.data.data || []
 
+      // Cambiar esta línea para filtrar correctamente los mensajes no leídos
+      // El estado viene como false (no leído) o true (leído)
       const unreadMessages = mensajesData.filter(
-        (m) => m.usuario_id_receptor === userData.id && (m.estado === 0 || !m.leido)
+        (m) => m.usuario_id_receptor === userData.id && m.estado === false,
       ).length
 
       setUnreadMessagesCount(unreadMessages)
 
-      if (unreadMessages > 0) {
-        setNotificationMessage(
-          `Tienes ${unreadMessages} mensaje${unreadMessages !== 1 ? "s" : ""} sin leer`
+      // Preparar mensajes de notificación
+      const notifications = []
+
+      if (userData.role === "admin" && pendingUsers > 0) {
+        notifications.push(
+          `Tienes ${pendingUsers} usuario${pendingUsers !== 1 ? "s" : ""} pendiente${pendingUsers !== 1 ? "s" : ""} de aprobación`,
         )
+      }
+
+      if (unreadMessages > 0) {
+        notifications.push(`Tienes ${unreadMessages} mensaje${unreadMessages !== 1 ? "s" : ""} sin leer`)
+      }
+
+      if (notifications.length > 0) {
+        setNotificationMessage(notifications.join(" • "))
         setShowNotification(true)
 
         setTimeout(() => {
@@ -189,7 +192,10 @@ export const AuthProvider = ({ children }) => {
     } finally {
       localStorage.removeItem("token")
       setUser(null)
-      navigate("/login")
+      // Pequeño delay para evitar problemas de routing
+      setTimeout(() => {
+        navigate("/login", { replace: true })
+      }, 100)
     }
   }
 
