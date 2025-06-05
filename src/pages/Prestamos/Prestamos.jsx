@@ -36,75 +36,98 @@ export default function Prestamos() {
   // Dentro del componente:
   const { isAdmin } = useAuth()
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        console.log("Intentando cargar datos de préstamos...")
+  const fetchData = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      console.log("🔄 Loading loans data...")
 
-        const [prestamosRes, usuariosRes, instrumentosRes] = await Promise.all([
-          api.get("/prestamos"),
-          api.get("/usuarios"),
-          api.get("/instrumentos"),
-        ])
+      const [prestamosRes, usuariosRes, instrumentosRes] = await Promise.all([
+        api.get("/prestamos"),
+        api.get("/usuarios"),
+        api.get("/instrumentos"),
+      ])
 
-        console.log("Respuesta de préstamos:", prestamosRes)
-        console.log("Respuesta de usuarios:", usuariosRes)
-        console.log("Respuesta de instrumentos:", instrumentosRes)
+      console.log("✅ API responses received:")
+      console.log("- Préstamos:", prestamosRes.data?.length || 0, "records")
+      console.log("- Usuarios:", usuariosRes.data?.length || 0, "records")
+      console.log("- Instrumentos:", instrumentosRes.data?.length || 0, "records")
 
-        // Procesar datos de préstamos
-        let prestamosData = []
-        if (prestamosRes.data && Array.isArray(prestamosRes.data)) {
-          prestamosData = prestamosRes.data
-        } else if (prestamosRes.data && prestamosRes.data.data && Array.isArray(prestamosRes.data.data)) {
-          prestamosData = prestamosRes.data.data
-        } else {
-          console.warn("Formato de respuesta inesperado para préstamos:", prestamosRes.data)
-        }
-        setPrestamos(prestamosData)
-
-        // Procesar datos de usuarios
-        let usuariosData = []
-        if (usuariosRes.data && Array.isArray(usuariosRes.data)) {
-          usuariosData = usuariosRes.data
-        } else if (usuariosRes.data && usuariosRes.data.data && Array.isArray(usuariosRes.data.data)) {
-          usuariosData = usuariosRes.data.data
-        } else {
-          console.warn("Formato de respuesta inesperado para usuarios:", usuariosRes.data)
-        }
-        setUsuarios(usuariosData)
-
-        // Procesar datos de instrumentos
-        let instrumentosData = []
-        if (instrumentosRes.data && Array.isArray(instrumentosRes.data)) {
-          instrumentosData = instrumentosRes.data
-        } else if (instrumentosRes.data && instrumentosRes.data.data && Array.isArray(instrumentosRes.data.data)) {
-          instrumentosData = instrumentosRes.data.data
-        } else {
-          console.warn("Formato de respuesta inesperado para instrumentos:", instrumentosRes.data)
-        }
-        setInstrumentos(instrumentosData)
-      } catch (error) {
-        console.error("Error al cargar datos:", error)
-        setError(`Error al cargar datos: ${error.message}`)
-
-        // Intentar determinar el tipo de error
-        if (error.response) {
-          console.error("Respuesta del servidor:", error.response.status, error.response.data)
-          setError(`Error del servidor: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
-        } else if (error.request) {
-          console.error("No se recibió respuesta del servidor")
-          setError("No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.")
-        } else {
-          console.error("Error de configuración:", error.message)
-          setError(`Error de configuración: ${error.message}`)
-        }
-      } finally {
-        setLoading(false)
+      // Procesar datos de préstamos
+      let prestamosData = []
+      if (prestamosRes.data && Array.isArray(prestamosRes.data)) {
+        prestamosData = prestamosRes.data
+      } else if (prestamosRes.data && prestamosRes.data.data && Array.isArray(prestamosRes.data.data)) {
+        prestamosData = prestamosRes.data.data
+      } else {
+        console.warn("Formato de respuesta inesperado para préstamos:", prestamosRes.data)
       }
-    }
+      setPrestamos(prestamosData)
 
+      // Procesar datos de usuarios
+      let usuariosData = []
+      if (usuariosRes.data && Array.isArray(usuariosRes.data)) {
+        usuariosData = usuariosRes.data
+      } else if (usuariosRes.data && usuariosRes.data.data && Array.isArray(usuariosRes.data.data)) {
+        usuariosData = usuariosRes.data.data
+      } else {
+        console.warn("Formato de respuesta inesperado para usuarios:", usuariosRes.data)
+      }
+      setUsuarios(usuariosData)
+
+      // Procesar datos de instrumentos
+      let instrumentosData = []
+      if (instrumentosRes.data && Array.isArray(instrumentosRes.data)) {
+        instrumentosData = instrumentosRes.data
+      } else if (instrumentosRes.data && instrumentosRes.data.data && Array.isArray(instrumentosRes.data.data)) {
+        instrumentosData = instrumentosRes.data.data
+      } else {
+        console.warn("Formato de respuesta inesperado para instrumentos:", instrumentosRes.data)
+      }
+      setInstrumentos(instrumentosData)
+
+      // Debug: Check for inconsistencies between loans and instruments
+      console.log("🔍 Checking for data inconsistencies...")
+      prestamosData.forEach((prestamo) => {
+        const instrumento = instrumentosData.find((i) => String(i.numero_serie) === String(prestamo.num_serie))
+        if (instrumento) {
+          const isLoanActive = !prestamo.fecha_devolucion || prestamo.fecha_devolucion === ""
+          const isInstrumentLoaned = instrumento.estado === "prestado"
+
+          if (isLoanActive && !isInstrumentLoaned) {
+            console.warn(
+              `⚠️ Inconsistency: Active loan for instrument ${prestamo.num_serie} but instrument status is '${instrumento.estado}'`,
+            )
+          } else if (!isLoanActive && isInstrumentLoaned) {
+            console.warn(
+              `⚠️ Inconsistency: Returned loan for instrument ${prestamo.num_serie} but instrument status is still 'prestado'`,
+            )
+          }
+        }
+      })
+
+      console.log("✅ Data loading completed successfully")
+    } catch (error) {
+      console.error("❌ Error loading data:", error)
+      setError(`Error al cargar datos: ${error.message}`)
+
+      // Intentar determinar el tipo de error
+      if (error.response) {
+        console.error("Respuesta del servidor:", error.response.status, error.response.data)
+        setError(`Error del servidor: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+      } else if (error.request) {
+        console.error("No se recibió respuesta del servidor")
+        setError("No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.")
+      } else {
+        console.error("Error de configuración:", error.message)
+        setError(`Error de configuración: ${error.message}`)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
     fetchData()
   }, [])
 
@@ -150,25 +173,59 @@ export default function Prestamos() {
         return
       }
 
-      await api.post("/prestamos", currentPrestamo)
+      console.log(`🔄 Creating loan for instrument ${currentPrestamo.num_serie}`)
+
+      // Create the loan with correct data format
+      const prestamoData = {
+        num_serie: currentPrestamo.num_serie,
+        usuario_id: Number.parseInt(currentPrestamo.usuario_id),
+        fecha_prestamo: currentPrestamo.fecha_prestamo,
+        fecha_devolucion: "",
+      }
+
+      await api.post("/prestamos", prestamoData)
+      console.log(`✅ Loan created successfully`)
+
+      // Get the instrument type before updating
+      const instrumento = instrumentos.find((i) => i.numero_serie === currentPrestamo.num_serie)
+      const instrumento_tipo_id = instrumento ? instrumento.instrumento_tipo_id : null
+
+      // Update instrument status to "prestado"
+      try {
+        console.log(`🔄 Updating instrument ${currentPrestamo.num_serie} status to 'prestado'`)
+
+        const updateResponse = await api.put(`/instrumentos/${currentPrestamo.num_serie}`, {
+          estado: "prestado",
+          instrumento_tipo_id: instrumento_tipo_id,
+        })
+
+        console.log(`✅ Instrument ${currentPrestamo.num_serie} status updated successfully:`, updateResponse.data)
+      } catch (instrumentError) {
+        console.error(`❌ Error updating instrument ${currentPrestamo.num_serie} status:`, instrumentError)
+
+        if (instrumentError.response) {
+          console.error("Error response:", instrumentError.response.status, instrumentError.response.data)
+          toast.error(`Error ${instrumentError.response.status}: No se pudo actualizar el estado del instrumento`)
+        } else {
+          toast.error("Error al actualizar el estado del instrumento")
+        }
+      }
+
       toast.success(t("loans.loanCreatedSuccessfully"))
 
       // Recargar los datos
-      const response = await api.get("/prestamos")
-
-      // Procesar datos de préstamos
-      let prestamosData = []
-      if (response.data && Array.isArray(response.data)) {
-        prestamosData = response.data
-      } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
-        prestamosData = response.data.data
-      }
-
-      setPrestamos(prestamosData)
+      console.log("🔄 Reloading data after loan creation...")
+      await fetchData()
       handleCloseModal()
+      console.log("✅ Loan creation process completed")
     } catch (error) {
-      console.error("Error al guardar préstamo:", error)
-      toast.error(t("loans.errorSavingLoan"))
+      console.error("❌ Error creating loan:", error)
+      if (error.response) {
+        console.error("Error details:", error.response.data)
+        toast.error(`Error al crear préstamo: ${JSON.stringify(error.response.data)}`)
+      } else {
+        toast.error(t("loans.errorSavingLoan"))
+      }
     }
   }
 
@@ -176,74 +233,175 @@ export default function Prestamos() {
     try {
       const fechaActual = new Date().toISOString().split("T")[0]
 
+      console.log(`🔄 Returning loan for instrument ${prestamo.num_serie}`)
+
+      // First, update the loan with return date
       await api.put(`/prestamos/${prestamo.num_serie}/${prestamo.usuario_id}`, {
         fecha_prestamo: prestamo.fecha_prestamo,
         fecha_devolucion: fechaActual,
       })
+      console.log(`✅ Loan updated with return date: ${fechaActual}`)
 
-      // Update instrument status to available
+      // Get the instrument type before updating
       const instrumento = instrumentos.find((i) => i.numero_serie === prestamo.num_serie)
-      if (instrumento) {
-        await api.put(`/instrumentos/${prestamo.num_serie}`, {
+      const instrumento_tipo_id = instrumento ? instrumento.instrumento_tipo_id : null
+
+      if (!instrumento_tipo_id) {
+        console.error(`❌ Could not find instrument type for ${prestamo.num_serie}`)
+      }
+
+      // Then, update instrument status to available
+      try {
+        console.log(`🔄 Updating instrument ${prestamo.num_serie} status to 'disponible'`)
+        console.log(`Using instrument_tipo_id: ${instrumento_tipo_id}`)
+
+        // Asegurarse de que tenemos el tipo de instrumento
+        if (!instrumento_tipo_id) {
+          console.error(`❌ No se pudo encontrar el tipo de instrumento para ${prestamo.num_serie}`)
+          toast.error(`Error: No se pudo determinar el tipo de instrumento para actualizar su estado`)
+          return
+        }
+
+        // Enviar TODOS los campos requeridos por el backend
+        const updateResponse = await api.put(`/instrumentos/${prestamo.num_serie}`, {
           estado: "disponible",
-          instrumento_tipo_id: instrumento.instrumento_tipo_id,
+          instrumento_tipo_id: instrumento_tipo_id,
         })
+
+        console.log(`✅ Instrument ${prestamo.num_serie} status updated successfully:`, updateResponse.data)
+
+        // Update local instruments state immediately
+        setInstrumentos((prevInstrumentos) =>
+          prevInstrumentos.map((inst) =>
+            inst.numero_serie === prestamo.num_serie ? { ...inst, estado: "disponible" } : inst,
+          ),
+        )
+      } catch (instrumentError) {
+        console.error(`❌ Error updating instrument ${prestamo.num_serie} status:`, instrumentError)
+
+        // Mostrar información detallada del error
+        if (instrumentError.response) {
+          console.error("Error response:", instrumentError.response.status, instrumentError.response.data)
+          toast.error(
+            `Error ${instrumentError.response.status}: No se pudo actualizar el estado del instrumento ${prestamo.num_serie}. Detalles: ${JSON.stringify(instrumentError.response.data)}`,
+          )
+        } else {
+          toast.error(`Error al actualizar el estado del instrumento ${prestamo.num_serie}`)
+        }
       }
 
       toast.success(t("loans.loanReturnedSuccessfully"))
 
-      // Update local state
-      setPrestamos(
-        prestamos.map((p) => {
-          if (p.num_serie === prestamo.num_serie && p.usuario_id === prestamo.usuario_id) {
-            return { ...p, fecha_devolucion: fechaActual }
-          }
-          return p
-        }),
+      // Update local prestamos state immediately
+      setPrestamos((prevPrestamos) =>
+        prevPrestamos.map((p) =>
+          p.num_serie === prestamo.num_serie && p.usuario_id === prestamo.usuario_id
+            ? { ...p, fecha_devolucion: fechaActual }
+            : p,
+        ),
       )
+
+      // Force reload all data to ensure consistency
+      console.log("🔄 Reloading all data to ensure consistency...")
+      setTimeout(async () => {
+        await fetchData()
+        console.log("✅ Data reloaded successfully")
+      }, 1000)
     } catch (error) {
       console.error("Error al devolver el préstamo:", error)
-      toast.error(t("loans.errorReturningLoan"))
+      if (error.response) {
+        console.error("Error details:", error.response.data)
+        toast.error(`Error al devolver préstamo: ${JSON.stringify(error.response.data)}`)
+      } else {
+        toast.error(t("loans.errorReturningLoan"))
+      }
     }
-  }
-
-  const confirmDelete = (numSerie, usuarioId) => {
-    setPrestamoToDelete({ numSerie, usuarioId })
-    setShowDeleteModal(true)
   }
 
   const handleDelete = async () => {
     if (!prestamoToDelete) return
 
     try {
-      // Eliminar el préstamo
-      await api.delete(`/prestamos/${prestamoToDelete.numSerie}/${prestamoToDelete.usuarioId}`)
+      console.log(`🗑️ Deleting loan for instrument ${prestamoToDelete.numSerie}`)
 
-      // Actualizar el estado del instrumento a disponible
+      // Delete the loan
+      await api.delete(`/prestamos/${prestamoToDelete.numSerie}/${prestamoToDelete.usuarioId}`)
+      console.log(`✅ Loan deleted successfully`)
+
+      // Get the instrument type before updating
+      const instrumento = instrumentos.find((i) => i.numero_serie === prestamoToDelete.numSerie)
+      const instrumento_tipo_id = instrumento ? instrumento.instrumento_tipo_id : null
+
+      // Update instrument status to available
       try {
-        await api.put(`/instrumentos/${prestamoToDelete.numSerie}`, {
+        console.log(`🔄 Updating instrument ${prestamoToDelete.numSerie} status to 'disponible'`)
+
+        // Asegurarse de que tenemos el tipo de instrumento
+        if (!instrumento_tipo_id) {
+          console.error(`❌ No se pudo encontrar el tipo de instrumento para ${prestamoToDelete.numSerie}`)
+          toast.error(`Error: No se pudo determinar el tipo de instrumento para actualizar su estado`)
+          return
+        }
+
+        // Enviar TODOS los campos requeridos por el backend
+        const updateResponse = await api.put(`/instrumentos/${prestamoToDelete.numSerie}`, {
           estado: "disponible",
-          instrumento_tipo_id:
-            instrumentos.find((i) => i.numero_serie === prestamoToDelete.numSerie)?.instrumento_tipo_id || "",
+          instrumento_tipo_id: instrumento_tipo_id,
         })
+
+        console.log(`✅ Instrument ${prestamoToDelete.numSerie} status updated successfully:`, updateResponse.data)
+
+        // Update local instruments state immediately
+        setInstrumentos((prevInstrumentos) =>
+          prevInstrumentos.map((inst) =>
+            inst.numero_serie === prestamoToDelete.numSerie ? { ...inst, estado: "disponible" } : inst,
+          ),
+        )
       } catch (instrumentError) {
-        console.error("Error al actualizar estado del instrumento:", instrumentError)
-        // No mostramos error al usuario porque el préstamo ya se eliminó correctamente
+        console.error(`❌ Error updating instrument ${prestamoToDelete.numSerie} status:`, instrumentError)
+
+        if (instrumentError.response) {
+          console.error("Error response:", instrumentError.response.status, instrumentError.response.data)
+          toast.error(
+            `Error ${instrumentError.response.status}: No se pudo actualizar el estado del instrumento. Detalles: ${JSON.stringify(instrumentError.response.data)}`,
+          )
+        } else {
+          toast.error("Error al actualizar el estado del instrumento")
+        }
       }
 
-      setPrestamos(
-        prestamos.filter(
+      // Update local prestamos state immediately
+      setPrestamos((prevPrestamos) =>
+        prevPrestamos.filter(
           (prestamo) =>
             !(prestamo.num_serie === prestamoToDelete.numSerie && prestamo.usuario_id === prestamoToDelete.usuarioId),
         ),
       )
+
       setShowDeleteModal(false)
       setPrestamoToDelete(null)
       toast.success(t("loans.loanDeletedSuccessfully"))
+
+      // Reload all data to ensure consistency
+      console.log("🔄 Reloading data after loan deletion...")
+      setTimeout(async () => {
+        await fetchData()
+        console.log("✅ Data reloaded after loan deletion")
+      }, 1000)
     } catch (error) {
-      console.error("Error al eliminar préstamo:", error)
-      toast.error(t("loans.errorDeletingLoan"))
+      console.error("❌ Error deleting loan:", error)
+      if (error.response) {
+        console.error("Error details:", error.response.data)
+        toast.error(`Error al eliminar préstamo: ${JSON.stringify(error.response.data)}`)
+      } else {
+        toast.error(t("loans.errorDeletingLoan"))
+      }
     }
+  }
+
+  const confirmDelete = (numSerie, usuarioId) => {
+    setPrestamoToDelete({ numSerie, usuarioId })
+    setShowDeleteModal(true)
   }
 
   const filteredPrestamos = prestamos.filter((prestamo) => {
