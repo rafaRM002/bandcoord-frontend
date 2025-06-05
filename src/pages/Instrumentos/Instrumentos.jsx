@@ -1,7 +1,20 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Edit, Trash2, Search, Music, Filter, ChevronLeft, ChevronRight, Save, X } from "lucide-react"
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Search,
+  Music,
+  Filter,
+  ChevronLeft,
+  ChevronRight,
+  Save,
+  X,
+  AlertTriangle,
+  Info,
+} from "lucide-react"
 import api from "../../api/axios"
 import { useTranslation } from "../../hooks/useTranslation"
 // Corregir la importación de useAuth
@@ -37,6 +50,9 @@ export default function Instrumentos() {
 
   // Estado separado para el usuario del préstamo (no va en la tabla instrumentos)
   const [selectedLoanUser, setSelectedLoanUser] = useState("")
+
+  // Nuevo estado para el modal de confirmación de creación
+  const [showCreateConfirmModal, setShowCreateConfirmModal] = useState(false)
 
   // Dentro del componente, después de las declaraciones de estado:
   const { isAdmin } = useAuth()
@@ -116,6 +132,10 @@ export default function Instrumentos() {
     if (!instrumentoToDelete) return
 
     try {
+      // Obtener información del instrumento antes de eliminarlo para decrementar la cantidad
+      const instrumentoAEliminar = instrumentos.find((i) => i.numero_serie === instrumentoToDelete)
+      console.log("🔍 Instrumento a eliminar:", instrumentoAEliminar)
+
       // First, delete any active loans for this instrument
       const prestamosActivos = prestamos.filter(
         (prestamo) =>
@@ -136,12 +156,34 @@ export default function Instrumentos() {
 
       // Then delete the instrument
       await api.delete(`/instrumentos/${instrumentoToDelete}`)
+      console.log(`✅ Instrumento ${instrumentoToDelete} eliminado`)
+
+      // Decrementar la cantidad del tipo de instrumento
+      if (instrumentoAEliminar && instrumentoAEliminar.instrumento_tipo_id) {
+        try {
+          console.log(`📊 Decrementando cantidad de tipo ${instrumentoAEliminar.instrumento_tipo_id}`)
+
+          // Obtener la cantidad actual del tipo
+          const tipoActual = tiposInstrumento.find((t) => t.instrumento === instrumentoAEliminar.instrumento_tipo_id)
+          if (tipoActual && tipoActual.cantidad > 0) {
+            await api.put(`/tipo-instrumentos/${encodeURIComponent(instrumentoAEliminar.instrumento_tipo_id)}`, {
+              cantidad: tipoActual.cantidad - 1,
+            })
+            console.log(`✅ Cantidad de tipo ${instrumentoAEliminar.instrumento_tipo_id} decrementada`)
+          } else {
+            console.warn(`⚠️ No se pudo decrementar la cantidad del tipo ${instrumentoAEliminar.instrumento_tipo_id}`)
+          }
+        } catch (error) {
+          console.error("❌ Error al decrementar cantidad de tipo:", error)
+        }
+      }
+
       setInstrumentos(instrumentos.filter((item) => item.numero_serie !== instrumentoToDelete))
       setShowDeleteModal(false)
       setInstrumentoToDelete(null)
 
       // Mostrar mensaje de éxito
-      setSuccessMessage("Instrumento y préstamos asociados eliminados correctamente")
+      setSuccessMessage(t("instruments.deleteConfirmation.successMessage"))
       setTimeout(() => setSuccessMessage(null), 3000)
 
       // Reload data to ensure consistency
@@ -156,6 +198,17 @@ export default function Instrumentos() {
   const confirmDelete = (numSerie) => {
     setInstrumentoToDelete(numSerie)
     setShowDeleteModal(true)
+  }
+
+  // Modificar la función para mostrar primero el modal de confirmación
+  const handleCreateInstrument = () => {
+    setShowCreateConfirmModal(true)
+  }
+
+  // Nueva función para confirmar la creación y abrir el modal principal
+  const confirmCreateInstrument = () => {
+    setShowCreateConfirmModal(false)
+    handleOpenModal("create")
   }
 
   const handleOpenModal = async (mode, instrumento = null) => {
@@ -578,12 +631,12 @@ export default function Instrumentos() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Modificar el botón "Nuevo Instrumento" para que solo aparezca para admins: */}
+      {/* Modificar el botón "Nuevo Instrumento" para que llame a la nueva función: */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("instruments.title")}</h1>
         {isAdmin && (
           <button
-            onClick={() => handleOpenModal("create")}
+            onClick={handleCreateInstrument}
             className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
           >
             <Plus size={18} />
@@ -666,10 +719,7 @@ export default function Instrumentos() {
                 : t("instruments.noInstruments")}
             </p>
             {isAdmin && (
-              <button
-                onClick={() => handleOpenModal("create")}
-                className="mt-4 text-[#C0C0C0] hover:text-white underline"
-              >
+              <button onClick={handleCreateInstrument} className="mt-4 text-[#C0C0C0] hover:text-white underline">
                 {t("instruments.addFirstInstrument")}
               </button>
             )}
@@ -802,6 +852,69 @@ export default function Instrumentos() {
         )}
       </div>
 
+      {/* Modal de confirmación para crear instrumento con traducciones */}
+      {showCreateConfirmModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-lg">
+            <div className="flex items-center gap-3 mb-4">
+              <Info className="text-blue-400" size={24} />
+              <h3 className="text-xl font-semibold text-[#C0C0C0]">{t("instruments.createConfirmation.title")}</h3>
+            </div>
+
+            <div className="space-y-4 mb-6">
+              <div className="bg-blue-900/20 border border-blue-800 rounded-lg p-4">
+                <h4 className="text-blue-300 font-medium mb-2">{t("instruments.createConfirmation.whatWillHappen")}</h4>
+                <ul className="text-blue-100 text-sm space-y-2">
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-400 mt-1">•</span>
+                    <span>{t("instruments.createConfirmation.willCreateInstrument")}</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-400 mt-1">•</span>
+                    <span>{t("instruments.createConfirmation.willIncrementQuantity")}</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-400 mt-1">•</span>
+                    <span>{t("instruments.createConfirmation.willCreateLoan")}</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="bg-yellow-900/20 border border-yellow-800 rounded-lg p-4">
+                <h4 className="text-yellow-300 font-medium mb-2 flex items-center gap-2">
+                  <AlertTriangle size={16} />
+                  {t("instruments.createConfirmation.currentQuantities")}
+                </h4>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  {tiposInstrumento.map((tipo) => (
+                    <div key={tipo.instrumento} className="flex justify-between text-yellow-100">
+                      <span>{tipo.instrumento}:</span>
+                      <span className="font-medium">{tipo.cantidad}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowCreateConfirmModal(false)}
+                className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+              >
+                {t("common.cancel")}
+              </button>
+              <button
+                onClick={confirmCreateInstrument}
+                className="px-4 py-2 bg-blue-900/80 text-blue-100 rounded-md hover:bg-blue-800 flex items-center gap-2"
+              >
+                <Plus size={18} />
+                {t("instruments.createConfirmation.continueCreation")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modal para crear/editar instrumento */}
       {showModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
@@ -848,7 +961,7 @@ export default function Instrumentos() {
                     <option value="">Selecciona un tipo</option>
                     {tiposInstrumento.map((tipo) => (
                       <option key={tipo.instrumento} value={tipo.instrumento}>
-                        {tipo.instrumento}
+                        {tipo.instrumento} ({t("instrumentTypes.quantity")}: {tipo.cantidad})
                       </option>
                     ))}
                   </select>
@@ -914,12 +1027,42 @@ export default function Instrumentos() {
         </div>
       )}
 
-      {/* Modal de confirmación de eliminación */}
+      {/* Modal de confirmación de eliminación mejorado con traducciones */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("instruments.confirmDelete")}</h3>
-            <p className="text-gray-400 mb-6">{t("instruments.deleteConfirmText")}</p>
+          <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-lg">
+            <div className="flex items-center gap-3 mb-4">
+              <AlertTriangle className="text-red-400" size={24} />
+              <h3 className="text-xl font-semibold text-[#C0C0C0]">{t("instruments.deleteConfirmation.title")}</h3>
+            </div>
+
+            <div className="space-y-4 mb-6">
+              <div className="bg-yellow-900/20 border border-yellow-800 rounded-lg p-4">
+                <h4 className="text-yellow-300 font-medium mb-2">{t("instruments.deleteConfirmation.warning")}</h4>
+                <ul className="text-yellow-100 text-sm space-y-2">
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-400 mt-1">•</span>
+                    <span>{t("instruments.deleteConfirmation.willDeleteInstrument")}</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-400 mt-1">•</span>
+                    <span>{t("instruments.deleteConfirmation.willDecrementQuantity")}</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-400 mt-1">•</span>
+                    <span>{t("instruments.deleteConfirmation.willDeleteLoans")}</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="bg-red-900/20 border border-red-800 rounded-lg p-4">
+                <p className="text-red-300 font-medium text-sm">
+                  <AlertTriangle className="inline mr-2" size={16} />
+                  {t("instruments.deleteConfirmation.cannotBeUndone")}
+                </p>
+              </div>
+            </div>
+
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
@@ -927,8 +1070,12 @@ export default function Instrumentos() {
               >
                 {t("common.cancel")}
               </button>
-              <button onClick={handleDelete} className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800">
-                {t("common.delete")}
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800 flex items-center gap-2"
+              >
+                <Trash2 size={18} />
+                {t("instruments.deleteConfirmation.confirmDelete")}
               </button>
             </div>
           </div>
