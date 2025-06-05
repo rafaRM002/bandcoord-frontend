@@ -30,6 +30,7 @@ import ConfirmacionEventos from "./pages/ConfirmacionEventos/ConfirmacionEventos
 import ComposicionesInterpretadas from "./pages/ComposicionesInterpretadas/ComposicionesInterpretadas"
 import MensajesUsuario from "./pages/MensajesUsuario/MensajesUsuario"
 import MemberRoute from "./components/MemberRoute"
+import HelpButton from "./components/HelpButton/HelpButton"
 
 function App() {
   return (
@@ -246,6 +247,9 @@ function AppContent() {
       </main>
 
       {shouldShowLayout && <Footer />}
+
+      {/* Help Button - Always visible when user is authenticated */}
+      <HelpButton />
     </div>
   )
 }

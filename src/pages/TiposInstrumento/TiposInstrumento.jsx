@@ -26,8 +26,16 @@ export default function TiposInstrumento() {
   // Dentro del componente:
   const { isAdmin } = useAuth()
 
+  const [showQuantityModal, setShowQuantityModal] = useState(false)
+  const [quantityAction, setQuantityAction] = useState(null) // 'increase' or 'decrease'
+  const [selectedInstruments, setSelectedInstruments] = useState([])
+  const [newQuantity, setNewQuantity] = useState(0)
+  const [currentTipoForQuantity, setCurrentTipoForQuantity] = useState(null)
+  const [instrumentos, setInstrumentos] = useState([]) // Added instrumentos state
+
   useEffect(() => {
     fetchTipos()
+    fetchInstrumentos() // Fetch instrumentos on component mount
   }, [])
 
   const fetchTipos = async () => {
@@ -71,9 +79,19 @@ export default function TiposInstrumento() {
     }
   }
 
+  const fetchInstrumentos = async () => {
+    try {
+      const response = await api.get("/instrumentos")
+      setInstrumentos(response.data)
+    } catch (error) {
+      console.error("Error al cargar instrumentos:", error)
+    }
+  }
+
   const handleOpenModal = (mode, tipo = { instrumento: "", cantidad: 0 }) => {
     setModalMode(mode)
     setCurrentTipo(tipo)
+    setCurrentTipoForQuantity(tipo) // Store original data
     setShowModal(true)
   }
 
@@ -97,10 +115,30 @@ export default function TiposInstrumento() {
       if (modalMode === "create") {
         await api.post("/tipo-instrumentos", currentTipo)
       } else {
-        // Corregir la ruta para actualizar según la captura de Postman
-        console.log("Actualizando tipo:", currentTipo.instrumento, "con datos:", currentTipo)
+        const oldQuantity = currentTipoForQuantity?.cantidad || 0
+        const newQuantityValue = currentTipo.cantidad
 
-        // Usar la ruta correcta para la actualización según Postman
+        if (newQuantityValue > oldQuantity) {
+          // Increasing quantity - need to create new instruments
+          setQuantityAction("increase")
+          setNewQuantity(newQuantityValue - oldQuantity)
+          setCurrentTipoForQuantity(currentTipo)
+          setShowQuantityModal(true)
+          return
+        } else if (newQuantityValue < oldQuantity) {
+          // Decreasing quantity - need to select which instruments to remove
+          setQuantityAction("decrease")
+          setNewQuantity(oldQuantity - newQuantityValue)
+          setCurrentTipoForQuantity(currentTipo)
+
+          // Get instruments of this type
+          const instrumentsOfType = instrumentos.filter((i) => i.instrumento_tipo_id === currentTipo.instrumento)
+          setSelectedInstruments(instrumentsOfType)
+          setShowQuantityModal(true)
+          return
+        }
+
+        // Same quantity, just update
         await api.put(`/tipo-instrumentos/${encodeURIComponent(currentTipo.instrumento)}`, {
           cantidad: currentTipo.cantidad,
         })
@@ -110,9 +148,6 @@ export default function TiposInstrumento() {
       handleCloseModal()
     } catch (error) {
       console.error("Error al guardar tipo de instrumento:", error)
-      if (error.response) {
-        console.error("Respuesta del servidor:", error.response.status, error.response.data)
-      }
     }
   }
 
@@ -393,6 +428,148 @@ export default function TiposInstrumento() {
               </button>
               <button onClick={handleDelete} className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800">
                 Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal for quantity management - FIXED SCROLLBAR ISSUE */}
+      {showQuantityModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md flex flex-col max-h-[80vh]">
+            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">
+              {quantityAction === "increase" ? "Añadir instrumentos" : "Eliminar instrumentos"}
+            </h3>
+
+            {quantityAction === "increase" ? (
+              <div className="space-y-4 overflow-y-auto flex-1 pr-1">
+                <p className="text-gray-400">
+                  Se van a añadir {newQuantity} instrumentos de tipo "{currentTipoForQuantity?.instrumento}".
+                  Proporciona los números de serie:
+                </p>
+                {Array.from({ length: newQuantity }, (_, i) => (
+                  <input
+                    key={i}
+                    type="text"
+                    placeholder={`Número de serie ${i + 1}`}
+                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    onChange={(e) => {
+                      const newSerials = [...(currentTipoForQuantity.newSerials || [])]
+                      newSerials[i] = e.target.value
+                      setCurrentTipoForQuantity({ ...currentTipoForQuantity, newSerials })
+                    }}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-4 flex-1">
+                <p className="text-gray-400">Selecciona {newQuantity} instrumentos para eliminar:</p>
+                <div className="max-h-48 overflow-y-auto pr-1 space-y-2">
+                  {selectedInstruments.map((instrument) => {
+                    const currentSelected = currentTipoForQuantity.toDelete || []
+                    const isChecked = currentSelected.includes(instrument.numero_serie)
+                    const canSelect = currentSelected.length < newQuantity || isChecked
+
+                    return (
+                      <label key={instrument.numero_serie} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          disabled={!canSelect}
+                          className="rounded bg-gray-900/50 border-gray-800 text-[#C0C0C0] disabled:opacity-50 disabled:cursor-not-allowed"
+                          onChange={(e) => {
+                            const selected = currentTipoForQuantity.toDelete || []
+                            if (e.target.checked) {
+                              if (selected.length < newQuantity) {
+                                setCurrentTipoForQuantity({
+                                  ...currentTipoForQuantity,
+                                  toDelete: [...selected, instrument.numero_serie],
+                                })
+                              }
+                            } else {
+                              setCurrentTipoForQuantity({
+                                ...currentTipoForQuantity,
+                                toDelete: selected.filter((s) => s !== instrument.numero_serie),
+                              })
+                            }
+                          }}
+                        />
+                        <span className={`text-[#C0C0C0] ${!canSelect ? "opacity-50" : ""}`}>
+                          #{instrument.numero_serie}
+                        </span>
+                      </label>
+                    )
+                  })}
+                </div>
+                {currentTipoForQuantity.toDelete && currentTipoForQuantity.toDelete.length > 0 && (
+                  <p className="text-sm text-gray-500">
+                    Seleccionados: {currentTipoForQuantity.toDelete.length} de {newQuantity}
+                  </p>
+                )}
+              </div>
+            )}
+
+            <div className="mt-6 flex justify-end space-x-3 pt-4">
+              <button
+                onClick={() => {
+                  setShowQuantityModal(false)
+                  setShowModal(false) // También cerrar el modal principal
+                  setCurrentTipoForQuantity(null)
+                  setCurrentTipo({ instrumento: "", cantidad: 0 }) // Reset del estado
+                }}
+                className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+              >
+                Cancelar
+              </button>
+              <button
+                disabled={
+                  quantityAction === "decrease" &&
+                  (!currentTipoForQuantity.toDelete || currentTipoForQuantity.toDelete.length !== newQuantity)
+                }
+                onClick={async () => {
+                  try {
+                    if (quantityAction === "increase") {
+                      // Create new instruments
+                      const serials = currentTipoForQuantity.newSerials || []
+                      for (const serial of serials) {
+                        if (serial) {
+                          await api.post("/instrumentos", {
+                            numero_serie: serial,
+                            instrumento_tipo_id: currentTipoForQuantity.instrumento,
+                            estado: "disponible",
+                          })
+                        }
+                      }
+                    } else {
+                      // Delete selected instruments
+                      const toDelete = currentTipoForQuantity.toDelete || []
+                      if (toDelete.length !== newQuantity) {
+                        alert(`Debes seleccionar exactamente ${newQuantity} instrumentos para eliminar`)
+                        return
+                      }
+                      for (const serial of toDelete) {
+                        await api.delete(`/instrumentos/${serial}`)
+                      }
+                    }
+
+                    // Update tipo quantity
+                    await api.put(`/tipo-instrumentos/${encodeURIComponent(currentTipoForQuantity.instrumento)}`, {
+                      cantidad: currentTipo.cantidad,
+                    })
+
+                    fetchTipos()
+                    setShowQuantityModal(false)
+                    setShowModal(false) // Cerrar también el modal principal
+                    setCurrentTipoForQuantity(null)
+                    setCurrentTipo({ instrumento: "", cantidad: 0 })
+                  } catch (error) {
+                    console.error("Error al actualizar cantidad:", error)
+                  }
+                }}
+                className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Confirmar
               </button>
             </div>
           </div>

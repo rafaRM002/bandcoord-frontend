@@ -222,3 +222,34 @@ button:focus-visible {
 .overflow-fix {
   overflow: visible !important;
 }
+
+/* Forzar tema oscuro en todos los botones */
+button {
+  background-color: #111827 !important;
+  color: white !important;
+  border: 1px solid #374151 !important;
+}
+
+button:hover {
+  background-color: #1f2937 !important;
+}
+
+/* Específicamente para botones con clases de shadcn */
+.bg-background {
+  background-color: #111827 !important;
+}
+
+.text-foreground {
+  color: white !important;
+}
+
+/* Para modales y overlays */
+[role="dialog"] {
+  background-color: #1f2937 !important;
+  color: white !important;
+}
+
+[role="dialog"] button {
+  background-color: #374151 !important;
+  color: white !important;
+}

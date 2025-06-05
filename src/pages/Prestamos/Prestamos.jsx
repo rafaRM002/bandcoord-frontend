@@ -181,9 +181,18 @@ export default function Prestamos() {
         fecha_devolucion: fechaActual,
       })
 
+      // Update instrument status to available
+      const instrumento = instrumentos.find((i) => i.numero_serie === prestamo.num_serie)
+      if (instrumento) {
+        await api.put(`/instrumentos/${prestamo.num_serie}`, {
+          estado: "disponible",
+          instrumento_tipo_id: instrumento.instrumento_tipo_id,
+        })
+      }
+
       toast.success(t("loans.loanReturnedSuccessfully"))
 
-      // Actualizar el préstamo en el estado local
+      // Update local state
       setPrestamos(
         prestamos.map((p) => {
           if (p.num_serie === prestamo.num_serie && p.usuario_id === prestamo.usuario_id) {
@@ -404,7 +413,10 @@ export default function Prestamos() {
                   return (
                     <tr key={`${prestamo.num_serie}-${prestamo.usuario_id}`} className="hover:bg-gray-900/30">
                       <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                        {getInstrumentoInfo(prestamo.num_serie)}
+                        <div>
+                          <div className="font-medium">{getInstrumentoInfo(prestamo.num_serie)}</div>
+                          <div className="text-xs text-gray-400">#{prestamo.num_serie}</div>
+                        </div>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
                         {getUsuarioNombre(prestamo.usuario_id)}
@@ -521,14 +533,15 @@ export default function Prestamos() {
                       value={currentPrestamo.num_serie}
                       onChange={handleInputChange}
                       required
-                      className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                      className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] max-h-32 overflow-y-auto"
+                      size="1"
                     >
                       <option value="">{t("loans.selectInstrument")}</option>
                       {instrumentos
                         .filter((instrumento) => instrumento.estado === "disponible")
                         .map((instrumento) => (
                           <option key={instrumento.numero_serie} value={instrumento.numero_serie}>
-                            ({instrumento.numero_serie})
+                            {instrumento.instrumento_tipo_id} - #{instrumento.numero_serie}
                           </option>
                         ))}
                     </select>
