@@ -283,19 +283,19 @@ export default function GestionUsuarios() {
               <table className="min-w-full divide-y divide-yellow-800/50">
                 <thead className="bg-yellow-900/20">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
                       {t("userManagement.name", "Nombre")}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
                       {t("userManagement.email", "Email")}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
                       {t("userManagement.phone", "Teléfono")}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
                       {t("userManagement.registrationDate", "Fecha Registro")}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider min-w-[120px]">
                       {t("userManagement.actions", "Acciones")}
                     </th>
                   </tr>
@@ -305,29 +305,29 @@ export default function GestionUsuarios() {
                     .filter((usuario) => usuario.estado === "pendiente")
                     .map((usuario) => (
                       <tr key={usuario.id} className="hover:bg-yellow-900/10">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-200">
+                        <td className="px-3 py-4 whitespace-nowrap text-sm text-yellow-200">
                           {usuario.nombre} {usuario.apellido1} {usuario.apellido2}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-200">{usuario.email}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-200">{usuario.telefono}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-200">
+                        <td className="px-3 py-4 whitespace-nowrap text-sm text-yellow-200">{usuario.email}</td>
+                        <td className="px-3 py-4 whitespace-nowrap text-sm text-yellow-200">{usuario.telefono}</td>
+                        <td className="px-3 py-4 whitespace-nowrap text-sm text-yellow-200">
                           {formatearFecha(usuario.created_at)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <div className="flex space-x-2">
+                        <td className="px-3 py-4 whitespace-nowrap text-sm">
+                          <div className="flex space-x-1">
                             <button
                               onClick={() => mostrarConfirmacion("aprobar", usuario)}
                               className="text-green-400 hover:text-green-300"
                               title={t("userManagement.activateUser", "Activar usuario")}
                             >
-                              <CheckCircle size={20} />
+                              <CheckCircle size={18} />
                             </button>
                             <button
                               onClick={() => mostrarConfirmacion("eliminar", usuario)}
                               className="text-gray-400 hover:text-gray-300"
                               title={t("userManagement.deleteUser", "Eliminar usuario")}
                             >
-                              <Trash2 size={20} />
+                              <Trash2 size={18} />
                             </button>
                           </div>
                         </td>
@@ -351,25 +351,25 @@ export default function GestionUsuarios() {
           <table className="min-w-full divide-y divide-gray-800">
             <thead className="bg-gray-900">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
                   {t("userManagement.name", "Nombre")}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
                   {t("userManagement.email", "Email")}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
                   {t("userManagement.phone", "Teléfono")}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
                   {t("userManagement.status", "Estado")}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
                   {t("userManagement.role", "Rol")}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
                   {t("userManagement.registrationDate", "Fecha Registro")}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider min-w-[140px]">
                   {t("userManagement.actions", "Acciones")}
                 </th>
               </tr>
@@ -377,25 +377,25 @@ export default function GestionUsuarios() {
             <tbody className="divide-y divide-gray-800">
               {loading ? (
                 <tr>
-                  <td colSpan="7" className="px-6 py-4 text-center text-[#C0C0C0]">
+                  <td colSpan="7" className="px-3 py-4 text-center text-[#C0C0C0]">
                     {t("userManagement.loadingUsers", "Cargando usuarios...")}
                   </td>
                 </tr>
               ) : usuariosFiltradosRegistrados.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="px-6 py-4 text-center text-[#C0C0C0]">
+                  <td colSpan="7" className="px-3 py-4 text-center text-[#C0C0C0]">
                     {t("userManagement.noUsersFound", "No se encontraron usuarios")}
                   </td>
                 </tr>
               ) : (
                 usuariosFiltradosRegistrados.map((usuario) => (
                   <tr key={usuario.id} className="hover:bg-gray-800/50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#C0C0C0]">
+                    <td className="px-3 py-4 whitespace-normal text-sm text-[#C0C0C0]">
                       {usuario.nombre} {usuario.apellido1} {usuario.apellido2}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#C0C0C0]">{usuario.email}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#C0C0C0]">{usuario.telefono}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <td className="px-3 py-4 whitespace-normal text-sm text-[#C0C0C0]">{usuario.email}</td>
+                    <td className="px-3 py-4 whitespace-nowrap text-sm text-[#C0C0C0]">{usuario.telefono}</td>
+                    <td className="px-3 py-4 whitespace-nowrap text-sm">
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${
                           usuario.estado === "activo"
@@ -404,13 +404,15 @@ export default function GestionUsuarios() {
                               ? "bg-yellow-900/50 text-yellow-300"
                               : usuario.estado === "bloqueado"
                                 ? "bg-red-900/50 text-red-300"
-                                : "bg-gray-900/50 text-gray-300"
+                                : usuario.estado === "suspendido"
+                                  ? "bg-gray-900/50 text-gray-300 border border-gray-500"
+                                  : "bg-gray-900/50 text-gray-300"
                         }`}
                       >
                         {usuario.estado.charAt(0).toUpperCase() + usuario.estado.slice(1)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#C0C0C0]">
+                    <td className="px-3 py-4 whitespace-nowrap text-sm text-[#C0C0C0]">
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${
                           usuario.role === "admin" ? "bg-purple-900/50 text-purple-300" : "bg-blue-900/50 text-blue-300"
@@ -421,11 +423,11 @@ export default function GestionUsuarios() {
                           : t("userManagement.member", "Miembro")}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#C0C0C0]">
+                    <td className="px-3 py-4 whitespace-nowrap text-sm text-[#C0C0C0]">
                       {formatearFecha(usuario.created_at)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#C0C0C0]">
-                      <div className="flex space-x-2">
+                    <td className="px-3 py-4 whitespace-nowrap text-sm text-[#C0C0C0]">
+                      <div className="flex space-x-1">
                         {(usuario.estado === "pendiente" ||
                           usuario.estado === "bloqueado" ||
                           usuario.estado === "suspendido") && (
@@ -434,7 +436,7 @@ export default function GestionUsuarios() {
                             className="text-green-400 hover:text-green-300"
                             title={t("userManagement.activateUser", "Activar usuario")}
                           >
-                            <CheckCircle size={20} />
+                            <CheckCircle size={18} />
                           </button>
                         )}
 
@@ -445,14 +447,14 @@ export default function GestionUsuarios() {
                               className="text-red-400 hover:text-red-300"
                               title={t("userManagement.blockUser", "Bloquear usuario")}
                             >
-                              <XCircle size={20} />
+                              <XCircle size={18} />
                             </button>
                             <button
                               onClick={() => mostrarConfirmacion("suspender", usuario)}
                               className="text-yellow-400 hover:text-yellow-300"
                               title={t("userManagement.suspendUser", "Suspender usuario")}
                             >
-                              <AlertCircle size={20} />
+                              <AlertCircle size={18} />
                             </button>
                           </>
                         )}
@@ -462,7 +464,7 @@ export default function GestionUsuarios() {
                           className="text-gray-400 hover:text-gray-300"
                           title={t("userManagement.deleteUser", "Eliminar usuario")}
                         >
-                          <Trash2 size={20} />
+                          <Trash2 size={18} />
                         </button>
                       </div>
                     </td>

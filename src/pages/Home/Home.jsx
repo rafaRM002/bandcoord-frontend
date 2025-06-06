@@ -1,6 +1,10 @@
+"use client"
+
 import { Link } from "react-router-dom"
 import { Music, Calendar, MessageSquare, Users, Package, Shield, Award, User } from "lucide-react"
 import { useTranslation } from "../../hooks/useTranslation"
+import { useState, useEffect } from "react"
+import axios from "../../api/axios"
 
 export default function Home({ user, loading }) {
   if (loading) {
@@ -18,6 +22,22 @@ export default function Home({ user, loading }) {
 
   // Si no está autenticado, mostrar la página de inicio pública
   return <PublicHome />
+}
+
+// Función para obtener el color del tipo de evento
+const getEventTypeColor = (tipo) => {
+  switch (tipo?.toLowerCase()) {
+    case "ensayo":
+      return "bg-blue-900/50 text-blue-300 border-blue-600"
+    case "procesion":
+      return "bg-green-900/50 text-green-300 border-green-600"
+    case "concierto":
+      return "bg-purple-900/50 text-purple-300 border-purple-600"
+    case "pasacalles":
+      return "bg-orange-900/50 text-orange-300 border-orange-600"
+    default:
+      return "bg-gray-900/50 text-gray-300 border-gray-600"
+  }
 }
 
 // Componente para usuarios no autenticados
@@ -206,6 +226,66 @@ function PublicHome() {
 // Componente para usuarios autenticados (dashboard)
 function UserDashboard({ user }) {
   const { t } = useTranslation()
+  const [upcomingEvents, setUpcomingEvents] = useState([])
+  const [recentCompositions, setRecentCompositions] = useState([])
+  const [loadingEvents, setLoadingEvents] = useState(true)
+  const [loadingCompositions, setLoadingCompositions] = useState(true)
+
+  // Cargar eventos próximos
+  useEffect(() => {
+    const fetchUpcomingEvents = async () => {
+      try {
+        const response = await axios.get("/eventos")
+        const now = new Date()
+
+        // Verificar si la respuesta tiene datos y es un array
+        const eventos = response.data?.eventos || []
+
+        // Filtrar eventos futuros y ordenar por fecha
+        const futureEvents = eventos
+          .filter((evento) => new Date(evento.fecha) > now)
+          .sort((a, b) => new Date(a.fecha) - new Date(b.fecha))
+          .slice(0, 3) // Tomar solo los 3 primeros
+
+        setUpcomingEvents(futureEvents)
+      } catch (error) {
+        console.error("Error al cargar eventos:", error)
+        setUpcomingEvents([])
+      } finally {
+        setLoadingEvents(false)
+      }
+    }
+
+    fetchUpcomingEvents()
+  }, [])
+
+  // Cargar composiciones recientes
+  useEffect(() => {
+    const fetchRecentCompositions = async () => {
+      try {
+        const response = await axios.get("/composiciones")
+
+        // La respuesta directa es el array de composiciones
+        const composiciones = Array.isArray(response.data) ? response.data : []
+
+        console.log("Composiciones recibidas:", composiciones)
+
+        // Ordenar por created_at descendente y tomar las 3 más recientes
+        const recentComps = composiciones.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 3)
+
+        console.log("Composiciones ordenadas:", recentComps)
+        setRecentCompositions(recentComps)
+      } catch (error) {
+        console.error("Error al cargar composiciones:", error)
+        setRecentCompositions([])
+      } finally {
+        setLoadingCompositions(false)
+      }
+    }
+
+    fetchRecentCompositions()
+  }, [])
+
   return (
     <div className="w-full bg-black">
       {/* Bienvenida personalizada */}
@@ -258,9 +338,46 @@ function UserDashboard({ user }) {
           </Link>
         </div>
         <div className="bg-black/50 border border-gray-800 rounded-lg overflow-hidden">
-          <div className="p-4 border-b border-gray-800">
-            <p className="text-gray-400 text-sm">{t("home.noUpcomingEvents")}</p>
-          </div>
+          {loadingEvents ? (
+            <div className="p-4 border-b border-gray-800">
+              <p className="text-gray-400 text-sm">Cargando eventos...</p>
+            </div>
+          ) : upcomingEvents.length > 0 ? (
+            <div className="divide-y divide-gray-800">
+              {upcomingEvents.map((evento) => (
+                <div key={evento.id} className="p-4">
+                  <div>
+                    <h3 className="text-[#C0C0C0] font-medium mb-2">{evento.nombre}</h3>
+                    <div className="flex flex-col gap-1 text-sm text-gray-400">
+                      <span className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4" />
+                        {new Date(evento.fecha).toLocaleDateString("es-ES", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })}{" "}
+                        -{" "}
+                        {new Date(evento.fecha).toLocaleTimeString("es-ES", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                      <span>📍 {evento.lugar}</span>
+                      <span
+                        className={`px-3 py-1 text-xs rounded-full border capitalize ${getEventTypeColor(evento.tipo)}`}
+                      >
+                        {evento.tipo}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="p-4 border-b border-gray-800">
+              <p className="text-gray-400 text-sm">{t("home.noUpcomingEvents")}</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -273,9 +390,34 @@ function UserDashboard({ user }) {
           </Link>
         </div>
         <div className="bg-black/50 border border-gray-800 rounded-lg overflow-hidden">
-          <div className="p-4 border-b border-gray-800">
-            <p className="text-gray-400 text-sm">{t("home.noRecentCompositions")}</p>
-          </div>
+          {loadingCompositions ? (
+            <div className="p-4 border-b border-gray-800">
+              <p className="text-gray-400 text-sm">Cargando composiciones...</p>
+            </div>
+          ) : recentCompositions.length > 0 ? (
+            <div className="divide-y divide-gray-800">
+              {recentCompositions.map((composicion) => (
+                <div key={composicion.id} className="p-4">
+                  <div>
+                    <h3 className="text-[#C0C0C0] font-medium mb-1">{composicion.nombre}</h3>
+                    <p className="text-gray-400 text-sm mb-2">Autor: {composicion.nombre_autor}</p>
+                    <p className="text-gray-500 text-xs">
+                      Añadida:{" "}
+                      {new Date(composicion.created_at).toLocaleDateString("es-ES", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="p-4 border-b border-gray-800">
+              <p className="text-gray-400 text-sm">{t("home.noRecentCompositions")}</p>
+            </div>
+          )}
         </div>
       </section>
 
