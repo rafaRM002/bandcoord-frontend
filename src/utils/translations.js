@@ -453,6 +453,7 @@ export const translations = {
       showing: "Mostrando",
       to: "a",
       of: "de",
+      oof:"del",
       yes: "Sí",
       no: "No",
       confirm: "Confirmar",
@@ -774,13 +775,15 @@ export const translations = {
       showing: "Mostrando",
       to: "a",
       of: "de",
-      events: "eventos",
+      events: "Eventos",
       eventTypes: "Tipos de eventos",
       rehearsal: "Ensayo",
       concert: "Concierto",
       procession: "Procesión",
       parade: "Pasacalles",
       other: "Otro",
+      pastEventCannotCancel:"Un evento pasado de fecha no se puede cancelar",
+      space:"de"
     },
 
     // Reset Password
@@ -1370,6 +1373,7 @@ export const translations = {
       showing: "Showing",
       to: "to",
       of: "of",
+      oof:"of",
       yes: "Yes",
       no: "No",
       confirm: "Confirm",
@@ -1696,13 +1700,15 @@ export const translations = {
       showing: "Showing",
       to: "to",
       of: "of",
-      events: "events",
+      events: "Events",
       eventTypes: "Event types",
       rehearsal: "Rehearsal",
       concert: "Concert",
       procession: "Procession",
       parade: "Parade",
       other: "Other",
+      pastEventCannotCancel:"An event that is past its date cannot be cancelled.",
+      space:" "
     },
 
     // Reset Password

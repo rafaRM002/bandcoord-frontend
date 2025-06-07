@@ -313,6 +313,24 @@ export default function Calendario() {
     }
   }
 
+  const isEventInFuture = (fecha, hora) => {
+    if (!fecha) return false
+
+    const now = new Date()
+    const eventDate = new Date(fecha)
+
+    if (hora) {
+      // Si hay hora específica, combinar fecha y hora
+      const [hours, minutes] = hora.split(":")
+      eventDate.setHours(Number.parseInt(hours), Number.parseInt(minutes), 0, 0)
+    } else {
+      // Si no hay hora, asumir que es al final del día
+      eventDate.setHours(23, 59, 59, 999)
+    }
+
+    return eventDate > now
+  }
+
   // Use translated month and day names
   const monthNames = t("calendar.months")
   const dayNames = t("calendar.days")
@@ -405,7 +423,7 @@ export default function Calendario() {
               <CalendarIcon size={20} className="text-[#C0C0C0] mr-2" />
               <h2 className="text-lg font-semibold text-[#C0C0C0]">
                 {selectedDate
-                  ? `${t("events.events")} ${t("common.of")} ${selectedDate.getDate()} ${t("common.of")} ${
+                  ? `${t("calendar.events")} ${t("common.oof")} ${selectedDate.getDate()} ${t("calendar.space")} ${
                       monthNames[selectedDate.getMonth()]
                     }`
                   : t("calendar.selectDate")}
@@ -581,7 +599,7 @@ export default function Calendario() {
 
               {/* Botones de acción */}
               <div className="mt-6">
-                {isAdmin && (
+                {isAdmin && isEventInFuture(selectedEvent.fecha, selectedEvent.hora) && (
                   <>
                     {!showDeleteConfirm ? (
                       <button
@@ -612,6 +630,12 @@ export default function Calendario() {
                       </div>
                     )}
                   </>
+                )}
+
+                {isAdmin && !isEventInFuture(selectedEvent.fecha, selectedEvent.hora) && (
+                  <div className="text-center py-3">
+                    <p className="text-red-500 text-sm">{t("calendar.pastEventCannotCancel")}</p>
+                  </div>
                 )}
               </div>
             </div>
