@@ -470,6 +470,11 @@ export default function EventoUsuario() {
     })
   }
 
+  const getEventoDetalles = (eventoId) => {
+    const evento = eventos.find((e) => e.id === eventoId)
+    return evento || {}
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
@@ -691,20 +696,26 @@ export default function EventoUsuario() {
                               <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
                                 {isAdmin && (
                                   <div className="flex space-x-2">
-                                    <button
-                                      onClick={() => handleOpenModal("edit", item)}
-                                      className="p-1 text-gray-400 hover:text-[#C0C0C0]"
-                                      title={t("common.edit")}
-                                    >
-                                      <Edit size={18} />
-                                    </button>
-                                    <button
-                                      onClick={() => confirmDelete(item.evento_id, item.usuario_id)}
-                                      className="p-1 text-gray-400 hover:text-red-400"
-                                      title={t("common.delete")}
-                                    >
-                                      <Trash2 size={18} />
-                                    </button>
+                                    {getEventoDetalles(item.evento_id).estado === "finalizado" ? (
+                                      <span className="text-xs text-red-400">{t("common.eventFinished")}</span>
+                                    ) : (
+                                      <>
+                                        <button
+                                          onClick={() => handleOpenModal("edit", item)}
+                                          className="p-1 text-gray-400 hover:text-[#C0C0C0]"
+                                          title={t("common.edit")}
+                                        >
+                                          <Edit size={18} />
+                                        </button>
+                                        <button
+                                          onClick={() => confirmDelete(item.evento_id, item.usuario_id)}
+                                          className="p-1 text-gray-400 hover:text-red-400"
+                                          title={t("common.delete")}
+                                        >
+                                          <Trash2 size={18} />
+                                        </button>
+                                      </>
+                                    )}
                                   </div>
                                 )}
                               </td>
@@ -715,8 +726,8 @@ export default function EventoUsuario() {
                     </div>
 
                     {/* Botón para añadir asignación a este evento */}
-                    {isAdmin && (
-                      <div className="bg-gray-900/20 px-4 py-3 flex justify-end">
+                    {isAdmin && evento.estado !== "finalizado" && (
+                      <div className="bg-gray-900/20 px-4 py-3 flex justify-center">
                         <button
                           onClick={() =>
                             handleOpenModal("create", {
@@ -888,7 +899,7 @@ export default function EventoUsuario() {
                       <div className="mt-6">
                         <div className="flex justify-between items-center mb-3">
                           <h3 className="text-[#C0C0C0] font-medium">{t("userEvents.assignmentList")}</h3>
-                          {isAdmin && (
+                          {isAdmin && evento.estado !== "finalizado" && (
                             <button
                               onClick={() =>
                                 handleOpenModal("create", {
@@ -940,20 +951,26 @@ export default function EventoUsuario() {
                                   <td className="px-4 py-2 whitespace-nowrap text-sm">
                                     {isAdmin && (
                                       <div className="flex space-x-2">
-                                        <button
-                                          onClick={() => handleOpenModal("edit", item)}
-                                          className="p-1 text-gray-400 hover:text-[#C0C0C0]"
-                                          title={t("common.edit")}
-                                        >
-                                          <Edit size={16} />
-                                        </button>
-                                        <button
-                                          onClick={() => confirmDelete(item.evento_id, item.usuario_id)}
-                                          className="p-1 text-gray-400 hover:text-red-400"
-                                          title={t("common.delete")}
-                                        >
-                                          <Trash2 size={16} />
-                                        </button>
+                                        {getEventoDetalles(item.evento_id).estado === "finalizado" ? (
+                                          <span className="text-xs text-red-400">{t("common.eventFinished")}</span>
+                                        ) : (
+                                          <>
+                                            <button
+                                              onClick={() => handleOpenModal("edit", item)}
+                                              className="p-1 text-gray-400 hover:text-[#C0C0C0]"
+                                              title={t("common.edit")}
+                                            >
+                                              <Edit size={16} />
+                                            </button>
+                                            <button
+                                              onClick={() => confirmDelete(item.evento_id, item.usuario_id)}
+                                              className="p-1 text-gray-400 hover:text-red-400"
+                                              title={t("common.delete")}
+                                            >
+                                              <Trash2 size={16} />
+                                            </button>
+                                          </>
+                                        )}
                                       </div>
                                     )}
                                   </td>
@@ -1050,11 +1067,13 @@ export default function EventoUsuario() {
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] disabled:opacity-70"
                   >
                     <option value="">{t("eventMinimums.selectEvent")}</option>
-                    {eventos.map((evento) => (
-                      <option key={evento.id} value={evento.id}>
-                        {evento.nombre} ({formatDate(evento.fecha)})
-                      </option>
-                    ))}
+                    {eventos
+                      .filter((evento) => evento.estado !== "finalizado")
+                      .map((evento) => (
+                        <option key={evento.id} value={evento.id}>
+                          {evento.nombre} ({formatDate(evento.fecha)})
+                        </option>
+                      ))}
                   </select>
                 </div>
                 <div className="space-y-2">
