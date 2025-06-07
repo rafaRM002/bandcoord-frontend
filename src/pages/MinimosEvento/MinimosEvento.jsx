@@ -111,6 +111,10 @@ export default function MinimosEvento() {
         } else {
           console.warn("Formato de respuesta inesperado para tipos de instrumento:", tiposRes.data)
         }
+
+        // Imprimir los tipos de instrumentos para depuración
+        console.log("Tipos de instrumentos cargados:", tiposData)
+
         setTiposInstrumento(tiposData)
 
         // Inicializar todos los eventos como expandidos
@@ -262,6 +266,8 @@ export default function MinimosEvento() {
 
   // Filtrar eventos según los criterios de búsqueda
   const filteredEventos = eventos.filter((evento) => {
+    // Remover esta línea: if (evento.estado === "finalizado") return false
+
     // Filtrar por término de búsqueda en el nombre del evento
     const matchesSearch = evento.nombre.toLowerCase().includes(searchTerm.toLowerCase())
 
@@ -307,8 +313,65 @@ export default function MinimosEvento() {
     }
 
     // Si no, buscar en la lista de tipos
-    const tipo = tiposInstrumento.find((t) => t.id === tipoId || t.instrumento === tipoId)
-    return tipo ? tipo.nombre || tipo.instrumento : tipoId
+    const tipo = tiposInstrumento.find((t) => {
+      // Verificar si el ID o el nombre del instrumento coincide
+      return (
+        (t.id !== undefined && t.id.toString() === tipoId.toString()) ||
+        (t.instrumento !== undefined && t.instrumento.toString() === tipoId.toString())
+      )
+    })
+
+    return tipo ? tipo.instrumento || tipo.nombre || tipoId : tipoId
+  }
+
+  // Función para obtener la cantidad disponible de un tipo de instrumento
+  const getCantidadDisponible = (tipoId) => {
+    if (!tipoId) return 0
+
+    console.log("Buscando cantidad disponible para tipo:", tipoId)
+    console.log("Tipos de instrumentos disponibles:", tiposInstrumento)
+
+    // Buscar por el campo 'instrumento' que parece ser el nombre del instrumento
+    const tipo = tiposInstrumento.find((t) => {
+      // Verificar si el ID o el nombre del instrumento coincide
+      const matchesId = t.id !== undefined && t.id.toString() === tipoId.toString()
+      const matchesName =
+        t.instrumento !== undefined &&
+        typeof t.instrumento === "string" &&
+        t.instrumento.toString() === tipoId.toString()
+
+      console.log(
+        `Comparando: ${tipoId} con instrumento: ${t.instrumento}, id: ${t.id}, matches: ${matchesId || matchesName}`,
+      )
+
+      return matchesId || matchesName
+    })
+
+    console.log("Tipo encontrado:", tipo)
+
+    // Si encontramos el tipo y tiene una cantidad definida, devolverla
+    if (tipo && typeof tipo.cantidad === "number") {
+      console.log(`Cantidad disponible para ${tipoId}: ${tipo.cantidad}`)
+      return tipo.cantidad
+    }
+
+    // Intentar buscar por nombre del instrumento en los tipos
+    const tipoByName = tiposInstrumento.find((t) => {
+      return (
+        t.instrumento &&
+        typeof t.instrumento === "string" &&
+        getTipoNombre(tipoId).toLowerCase() === t.instrumento.toLowerCase()
+      )
+    })
+
+    if (tipoByName && typeof tipoByName.cantidad === "number") {
+      console.log(`Cantidad disponible (por nombre) para ${tipoId}: ${tipoByName.cantidad}`)
+      return tipoByName.cantidad
+    }
+
+    // Si no encontramos el tipo o no tiene cantidad, devolver 0
+    console.log(`No se encontró cantidad para ${tipoId}, devolviendo 0`)
+    return 0
   }
 
   // Agrupar mínimos por evento
@@ -494,20 +557,26 @@ export default function MinimosEvento() {
                             <div className="col-span-4 flex justify-end space-x-2">
                               {isAdmin && (
                                 <>
-                                  <button
-                                    onClick={() => handleOpenModal("edit", minimo)}
-                                    className="p-1 text-gray-400 hover:text-[#C0C0C0]"
-                                    title="Editar"
-                                  >
-                                    <Edit size={18} />
-                                  </button>
-                                  <button
-                                    onClick={() => confirmDelete(minimo.evento_id, minimo.instrumento_tipo_id)}
-                                    className="p-1 text-gray-400 hover:text-red-400"
-                                    title="Eliminar"
-                                  >
-                                    <Trash2 size={18} />
-                                  </button>
+                                  {evento.estado === "finalizado" ? (
+                                    <span className="text-xs text-red-400">{t("common.eventFinished")}</span>
+                                  ) : (
+                                    <>
+                                      <button
+                                        onClick={() => handleOpenModal("edit", minimo)}
+                                        className="p-1 text-gray-400 hover:text-[#C0C0C0]"
+                                        title={t("common.edit")}
+                                      >
+                                        <Edit size={18} />
+                                      </button>
+                                      <button
+                                        onClick={() => confirmDelete(minimo.evento_id, minimo.instrumento_tipo_id)}
+                                        className="p-1 text-gray-400 hover:text-red-400"
+                                        title={t("common.delete")}
+                                      >
+                                        <Trash2 size={18} />
+                                      </button>
+                                    </>
+                                  )}
                                 </>
                               )}
                             </div>
@@ -515,7 +584,7 @@ export default function MinimosEvento() {
                         ))}
 
                         {/* Botón para añadir nuevo mínimo para este evento */}
-                        {isAdmin && (
+                        {isAdmin && evento.estado !== "finalizado" && (
                           <div className="py-3 flex justify-center">
                             <button
                               onClick={() =>
@@ -614,11 +683,13 @@ export default function MinimosEvento() {
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] disabled:opacity-70"
                   >
                     <option value="">{t("eventMinimums.selectEvent")}</option>
-                    {eventos.map((evento) => (
-                      <option key={evento.id} value={evento.id}>
-                        {evento.nombre}
-                      </option>
-                    ))}
+                    {eventos
+                      .filter((evento) => evento.estado !== "finalizado")
+                      .map((evento) => (
+                        <option key={evento.id} value={evento.id}>
+                          {evento.nombre}
+                        </option>
+                      ))}
                   </select>
                 </div>
                 <div className="space-y-2">
@@ -636,8 +707,8 @@ export default function MinimosEvento() {
                   >
                     <option value="">{t("eventMinimums.selectType")}</option>
                     {tiposInstrumento.map((tipo) => (
-                      <option key={tipo.id} value={tipo.id}>
-                        {tipo.nombre || tipo.instrumento}
+                      <option key={tipo.id || tipo.instrumento} value={tipo.id || tipo.instrumento}>
+                        {tipo.instrumento}
                       </option>
                     ))}
                   </select>
@@ -667,11 +738,29 @@ export default function MinimosEvento() {
                     name="cantidad"
                     type="number"
                     min="1"
+                    max={
+                      currentMinimo.instrumento_tipo_id ? getCantidadDisponible(currentMinimo.instrumento_tipo_id) : 1
+                    }
                     value={currentMinimo.cantidad}
                     onChange={handleInputChange}
                     required
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                   />
+                  {currentMinimo.instrumento_tipo_id && (
+                    <div className="text-sm text-gray-400">
+                      Cantidad disponible: {getCantidadDisponible(currentMinimo.instrumento_tipo_id)}
+                    </div>
+                  )}
+                  {currentMinimo.instrumento_tipo_id &&
+                    Number(currentMinimo.cantidad) > getCantidadDisponible(currentMinimo.instrumento_tipo_id) && (
+                      <div className="mt-2 flex items-start text-red-400 text-sm">
+                        <AlertCircle size={16} className="mr-1 mt-0.5 flex-shrink-0" />
+                        <span>
+                          La cantidad mínima no puede ser superior a la cantidad disponible (
+                          {getCantidadDisponible(currentMinimo.instrumento_tipo_id)}).
+                        </span>
+                      </div>
+                    )}
                 </div>
               </div>
               <div className="mt-6 flex justify-end space-x-3">
@@ -684,16 +773,18 @@ export default function MinimosEvento() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors"
+                  className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={
-                    modalMode === "create" &&
-                    currentMinimo.evento_id &&
-                    currentMinimo.instrumento_tipo_id &&
-                    minimos.some(
-                      (minimo) =>
-                        minimo.evento_id.toString() === currentMinimo.evento_id.toString() &&
-                        minimo.instrumento_tipo_id.toString() === currentMinimo.instrumento_tipo_id.toString(),
-                    )
+                    (modalMode === "create" &&
+                      currentMinimo.evento_id &&
+                      currentMinimo.instrumento_tipo_id &&
+                      minimos.some(
+                        (minimo) =>
+                          minimo.evento_id.toString() === currentMinimo.evento_id.toString() &&
+                          minimo.instrumento_tipo_id.toString() === currentMinimo.instrumento_tipo_id.toString(),
+                      )) ||
+                    (currentMinimo.instrumento_tipo_id &&
+                      Number(currentMinimo.cantidad) > getCantidadDisponible(currentMinimo.instrumento_tipo_id))
                   }
                 >
                   {modalMode === "create" ? t("common.create") : t("common.save")}
