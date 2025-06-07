@@ -31,6 +31,60 @@ export default function Eventos() {
     fetchEventos()
   }, [])
 
+  const updateExpiredEvents = async (eventosData) => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0) // Set to start of day for comparison
+
+    const eventosToUpdate = eventosData.filter((evento) => {
+      if (!evento.fecha || evento.estado === "finalizado") return false
+
+      const eventoDate = new Date(evento.fecha)
+      eventoDate.setHours(0, 0, 0, 0)
+
+      // If event date is before today and not already finished
+      return eventoDate < today && evento.estado !== "finalizado"
+    })
+
+    if (eventosToUpdate.length === 0) return eventosData
+
+    console.log(`Actualizando ${eventosToUpdate.length} eventos expirados a estado 'finalizado'`)
+
+    // Update each expired event
+    const updatePromises = eventosToUpdate.map(async (evento) => {
+      try {
+        // Solo enviamos los campos necesarios en el formato correcto
+        const eventoData = {
+          nombre: evento.nombre,
+          fecha: evento.fecha,
+          lugar: evento.lugar,
+          hora: evento.hora ? evento.hora.substring(0, 5) : "00:00", // Aseguramos formato H:i
+          estado: "finalizado", // Cambiamos a finalizado
+          tipo: evento.tipo,
+          entidad_id: evento.entidad_id,
+        }
+
+        console.log(`Actualizando evento ${evento.id} con datos:`, eventoData)
+
+        const response = await api.put(`/eventos/${evento.id}`, eventoData)
+        console.log(`Evento ${evento.id} actualizado correctamente:`, response.data)
+
+        return { ...evento, estado: "finalizado" }
+      } catch (error) {
+        console.error(`Error al actualizar evento ${evento.id}:`, error)
+        // Si hay error, marcamos localmente como finalizado pero no actualizamos en BD
+        return { ...evento, estado: "finalizado", _updateFailed: true }
+      }
+    })
+
+    const updatedEventos = await Promise.all(updatePromises)
+
+    // Return the updated events array
+    return eventosData.map((evento) => {
+      const updatedEvento = updatedEventos.find((updated) => updated.id === evento.id)
+      return updatedEvento || evento
+    })
+  }
+
   const fetchEventos = async () => {
     try {
       setLoading(true)
@@ -53,6 +107,9 @@ export default function Eventos() {
         console.warn("Formato de respuesta inesperado para eventos:", response.data)
         setError("Formato de respuesta inesperado. Verifica la consola para más detalles.")
       }
+
+      // Update expired events automatically
+      eventosData = await updateExpiredEvents(eventosData)
 
       eventosData.sort((a, b) => a.nombre.localeCompare(b.nombre))
       setEventos(eventosData)
@@ -289,19 +346,21 @@ export default function Eventos() {
                           </div>
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm">
-                          <span
-                            className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              evento.estado === "planificado"
-                                ? "bg-blue-900/30 text-blue-400 border border-blue-800"
-                                : evento.estado === "en progreso"
-                                  ? "bg-yellow-900/30 text-yellow-400 border border-yellow-800"
-                                  : evento.estado === "finalizado" || evento.estado === "completado"
-                                    ? "bg-green-900/30 text-green-400 border border-green-800"
-                                    : "bg-red-900/30 text-red-400 border border-red-800"
-                            }`}
-                          >
-                            {evento.estado.charAt(0).toUpperCase() + evento.estado.slice(1)}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                evento.estado === "planificado"
+                                  ? "bg-blue-900/30 text-blue-400 border border-blue-800"
+                                  : evento.estado === "en progreso"
+                                    ? "bg-yellow-900/30 text-yellow-400 border border-yellow-800"
+                                    : evento.estado === "finalizado" || evento.estado === "completado"
+                                      ? "bg-green-900/30 text-green-400 border border-green-800"
+                                      : "bg-red-900/30 text-red-400 border border-red-800"
+                              }`}
+                            >
+                              {evento.estado.charAt(0).toUpperCase() + evento.estado.slice(1)}
+                            </span>
+                          </div>
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
                           {isAdmin && (
