@@ -441,6 +441,8 @@ export const translations = {
 
     // Common
     common: {
+      name:"Nombre",
+      status:"Estado",
       loading: "Cargando...",
       save: "Guardar",
       cancel: "Cancelar",
@@ -1361,6 +1363,8 @@ export const translations = {
 
     // Common
     common: {
+      name:"Name",
+      status:"Status",
       loading: "Loading...",
       save: "Save",
       cancel: "Cancel",
