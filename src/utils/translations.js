@@ -473,6 +473,7 @@ export const translations = {
       reset: "Restablecer",
       submit: "Enviar",
       continue: "Continuar",
+      eventFinished:"Evento finalizado"
     },
 
     // Home Page
@@ -1395,6 +1396,7 @@ export const translations = {
       reset: "Reset",
       submit: "Submit",
       continue: "Continue",
+      eventFinished:"Event  finished"
     },
 
     // Home Page
