@@ -94,6 +94,13 @@ export default function ConfirmacionEventos() {
         return
       }
 
+      // Verificar si el evento está finalizado
+      const evento = eventosConDetalles.find((e) => e.evento_id === eventoId)
+      if (evento && evento.estado === "finalizado") {
+        toast.error("No se puede modificar la asistencia de un evento finalizado")
+        return
+      }
+
       await api.put(`/evento-usuario/${eventoId}/${user.id}`, {
         confirmacion: confirmado,
       })
@@ -301,7 +308,11 @@ export default function ConfirmacionEventos() {
                 </div>
 
                 <div className="flex space-x-3 mt-4">
-                  {item.confirmacion ? (
+                  {item.estado === "finalizado" ? (
+                    <div className="flex-1 flex items-center justify-center py-2">
+                      <span className="text-red-400 font-medium"> {t("common.eventFinished")}</span>
+                    </div>
+                  ) : item.confirmacion ? (
                     <button
                       onClick={() => confirmarAsistencia(item.evento_id, false)}
                       className="flex-1 flex items-center justify-center gap-2 bg-red-900/30 border border-red-800 text-red-400 px-4 py-2 rounded-md hover:bg-red-900/50 transition-colors"
