@@ -1,3 +1,11 @@
+/**
+ * @file GestionUsuarios.jsx
+ * @module pages/Admin/GestionUsuarios
+ * @description Página de gestión de usuarios para administradores. Permite ver, filtrar, buscar, aprobar, bloquear, suspender y eliminar usuarios.
+ * Incluye tablas separadas para usuarios pendientes y registrados, filtros, búsqueda, recarga y un modal de confirmación para acciones críticas.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -5,63 +13,100 @@ import api from "../../api/axios"
 import { CheckCircle, XCircle, Trash2, RefreshCw, Search, Filter, Bell, AlertCircle } from "lucide-react"
 import { useTranslation } from "../../hooks/useTranslation"
 
+/**
+ * Componente de gestión de usuarios para administradores.
+ * @function
+ * @returns {JSX.Element} Interfaz de gestión de usuarios.
+ */
 export default function GestionUsuarios() {
-  // Importamos la función de traducción pero NO la usamos como dependencia en useEffect
-  const { t } = useTranslation()
-  const [usuarios, setUsuarios] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [filtroEstado, setFiltroEstado] = useState("todos")
-  const [busqueda, setBusqueda] = useState("")
-  const [usuariosPendientes, setUsuariosPendientes] = useState(0)
-  const [modalConfirmacion, setModalConfirmacion] = useState({ visible: false, accion: null, usuario: null })
-  const [actualizando, setActualizando] = useState(false)
+  const { t } = useTranslation() // Hook de traducción
 
-  // Cargar usuarios - Mantenemos exactamente igual que el original
+  /** Lista de usuarios */
+/** @type {Array} */
+const [usuarios, setUsuarios] = useState([])
+
+/** Estado de carga */
+/** @type {boolean} */
+const [loading, setLoading] = useState(true)
+
+/** Estado de error */
+/** @type {string|null} */
+const [error, setError] = useState(null)
+
+/** Filtro de estado de usuario */
+/** @type {string} */
+const [filtroEstado, setFiltroEstado] = useState("todos")
+
+/** Búsqueda por nombre/email */
+/** @type {string} */
+const [busqueda, setBusqueda] = useState("")
+
+/** Número de usuarios pendientes de aprobación */
+/** @type {number} */
+const [usuariosPendientes, setUsuariosPendientes] = useState(0)
+
+/** Estado del modal de confirmación de acciones */
+/** @type {{ visible: boolean, accion: string|null, usuario: Object|null }} */
+const [modalConfirmacion, setModalConfirmacion] = useState({
+  visible: false,
+  accion: null,
+  usuario: null,
+})
+
+/** Estado para indicar si se está procesando una acción */
+/** @type {boolean} */
+const [actualizando, setActualizando] = useState(false)
+
+
+  /**
+   * Carga los usuarios desde la API y actualiza los estados correspondientes.
+   * @async
+   */
   const cargarUsuarios = async () => {
     try {
       setLoading(true)
       setError(null)
 
-      console.log("Cargando usuarios...")
+      // console.log("Cargando usuarios...")
       const response = await api.get("/usuarios")
-      console.log("Respuesta de usuarios:", response.data)
+      // console.log("Respuesta de usuarios:", response.data)
 
-      // Check if response.data is an array or if it has a data property
+      // Comprueba si la respuesta es un array o tiene propiedad data
       const usuariosData = Array.isArray(response.data) ? response.data : response.data.data || []
       setUsuarios(usuariosData)
 
-      // Contar usuarios pendientes
+      // Cuenta los usuarios pendientes
       const pendientes = usuariosData.filter((usuario) => usuario.estado === "pendiente").length
       setUsuariosPendientes(pendientes)
     } catch (error) {
-      console.error("Error al cargar usuarios:", error)
+      // console.error("Error al cargar usuarios:", error)
       setError("Error al cargar los usuarios. Por favor, inténtalo de nuevo.")
     } finally {
       setLoading(false)
     }
   }
 
-  // Mantenemos el useEffect exactamente igual que el original, sin dependencias
+  /**
+   * Carga los usuarios al montar el componente.
+   * Solo se ejecuta una vez.
+   */
   useEffect(() => {
     const cargarUsuarios = async () => {
       try {
         setLoading(true)
         setError(null)
 
-        console.log("Cargando usuarios...")
+        // console.log("Cargando usuarios...")
         const response = await api.get("/usuarios")
-        console.log("Respuesta de usuarios:", response.data)
+        // console.log("Respuesta de usuarios:", response.data)
 
-        // Check if response.data is an array or if it has a data property
         const usuariosData = Array.isArray(response.data) ? response.data : response.data.data || []
         setUsuarios(usuariosData)
 
-        // Contar usuarios pendientes
         const pendientes = usuariosData.filter((usuario) => usuario.estado === "pendiente").length
         setUsuariosPendientes(pendientes)
       } catch (error) {
-        console.error("Error al cargar usuarios:", error)
+        // console.error("Error al cargar usuarios:", error)
         setError("Error al cargar los usuarios. Por favor, inténtalo de nuevo.")
       } finally {
         setLoading(false)
@@ -69,15 +114,17 @@ export default function GestionUsuarios() {
     }
 
     cargarUsuarios()
-  }, []) // Mantenemos el array de dependencias vacío
+  }, []) // Solo se ejecuta una vez al montar
 
-  // Filtrar usuarios
+  /**
+   * Filtra los usuarios según el estado y la búsqueda.
+   * @type {Array}
+   */
   const usuariosFiltrados = usuarios.filter((usuario) => {
     // Filtrar por estado
     if (filtroEstado !== "todos" && usuario.estado !== filtroEstado) {
       return false
     }
-
     // Filtrar por búsqueda
     if (busqueda) {
       const terminoBusqueda = busqueda.toLowerCase()
@@ -88,87 +135,90 @@ export default function GestionUsuarios() {
         usuario.email.toLowerCase().includes(terminoBusqueda)
       )
     }
-
     return true
   })
 
-  // Aprobar usuario
+  /**
+   * Aprueba un usuario.
+   * @async
+   * @param {number} id - ID del usuario a aprobar.
+   */
   const aprobarUsuario = async (id) => {
     try {
       setActualizando(true)
       await api.patch(`/usuarios/${id}/approve`)
-
-      // Actualizar la lista de usuarios
       cargarUsuarios()
-
-      // Cerrar modal
       setModalConfirmacion({ visible: false, accion: null, usuario: null })
     } catch (error) {
-      console.error("Error al aprobar usuario:", error)
+      // console.error("Error al aprobar usuario:", error)
       setError("Error al aprobar el usuario. Por favor, inténtalo de nuevo.")
     } finally {
       setActualizando(false)
     }
   }
 
-  // Bloquear usuario
+  /**
+   * Bloquea un usuario.
+   * @async
+   * @param {number} id - ID del usuario a bloquear.
+   */
   const bloquearUsuario = async (id) => {
     try {
       setActualizando(true)
       await api.patch(`/usuarios/${id}/block`)
-
-      // Actualizar la lista de usuarios
       cargarUsuarios()
-
-      // Cerrar modal
       setModalConfirmacion({ visible: false, accion: null, usuario: null })
     } catch (error) {
-      console.error("Error al bloquear usuario:", error)
+      // console.error("Error al bloquear usuario:", error)
       setError("Error al bloquear el usuario. Por favor, inténtalo de nuevo.")
     } finally {
       setActualizando(false)
     }
   }
 
-  // Eliminar usuario
+  /**
+   * Elimina un usuario.
+   * @async
+   * @param {number} id - ID del usuario a eliminar.
+   */
   const eliminarUsuario = async (id) => {
     try {
       setActualizando(true)
       await api.delete(`/usuarios/${id}`)
-
-      // Actualizar la lista de usuarios
       cargarUsuarios()
-
-      // Cerrar modal
       setModalConfirmacion({ visible: false, accion: null, usuario: null })
     } catch (error) {
-      console.error("Error al eliminar usuario:", error)
+      // console.error("Error al eliminar usuario:", error)
       setError("Error al eliminar el usuario. Por favor, inténtalo de nuevo.")
     } finally {
       setActualizando(false)
     }
   }
 
-  // Suspender usuario
+  /**
+   * Suspende un usuario.
+   * @async
+   * @param {number} id - ID del usuario a suspender.
+   */
   const suspenderUsuario = async (id) => {
     try {
       setActualizando(true)
       await api.patch(`/usuarios/${id}/suspend`)
-
-      // Actualizar la lista de usuarios
       cargarUsuarios()
-
-      // Cerrar modal
       setModalConfirmacion({ visible: false, accion: null, usuario: null })
     } catch (error) {
-      console.error("Error al suspender usuario:", error)
+      // console.error("Error al suspender usuario:", error)
       setError("Error al suspender el usuario. Por favor, inténtalo de nuevo.")
     } finally {
       setActualizando(false)
     }
   }
 
-  // Mostrar modal de confirmación
+  /**
+   * Muestra el modal de confirmación para una acción y usuario concretos.
+   * @param {string} accion - Acción a confirmar.
+   * @param {Object} usuario - Usuario sobre el que se realiza la acción.
+   */
   const mostrarConfirmacion = (accion, usuario) => {
     setModalConfirmacion({
       visible: true,
@@ -177,10 +227,11 @@ export default function GestionUsuarios() {
     })
   }
 
-  // Ejecutar acción confirmada
+  /**
+   * Ejecuta la acción seleccionada en el modal de confirmación.
+   */
   const ejecutarAccion = () => {
     const { accion, usuario } = modalConfirmacion
-
     if (accion === "aprobar") {
       aprobarUsuario(usuario.id)
     } else if (accion === "bloquear") {
@@ -192,23 +243,30 @@ export default function GestionUsuarios() {
     }
   }
 
-  // Formatear fecha
+  /**
+   * Formatea la fecha para mostrarla en la tabla.
+   * @param {string} fecha - Fecha en formato ISO.
+   * @returns {string} Fecha formateada.
+   */
   const formatearFecha = (fecha) => {
     if (!fecha) return "-"
     return new Date(fecha).toLocaleDateString()
   }
 
-  // Modificar el filtro de usuarios para excluir los pendientes de la tabla principal
+  /**
+   * Excluye los usuarios pendientes de la tabla principal.
+   * @type {Array}
+   */
   const usuariosFiltradosRegistrados = usuariosFiltrados.filter((usuario) => usuario.estado !== "pendiente")
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Cabecera y notificación de usuarios pendientes */}
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white">{t("userManagement.title", "Gestión de Usuarios")}</h1>
           <p className="text-[#C0C0C0]">{t("userManagement.subtitle", "Administra los usuarios de la plataforma")}</p>
         </div>
-
         {usuariosPendientes > 0 && (
           <div className="bg-yellow-500/80 text-black px-4 py-2 rounded-md flex items-center">
             <Bell className="mr-2" size={20} />
@@ -239,7 +297,6 @@ export default function GestionUsuarios() {
             <option value="suspendido">{t("userManagement.suspended", "Suspendidos")}</option>
           </select>
         </div>
-
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
             <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#C0C0C0]" />
@@ -251,7 +308,6 @@ export default function GestionUsuarios() {
               className="bg-gray-900 border border-gray-700 rounded-md pl-10 pr-3 py-2 w-full text-[#C0C0C0] focus:outline-none focus:ring-2 focus:ring-gray-600"
             />
           </div>
-
           <button
             onClick={cargarUsuarios}
             className="bg-gray-800 hover:bg-gray-700 text-[#C0C0C0] px-4 py-2 rounded-md flex items-center"
@@ -270,7 +326,7 @@ export default function GestionUsuarios() {
         </div>
       )}
 
-      {/* Usuarios pendientes */}
+      {/* Tabla de usuarios pendientes de aprobación */}
       {usuariosPendientes > 0 && (
         <div className="mb-6">
           <div className="bg-yellow-900/20 border border-yellow-800 rounded-lg overflow-hidden">
@@ -340,7 +396,7 @@ export default function GestionUsuarios() {
         </div>
       )}
 
-      {/* Tabla de usuarios */}
+      {/* Tabla de usuarios registrados (excluye pendientes) */}
       <div className="bg-gray-900/50 border border-gray-800 rounded-lg overflow-hidden">
         <div className="px-4 py-3 bg-gray-900 border-b border-gray-800">
           <h2 className="text-lg font-semibold text-[#C0C0C0]">
@@ -476,7 +532,7 @@ export default function GestionUsuarios() {
         </div>
       </div>
 
-      {/* Modal de confirmación */}
+      {/* Modal de confirmación de acciones */}
       {modalConfirmacion.visible && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 max-w-md w-full">
@@ -489,7 +545,6 @@ export default function GestionUsuarios() {
                     ? t("userManagement.suspendUser", "Suspender usuario")
                     : t("userManagement.deleteUser", "Eliminar usuario")}
             </h3>
-
             <p className="text-[#C0C0C0] mb-6">
               {modalConfirmacion.accion === "aprobar"
                 ? t(
@@ -511,7 +566,6 @@ export default function GestionUsuarios() {
                         "¿Estás seguro de que deseas eliminar a este usuario? Esta acción no se puede deshacer.",
                       )}
             </p>
-
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setModalConfirmacion({ visible: false, accion: null, usuario: null })}
@@ -520,7 +574,6 @@ export default function GestionUsuarios() {
               >
                 {t("userManagement.cancel", "Cancelar")}
               </button>
-
               <button
                 onClick={ejecutarAccion}
                 className={`px-4 py-2 rounded-md ${

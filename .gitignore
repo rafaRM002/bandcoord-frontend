@@ -1,4 +1,11 @@
-# Logs
+# /**
+#  * @file .gitignore
+#  * @module gitignore
+#  * @description Archivo de exclusión de Git para el proyecto BandCoord. Define los archivos y carpetas que no deben ser versionados, incluyendo logs, dependencias, directorios de compilación, archivos de configuración de editores y archivos temporales del sistema.
+#  * @author Rafael Rodriguez Mengual
+#  */
+
+# Archivos de logs
 logs
 *.log
 npm-debug.log*
@@ -7,12 +14,13 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencias y builds
 node_modules
 dist
 dist-ssr
 *.local
 
-# Editor directories and files
+# Directorios y archivos de configuración de editores
 .vscode/*
 !.vscode/extensions.json
 .idea

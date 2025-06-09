@@ -1,3 +1,10 @@
+/**
+ * @file MinimosEvento.jsx
+ * @module pages/MinimosEvento/MinimosEvento
+ * @description Página para la gestión de mínimos de instrumentos por evento. Permite crear, editar, eliminar, filtrar y paginar mínimos, así como ver la cantidad disponible de cada tipo de instrumento. Solo los administradores pueden modificar los mínimos.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -5,41 +12,66 @@ import { Plus, Edit, Trash2, Filter, Search, ChevronDown, ChevronUp, AlertCircle
 import api from "../../api/axios"
 import { toast } from "react-toastify"
 import { useTranslation } from "../../hooks/useTranslation"
-// Importar useAuth
 import { useAuth } from "../../context/AuthContext"
 
+/**
+ * Componente principal para la gestión de mínimos de instrumentos por evento.
+ * Permite listar, buscar, filtrar, crear, editar y eliminar mínimos.
+ * @component
+ * @returns {JSX.Element} Página de mínimos de evento.
+ */
 export default function MinimosEvento() {
+  /** Lista de mínimos de instrumentos por evento */
   const [minimos, setMinimos] = useState([])
+  /** Estado de carga */
   const [loading, setLoading] = useState(true)
+  /** Mensaje de error */
   const [error, setError] = useState(null)
+  /** Lista de eventos */
   const [eventos, setEventos] = useState([])
+  /** Lista de tipos de instrumento */
   const [tiposInstrumento, setTiposInstrumento] = useState([])
+  /** Filtro por evento */
   const [eventoFilter, setEventoFilter] = useState("")
+  /** Filtro por tipo de instrumento */
   const [tipoFilter, setTipoFilter] = useState("")
+  /** Término de búsqueda */
   const [searchTerm, setSearchTerm] = useState("")
+  /** Estado del modal de formulario */
   const [showModal, setShowModal] = useState(false)
-  const [modalMode, setModalMode] = useState("create") // "create" o "edit"
+  /** Modo del modal: "create" o "edit" */
+  const [modalMode, setModalMode] = useState("create")
+  /** Mínimo actual para crear/editar */
   const [currentMinimo, setCurrentMinimo] = useState({
     evento_id: "",
     instrumento_tipo_id: "",
     cantidad: 1,
   })
+  /** Estado del modal de confirmación de borrado */
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  /** Identificador del mínimo a eliminar */
   const [minimoToDelete, setMinimoToDelete] = useState(null)
+  /** Estado de eventos expandidos */
   const [expandedEventos, setExpandedEventos] = useState({})
+  /** Página actual de la paginación */
   const [currentPage, setCurrentPage] = useState(1)
-  const [eventosPerPage] = useState(2) // Mostrar solo 2 eventos por página
+  /** Eventos por página */
+  const [eventosPerPage] = useState(2)
 
+  /** Hook de traducción */
   const { t } = useTranslation()
-  // Dentro del componente:
+  /** Si el usuario es administrador */
   const { isAdmin } = useAuth()
 
+  /**
+   * Efecto para cargar datos al montar el componente.
+   */
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true)
         setError(null)
-        console.log("Intentando cargar datos de mínimos de evento...")
+        // console.log("Intentando cargar datos de mínimos de evento...")
 
         const [minimosRes, eventosRes, tiposRes] = await Promise.all([
           api.get("/minimos-evento"),
@@ -47,9 +79,9 @@ export default function MinimosEvento() {
           api.get("/tipo-instrumentos"),
         ])
 
-        console.log("Respuesta de minimos-evento:", minimosRes)
-        console.log("Respuesta de eventos:", eventosRes)
-        console.log("Respuesta de tipos de instrumento:", tiposRes)
+        // console.log("Respuesta de minimos-evento:", minimosRes)
+        // console.log("Respuesta de eventos:", eventosRes)
+        // console.log("Respuesta de tipos de instrumento:", tiposRes)
 
         // Procesar datos de mínimos
         let minimosData = []
@@ -65,7 +97,7 @@ export default function MinimosEvento() {
         ) {
           minimosData = minimosRes.data.originalData.data
         } else {
-          console.warn("Formato de respuesta inesperado para mínimos:", minimosRes.data)
+          // console.warn("Formato de respuesta inesperado para mínimos:", minimosRes.data)
         }
 
         // Mapear los datos para tener una estructura consistente
@@ -95,7 +127,7 @@ export default function MinimosEvento() {
         } else if (eventosRes.data && eventosRes.data.data && Array.isArray(eventosRes.data.data)) {
           eventosData = eventosRes.data.data
         } else {
-          console.warn("Formato de respuesta inesperado para eventos:", eventosRes.data)
+          // console.warn("Formato de respuesta inesperado para eventos:", eventosRes.data)
         }
 
         // Ordenar eventos alfabéticamente por nombre
@@ -109,12 +141,10 @@ export default function MinimosEvento() {
         } else if (tiposRes.data && tiposRes.data.data && Array.isArray(tiposRes.data.data)) {
           tiposData = tiposRes.data.data
         } else {
-          console.warn("Formato de respuesta inesperado para tipos de instrumento:", tiposRes.data)
+          // console.warn("Formato de respuesta inesperado para tipos de instrumento:", tiposRes.data)
         }
 
-        // Imprimir los tipos de instrumentos para depuración
-        console.log("Tipos de instrumentos cargados:", tiposData)
-
+        // console.log("Tipos de instrumentos cargados:", tiposData)
         setTiposInstrumento(tiposData)
 
         // Inicializar todos los eventos como expandidos
@@ -127,7 +157,6 @@ export default function MinimosEvento() {
         console.error("Error al cargar datos:", error)
         setError(`Error al cargar datos: ${error.message}`)
 
-        // Intentar determinar el tipo de error
         if (error.response) {
           console.error("Respuesta del servidor:", error.response.status, error.response.data)
           setError(`Error del servidor: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
@@ -146,22 +175,39 @@ export default function MinimosEvento() {
     fetchData()
   }, [])
 
+  /**
+   * Abre el modal para crear o editar un mínimo.
+   * @param {"create"|"edit"} mode - Modo del modal.
+   * @param {Object} minimo - Mínimo a editar (opcional).
+   */
   const handleOpenModal = (mode, minimo = { evento_id: "", instrumento_tipo_id: "", cantidad: 1 }) => {
     setModalMode(mode)
     setCurrentMinimo(minimo)
     setShowModal(true)
   }
 
+  /**
+   * Cierra el modal de formulario.
+   */
   const handleCloseModal = () => {
     setShowModal(false)
     setCurrentMinimo({ evento_id: "", instrumento_tipo_id: "", cantidad: 1 })
   }
 
+  /**
+   * Maneja el cambio en los campos del formulario de mínimo.
+   * @param {Object} e - Evento de cambio.
+   */
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setCurrentMinimo((prev) => ({ ...prev, [name]: value }))
   }
 
+  /**
+   * Envía el formulario para crear o editar un mínimo.
+   * @async
+   * @param {Object} e - Evento de envío.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -229,11 +275,20 @@ export default function MinimosEvento() {
     }
   }
 
+  /**
+   * Abre el modal de confirmación de borrado para un mínimo.
+   * @param {string|number} eventoId - ID del evento.
+   * @param {string|number} instrumentoTipoId - ID del tipo de instrumento.
+   */
   const confirmDelete = (eventoId, instrumentoTipoId) => {
     setMinimoToDelete({ eventoId, instrumentoTipoId })
     setShowDeleteModal(true)
   }
 
+  /**
+   * Elimina un mínimo de evento.
+   * @async
+   */
   const handleDelete = async () => {
     if (!minimoToDelete) return
 
@@ -257,6 +312,10 @@ export default function MinimosEvento() {
     }
   }
 
+  /**
+   * Alterna el estado expandido de un evento.
+   * @param {string|number} eventoId - ID del evento.
+   */
   const toggleEventoExpanded = (eventoId) => {
     setExpandedEventos((prev) => ({
       ...prev,
@@ -264,10 +323,11 @@ export default function MinimosEvento() {
     }))
   }
 
-  // Filtrar eventos según los criterios de búsqueda
+  /**
+   * Filtra los eventos según los criterios de búsqueda y filtros seleccionados.
+   * @type {Array}
+   */
   const filteredEventos = eventos.filter((evento) => {
-    // Remover esta línea: if (evento.estado === "finalizado") return false
-
     // Filtrar por término de búsqueda en el nombre del evento
     const matchesSearch = evento.nombre.toLowerCase().includes(searchTerm.toLowerCase())
 
@@ -295,15 +355,23 @@ export default function MinimosEvento() {
   const currentEventos = filteredEventos.slice(indexOfFirstEvento, indexOfLastEvento)
   const totalPages = Math.ceil(filteredEventos.length / eventosPerPage)
 
+  /**
+   * Cambia la página actual de la paginación.
+   * @param {number} pageNumber - Número de página a mostrar.
+   */
   const paginate = (pageNumber) => {
     if (pageNumber > 0 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber)
     }
   }
 
-  // Función para obtener el nombre del tipo de instrumento
+  /**
+   * Obtiene el nombre del tipo de instrumento a partir de su ID.
+   * @param {string|number} tipoId - ID del tipo de instrumento.
+   * @returns {string} Nombre del tipo de instrumento.
+   */
   const getTipoNombre = (tipoId) => {
-    // Primero buscar en los minimos por si tiene el objeto tipo_instrumento anidado
+    // Buscar en los mínimos por si tiene el objeto tipo_instrumento anidado
     const minimoConTipo = minimos.find(
       (m) => (m.instrumento_tipo_id === tipoId || m.instrumento_tipo_id.toString() === tipoId) && m.tipo_instrumento,
     )
@@ -312,9 +380,8 @@ export default function MinimosEvento() {
       return minimoConTipo.tipo_instrumento.instrumento || minimoConTipo.tipo_instrumento.nombre || tipoId
     }
 
-    // Si no, buscar en la lista de tipos
+    // Buscar en la lista de tipos
     const tipo = tiposInstrumento.find((t) => {
-      // Verificar si el ID o el nombre del instrumento coincide
       return (
         (t.id !== undefined && t.id.toString() === tipoId.toString()) ||
         (t.instrumento !== undefined && t.instrumento.toString() === tipoId.toString())
@@ -324,38 +391,39 @@ export default function MinimosEvento() {
     return tipo ? tipo.instrumento || tipo.nombre || tipoId : tipoId
   }
 
-  // Función para obtener la cantidad disponible de un tipo de instrumento
+  /**
+   * Obtiene la cantidad disponible de un tipo de instrumento.
+   * @param {string|number} tipoId - ID del tipo de instrumento.
+   * @returns {number} Cantidad disponible.
+   */
   const getCantidadDisponible = (tipoId) => {
     if (!tipoId) return 0
 
-    console.log("Buscando cantidad disponible para tipo:", tipoId)
-    console.log("Tipos de instrumentos disponibles:", tiposInstrumento)
+    // console.log("Buscando cantidad disponible para tipo:", tipoId)
+    // console.log("Tipos de instrumentos disponibles:", tiposInstrumento)
 
-    // Buscar por el campo 'instrumento' que parece ser el nombre del instrumento
     const tipo = tiposInstrumento.find((t) => {
-      // Verificar si el ID o el nombre del instrumento coincide
       const matchesId = t.id !== undefined && t.id.toString() === tipoId.toString()
       const matchesName =
         t.instrumento !== undefined &&
         typeof t.instrumento === "string" &&
         t.instrumento.toString() === tipoId.toString()
 
-      console.log(
-        `Comparando: ${tipoId} con instrumento: ${t.instrumento}, id: ${t.id}, matches: ${matchesId || matchesName}`,
-      )
+      // console.log(
+      //   `Comparando: ${tipoId} con instrumento: ${t.instrumento}, id: ${t.id}, matches: ${matchesId || matchesName}`,
+      // )
 
       return matchesId || matchesName
     })
 
-    console.log("Tipo encontrado:", tipo)
+    // console.log("Tipo encontrado:", tipo)
 
-    // Si encontramos el tipo y tiene una cantidad definida, devolverla
     if (tipo && typeof tipo.cantidad === "number") {
-      console.log(`Cantidad disponible para ${tipoId}: ${tipo.cantidad}`)
+      // console.log(`Cantidad disponible para ${tipoId}: ${tipo.cantidad}`)
       return tipo.cantidad
     }
 
-    // Intentar buscar por nombre del instrumento en los tipos
+    // Buscar por nombre del instrumento en los tipos
     const tipoByName = tiposInstrumento.find((t) => {
       return (
         t.instrumento &&
@@ -365,27 +433,35 @@ export default function MinimosEvento() {
     })
 
     if (tipoByName && typeof tipoByName.cantidad === "number") {
-      console.log(`Cantidad disponible (por nombre) para ${tipoId}: ${tipoByName.cantidad}`)
+      // console.log(`Cantidad disponible (por nombre) para ${tipoId}: ${tipoByName.cantidad}`)
       return tipoByName.cantidad
     }
 
-    // Si no encontramos el tipo o no tiene cantidad, devolver 0
-    console.log(`No se encontró cantidad para ${tipoId}, devolviendo 0`)
+    // console.log(`No se encontró cantidad para ${tipoId}, devolviendo 0`)
     return 0
   }
 
-  // Agrupar mínimos por evento
+  /**
+   * Agrupa los mínimos por evento.
+   * @param {string|number} eventoId - ID del evento.
+   * @returns {Array} Lista de mínimos para el evento.
+   */
   const getMinimosPorEvento = (eventoId) => {
     return minimos.filter((minimo) => minimo.evento_id === eventoId)
   }
 
-  // Formatear fecha para mostrar
+  /**
+   * Formatea una fecha a DD/MM/YYYY.
+   * @param {string} dateString - Fecha en formato ISO.
+   * @returns {string} Fecha formateada.
+   */
   const formatDate = (dateString) => {
     if (!dateString) return ""
     const options = { day: "2-digit", month: "2-digit", year: "numeric" }
     return new Date(dateString).toLocaleDateString("es-ES", options)
   }
 
+  // Renderizado principal de la página de mínimos de evento
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">

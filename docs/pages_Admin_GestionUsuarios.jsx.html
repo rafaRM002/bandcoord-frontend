@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>pages/Admin/GestionUsuarios.jsx - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-App.html">App</a><ul class='methods'><li data-type='method'><a href="module-App.html#~App">App</a></li><li data-type='method'><a href="module-App.html#~AppContent">AppContent</a></li></ul></li><li><a href="module-api_axios.html">api/axios</a></li><li><a href="module-components_AdminRoute.html">components/AdminRoute</a></li><li><a href="module-components_HelpButton_AboutModal.html">components/HelpButton/AboutModal</a></li><li><a href="module-components_HelpButton_HelpButton.html">components/HelpButton/HelpButton</a></li><li><a href="module-components_HelpButton_HelpModal.html">components/HelpButton/HelpModal</a></li><li><a href="module-components_MemberRoute.html">components/MemberRoute</a></li><li><a href="module-components_Navigation_Footer.html">components/Navigation/Footer</a></li><li><a href="module-components_Navigation_Navbar.html">components/Navigation/Navbar</a></li><li><a href="module-components_PasswordValidator.html">components/PasswordValidator</a></li><li><a href="module-components_ProtectedRoute.html">components/ProtectedRoute</a></li><li><a href="module-context_AuthContext.html">context/AuthContext</a><ul class='methods'><li data-type='method'><a href="module-context_AuthContext.html#.useAuth">useAuth</a></li><li data-type='method'><a href="module-context_AuthContext.html#~getCsrfCookie">getCsrfCookie</a></li></ul></li><li><a href="module-context_LanguageContext.html">context/LanguageContext</a><ul class='methods'><li data-type='method'><a href="module-context_LanguageContext.html#.useLanguage">useLanguage</a></li></ul></li><li><a href="module-hooks_useTranslation.html">hooks/useTranslation</a><ul class='methods'><li data-type='method'><a href="module-hooks_useTranslation.html#.useTranslation">useTranslation</a></li></ul></li><li><a href="module-main.html">main</a></li><li><a href="module-pages_Admin_GestionUsuarios.html">pages/Admin/GestionUsuarios</a></li><li><a href="module-pages_Calendario_Calendario.html">pages/Calendario/Calendario</a></li><li><a href="module-pages_Composiciones_Composiciones.html">pages/Composiciones/Composiciones</a></li><li><a href="module-pages_ComposicionesInterpretadas_ComposicionesInterpretadas.html">pages/ComposicionesInterpretadas/ComposicionesInterpretadas</a><ul class='methods'><li data-type='method'><a href="module-pages_ComposicionesInterpretadas_ComposicionesInterpretadas.html#~ComposicionesInterpretadas">ComposicionesInterpretadas</a></li></ul></li><li><a href="module-pages_ConfirmacionEventos_ConfirmacionEventos.html">pages/ConfirmacionEventos/ConfirmacionEventos</a></li><li><a href="module-pages_Entidades_Entidades.html">pages/Entidades/Entidades</a></li><li><a href="module-pages_EventoUsuario_EventoUsuario.html">pages/EventoUsuario/EventoUsuario</a></li><li><a href="module-pages_Eventos_Eventos.html">pages/Eventos/Eventos</a></li><li><a href="module-pages_Eventos_FormularioEvento.html">pages/Eventos/FormularioEvento</a></li><li><a href="module-pages_Home_Home.html">pages/Home/Home</a><ul class='methods'><li data-type='method'><a href="module-pages_Home_Home.html#~AdminCard">AdminCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~FeatureCard">FeatureCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~PublicHome">PublicHome</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~QuickAccessCard">QuickAccessCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~UserDashboard">UserDashboard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~getEventTypeColor">getEventTypeColor</a></li></ul></li><li><a href="module-pages_Instrumentos_Instrumentos.html">pages/Instrumentos/Instrumentos</a></li><li><a href="module-pages_Login_Login.html">pages/Login/Login</a></li><li><a href="module-pages_Mensajes_DetalleMensaje.html">pages/Mensajes/DetalleMensaje</a></li><li><a href="module-pages_Mensajes_FormularioMensaje.html">pages/Mensajes/FormularioMensaje</a></li><li><a href="module-pages_Mensajes_Mensajes.html">pages/Mensajes/Mensajes</a></li><li><a href="module-pages_MensajesUsuario_MensajesUsuario.html">pages/MensajesUsuario/MensajesUsuario</a><ul class='methods'><li data-type='method'><a href="module-pages_MensajesUsuario_MensajesUsuario.html#~MensajesUsuario">MensajesUsuario</a></li></ul></li><li><a href="module-pages_MinimosEvento_MinimosEvento.html">pages/MinimosEvento/MinimosEvento</a></li><li><a href="module-pages_NotFound_NotFound.html">pages/NotFound/NotFound</a></li><li><a href="module-pages_Perfil_Perfil.html">pages/Perfil/Perfil</a></li><li><a href="module-pages_Prestamos_Prestamos.html">pages/Prestamos/Prestamos</a></li><li><a href="module-pages_Register_Register.html">pages/Register/Register</a></li><li><a href="module-pages_RegistroPendiente_RegistroPendiente.html">pages/RegistroPendiente/RegistroPendiente</a></li><li><a href="module-pages_RestablecerPassword_NuevaPassword.html">pages/RestablecerPassword/NuevaPassword</a></li><li><a href="module-pages_RestablecerPassword_RestablecerPassword.html">pages/RestablecerPassword/RestablecerPassword</a></li><li><a href="module-pages_TiposInstrumento_TiposInstrumento.html">pages/TiposInstrumento/TiposInstrumento</a></li><li><a href="module-utils_translations.html">utils/translations</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+
+    
+    <h1 class="page-title">pages/Admin/GestionUsuarios.jsx</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file GestionUsuarios.jsx
+ * @module pages/Admin/GestionUsuarios
+ * @description Página de gestión de usuarios para administradores. Permite ver, filtrar, buscar, aprobar, bloquear, suspender y eliminar usuarios.
+ * Incluye tablas separadas para usuarios pendientes y registrados, filtros, búsqueda, recarga y un modal de confirmación para acciones críticas.
+ * @author Rafael Rodriguez Mengual
+ */
+
+"use client"
+
+import { useState, useEffect } from "react"
+import api from "../../api/axios"
+import { CheckCircle, XCircle, Trash2, RefreshCw, Search, Filter, Bell, AlertCircle } from "lucide-react"
+import { useTranslation } from "../../hooks/useTranslation"
+
+/**
+ * Componente de gestión de usuarios para administradores.
+ * @function
+ * @returns {JSX.Element} Interfaz de gestión de usuarios.
+ */
+export default function GestionUsuarios() {
+  const { t } = useTranslation() // Hook de traducción
+
+  /** Lista de usuarios */
+/** @type {Array} */
+const [usuarios, setUsuarios] = useState([])
+
+/** Estado de carga */
+/** @type {boolean} */
+const [loading, setLoading] = useState(true)
+
+/** Estado de error */
+/** @type {string|null} */
+const [error, setError] = useState(null)
+
+/** Filtro de estado de usuario */
+/** @type {string} */
+const [filtroEstado, setFiltroEstado] = useState("todos")
+
+/** Búsqueda por nombre/email */
+/** @type {string} */
+const [busqueda, setBusqueda] = useState("")
+
+/** Número de usuarios pendientes de aprobación */
+/** @type {number} */
+const [usuariosPendientes, setUsuariosPendientes] = useState(0)
+
+/** Estado del modal de confirmación de acciones */
+/** @type {{ visible: boolean, accion: string|null, usuario: Object|null }} */
+const [modalConfirmacion, setModalConfirmacion] = useState({
+  visible: false,
+  accion: null,
+  usuario: null,
+})
+
+/** Estado para indicar si se está procesando una acción */
+/** @type {boolean} */
+const [actualizando, setActualizando] = useState(false)
+
+
+  /**
+   * Carga los usuarios desde la API y actualiza los estados correspondientes.
+   * @async
+   */
+  const cargarUsuarios = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      // console.log("Cargando usuarios...")
+      const response = await api.get("/usuarios")
+      // console.log("Respuesta de usuarios:", response.data)
+
+      // Comprueba si la respuesta es un array o tiene propiedad data
+      const usuariosData = Array.isArray(response.data) ? response.data : response.data.data || []
+      setUsuarios(usuariosData)
+
+      // Cuenta los usuarios pendientes
+      const pendientes = usuariosData.filter((usuario) => usuario.estado === "pendiente").length
+      setUsuariosPendientes(pendientes)
+    } catch (error) {
+      // console.error("Error al cargar usuarios:", error)
+      setError("Error al cargar los usuarios. Por favor, inténtalo de nuevo.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  /**
+   * Carga los usuarios al montar el componente.
+   * Solo se ejecuta una vez.
+   */
+  useEffect(() => {
+    const cargarUsuarios = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+
+        // console.log("Cargando usuarios...")
+        const response = await api.get("/usuarios")
+        // console.log("Respuesta de usuarios:", response.data)
+
+        const usuariosData = Array.isArray(response.data) ? response.data : response.data.data || []
+        setUsuarios(usuariosData)
+
+        const pendientes = usuariosData.filter((usuario) => usuario.estado === "pendiente").length
+        setUsuariosPendientes(pendientes)
+      } catch (error) {
+        // console.error("Error al cargar usuarios:", error)
+        setError("Error al cargar los usuarios. Por favor, inténtalo de nuevo.")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    cargarUsuarios()
+  }, []) // Solo se ejecuta una vez al montar
+
+  /**
+   * Filtra los usuarios según el estado y la búsqueda.
+   * @type {Array}
+   */
+  const usuariosFiltrados = usuarios.filter((usuario) => {
+    // Filtrar por estado
+    if (filtroEstado !== "todos" &amp;&amp; usuario.estado !== filtroEstado) {
+      return false
+    }
+    // Filtrar por búsqueda
+    if (busqueda) {
+      const terminoBusqueda = busqueda.toLowerCase()
+      return (
+        usuario.nombre.toLowerCase().includes(terminoBusqueda) ||
+        usuario.apellido1.toLowerCase().includes(terminoBusqueda) ||
+        (usuario.apellido2 &amp;&amp; usuario.apellido2.toLowerCase().includes(terminoBusqueda)) ||
+        usuario.email.toLowerCase().includes(terminoBusqueda)
+      )
+    }
+    return true
+  })
+
+  /**
+   * Aprueba un usuario.
+   * @async
+   * @param {number} id - ID del usuario a aprobar.
+   */
+  const aprobarUsuario = async (id) => {
+    try {
+      setActualizando(true)
+      await api.patch(`/usuarios/${id}/approve`)
+      cargarUsuarios()
+      setModalConfirmacion({ visible: false, accion: null, usuario: null })
+    } catch (error) {
+      // console.error("Error al aprobar usuario:", error)
+      setError("Error al aprobar el usuario. Por favor, inténtalo de nuevo.")
+    } finally {
+      setActualizando(false)
+    }
+  }
+
+  /**
+   * Bloquea un usuario.
+   * @async
+   * @param {number} id - ID del usuario a bloquear.
+   */
+  const bloquearUsuario = async (id) => {
+    try {
+      setActualizando(true)
+      await api.patch(`/usuarios/${id}/block`)
+      cargarUsuarios()
+      setModalConfirmacion({ visible: false, accion: null, usuario: null })
+    } catch (error) {
+      // console.error("Error al bloquear usuario:", error)
+      setError("Error al bloquear el usuario. Por favor, inténtalo de nuevo.")
+    } finally {
+      setActualizando(false)
+    }
+  }
+
+  /**
+   * Elimina un usuario.
+   * @async
+   * @param {number} id - ID del usuario a eliminar.
+   */
+  const eliminarUsuario = async (id) => {
+    try {
+      setActualizando(true)
+      await api.delete(`/usuarios/${id}`)
+      cargarUsuarios()
+      setModalConfirmacion({ visible: false, accion: null, usuario: null })
+    } catch (error) {
+      // console.error("Error al eliminar usuario:", error)
+      setError("Error al eliminar el usuario. Por favor, inténtalo de nuevo.")
+    } finally {
+      setActualizando(false)
+    }
+  }
+
+  /**
+   * Suspende un usuario.
+   * @async
+   * @param {number} id - ID del usuario a suspender.
+   */
+  const suspenderUsuario = async (id) => {
+    try {
+      setActualizando(true)
+      await api.patch(`/usuarios/${id}/suspend`)
+      cargarUsuarios()
+      setModalConfirmacion({ visible: false, accion: null, usuario: null })
+    } catch (error) {
+      // console.error("Error al suspender usuario:", error)
+      setError("Error al suspender el usuario. Por favor, inténtalo de nuevo.")
+    } finally {
+      setActualizando(false)
+    }
+  }
+
+  /**
+   * Muestra el modal de confirmación para una acción y usuario concretos.
+   * @param {string} accion - Acción a confirmar.
+   * @param {Object} usuario - Usuario sobre el que se realiza la acción.
+   */
+  const mostrarConfirmacion = (accion, usuario) => {
+    setModalConfirmacion({
+      visible: true,
+      accion,
+      usuario,
+    })
+  }
+
+  /**
+   * Ejecuta la acción seleccionada en el modal de confirmación.
+   */
+  const ejecutarAccion = () => {
+    const { accion, usuario } = modalConfirmacion
+    if (accion === "aprobar") {
+      aprobarUsuario(usuario.id)
+    } else if (accion === "bloquear") {
+      bloquearUsuario(usuario.id)
+    } else if (accion === "suspender") {
+      suspenderUsuario(usuario.id)
+    } else if (accion === "eliminar") {
+      eliminarUsuario(usuario.id)
+    }
+  }
+
+  /**
+   * Formatea la fecha para mostrarla en la tabla.
+   * @param {string} fecha - Fecha en formato ISO.
+   * @returns {string} Fecha formateada.
+   */
+  const formatearFecha = (fecha) => {
+    if (!fecha) return "-"
+    return new Date(fecha).toLocaleDateString()
+  }
+
+  /**
+   * Excluye los usuarios pendientes de la tabla principal.
+   * @type {Array}
+   */
+  const usuariosFiltradosRegistrados = usuariosFiltrados.filter((usuario) => usuario.estado !== "pendiente")
+
+  return (
+    &lt;div className="container mx-auto px-4 py-8">
+      {/* Cabecera y notificación de usuarios pendientes */}
+      &lt;div className="flex justify-between items-center mb-6">
+        &lt;div>
+          &lt;h1 className="text-2xl font-bold text-white">{t("userManagement.title", "Gestión de Usuarios")}&lt;/h1>
+          &lt;p className="text-[#C0C0C0]">{t("userManagement.subtitle", "Administra los usuarios de la plataforma")}&lt;/p>
+        &lt;/div>
+        {usuariosPendientes > 0 &amp;&amp; (
+          &lt;div className="bg-yellow-500/80 text-black px-4 py-2 rounded-md flex items-center">
+            &lt;Bell className="mr-2" size={20} />
+            &lt;span className="font-bold">
+              {usuariosPendientes}{" "}
+              {t(
+                "userManagement.pendingApprovalNotification",
+                `usuario${usuariosPendientes !== 1 ? "s" : ""} pendiente${usuariosPendientes !== 1 ? "s" : ""} de aprobación`,
+              )}
+            &lt;/span>
+          &lt;/div>
+        )}
+      &lt;/div>
+
+      {/* Filtros y búsqueda */}
+      &lt;div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
+        &lt;div className="flex items-center gap-2">
+          &lt;Filter size={20} className="text-[#C0C0C0]" />
+          &lt;select
+            value={filtroEstado}
+            onChange={(e) => setFiltroEstado(e.target.value)}
+            className="bg-gray-900 border border-gray-700 rounded-md px-3 py-2 text-[#C0C0C0] focus:outline-none focus:ring-2 focus:ring-gray-600"
+          >
+            &lt;option value="todos">{t("userManagement.allStatuses", "Todos los estados")}&lt;/option>
+            &lt;option value="activo">{t("userManagement.active", "Activos")}&lt;/option>
+            &lt;option value="pendiente">{t("userManagement.pending", "Pendientes")}&lt;/option>
+            &lt;option value="bloqueado">{t("userManagement.blocked", "Bloqueados")}&lt;/option>
+            &lt;option value="suspendido">{t("userManagement.suspended", "Suspendidos")}&lt;/option>
+          &lt;/select>
+        &lt;/div>
+        &lt;div className="flex items-center gap-2">
+          &lt;div className="relative flex-1">
+            &lt;Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#C0C0C0]" />
+            &lt;input
+              type="text"
+              placeholder={t("userManagement.searchByNameOrEmail", "Buscar por nombre o email...")}
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              className="bg-gray-900 border border-gray-700 rounded-md pl-10 pr-3 py-2 w-full text-[#C0C0C0] focus:outline-none focus:ring-2 focus:ring-gray-600"
+            />
+          &lt;/div>
+          &lt;button
+            onClick={cargarUsuarios}
+            className="bg-gray-800 hover:bg-gray-700 text-[#C0C0C0] px-4 py-2 rounded-md flex items-center"
+            disabled={loading}
+          >
+            &lt;RefreshCw size={20} className={`mr-2 ${loading ? "animate-spin" : ""}`} />
+            {t("userManagement.update", "Actualizar")}
+          &lt;/button>
+        &lt;/div>
+      &lt;/div>
+
+      {/* Mensaje de error */}
+      {error &amp;&amp; (
+        &lt;div className="bg-red-900/50 border border-red-700 text-red-100 px-4 py-3 rounded-md mb-6">
+          &lt;p>{error}&lt;/p>
+        &lt;/div>
+      )}
+
+      {/* Tabla de usuarios pendientes de aprobación */}
+      {usuariosPendientes > 0 &amp;&amp; (
+        &lt;div className="mb-6">
+          &lt;div className="bg-yellow-900/20 border border-yellow-800 rounded-lg overflow-hidden">
+            &lt;div className="px-4 py-3 bg-yellow-900/30 border-b border-yellow-800">
+              &lt;h2 className="text-lg font-semibold text-yellow-300">
+                {t("userManagement.pendingUsers", "Usuarios pendientes de aprobación")} ({usuariosPendientes})
+              &lt;/h2>
+            &lt;/div>
+            &lt;div className="overflow-x-auto">
+              &lt;table className="min-w-full divide-y divide-yellow-800/50">
+                &lt;thead className="bg-yellow-900/20">
+                  &lt;tr>
+                    &lt;th className="px-3 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
+                      {t("userManagement.name", "Nombre")}
+                    &lt;/th>
+                    &lt;th className="px-3 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
+                      {t("userManagement.email", "Email")}
+                    &lt;/th>
+                    &lt;th className="px-3 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
+                      {t("userManagement.phone", "Teléfono")}
+                    &lt;/th>
+                    &lt;th className="px-3 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider">
+                      {t("userManagement.registrationDate", "Fecha Registro")}
+                    &lt;/th>
+                    &lt;th className="px-3 py-3 text-left text-xs font-medium text-yellow-300 uppercase tracking-wider min-w-[120px]">
+                      {t("userManagement.actions", "Acciones")}
+                    &lt;/th>
+                  &lt;/tr>
+                &lt;/thead>
+                &lt;tbody className="divide-y divide-yellow-800/30">
+                  {usuariosFiltrados
+                    .filter((usuario) => usuario.estado === "pendiente")
+                    .map((usuario) => (
+                      &lt;tr key={usuario.id} className="hover:bg-yellow-900/10">
+                        &lt;td className="px-3 py-4 whitespace-nowrap text-sm text-yellow-200">
+                          {usuario.nombre} {usuario.apellido1} {usuario.apellido2}
+                        &lt;/td>
+                        &lt;td className="px-3 py-4 whitespace-nowrap text-sm text-yellow-200">{usuario.email}&lt;/td>
+                        &lt;td className="px-3 py-4 whitespace-nowrap text-sm text-yellow-200">{usuario.telefono}&lt;/td>
+                        &lt;td className="px-3 py-4 whitespace-nowrap text-sm text-yellow-200">
+                          {formatearFecha(usuario.created_at)}
+                        &lt;/td>
+                        &lt;td className="px-3 py-4 whitespace-nowrap text-sm">
+                          &lt;div className="flex space-x-1">
+                            &lt;button
+                              onClick={() => mostrarConfirmacion("aprobar", usuario)}
+                              className="text-green-400 hover:text-green-300"
+                              title={t("userManagement.activateUser", "Activar usuario")}
+                            >
+                              &lt;CheckCircle size={18} />
+                            &lt;/button>
+                            &lt;button
+                              onClick={() => mostrarConfirmacion("eliminar", usuario)}
+                              className="text-gray-400 hover:text-gray-300"
+                              title={t("userManagement.deleteUser", "Eliminar usuario")}
+                            >
+                              &lt;Trash2 size={18} />
+                            &lt;/button>
+                          &lt;/div>
+                        &lt;/td>
+                      &lt;/tr>
+                    ))}
+                &lt;/tbody>
+              &lt;/table>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      )}
+
+      {/* Tabla de usuarios registrados (excluye pendientes) */}
+      &lt;div className="bg-gray-900/50 border border-gray-800 rounded-lg overflow-hidden">
+        &lt;div className="px-4 py-3 bg-gray-900 border-b border-gray-800">
+          &lt;h2 className="text-lg font-semibold text-[#C0C0C0]">
+            {t("userManagement.registeredUsers", "Usuarios registrados")}
+          &lt;/h2>
+        &lt;/div>
+        &lt;div className="overflow-x-auto">
+          &lt;table className="min-w-full divide-y divide-gray-800">
+            &lt;thead className="bg-gray-900">
+              &lt;tr>
+                &lt;th className="px-3 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
+                  {t("userManagement.name", "Nombre")}
+                &lt;/th>
+                &lt;th className="px-3 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
+                  {t("userManagement.email", "Email")}
+                &lt;/th>
+                &lt;th className="px-3 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
+                  {t("userManagement.phone", "Teléfono")}
+                &lt;/th>
+                &lt;th className="px-3 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
+                  {t("userManagement.status", "Estado")}
+                &lt;/th>
+                &lt;th className="px-3 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
+                  {t("userManagement.role", "Rol")}
+                &lt;/th>
+                &lt;th className="px-3 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider">
+                  {t("userManagement.registrationDate", "Fecha Registro")}
+                &lt;/th>
+                &lt;th className="px-3 py-3 text-left text-xs font-medium text-[#C0C0C0] uppercase tracking-wider min-w-[140px]">
+                  {t("userManagement.actions", "Acciones")}
+                &lt;/th>
+              &lt;/tr>
+            &lt;/thead>
+            &lt;tbody className="divide-y divide-gray-800">
+              {loading ? (
+                &lt;tr>
+                  &lt;td colSpan="7" className="px-3 py-4 text-center text-[#C0C0C0]">
+                    {t("userManagement.loadingUsers", "Cargando usuarios...")}
+                  &lt;/td>
+                &lt;/tr>
+              ) : usuariosFiltradosRegistrados.length === 0 ? (
+                &lt;tr>
+                  &lt;td colSpan="7" className="px-3 py-4 text-center text-[#C0C0C0]">
+                    {t("userManagement.noUsersFound", "No se encontraron usuarios")}
+                  &lt;/td>
+                &lt;/tr>
+              ) : (
+                usuariosFiltradosRegistrados.map((usuario) => (
+                  &lt;tr key={usuario.id} className="hover:bg-gray-800/50">
+                    &lt;td className="px-3 py-4 whitespace-normal text-sm text-[#C0C0C0]">
+                      {usuario.nombre} {usuario.apellido1} {usuario.apellido2}
+                    &lt;/td>
+                    &lt;td className="px-3 py-4 whitespace-normal text-sm text-[#C0C0C0]">{usuario.email}&lt;/td>
+                    &lt;td className="px-3 py-4 whitespace-nowrap text-sm text-[#C0C0C0]">{usuario.telefono}&lt;/td>
+                    &lt;td className="px-3 py-4 whitespace-nowrap text-sm">
+                      &lt;span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          usuario.estado === "activo"
+                            ? "bg-green-900/50 text-green-300"
+                            : usuario.estado === "pendiente"
+                              ? "bg-yellow-900/50 text-yellow-300"
+                              : usuario.estado === "bloqueado"
+                                ? "bg-red-900/50 text-red-300"
+                                : usuario.estado === "suspendido"
+                                  ? "bg-gray-900/50 text-gray-300 border border-gray-500"
+                                  : "bg-gray-900/50 text-gray-300"
+                        }`}
+                      >
+                        {usuario.estado.charAt(0).toUpperCase() + usuario.estado.slice(1)}
+                      &lt;/span>
+                    &lt;/td>
+                    &lt;td className="px-3 py-4 whitespace-nowrap text-sm text-[#C0C0C0]">
+                      &lt;span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          usuario.role === "admin" ? "bg-purple-900/50 text-purple-300" : "bg-blue-900/50 text-blue-300"
+                        }`}
+                      >
+                        {usuario.role === "admin"
+                          ? t("userManagement.administrator", "Administrador")
+                          : t("userManagement.member", "Miembro")}
+                      &lt;/span>
+                    &lt;/td>
+                    &lt;td className="px-3 py-4 whitespace-nowrap text-sm text-[#C0C0C0]">
+                      {formatearFecha(usuario.created_at)}
+                    &lt;/td>
+                    &lt;td className="px-3 py-4 whitespace-nowrap text-sm text-[#C0C0C0]">
+                      &lt;div className="flex space-x-1">
+                        {(usuario.estado === "pendiente" ||
+                          usuario.estado === "bloqueado" ||
+                          usuario.estado === "suspendido") &amp;&amp; (
+                          &lt;button
+                            onClick={() => mostrarConfirmacion("aprobar", usuario)}
+                            className="text-green-400 hover:text-green-300"
+                            title={t("userManagement.activateUser", "Activar usuario")}
+                          >
+                            &lt;CheckCircle size={18} />
+                          &lt;/button>
+                        )}
+
+                        {usuario.estado === "activo" &amp;&amp; (
+                          &lt;>
+                            &lt;button
+                              onClick={() => mostrarConfirmacion("bloquear", usuario)}
+                              className="text-red-400 hover:text-red-300"
+                              title={t("userManagement.blockUser", "Bloquear usuario")}
+                            >
+                              &lt;XCircle size={18} />
+                            &lt;/button>
+                            &lt;button
+                              onClick={() => mostrarConfirmacion("suspender", usuario)}
+                              className="text-yellow-400 hover:text-yellow-300"
+                              title={t("userManagement.suspendUser", "Suspender usuario")}
+                            >
+                              &lt;AlertCircle size={18} />
+                            &lt;/button>
+                          &lt;/>
+                        )}
+
+                        &lt;button
+                          onClick={() => mostrarConfirmacion("eliminar", usuario)}
+                          className="text-gray-400 hover:text-gray-300"
+                          title={t("userManagement.deleteUser", "Eliminar usuario")}
+                        >
+                          &lt;Trash2 size={18} />
+                        &lt;/button>
+                      &lt;/div>
+                    &lt;/td>
+                  &lt;/tr>
+                ))
+              )}
+            &lt;/tbody>
+          &lt;/table>
+        &lt;/div>
+      &lt;/div>
+
+      {/* Modal de confirmación de acciones */}
+      {modalConfirmacion.visible &amp;&amp; (
+        &lt;div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          &lt;div className="bg-gray-900 border border-gray-800 rounded-lg p-6 max-w-md w-full">
+            &lt;h3 className="text-xl font-bold text-white mb-4">
+              {modalConfirmacion.accion === "aprobar"
+                ? t("userManagement.activateUser", "Activar usuario")
+                : modalConfirmacion.accion === "bloquear"
+                  ? t("userManagement.blockUser", "Bloquear usuario")
+                  : modalConfirmacion.accion === "suspender"
+                    ? t("userManagement.suspendUser", "Suspender usuario")
+                    : t("userManagement.deleteUser", "Eliminar usuario")}
+            &lt;/h3>
+            &lt;p className="text-[#C0C0C0] mb-6">
+              {modalConfirmacion.accion === "aprobar"
+                ? t(
+                    "userManagement.confirmActivation",
+                    "¿Estás seguro de que deseas activar a este usuario? Podrá acceder a la plataforma.",
+                  )
+                : modalConfirmacion.accion === "bloquear"
+                  ? t(
+                      "userManagement.confirmBlocking",
+                      "¿Estás seguro de que deseas bloquear a este usuario? No podrá acceder a la plataforma.",
+                    )
+                  : modalConfirmacion.accion === "suspender"
+                    ? t(
+                        "userManagement.confirmSuspension",
+                        "¿Estás seguro de que deseas suspender a este usuario? No podrá acceder a la plataforma temporalmente.",
+                      )
+                    : t(
+                        "userManagement.confirmDeletion",
+                        "¿Estás seguro de que deseas eliminar a este usuario? Esta acción no se puede deshacer.",
+                      )}
+            &lt;/p>
+            &lt;div className="flex justify-end space-x-3">
+              &lt;button
+                onClick={() => setModalConfirmacion({ visible: false, accion: null, usuario: null })}
+                className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+                disabled={actualizando}
+              >
+                {t("userManagement.cancel", "Cancelar")}
+              &lt;/button>
+              &lt;button
+                onClick={ejecutarAccion}
+                className={`px-4 py-2 rounded-md ${
+                  modalConfirmacion.accion === "aprobar"
+                    ? "bg-green-700 hover:bg-green-600 text-white"
+                    : modalConfirmacion.accion === "bloquear"
+                      ? "bg-red-700 hover:bg-red-600 text-white"
+                      : modalConfirmacion.accion === "suspender"
+                        ? "bg-yellow-700 hover:bg-yellow-600 text-white"
+                        : "bg-red-700 hover:bg-red-600 text-white"
+                }`}
+                disabled={actualizando}
+              >
+                {actualizando
+                  ? t("userManagement.processing", "Procesando...")
+                  : modalConfirmacion.accion === "aprobar"
+                    ? t("userManagement.approve", "Aprobar")
+                    : modalConfirmacion.accion === "bloquear"
+                      ? t("userManagement.block", "Bloquear")
+                      : modalConfirmacion.accion === "suspender"
+                        ? t("userManagement.suspend", "Suspender")
+                        : t("userManagement.delete", "Eliminar")}
+              &lt;/button>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      )}
+    &lt;/div>
+  )
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> on Mon Jun 09 2025 13:51:24 GMT+0200 (hora de verano de Europa central) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>

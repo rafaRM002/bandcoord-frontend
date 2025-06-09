@@ -1,3 +1,10 @@
+/**
+ * @file NuevaPassword.jsx
+ * @module pages/RestablecerPassword/NuevaPassword
+ * @description Página para restablecer la contraseña de un usuario mediante un enlace con token. Permite validar el token, introducir y confirmar la nueva contraseña, mostrando mensajes de éxito o error. Utiliza traducción internacionalizada.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -6,21 +13,43 @@ import { Lock, Eye, EyeOff, CheckCircle, AlertCircle } from "lucide-react"
 import api from "../../api/axios"
 import { useTranslation } from "../../hooks/useTranslation"
 
+/**
+ * Componente para restablecer la contraseña de usuario.
+ * Permite validar el token, introducir nueva contraseña y confirmarla.
+ * @component
+ * @returns {JSX.Element} Página de restablecimiento de contraseña.
+ */
 export default function NuevaPassword() {
+  /** Hook de traducción */
   const { t } = useTranslation()
+  /** Hook de navegación */
   const navigate = useNavigate()
+  /** Hook de localización para obtener parámetros de la URL */
   const location = useLocation()
+  /** Token de restablecimiento */
   const [token, setToken] = useState("")
+  /** Email asociado al token */
   const [email, setEmail] = useState("")
+  /** Nueva contraseña */
   const [password, setPassword] = useState("")
+  /** Confirmación de la nueva contraseña */
   const [passwordConfirmation, setPasswordConfirmation] = useState("")
+  /** Mostrar/ocultar nueva contraseña */
   const [showPassword, setShowPassword] = useState(false)
+  /** Mostrar/ocultar confirmación de contraseña */
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  /** Estado de carga del proceso */
   const [isLoading, setIsLoading] = useState(false)
+  /** Mensaje de error */
   const [error, setError] = useState("")
+  /** Estado de éxito */
   const [success, setSuccess] = useState(false)
+  /** Error de token inválido */
   const [tokenError, setTokenError] = useState(false)
 
+  /**
+   * Efecto para extraer token y email de la URL y verificar el token.
+   */
   useEffect(() => {
     // Extraer token y email de los parámetros de la URL
     const params = new URLSearchParams(location.search)
@@ -51,6 +80,12 @@ export default function NuevaPassword() {
     verifyToken()
   }, [location])
 
+  /**
+   * Envía el formulario para restablecer la contraseña.
+   * Valida coincidencia y longitud mínima.
+   * @async
+   * @param {Object} e - Evento de envío.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
@@ -97,6 +132,7 @@ export default function NuevaPassword() {
     }
   }
 
+  // Renderizado para token inválido
   if (tokenError) {
     return (
       <div className="flex justify-center items-center min-h-[calc(100vh-64px)] py-8 px-4">
@@ -130,6 +166,7 @@ export default function NuevaPassword() {
     )
   }
 
+  // Renderizado principal del formulario de restablecimiento
   return (
     <div className="flex justify-center items-center min-h-[calc(100vh-64px)] py-8 px-4">
       <div className="w-full max-w-md mx-auto">

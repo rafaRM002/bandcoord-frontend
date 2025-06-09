@@ -1,3 +1,10 @@
+/**
+ * @file RestablecerPassword.jsx
+ * @module pages/RestablecerPassword/RestablecerPassword
+ * @description Página para solicitar el restablecimiento de contraseña. Permite al usuario introducir su email para recibir instrucciones y muestra mensajes de éxito o error. Utiliza traducción internacionalizada.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState } from "react"
@@ -6,13 +13,29 @@ import { ArrowLeft, Mail, Send, CheckCircle } from "lucide-react"
 import api from "../../api/axios"
 import { useTranslation } from "../../hooks/useTranslation"
 
+/**
+ * Componente para solicitar el restablecimiento de contraseña.
+ * Permite enviar el email y muestra mensajes según el resultado.
+ * @component
+ * @returns {JSX.Element} Página de solicitud de restablecimiento.
+ */
 export default function RestablecerPassword() {
+  /** Hook de traducción */
   const { t } = useTranslation()
+  /** Email introducido por el usuario */
   const [email, setEmail] = useState("")
+  /** Estado de carga del proceso */
   const [isLoading, setIsLoading] = useState(false)
+  /** Mensaje de error */
   const [error, setError] = useState("")
+  /** Estado de éxito */
   const [success, setSuccess] = useState(false)
 
+  /**
+   * Envía la solicitud de restablecimiento de contraseña.
+   * @async
+   * @param {Object} e - Evento de envío.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
@@ -35,6 +58,7 @@ export default function RestablecerPassword() {
     }
   }
 
+  // Renderizado principal del formulario de restablecimiento
   return (
     <div className="flex justify-center items-center min-h-[calc(100vh-64px)] py-8 px-4">
       <div className="w-full max-w-md mx-auto">

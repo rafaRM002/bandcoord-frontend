@@ -1,3 +1,11 @@
+/**
+ * @file App.css
+ * @module App
+ * @description Estilos globales para la aplicación BandCoord. Incluye estilos para el contenedor principal, logotipo, animaciones, tarjetas y clases auxiliares. Utiliza animaciones CSS y media queries para mejorar la experiencia visual.
+ * @author Rafael Rodriguez Mengual
+ */
+
+/* Contenedor principal de la aplicación */
 #root {
   max-width: 1280px;
   max-height: 98%;
@@ -6,19 +14,25 @@
   text-align: center;
 }
 
+/* Estilos para el logotipo */
 .logo {
   height: 6em;
   padding: 1.5em;
   will-change: filter;
   transition: filter 300ms;
 }
+
+/* Sombra al pasar el ratón por el logo */
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
+/* Sombra especial para el logo de React */
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
+/* Animación de giro para el logo */
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
@@ -28,16 +42,19 @@
   }
 }
 
+/* Aplica animación de giro solo si el usuario no prefiere reducir movimiento */
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
   }
 }
 
+/* Estilos para tarjetas */
 .card {
   padding: 2em;
 }
 
+/* Clase auxiliar para textos de documentación */
 .read-the-docs {
   color: #888;
 }

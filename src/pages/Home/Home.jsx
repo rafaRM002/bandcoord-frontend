@@ -1,3 +1,10 @@
+/**
+ * @file Home.jsx
+ * @module pages/Home/Home
+ * @description Página principal de la aplicación. Muestra la home pública para usuarios no autenticados y un dashboard personalizado para usuarios autenticados, incluyendo accesos rápidos, próximos eventos, composiciones recientes y panel de administración para administradores.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { Link } from "react-router-dom"
@@ -6,6 +13,15 @@ import { useTranslation } from "../../hooks/useTranslation"
 import { useState, useEffect } from "react"
 import axios from "../../api/axios"
 
+/**
+ * Componente principal de la página Home.
+ * Muestra la home pública o el dashboard según el estado de autenticación.
+ * @component
+ * @param {Object} props
+ * @param {Object|null} props.user - Usuario autenticado (si existe).
+ * @param {boolean} props.loading - Estado de carga.
+ * @returns {JSX.Element} Página principal.
+ */
 export default function Home({ user, loading }) {
   if (loading) {
     return (
@@ -24,7 +40,11 @@ export default function Home({ user, loading }) {
   return <PublicHome />
 }
 
-// Función para obtener el color del tipo de evento
+/**
+ * Devuelve la clase de color para el tipo de evento.
+ * @param {string} tipo - Tipo de evento.
+ * @returns {string} Clases de color.
+ */
 const getEventTypeColor = (tipo) => {
   switch (tipo?.toLowerCase()) {
     case "ensayo":
@@ -40,7 +60,11 @@ const getEventTypeColor = (tipo) => {
   }
 }
 
-// Componente para usuarios no autenticados
+/**
+ * Componente de la home pública para usuarios no autenticados.
+ * @component
+ * @returns {JSX.Element}
+ */
 function PublicHome() {
   const { t } = useTranslation()
   return (
@@ -223,15 +247,28 @@ function PublicHome() {
   )
 }
 
-// Componente para usuarios autenticados (dashboard)
+/**
+ * Dashboard para usuarios autenticados.
+ * Muestra bienvenida, accesos rápidos, próximos eventos, composiciones recientes y panel de administración si es admin.
+ * @component
+ * @param {Object} props
+ * @param {Object} props.user - Usuario autenticado.
+ * @returns {JSX.Element}
+ */
 function UserDashboard({ user }) {
   const { t } = useTranslation()
+  /** Próximos eventos */
   const [upcomingEvents, setUpcomingEvents] = useState([])
+  /** Composiciones recientes */
   const [recentCompositions, setRecentCompositions] = useState([])
+  /** Estado de carga de eventos */
   const [loadingEvents, setLoadingEvents] = useState(true)
+  /** Estado de carga de composiciones */
   const [loadingCompositions, setLoadingCompositions] = useState(true)
 
-  // Cargar eventos próximos
+  /**
+   * Carga los próximos eventos al montar el componente.
+   */
   useEffect(() => {
     const fetchUpcomingEvents = async () => {
       try {
@@ -259,7 +296,9 @@ function UserDashboard({ user }) {
     fetchUpcomingEvents()
   }, [])
 
-  // Cargar composiciones recientes
+  /**
+   * Carga las composiciones recientes al montar el componente.
+   */
   useEffect(() => {
     const fetchRecentCompositions = async () => {
       try {
@@ -268,12 +307,12 @@ function UserDashboard({ user }) {
         // La respuesta directa es el array de composiciones
         const composiciones = Array.isArray(response.data) ? response.data : []
 
-        console.log("Composiciones recibidas:", composiciones)
+        // console.log("Composiciones recibidas:", composiciones)
 
         // Ordenar por created_at descendente y tomar las 3 más recientes
         const recentComps = composiciones.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 3)
 
-        console.log("Composiciones ordenadas:", recentComps)
+        // console.log("Composiciones ordenadas:", recentComps)
         setRecentCompositions(recentComps)
       } catch (error) {
         console.error("Error al cargar composiciones:", error)
@@ -453,6 +492,15 @@ function UserDashboard({ user }) {
   )
 }
 
+/**
+ * Tarjeta de funcionalidad destacada para la home pública.
+ * @component
+ * @param {Object} props
+ * @param {JSX.Element} props.icon - Icono a mostrar.
+ * @param {string} props.title - Título de la funcionalidad.
+ * @param {string} props.description - Descripción de la funcionalidad.
+ * @returns {JSX.Element}
+ */
 function FeatureCard({ icon, title, description }) {
   return (
     <div className="bg-black/50 p-6 rounded-lg border border-gray-800 hover:border-[#C0C0C0] transition-colors duration-300 h-full">
@@ -463,6 +511,16 @@ function FeatureCard({ icon, title, description }) {
   )
 }
 
+/**
+ * Tarjeta de acceso rápido para el dashboard de usuario.
+ * @component
+ * @param {Object} props
+ * @param {JSX.Element} props.icon - Icono a mostrar.
+ * @param {string} props.title - Título del acceso.
+ * @param {string} props.description - Descripción del acceso.
+ * @param {string} props.link - Ruta de navegación.
+ * @returns {JSX.Element}
+ */
 function QuickAccessCard({ icon, title, description, link }) {
   return (
     <Link to={link} className="block">
@@ -479,6 +537,15 @@ function QuickAccessCard({ icon, title, description, link }) {
   )
 }
 
+/**
+ * Tarjeta de acceso rápido para el panel de administración.
+ * @component
+ * @param {Object} props
+ * @param {JSX.Element} props.icon - Icono a mostrar.
+ * @param {string} props.title - Título del acceso.
+ * @param {string} props.link - Ruta de navegación.
+ * @returns {JSX.Element}
+ */
 function AdminCard({ icon, title, link }) {
   return (
     <Link to={link} className="block">

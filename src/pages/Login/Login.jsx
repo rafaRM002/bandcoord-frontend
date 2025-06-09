@@ -1,3 +1,10 @@
+/**
+ * @file Login.jsx
+ * @module pages/Login/Login
+ * @description Página de inicio de sesión para usuarios de BandCoord. Permite autenticarse mediante email y contraseña, mostrando mensajes de error y enlaces a registro y recuperación de contraseña.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState } from "react"
@@ -6,20 +13,42 @@ import { Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react"
 import { useAuth } from "../../context/AuthContext"
 import { useTranslation } from "../../hooks/useTranslation"
 
+/**
+ * Componente de formulario de inicio de sesión.
+ * Permite al usuario autenticarse con email y contraseña.
+ * @component
+ * @returns {JSX.Element} Formulario de login.
+ */
 export default function Login() {
+  /** Estado del formulario de login */
   const [form, setForm] = useState({
     email: "",
     password: "",
   })
+  /** Estado de carga del botón */
   const [isLoading, setIsLoading] = useState(false)
+  /** Mostrar u ocultar contraseña */
   const [showPassword, setShowPassword] = useState(false)
+  /** Mensaje de error */
   const [error, setError] = useState("")
+  /** Hook de navegación */
   const navigate = useNavigate()
+  /** Función de login del contexto de autenticación */
   const { login } = useAuth()
+  /** Hook de traducción */
   const { t } = useTranslation()
 
+  /**
+   * Maneja el cambio en los campos del formulario.
+   * @param {Object} e - Evento de cambio.
+   */
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
+  /**
+   * Envía el formulario de login.
+   * @async
+   * @param {Object} e - Evento de envío.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
@@ -41,6 +70,7 @@ export default function Login() {
     }
   }
 
+  // Renderizado del formulario de login
   return (
     <div className="flex justify-center items-center min-h-[calc(100vh-64px)] py-8 px-4">
       <div className="w-full max-w-md mx-auto">

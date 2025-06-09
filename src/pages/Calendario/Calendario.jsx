@@ -1,12 +1,25 @@
+/**
+ * @file Calendario.jsx
+ * @module pages/Calendario/Calendario
+ * @description Componente principal del calendario de eventos. Permite visualizar eventos en un calendario mensual,
+ * seleccionar días, ver detalles de eventos y, si el usuario es admin, cancelar eventos futuros.
+ * Incluye paginación, leyenda de tipos, notificaciones y traducción de textos.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight, CalendarIcon, Clock, MapPin, Music, X, AlertTriangle, Check } from "lucide-react"
 import api from "../../api/axios"
 import { useTranslation } from "../../hooks/useTranslation"
-// Importar useAuth
 import { useAuth } from "../../context/AuthContext"
 
+/**
+ * Componente principal del calendario de eventos.
+ * @function
+ * @returns {JSX.Element} Calendario interactivo con eventos y detalles.
+ */
 export default function Calendario() {
   const { t } = useTranslation()
   const [eventos, setEventos] = useState([])
@@ -29,18 +42,21 @@ export default function Calendario() {
   // Estado para notificaciones
   const [notification, setNotification] = useState({ show: false, message: "", type: "" })
 
-  // Dentro del componente:
+  // Saber si el usuario es admin
   const { isAdmin } = useAuth()
 
+  /**
+   * Efecto para cargar los eventos al montar el componente.
+   * Llama a la API y guarda los eventos en el estado.
+   */
   useEffect(() => {
     const fetchEventos = async () => {
       try {
         setLoading(true)
         const response = await api.get("/eventos")
-
         // Acceder correctamente a los eventos en la estructura de respuesta
         const eventosData = response.data?.eventos || response.data?.data?.eventos || []
-        console.log("Eventos cargados:", eventosData)
+        // console.log("Eventos cargados:", eventosData)
         setEventos(eventosData)
       } catch (error) {
         console.error("Error al cargar eventos:", error)
@@ -48,10 +64,12 @@ export default function Calendario() {
         setLoading(false)
       }
     }
-
     fetchEventos()
   }, [])
 
+  /**
+   * Efecto para actualizar los eventos del día cuando cambia la fecha seleccionada o la lista de eventos.
+   */
   useEffect(() => {
     if (selectedDate && eventos.length > 0) {
       // Formatear la fecha seleccionada a YYYY-MM-DD para comparar
@@ -60,17 +78,17 @@ export default function Calendario() {
       const day = String(selectedDate.getDate()).padStart(2, "0")
       const fechaFormateada = `${year}-${month}-${day}`
 
-      console.log("Fecha seleccionada formateada:", fechaFormateada)
+      // console.log("Fecha seleccionada formateada:", fechaFormateada)
 
       // Filtrar eventos que coincidan con la fecha seleccionada
       const eventosEnFecha = eventos.filter((evento) => {
         // Extraer solo la parte de la fecha (YYYY-MM-DD) del evento
         const fechaEvento = evento.fecha.split("T")[0]
-        console.log(`Comparando: ${fechaEvento} con ${fechaFormateada}`)
+        // console.log(`Comparando: ${fechaEvento} con ${fechaFormateada}`)
         return fechaEvento === fechaFormateada
       })
 
-      console.log("Eventos encontrados para la fecha:", eventosEnFecha)
+      // console.log("Eventos encontrados para la fecha:", eventosEnFecha)
       setEventosDelDia(eventosEnFecha)
       // Resetear la página actual cuando se selecciona una nueva fecha
       setCurrentEventPage(1)
@@ -79,14 +97,29 @@ export default function Calendario() {
     }
   }, [selectedDate, eventos])
 
+  /**
+   * Devuelve el número de días de un mes.
+   * @param {number} year - Año.
+   * @param {number} month - Mes (0-indexado).
+   * @returns {number} Días en el mes.
+   */
   const getDaysInMonth = (year, month) => {
     return new Date(year, month + 1, 0).getDate()
   }
 
+  /**
+   * Devuelve el día de la semana del primer día del mes.
+   * @param {number} year - Año.
+   * @param {number} month - Mes (0-indexado).
+   * @returns {number} Día de la semana (0=domingo).
+   */
   const getFirstDayOfMonth = (year, month) => {
     return new Date(year, month, 1).getDay()
   }
 
+  /**
+   * Cambia al mes anterior.
+   */
   const handlePrevMonth = () => {
     setCurrentDate((prev) => {
       const prevMonth = new Date(prev)
@@ -96,6 +129,9 @@ export default function Calendario() {
     setSelectedDate(null)
   }
 
+  /**
+   * Cambia al mes siguiente.
+   */
   const handleNextMonth = () => {
     setCurrentDate((prev) => {
       const nextMonth = new Date(prev)
@@ -105,6 +141,10 @@ export default function Calendario() {
     setSelectedDate(null)
   }
 
+  /**
+   * Selecciona un día del calendario.
+   * @param {number} day - Día del mes.
+   */
   const handleDateClick = (day) => {
     if (day) {
       const clickedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
@@ -112,6 +152,11 @@ export default function Calendario() {
     }
   }
 
+  /**
+   * Devuelve los eventos de un día concreto del mes actual.
+   * @param {number} day - Día del mes.
+   * @returns {Array} Lista de eventos para ese día.
+   */
   const getEventosForDay = (day) => {
     // Formatear la fecha a YYYY-MM-DD para comparar
     const year = currentDate.getFullYear()

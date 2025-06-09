@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>pages/Instrumentos/Instrumentos.jsx - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-App.html">App</a><ul class='methods'><li data-type='method'><a href="module-App.html#~App">App</a></li><li data-type='method'><a href="module-App.html#~AppContent">AppContent</a></li></ul></li><li><a href="module-api_axios.html">api/axios</a></li><li><a href="module-components_AdminRoute.html">components/AdminRoute</a></li><li><a href="module-components_HelpButton_AboutModal.html">components/HelpButton/AboutModal</a></li><li><a href="module-components_HelpButton_HelpButton.html">components/HelpButton/HelpButton</a></li><li><a href="module-components_HelpButton_HelpModal.html">components/HelpButton/HelpModal</a></li><li><a href="module-components_MemberRoute.html">components/MemberRoute</a></li><li><a href="module-components_Navigation_Footer.html">components/Navigation/Footer</a></li><li><a href="module-components_Navigation_Navbar.html">components/Navigation/Navbar</a></li><li><a href="module-components_PasswordValidator.html">components/PasswordValidator</a></li><li><a href="module-components_ProtectedRoute.html">components/ProtectedRoute</a></li><li><a href="module-context_AuthContext.html">context/AuthContext</a><ul class='methods'><li data-type='method'><a href="module-context_AuthContext.html#.useAuth">useAuth</a></li><li data-type='method'><a href="module-context_AuthContext.html#~getCsrfCookie">getCsrfCookie</a></li></ul></li><li><a href="module-context_LanguageContext.html">context/LanguageContext</a><ul class='methods'><li data-type='method'><a href="module-context_LanguageContext.html#.useLanguage">useLanguage</a></li></ul></li><li><a href="module-hooks_useTranslation.html">hooks/useTranslation</a><ul class='methods'><li data-type='method'><a href="module-hooks_useTranslation.html#.useTranslation">useTranslation</a></li></ul></li><li><a href="module-main.html">main</a></li><li><a href="module-pages_Admin_GestionUsuarios.html">pages/Admin/GestionUsuarios</a></li><li><a href="module-pages_Calendario_Calendario.html">pages/Calendario/Calendario</a></li><li><a href="module-pages_Composiciones_Composiciones.html">pages/Composiciones/Composiciones</a></li><li><a href="module-pages_ComposicionesInterpretadas_ComposicionesInterpretadas.html">pages/ComposicionesInterpretadas/ComposicionesInterpretadas</a><ul class='methods'><li data-type='method'><a href="module-pages_ComposicionesInterpretadas_ComposicionesInterpretadas.html#~ComposicionesInterpretadas">ComposicionesInterpretadas</a></li></ul></li><li><a href="module-pages_ConfirmacionEventos_ConfirmacionEventos.html">pages/ConfirmacionEventos/ConfirmacionEventos</a></li><li><a href="module-pages_Entidades_Entidades.html">pages/Entidades/Entidades</a></li><li><a href="module-pages_EventoUsuario_EventoUsuario.html">pages/EventoUsuario/EventoUsuario</a></li><li><a href="module-pages_Eventos_Eventos.html">pages/Eventos/Eventos</a></li><li><a href="module-pages_Eventos_FormularioEvento.html">pages/Eventos/FormularioEvento</a></li><li><a href="module-pages_Home_Home.html">pages/Home/Home</a><ul class='methods'><li data-type='method'><a href="module-pages_Home_Home.html#~AdminCard">AdminCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~FeatureCard">FeatureCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~PublicHome">PublicHome</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~QuickAccessCard">QuickAccessCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~UserDashboard">UserDashboard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~getEventTypeColor">getEventTypeColor</a></li></ul></li><li><a href="module-pages_Instrumentos_Instrumentos.html">pages/Instrumentos/Instrumentos</a></li><li><a href="module-pages_Login_Login.html">pages/Login/Login</a></li><li><a href="module-pages_Mensajes_DetalleMensaje.html">pages/Mensajes/DetalleMensaje</a></li><li><a href="module-pages_Mensajes_FormularioMensaje.html">pages/Mensajes/FormularioMensaje</a></li><li><a href="module-pages_Mensajes_Mensajes.html">pages/Mensajes/Mensajes</a></li><li><a href="module-pages_MensajesUsuario_MensajesUsuario.html">pages/MensajesUsuario/MensajesUsuario</a><ul class='methods'><li data-type='method'><a href="module-pages_MensajesUsuario_MensajesUsuario.html#~MensajesUsuario">MensajesUsuario</a></li></ul></li><li><a href="module-pages_MinimosEvento_MinimosEvento.html">pages/MinimosEvento/MinimosEvento</a></li><li><a href="module-pages_NotFound_NotFound.html">pages/NotFound/NotFound</a></li><li><a href="module-pages_Perfil_Perfil.html">pages/Perfil/Perfil</a></li><li><a href="module-pages_Prestamos_Prestamos.html">pages/Prestamos/Prestamos</a></li><li><a href="module-pages_Register_Register.html">pages/Register/Register</a></li><li><a href="module-pages_RegistroPendiente_RegistroPendiente.html">pages/RegistroPendiente/RegistroPendiente</a></li><li><a href="module-pages_RestablecerPassword_NuevaPassword.html">pages/RestablecerPassword/NuevaPassword</a></li><li><a href="module-pages_RestablecerPassword_RestablecerPassword.html">pages/RestablecerPassword/RestablecerPassword</a></li><li><a href="module-pages_TiposInstrumento_TiposInstrumento.html">pages/TiposInstrumento/TiposInstrumento</a></li><li><a href="module-utils_translations.html">utils/translations</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+
+    
+    <h1 class="page-title">pages/Instrumentos/Instrumentos.jsx</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file Instrumentos.jsx
+ * @module pages/Instrumentos/Instrumentos
+ * @description Página para la gestión de instrumentos musicales. Permite crear, editar, eliminar, buscar, filtrar y paginar instrumentos, así como gestionar préstamos asociados y actualizar cantidades de tipos de instrumento. Solo los administradores pueden modificar datos.
+ * @author Rafael Rodriguez Mengual
+ */
+
+"use client"
+
+import { useState, useEffect } from "react"
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Search,
+  Music,
+  Filter,
+  ChevronLeft,
+  ChevronRight,
+  Save,
+  X,
+  AlertTriangle,
+  Info,
+} from "lucide-react"
+import api from "../../api/axios"
+import { useTranslation } from "../../hooks/useTranslation"
+import { useAuth } from "../../context/AuthContext"
+
+/**
+ * Componente principal para la gestión de instrumentos musicales.
+ * Permite listar, buscar, filtrar, crear, editar, eliminar y gestionar préstamos de instrumentos.
+ * @component
+ * @returns {JSX.Element} Página de instrumentos.
+ */
+export default function Instrumentos() {
+  /** Lista de instrumentos */
+  const [instrumentos, setInstrumentos] = useState([])
+  /** Estado de carga */
+  const [loading, setLoading] = useState(true)
+  /** Mensaje de error de conexión */
+  const [error, setError] = useState(null)
+  /** Término de búsqueda */
+  const [searchTerm, setSearchTerm] = useState("")
+  /** Filtro por tipo de instrumento */
+  const [tipoFilter, setTipoFilter] = useState("")
+  /** Lista de tipos de instrumento */
+  const [tiposInstrumento, setTiposInstrumento] = useState([])
+  /** Estado del modal de confirmación de borrado */
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  /** Número de serie del instrumento a eliminar */
+  const [instrumentoToDelete, setInstrumentoToDelete] = useState(null)
+  /** Hook de traducción */
+  const { t } = useTranslation()
+  /** Lista de usuarios */
+  const [usuarios, setUsuarios] = useState([])
+  /** Lista de préstamos */
+  const [prestamos, setPrestamos] = useState([])
+  /** Mensaje de éxito */
+  const [successMessage, setSuccessMessage] = useState(null)
+  /** Mensaje de error de operación */
+  const [errorMessage, setErrorMessage] = useState(null)
+
+  // Paginación
+  /** Página actual */
+  const [currentPage, setCurrentPage] = useState(1)
+  /** Elementos por página */
+  const [itemsPerPage] = useState(10)
+
+  // Modal para crear/editar instrumento
+  /** Estado del modal de formulario */
+  const [showModal, setShowModal] = useState(false)
+  /** Modo del modal: "create" o "edit" */
+  const [modalMode, setModalMode] = useState("create")
+  /** Instrumento actual para crear/editar */
+  const [currentInstrumento, setCurrentInstrumento] = useState({
+    numero_serie: "",
+    instrumento_tipo_id: "",
+    estado: "disponible",
+  })
+
+  /** Usuario seleccionado para préstamo */
+  const [selectedLoanUser, setSelectedLoanUser] = useState("")
+
+  /** Estado del modal de confirmación de creación */
+  const [showCreateConfirmModal, setShowCreateConfirmModal] = useState(false)
+
+  /** Si el usuario es administrador */
+  const { isAdmin } = useAuth()
+
+  /**
+   * Efecto para cargar datos al montar el componente.
+   */
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  /**
+   * Carga los datos de instrumentos, tipos, usuarios y préstamos.
+   * @async
+   */
+  const fetchData = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      // console.log("Intentando conectar a:", `${api.defaults.baseURL}/instrumentos`)
+
+      const [instrumentosRes, tiposRes, usuariosRes, prestamosRes] = await Promise.all([
+        api.get("/instrumentos"),
+        api.get("/tipo-instrumentos"),
+        api.get("/usuarios"),
+        api.get("/prestamos"),
+      ])
+
+      // console.log("Respuesta de instrumentos:", instrumentosRes)
+      // console.log("Respuesta de tipos:", tiposRes)
+      // console.log("Respuesta de usuarios:", usuariosRes)
+      // console.log("Respuesta de préstamos:", prestamosRes)
+
+      setInstrumentos(instrumentosRes.data)
+      setTiposInstrumento(tiposRes.data)
+
+      // console.log("🔍 Estructura de tipos de instrumento:", tiposRes.data)
+      // if (tiposRes.data &amp;&amp; tiposRes.data.length > 0) {
+      //   console.log("🔍 Primer tipo de instrumento:", tiposRes.data[0])
+      //   console.log("🔍 Claves disponibles:", Object.keys(tiposRes.data[0]))
+      // }
+
+      // Procesar datos de usuarios
+      let usuariosData = []
+      if (usuariosRes.data &amp;&amp; Array.isArray(usuariosRes.data)) {
+        usuariosData = usuariosRes.data
+      } else if (usuariosRes.data &amp;&amp; usuariosRes.data.data &amp;&amp; Array.isArray(usuariosRes.data.data)) {
+        usuariosData = usuariosRes.data.data
+      }
+      setUsuarios(usuariosData)
+
+      // Procesar datos de préstamos
+      let prestamosData = []
+      if (prestamosRes.data &amp;&amp; Array.isArray(prestamosRes.data)) {
+        prestamosData = prestamosRes.data
+      } else if (prestamosRes.data &amp;&amp; prestamosRes.data.data &amp;&amp; Array.isArray(prestamosRes.data.data)) {
+        prestamosData = prestamosRes.data.data
+      }
+      setPrestamos(prestamosData)
+
+      // console.log("Préstamos procesados:", prestamosData)
+    } catch (error) {
+      console.error("Error al cargar datos:", error)
+      setError(`Error al cargar datos: ${error.message}`)
+
+      if (error.response) {
+        console.error("Respuesta del servidor:", error.response.status, error.response.data)
+        setError(`Error del servidor: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+      } else if (error.request) {
+        console.error("No se recibió respuesta del servidor")
+        setError("No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.")
+      } else {
+        console.error("Error de configuración:", error.message)
+        setError(`Error de configuración: ${error.message}`)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  /**
+   * Elimina un instrumento y sus préstamos asociados, y actualiza la cantidad del tipo.
+   * @async
+   */
+  const handleDelete = async () => {
+    if (!instrumentoToDelete) return
+
+    try {
+      // Obtener información del instrumento antes de eliminarlo para decrementar la cantidad
+      const instrumentoAEliminar = instrumentos.find((i) => i.numero_serie === instrumentoToDelete)
+      // console.log("🔍 Instrumento a eliminar:", instrumentoAEliminar)
+
+      // Eliminar préstamos activos asociados
+      const prestamosActivos = prestamos.filter(
+        (prestamo) =>
+          String(prestamo.num_serie) === String(instrumentoToDelete) &amp;&amp;
+          (!prestamo.fecha_devolucion || prestamo.fecha_devolucion === ""),
+      )
+
+      // console.log(`🔄 Eliminando ${prestamosActivos.length} préstamos activos para instrumento ${instrumentoToDelete}`)
+
+      for (const prestamo of prestamosActivos) {
+        try {
+          await api.delete(`/prestamos/${prestamo.num_serie}/${prestamo.usuario_id}`)
+          // console.log(`✅ Préstamo eliminado: ${prestamo.num_serie}/${prestamo.usuario_id}`)
+        } catch (error) {
+          console.error(`❌ Error al eliminar préstamo ${prestamo.num_serie}/${prestamo.usuario_id}:`, error)
+        }
+      }
+
+      // Eliminar el instrumento
+      await api.delete(`/instrumentos/${instrumentoToDelete}`)
+      // console.log(`✅ Instrumento ${instrumentoToDelete} eliminado`)
+
+      // Decrementar la cantidad del tipo de instrumento
+      if (instrumentoAEliminar &amp;&amp; instrumentoAEliminar.instrumento_tipo_id) {
+        try {
+          // console.log(`📊 Decrementando cantidad de tipo ${instrumentoAEliminar.instrumento_tipo_id}`)
+
+          const tipoActual = tiposInstrumento.find((t) => t.instrumento === instrumentoAEliminar.instrumento_tipo_id)
+          if (tipoActual &amp;&amp; tipoActual.cantidad > 0) {
+            await api.put(`/tipo-instrumentos/${encodeURIComponent(instrumentoAEliminar.instrumento_tipo_id)}`, {
+              cantidad: tipoActual.cantidad - 1,
+            })
+            // console.log(`✅ Cantidad de tipo ${instrumentoAEliminar.instrumento_tipo_id} decrementada`)
+          } else {
+            // console.warn(`⚠️ No se pudo decrementar la cantidad del tipo ${instrumentoAEliminar.instrumento_tipo_id}`)
+          }
+        } catch (error) {
+          console.error("❌ Error al decrementar cantidad de tipo:", error)
+        }
+      }
+
+      setInstrumentos(instrumentos.filter((item) => item.numero_serie !== instrumentoToDelete))
+      setShowDeleteModal(false)
+      setInstrumentoToDelete(null)
+
+      setSuccessMessage(t("instruments.deleteConfirmation.successMessage"))
+      setTimeout(() => setSuccessMessage(null), 3000)
+
+      await fetchData()
+    } catch (error) {
+      console.error("Error al eliminar instrumento:", error)
+      setErrorMessage(`Error al eliminar instrumento: ${error.message}`)
+      setTimeout(() => setErrorMessage(null), 5000)
+    }
+  }
+
+  /**
+   * Abre el modal de confirmación de borrado para un instrumento.
+   * @param {string} numSerie - Número de serie del instrumento.
+   */
+  const confirmDelete = (numSerie) => {
+    setInstrumentoToDelete(numSerie)
+    setShowDeleteModal(true)
+  }
+
+  /**
+   * Muestra el modal de confirmación antes de crear un instrumento.
+   */
+  const handleCreateInstrument = () => {
+    setShowCreateConfirmModal(true)
+  }
+
+  /**
+   * Confirma la creación y abre el modal principal.
+   */
+  const confirmCreateInstrument = () => {
+    setShowCreateConfirmModal(false)
+    handleOpenModal("create")
+  }
+
+  /**
+   * Abre el modal para crear o editar un instrumento.
+   * @param {"create"|"edit"} mode - Modo del modal.
+   * @param {Object|null} instrumento - Instrumento a editar (opcional).
+   */
+  const handleOpenModal = async (mode, instrumento = null) => {
+    setModalMode(mode)
+    if (mode === "edit" &amp;&amp; instrumento) {
+      // console.log("Opening edit modal for instrument:", instrumento)
+      let usuarioPrestamo = ""
+
+      // Si el instrumento está prestado, buscar el préstamo activo
+      if (instrumento.estado === "prestado") {
+        // console.log("Fetching loan info for instrument:", instrumento.numero_serie)
+        // console.log("Available loans:", prestamos)
+        const prestamoActivo = prestamos.find((prestamo) => {
+          // console.log("Comparing loan:", {
+          //   prestamoNumSerie: prestamo.num_serie,
+          //   instrumentoNumSerie: instrumento.numero_serie,
+          //   fechaDevolucion: prestamo.fecha_devolucion,
+          //   isActive: !prestamo.fecha_devolucion || prestamo.fecha_devolucion === "",
+          // })
+          return (
+            String(prestamo.num_serie) === String(instrumento.numero_serie) &amp;&amp;
+            (!prestamo.fecha_devolucion || prestamo.fecha_devolucion === "")
+          )
+        })
+
+        // console.log("Active loan found:", prestamoActivo)
+
+        if (prestamoActivo &amp;&amp; prestamoActivo.usuario_id) {
+          usuarioPrestamo = String(prestamoActivo.usuario_id)
+          // console.log("Setting user loan to:", usuarioPrestamo)
+          // const usuarioEncontrado = usuarios.find((u) => String(u.id) === usuarioPrestamo)
+          // console.log("User found in users list:", usuarioEncontrado)
+        } else {
+          // console.log("No active loan found for instrument:", instrumento.numero_serie)
+        }
+      }
+
+      setCurrentInstrumento({
+        numero_serie: instrumento.numero_serie,
+        instrumento_tipo_id: String(instrumento.instrumento_tipo_id),
+        estado: String(instrumento.estado),
+      })
+
+      setSelectedLoanUser(usuarioPrestamo)
+    } else {
+      setCurrentInstrumento({
+        numero_serie: "",
+        instrumento_tipo_id: tiposInstrumento.length > 0 ? tiposInstrumento[0].instrumento : "",
+        estado: "disponible",
+      })
+      setSelectedLoanUser("")
+    }
+    setShowModal(true)
+  }
+
+  /**
+   * Cierra el modal de formulario de instrumento.
+   */
+  const handleCloseModal = () => {
+    setShowModal(false)
+    setCurrentInstrumento({
+      numero_serie: "",
+      instrumento_tipo_id: "",
+      estado: "disponible",
+    })
+    setSelectedLoanUser("")
+  }
+
+  /**
+   * Maneja el cambio en los campos del formulario de instrumento.
+   * @param {Object} e - Evento de cambio.
+   */
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    // console.log(`🔍 Input change: ${name} = ${value} (type: ${typeof value})`)
+    setCurrentInstrumento((prev) => ({
+      ...prev,
+      [name]: String(value),
+    }))
+  }
+
+  /**
+   * Maneja el cambio de usuario para préstamo.
+   * @param {Object} e - Evento de cambio.
+   */
+  const handleLoanUserChange = (e) => {
+    setSelectedLoanUser(e.target.value)
+  }
+
+  /**
+   * Limpia el usuario del préstamo si el estado cambia a distinto de "prestado".
+   */
+  useEffect(() => {
+    if (currentInstrumento.estado !== "prestado") {
+      setSelectedLoanUser("")
+    }
+  }, [currentInstrumento.estado])
+
+  /**
+   * Envía el formulario para crear o editar un instrumento y gestiona préstamos y cantidades.
+   * @async
+   * @param {Object} e - Evento de envío.
+   */
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    try {
+      if (modalMode === "create") {
+        // Determinar si se debe crear un préstamo
+        const needsLoan = currentInstrumento.estado === "prestado" &amp;&amp; selectedLoanUser
+
+        // Crear instrumento como disponible si va a ser prestado
+        const instrumentoData = {
+          numero_serie: currentInstrumento.numero_serie,
+          instrumento_tipo_id: currentInstrumento.instrumento_tipo_id,
+          estado: needsLoan ? "disponible" : currentInstrumento.estado,
+        }
+
+        // console.log("📝 Creando nuevo instrumento:", instrumentoData)
+        const response = await api.post("/instrumentos", instrumentoData)
+        // console.log("✅ Instrumento creado:", response.data)
+
+        // Incrementar cantidad en tipo_instrumentos
+        try {
+          const tipoActual = tiposInstrumento.find((t) => t.instrumento === currentInstrumento.instrumento_tipo_id)
+          if (tipoActual) {
+            // console.log(`📊 Actualizando cantidad de tipo ${currentInstrumento.instrumento_tipo_id}`)
+            await api.put(`/tipo-instrumentos/${encodeURIComponent(currentInstrumento.instrumento_tipo_id)}`, {
+              cantidad: tipoActual.cantidad + 1,
+            })
+            // console.log(`✅ Cantidad de tipo actualizada`)
+          }
+        } catch (error) {
+          console.error("❌ Error al actualizar cantidad de tipo:", error)
+        }
+
+        // Si se debe crear un préstamo, hacerlo ahora
+        if (needsLoan) {
+          try {
+            const fechaPrestamo = new Date().toISOString().split("T")[0]
+            // console.log(`🔄 Creando nuevo préstamo para instrumento ${currentInstrumento.numero_serie}`)
+
+            const prestamoData = {
+              num_serie: currentInstrumento.numero_serie,
+              usuario_id: Number.parseInt(selectedLoanUser),
+              fecha_prestamo: fechaPrestamo,
+              fecha_devolucion: "",
+            }
+
+            // console.log("📝 Datos del préstamo:", prestamoData)
+            await api.post("/prestamos", prestamoData)
+            // console.log("✅ Préstamo creado exitosamente")
+
+            // Actualizar el instrumento a estado prestado
+            // console.log(`🔄 Actualizando instrumento ${currentInstrumento.numero_serie} a estado prestado`)
+            await api.put(`/instrumentos/${currentInstrumento.numero_serie}`, {
+              estado: "prestado",
+              instrumento_tipo_id: currentInstrumento.instrumento_tipo_id,
+            })
+            // console.log(`✅ Instrumento actualizado a estado prestado`)
+          } catch (error) {
+            console.error("❌ Error al crear préstamo:", error)
+            if (error.response) {
+              console.error("Detalles del error:", error.response.data)
+            }
+            setErrorMessage(
+              `Error al crear préstamo: ${error.response?.data ? JSON.stringify(error.response.data) : error.message}`,
+            )
+            setTimeout(() => setErrorMessage(null), 5000)
+          }
+        }
+
+        // Actualizar el estado local con el nuevo instrumento
+        const finalInstrumento = {
+          ...response.data,
+          estado: needsLoan ? "prestado" : currentInstrumento.estado,
+        }
+        setInstrumentos([...instrumentos, finalInstrumento])
+
+        if (needsLoan) {
+          setSuccessMessage("Instrumento creado y préstamo registrado correctamente")
+        } else {
+          setSuccessMessage("Instrumento creado exitosamente")
+        }
+        setTimeout(() => setSuccessMessage(null), 3000)
+      } else {
+        // Edición de instrumento
+        const originalInstrumento = instrumentos.find((i) => i.numero_serie === currentInstrumento.numero_serie)
+
+        const instrumentoToUpdate = {
+          estado: currentInstrumento.estado,
+          instrumento_tipo_id: String(currentInstrumento.instrumento_tipo_id),
+        }
+
+        // console.log(`📝 Actualizando instrumento ${currentInstrumento.numero_serie}:`, instrumentoToUpdate)
+        const updateUrl = `/instrumentos/${currentInstrumento.numero_serie}`
+
+        // Actualizar instrumento si no es cambio a prestado (eso se gestiona aparte)
+        if (!(originalInstrumento.estado !== "prestado" &amp;&amp; currentInstrumento.estado === "prestado")) {
+          await api.put(updateUrl, instrumentoToUpdate)
+          // console.log(`✅ Instrumento ${currentInstrumento.numero_serie} actualizado`)
+        }
+
+        // Si cambia el tipo, actualizar cantidades
+        if (originalInstrumento.instrumento_tipo_id !== currentInstrumento.instrumento_tipo_id) {
+          try {
+            // console.log(
+            //   `📊 Actualizando cantidades por cambio de tipo: ${originalInstrumento.instrumento_tipo_id} -> ${currentInstrumento.instrumento_tipo_id}`,
+            // )
+            const tipoAnteriorRes = await api.get(
+              `/tipo-instrumentos/${encodeURIComponent(originalInstrumento.instrumento_tipo_id)}`,
+            )
+            const tipoNuevoRes = await api.get(
+              `/tipo-instrumentos/${encodeURIComponent(currentInstrumento.instrumento_tipo_id)}`,
+            )
+
+            if (tipoAnteriorRes.data.data &amp;&amp; tipoAnteriorRes.data.data.cantidad > 0) {
+              await api.put(`/tipo-instrumentos/${encodeURIComponent(originalInstrumento.instrumento_tipo_id)}`, {
+                cantidad: tipoAnteriorRes.data.data.cantidad - 1,
+              })
+              // console.log(`✅ Cantidad de tipo ${originalInstrumento.instrumento_tipo_id} decrementada`)
+            }
+
+            if (tipoNuevoRes.data.data) {
+              await api.put(`/tipo-instrumentos/${encodeURIComponent(currentInstrumento.instrumento_tipo_id)}`, {
+                cantidad: tipoNuevoRes.data.data.cantidad + 1,
+              })
+              // console.log(`✅ Cantidad de tipo ${currentInstrumento.instrumento_tipo_id} incrementada`)
+            }
+          } catch (error) {
+            console.error("❌ Error al actualizar cantidades de tipos:", error)
+          }
+        }
+
+        // Gestionar cambios de estado y préstamos
+        if (originalInstrumento.estado !== currentInstrumento.estado) {
+          if (originalInstrumento.estado === "prestado" &amp;&amp; currentInstrumento.estado !== "prestado") {
+            // Finalizar préstamo
+            try {
+              // console.log(`🔄 Finalizando préstamo para instrumento ${currentInstrumento.numero_serie}`)
+              const prestamoActivo = prestamos.find(
+                (prestamo) =>
+                  String(prestamo.num_serie) === String(currentInstrumento.numero_serie) &amp;&amp;
+                  (!prestamo.fecha_devolucion || prestamo.fecha_devolucion === ""),
+              )
+
+              if (prestamoActivo) {
+                await api.put(`/prestamos/${prestamoActivo.num_serie}/${prestamoActivo.usuario_id}`, {
+                  fecha_prestamo: prestamoActivo.fecha_prestamo,
+                  fecha_devolucion: new Date().toISOString().split("T")[0],
+                })
+                // console.log("✅ Préstamo finalizado automáticamente desde Instrumentos")
+              } else {
+                // console.log("⚠️ No se encontró un préstamo activo para finalizar")
+              }
+            } catch (error) {
+              console.error("❌ Error al finalizar préstamo:", error)
+            }
+          } else if (originalInstrumento.estado !== "prestado" &amp;&amp; currentInstrumento.estado === "prestado") {
+            // Crear nuevo préstamo
+            if (selectedLoanUser) {
+              try {
+                const fechaPrestamo = new Date().toISOString().split("T")[0]
+                // console.log(`🔄 Creando nuevo préstamo para instrumento ${currentInstrumento.numero_serie}`)
+
+                const prestamoData = {
+                  num_serie: currentInstrumento.numero_serie,
+                  usuario_id: Number.parseInt(selectedLoanUser),
+                  fecha_prestamo: fechaPrestamo,
+                }
+
+                // console.log("📝 Datos del préstamo:", prestamoData)
+                // console.log("📝 Endpoint del préstamo:", `/prestamos`)
+
+                await api.post(`/prestamos`, prestamoData)
+                // console.log("✅ Nuevo préstamo creado automáticamente desde Instrumentos")
+
+                // Actualizar instrumento a prestado
+                // console.log(
+                //   `📝 Actualizando instrumento ${currentInstrumento.numero_serie} a prestado después de crear préstamo`,
+                // )
+                await api.put(updateUrl, instrumentoToUpdate)
+                // console.log(`✅ Instrumento ${currentInstrumento.numero_serie} actualizado a prestado`)
+              } catch (error) {
+                console.error("❌ Error al crear préstamo:", error)
+                if (error.response) {
+                  console.error("Detalles del error:", error.response.data)
+                  setErrorMessage(`Error al crear préstamo: ${JSON.stringify(error.response.data)}`)
+                  setTimeout(() => setErrorMessage(null), 5000)
+                }
+                return
+              }
+            } else {
+              console.error("❌ Error: Se intentó crear un préstamo sin seleccionar usuario")
+              setErrorMessage("Error: Debe seleccionar un usuario para prestar el instrumento")
+              setTimeout(() => setErrorMessage(null), 5000)
+              return
+            }
+          } else if (originalInstrumento.estado === "prestado" &amp;&amp; currentInstrumento.estado === "prestado") {
+            // Actualizar préstamo con nuevo usuario
+            const prestamoActivo = prestamos.find(
+              (prestamo) =>
+                String(prestamo.num_serie) === String(currentInstrumento.numero_serie) &amp;&amp;
+                (!prestamo.fecha_devolucion || prestamo.fecha_devolucion === ""),
+            )
+
+            if (prestamoActivo &amp;&amp; String(prestamoActivo.usuario_id) !== selectedLoanUser) {
+              try {
+                // console.log(
+                //   `🔄 Actualizando préstamo con nuevo usuario: ${prestamoActivo.usuario_id} -> ${selectedLoanUser}`,
+                // )
+
+                await api.put(`/prestamos/${prestamoActivo.num_serie}/${prestamoActivo.usuario_id}`, {
+                  fecha_prestamo: prestamoActivo.fecha_prestamo,
+                  fecha_devolucion: new Date().toISOString().split("T")[0],
+                })
+                // console.log("✅ Préstamo anterior finalizado")
+
+                const fechaPrestamo = new Date().toISOString().split("T")[0]
+                const prestamoData = {
+                  num_serie: currentInstrumento.numero_serie,
+                  usuario_id: Number.parseInt(selectedLoanUser),
+                  fecha_prestamo: fechaPrestamo,
+                }
+
+                await api.post("/prestamos", prestamoData)
+                // console.log("✅ Nuevo préstamo creado con el nuevo usuario")
+              } catch (error) {
+                console.error("❌ Error al actualizar préstamo:", error)
+              }
+            } else if (!prestamoActivo) {
+              // Crear préstamo si no existe pero el estado es prestado
+              try {
+                // console.log(
+                //   `⚠️ Estado inconsistente: instrumento marcado como prestado sin préstamo activo. Creando nuevo préstamo.`,
+                // )
+
+                const fechaPrestamo = new Date().toISOString().split("T")[0]
+                const prestamoData = {
+                  num_serie: currentInstrumento.numero_serie,
+                  usuario_id: Number.parseInt(selectedLoanUser),
+                  fecha_prestamo: fechaPrestamo,
+                }
+
+                await api.post("/prestamos", prestamoData)
+                // console.log("✅ Préstamo creado para corregir inconsistencia")
+              } catch (error) {
+                console.error("❌ Error al crear préstamo para corregir inconsistencia:", error)
+              }
+            }
+          }
+        }
+
+        setInstrumentos(
+          instrumentos.map((item) =>
+            item.numero_serie === currentInstrumento.numero_serie ? { ...item, ...instrumentoToUpdate } : item,
+          ),
+        )
+
+        if (originalInstrumento.estado !== currentInstrumento.estado) {
+          if (currentInstrumento.estado === "prestado") {
+            setSuccessMessage("Instrumento marcado como prestado y préstamo creado")
+          } else if (originalInstrumento.estado === "prestado") {
+            setSuccessMessage("Instrumento devuelto y préstamo finalizado")
+          } else {
+            setSuccessMessage("Estado del instrumento actualizado")
+          }
+        } else {
+          setSuccessMessage("Instrumento actualizado exitosamente")
+        }
+        setTimeout(() => setSuccessMessage(null), 3000)
+      }
+
+      handleCloseModal()
+      await fetchData()
+    } catch (error) {
+      console.error("❌ Error al guardar instrumento:", error)
+      if (error.response &amp;&amp; error.response.data) {
+        console.error("Detalles del error:", error.response.data)
+        setErrorMessage(`Error al guardar: ${JSON.stringify(error.response.data)}`)
+      } else {
+        setErrorMessage(`Error al guardar: ${error.message}`)
+      }
+      setTimeout(() => setErrorMessage(null), 5000)
+    }
+  }
+
+  /**
+   * Filtra los instrumentos según los criterios de búsqueda y filtros seleccionados.
+   * @type {Array}
+   */
+  const filteredInstrumentos = instrumentos.filter((instrumento) => {
+    const matchesSearch =
+      String(instrumento.numero_serie).toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (instrumento.instrumento_tipo_id &amp;&amp;
+        instrumento.instrumento_tipo_id.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (instrumento.estado &amp;&amp; instrumento.estado.toLowerCase().includes(searchTerm.toLowerCase()))
+
+    const matchesTipo = tipoFilter === "" || instrumento.instrumento_tipo_id === tipoFilter
+
+    return matchesSearch &amp;&amp; matchesTipo
+  })
+
+  // Paginación
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentInstrumentos = filteredInstrumentos.slice(indexOfFirstItem, indexOfLastItem)
+  const totalPages = Math.ceil(filteredInstrumentos.length / itemsPerPage)
+
+  /**
+   * Cambia la página actual de la paginación.
+   * @param {number} pageNumber - Número de página a mostrar.
+   */
+  const paginate = (pageNumber) => {
+    if (pageNumber > 0 &amp;&amp; pageNumber &lt;= totalPages) {
+      setCurrentPage(pageNumber)
+    }
+  }
+
+  // Renderizado de la interfaz y modales
+  return (
+    &lt;div className="container mx-auto px-4 py-8">
+      {/* Modificar el botón "Nuevo Instrumento" para que llame a la nueva función: */}
+      &lt;div className="flex justify-between items-center mb-6">
+        &lt;h1 className="text-2xl font-bold text-[#C0C0C0]">{t("instruments.title")}&lt;/h1>
+        {isAdmin &amp;&amp; (
+          &lt;button
+            onClick={handleCreateInstrument}
+            className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
+          >
+            &lt;Plus size={18} />
+            {t("instruments.newInstrument")}
+          &lt;/button>
+        )}
+      &lt;/div>
+
+      {/* Mensajes de éxito y error */}
+      {successMessage &amp;&amp; (
+        &lt;div className="bg-green-900/20 border border-green-800 text-green-100 px-4 py-3 rounded-md mb-6 flex items-center">
+          &lt;span className="mr-2">✅&lt;/span>
+          &lt;p>{successMessage}&lt;/p>
+        &lt;/div>
+      )}
+
+      {errorMessage &amp;&amp; (
+        &lt;div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md mb-6 flex items-center">
+          &lt;span className="mr-2">❌&lt;/span>
+          &lt;p>{errorMessage}&lt;/p>
+        &lt;/div>
+      )}
+
+      {/* Mensaje de error de conexión */}
+      {error &amp;&amp; (
+        &lt;div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md mb-6">
+          &lt;h3 className="font-semibold">Error de conexión&lt;/h3>
+          &lt;p>{error}&lt;/p>
+        &lt;/div>
+      )}
+
+      {/* Filtros y búsqueda */}
+      &lt;div className="bg-black/30 border border-gray-800 rounded-lg p-4 mb-6">
+        &lt;div className="flex flex-col md:flex-row gap-4">
+          &lt;div className="flex-1">
+            &lt;div className="relative">
+              &lt;Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+              &lt;input
+                type="text"
+                placeholder={t("instruments.search")}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+              />
+            &lt;/div>
+          &lt;/div>
+          &lt;div className="w-full md:w-64">
+            &lt;div className="relative">
+              &lt;Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+              &lt;select
+                value={tipoFilter}
+                onChange={(e) => setTipoFilter(e.target.value)}
+                className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
+              >
+                &lt;option value="">{t("instruments.allTypes")}&lt;/option>
+                {tiposInstrumento.map((tipo) => (
+                  &lt;option key={tipo.instrumento} value={tipo.instrumento}>
+                    {tipo.instrumento}
+                  &lt;/option>
+                ))}
+              &lt;/select>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      &lt;/div>
+
+      {/* Tabla de instrumentos */}
+      &lt;div className="bg-black/30 border border-gray-800 rounded-lg overflow-hidden">
+        {loading ? (
+          &lt;div className="flex justify-center items-center h-64">
+            &lt;div className="text-[#C0C0C0]">{t("common.loading")}&lt;/div>
+          &lt;/div>
+        ) : filteredInstrumentos.length === 0 ? (
+          &lt;div className="flex flex-col justify-center items-center h-64">
+            &lt;Music size={48} className="text-gray-600 mb-4" />
+            {/* Modificar el mensaje cuando no hay instrumentos para que no muestre el botón de añadir para miembros: */}
+            &lt;p className="text-gray-400 text-center">
+              {searchTerm || tipoFilter
+                ? "No se encontraron instrumentos con los filtros aplicados."
+                : t("instruments.noInstruments")}
+            &lt;/p>
+            {isAdmin &amp;&amp; (
+              &lt;button onClick={handleCreateInstrument} className="mt-4 text-[#C0C0C0] hover:text-white underline">
+                {t("instruments.addFirstInstrument")}
+              &lt;/button>
+            )}
+          &lt;/div>
+        ) : (
+          &lt;div className="overflow-x-auto">
+            &lt;div className="min-w-full inline-block align-middle">
+              &lt;div className="overflow-hidden">
+                &lt;table className="min-w-full">
+                  &lt;thead className="bg-gray-900/50 border-b border-gray-800">
+                    &lt;tr>
+                      &lt;th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        {t("instruments.serialNumber")}
+                      &lt;/th>
+                      &lt;th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        {t("instruments.type")}
+                      &lt;/th>
+                      &lt;th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        {t("instruments.status")}
+                      &lt;/th>
+                      {/* Modificar la columna de acciones en la tabla para que solo aparezca para admins: */}
+                      &lt;th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                        {isAdmin ? t("common.actions") : ""}
+                      &lt;/th>
+                    &lt;/tr>
+                  &lt;/thead>
+                  &lt;tbody className="divide-y divide-gray-800">
+                    {currentInstrumentos.map((instrumento) => (
+                      &lt;tr key={instrumento.numero_serie} className="hover:bg-gray-900/30">
+                        &lt;td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                          {instrumento.numero_serie}
+                        &lt;/td>
+                        &lt;td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                          {instrumento.instrumento_tipo_id}
+                        &lt;/td>
+                        &lt;td className="px-4 py-3 whitespace-nowrap text-sm">
+                          &lt;span
+                            className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              instrumento.estado === "disponible"
+                                ? "bg-green-900/30 text-green-400 border border-green-800"
+                                : instrumento.estado === "prestado"
+                                  ? "bg-yellow-900/30 text-yellow-400 border border-yellow-800"
+                                  : "bg-red-900/30 text-red-400 border border-red-800"
+                            }`}
+                          >
+                            {instrumento.estado === "en reparacion"
+                              ? "En Reparación"
+                              : instrumento.estado.charAt(0).toUpperCase() + instrumento.estado.slice(1)}
+                          &lt;/span>
+                        &lt;/td>
+                        {/* Y en el tbody: */}
+                        &lt;td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                          {isAdmin &amp;&amp; (
+                            &lt;div className="flex space-x-2">
+                              &lt;button
+                                onClick={() => handleOpenModal("edit", instrumento)}
+                                className="p-1 text-gray-400 hover:text-[#C0C0C0]"
+                              >
+                                &lt;Edit size={18} />
+                              &lt;/button>
+                              &lt;button
+                                onClick={() => confirmDelete(instrumento.numero_serie)}
+                                className="p-1 text-gray-400 hover:text-red-400"
+                              >
+                                &lt;Trash2 size={18} />
+                              &lt;/button>
+                            &lt;/div>
+                          )}
+                        &lt;/td>
+                      &lt;/tr>
+                    ))}
+                  &lt;/tbody>
+                &lt;/table>
+              &lt;/div>
+            &lt;/div>
+          &lt;/div>
+        )}
+
+        {/* Pagination */}
+        {filteredInstrumentos.length > 0 &amp;&amp; (
+          &lt;div className="px-4 py-3 flex items-center justify-between border-t border-gray-800">
+            &lt;div className="text-sm text-gray-400">
+              {t("common.showing")} {indexOfFirstItem + 1} {t("common.to")}{" "}
+              {Math.min(indexOfLastItem, filteredInstrumentos.length)} {t("common.of")} {filteredInstrumentos.length}{" "}
+              instrumentos
+            &lt;/div>
+            &lt;div className="flex space-x-1">
+              &lt;button
+                onClick={() => paginate(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="p-2 rounded-md bg-gray-900/50 text-gray-400 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                &lt;ChevronLeft size={16} />
+              &lt;/button>
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                let pageNum
+                if (totalPages &lt;= 5) {
+                  pageNum = i + 1
+                } else if (currentPage &lt;= 3) {
+                  pageNum = i + 1
+                } else if (currentPage >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i
+                } else {
+                  pageNum = currentPage - 2 + i
+                }
+
+                return (
+                  &lt;button
+                    key={pageNum}
+                    onClick={() => paginate(pageNum)}
+                    className={`w-8 h-8 flex items-center justify-center rounded-md ${
+                      currentPage === pageNum
+                        ? "bg-black border border-[#C0C0C0] text-[#C0C0C0]"
+                        : "bg-gray-900/50 text-gray-400 hover:bg-gray-800"
+                    }`}
+                  >
+                    {pageNum}
+                  &lt;/button>
+                )
+              })}
+              &lt;button
+                onClick={() => paginate(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="p-2 rounded-md bg-gray-900/50 text-gray-400 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                &lt;ChevronRight size={16} />
+              &lt;/button>
+            &lt;/div>
+          &lt;/div>
+        )}
+      &lt;/div>
+
+      {/* Modal de confirmación para crear instrumento con traducciones */}
+      {showCreateConfirmModal &amp;&amp; (
+        &lt;div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          &lt;div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-lg">
+            &lt;div className="flex items-center gap-3 mb-4">
+              &lt;Info className="text-blue-400" size={24} />
+              &lt;h3 className="text-xl font-semibold text-[#C0C0C0]">{t("instruments.createConfirmation.title")}&lt;/h3>
+            &lt;/div>
+
+            &lt;div className="space-y-4 mb-6">
+              &lt;div className="bg-blue-900/20 border border-blue-800 rounded-lg p-4">
+                &lt;h4 className="text-blue-300 font-medium mb-2">{t("instruments.createConfirmation.whatWillHappen")}&lt;/h4>
+                &lt;ul className="text-blue-100 text-sm space-y-2">
+                  &lt;li className="flex items-start gap-2">
+                    &lt;span className="text-blue-400 mt-1">•&lt;/span>
+                    &lt;span>{t("instruments.createConfirmation.willCreateInstrument")}&lt;/span>
+                  &lt;/li>
+                  &lt;li className="flex items-start gap-2">
+                    &lt;span className="text-blue-400 mt-1">•&lt;/span>
+                    &lt;span>{t("instruments.createConfirmation.willIncrementQuantity")}&lt;/span>
+                  &lt;/li>
+                  &lt;li className="flex items-start gap-2">
+                    &lt;span className="text-blue-400 mt-1">•&lt;/span>
+                    &lt;span>{t("instruments.createConfirmation.willCreateLoan")}&lt;/span>
+                  &lt;/li>
+                &lt;/ul>
+              &lt;/div>
+
+              &lt;div className="bg-yellow-900/20 border border-yellow-800 rounded-lg p-4">
+                &lt;h4 className="text-yellow-300 font-medium mb-2 flex items-center gap-2">
+                  &lt;AlertTriangle size={16} />
+                  {t("instruments.createConfirmation.currentQuantities")}
+                &lt;/h4>
+                &lt;div className="grid grid-cols-2 gap-2 text-sm">
+                  {tiposInstrumento.map((tipo) => (
+                    &lt;div key={tipo.instrumento} className="flex justify-between text-yellow-100">
+                      &lt;span>{tipo.instrumento}:&lt;/span>
+                      &lt;span className="font-medium">{tipo.cantidad}&lt;/span>
+                    &lt;/div>
+                  ))}
+                &lt;/div>
+              &lt;/div>
+            &lt;/div>
+
+            &lt;div className="flex justify-end space-x-3">
+              &lt;button
+                onClick={() => setShowCreateConfirmModal(false)}
+                className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+              >
+                {t("common.cancel")}
+              &lt;/button>
+              &lt;button
+                onClick={confirmCreateInstrument}
+                className="px-4 py-2 bg-blue-900/80 text-blue-100 rounded-md hover:bg-blue-800 flex items-center gap-2"
+              >
+                &lt;Plus size={18} />
+                {t("instruments.createConfirmation.continueCreation")}
+              &lt;/button>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      )}
+
+      {/* Modal para crear/editar instrumento */}
+      {showModal &amp;&amp; (
+        &lt;div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          &lt;div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
+            &lt;div className="flex justify-between items-center mb-4">
+              &lt;h3 className="text-xl font-semibold text-[#C0C0C0]">
+                {modalMode === "create" ? t("instruments.newInstrument") : t("instruments.editInstrument")}
+              &lt;/h3>
+              &lt;button onClick={handleCloseModal} className="text-gray-400 hover:text-white">
+                &lt;X size={20} />
+              &lt;/button>
+            &lt;/div>
+            &lt;form onSubmit={handleSubmit}>
+              &lt;div className="space-y-4">
+                &lt;div className="space-y-2">
+                  &lt;label htmlFor="numero_serie" className="block text-[#C0C0C0] text-sm font-medium">
+                    {t("instruments.serialNumber")} *
+                  &lt;/label>
+                  &lt;input
+                    id="numero_serie"
+                    name="numero_serie"
+                    value={currentInstrumento.numero_serie}
+                    onChange={handleInputChange}
+                    disabled={modalMode === "edit"}
+                    required
+                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] disabled:opacity-60 disabled:cursor-not-allowed"
+                  />
+                  {modalMode === "edit" &amp;&amp; (
+                    &lt;p className="text-xs text-gray-500">{t("instruments.serialNumberCannotBeModified")}&lt;/p>
+                  )}
+                &lt;/div>
+                &lt;div className="space-y-2">
+                  &lt;label htmlFor="instrumento_tipo_id" className="block text-[#C0C0C0] text-sm font-medium">
+                    {t("instruments.instrumentType")} *
+                  &lt;/label>
+                  &lt;select
+                    id="instrumento_tipo_id"
+                    name="instrumento_tipo_id"
+                    value={currentInstrumento.instrumento_tipo_id}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                  >
+                    &lt;option value="">Selecciona un tipo&lt;/option>
+                    {tiposInstrumento.map((tipo) => (
+                      &lt;option key={tipo.instrumento} value={tipo.instrumento}>
+                        {tipo.instrumento} ({t("instrumentTypes.quantity")}: {tipo.cantidad})
+                      &lt;/option>
+                    ))}
+                  &lt;/select>
+                &lt;/div>
+                &lt;div className="space-y-2">
+                  &lt;label htmlFor="estado" className="block text-[#C0C0C0] text-sm font-medium">
+                    {t("instruments.status")} *
+                  &lt;/label>
+                  &lt;select
+                    id="estado"
+                    name="estado"
+                    value={currentInstrumento.estado}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                  >
+                    &lt;option value="disponible">{t("instruments.available")}&lt;/option>
+                    &lt;option value="prestado">{t("instruments.loaned")}&lt;/option>
+                    &lt;option value="en reparacion">{t("instruments.repair")}&lt;/option>
+                  &lt;/select>
+                &lt;/div>
+                {currentInstrumento.estado === "prestado" &amp;&amp; (
+                  &lt;div className="space-y-2">
+                    &lt;label htmlFor="selectedLoanUser" className="block text-[#C0C0C0] text-sm font-medium">
+                      Usuario del préstamo *
+                    &lt;/label>
+                    &lt;select
+                      id="selectedLoanUser"
+                      name="selectedLoanUser"
+                      value={selectedLoanUser}
+                      onChange={handleLoanUserChange}
+                      required
+                      className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    >
+                      &lt;option value="">Selecciona un usuario&lt;/option>
+                      {usuarios.map((usuario) => (
+                        &lt;option key={usuario.id} value={String(usuario.id)}>
+                          {usuario.nombre} {usuario.apellido1}
+                        &lt;/option>
+                      ))}
+                    &lt;/select>
+                  &lt;/div>
+                )}
+              &lt;/div>
+              &lt;div className="mt-6 flex justify-end space-x-3">
+                &lt;button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+                >
+                  {t("common.cancel")}
+                &lt;/button>
+                &lt;button
+                  type="submit"
+                  className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors flex items-center gap-2"
+                >
+                  &lt;Save size={18} />
+                  {modalMode === "create" ? t("instruments.create") : t("common.save")}
+                &lt;/button>
+              &lt;/div>
+            &lt;/form>
+          &lt;/div>
+        &lt;/div>
+      )}
+
+      {/* Modal de confirmación de eliminación mejorado con traducciones */}
+      {showDeleteModal &amp;&amp; (
+        &lt;div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          &lt;div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-lg">
+            &lt;div className="flex items-center gap-3 mb-4">
+              &lt;AlertTriangle className="text-red-400" size={24} />
+              &lt;h3 className="text-xl font-semibold text-[#C0C0C0]">{t("instruments.deleteConfirmation.title")}&lt;/h3>
+            &lt;/div>
+
+            &lt;div className="space-y-4 mb-6">
+              &lt;div className="bg-yellow-900/20 border border-yellow-800 rounded-lg p-4">
+                &lt;h4 className="text-yellow-300 font-medium mb-2">{t("instruments.deleteConfirmation.warning")}&lt;/h4>
+                &lt;ul className="text-yellow-100 text-sm space-y-2">
+                  &lt;li className="flex items-start gap-2">
+                    &lt;span className="text-yellow-400 mt-1">•&lt;/span>
+                    &lt;span>{t("instruments.deleteConfirmation.willDeleteInstrument")}&lt;/span>
+                  &lt;/li>
+                  &lt;li className="flex items-start gap-2">
+                    &lt;span className="text-yellow-400 mt-1">•&lt;/span>
+                    &lt;span>{t("instruments.deleteConfirmation.willDecrementQuantity")}&lt;/span>
+                  &lt;/li>
+                  &lt;li className="flex items-start gap-2">
+                    &lt;span className="text-yellow-400 mt-1">•&lt;/span>
+                    &lt;span>{t("instruments.deleteConfirmation.willDeleteLoans")}&lt;/span>
+                  &lt;/li>
+                &lt;/ul>
+              &lt;/div>
+
+              &lt;div className="bg-red-900/20 border border-red-800 rounded-lg p-4">
+                &lt;p className="text-red-300 font-medium text-sm">
+                  &lt;AlertTriangle className="inline mr-2" size={16} />
+                  {t("instruments.deleteConfirmation.cannotBeUndone")}
+                &lt;/p>
+              &lt;/div>
+            &lt;/div>
+
+            &lt;div className="flex justify-end space-x-3">
+              &lt;button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+              >
+                {t("common.cancel")}
+              &lt;/button>
+              &lt;button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800 flex items-center gap-2"
+              >
+                &lt;Trash2 size={18} />
+                {t("instruments.deleteConfirmation.confirmDelete")}
+              &lt;/button>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      )}
+    &lt;/div>
+  )
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> on Mon Jun 09 2025 13:51:24 GMT+0200 (hora de verano de Europa central) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>

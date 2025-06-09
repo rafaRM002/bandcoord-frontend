@@ -1,3 +1,10 @@
+/**
+ * @file App.jsx
+ * @module App
+ * @description Componente raíz de la aplicación BandCoord. Gestiona el enrutamiento, el contexto de autenticación, el contexto de idioma y el layout principal (Navbar, Footer). Define rutas públicas, protegidas y de miembro, así como la lógica de acceso y renderizado condicional de la interfaz.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { HashRouter as Router, Routes, Route, Navigate } from "react-router-dom"
@@ -32,6 +39,11 @@ import MensajesUsuario from "./pages/MensajesUsuario/MensajesUsuario"
 import MemberRoute from "./components/MemberRoute"
 import HelpButton from "./components/HelpButton/HelpButton"
 
+/**
+ * Componente principal de la aplicación.
+ * Provee los contextos de idioma y autenticación, y renderiza el contenido principal.
+ * @returns {JSX.Element} Estructura principal de la app con proveedores y rutas.
+ */
 function App() {
   return (
     <Router>
@@ -44,19 +56,33 @@ function App() {
   )
 }
 
+/**
+ * Componente que gestiona el contenido y las rutas de la aplicación.
+ * Controla el acceso a rutas públicas, protegidas y de miembro, así como el layout.
+ * @returns {JSX.Element} Contenido y rutas de la aplicación.
+ */
 function AppContent() {
   const { user, loading } = useAuth()
+  /** Rutas públicas accesibles sin autenticación */
   const publicRoutes = ["/login", "/register", "/registro-pendiente"]
 
-  // Determinar si la ruta actual es pública
+  /**
+   * Determina si la ruta actual es pública.
+   * @returns {boolean} True si la ruta es pública.
+   */
   const isPublicRoute = () => {
     const path = window.location.hash.replace(/^#/, "")
     return publicRoutes.includes(path)
   }
 
-  // Solo mostrar layout (navbar/footer) si el usuario está autenticado y no está en rutas públicas
+  /**
+   * Determina si se debe mostrar el layout (Navbar/Footer).
+   * Solo se muestra si el usuario está autenticado y no está en una ruta pública.
+   * @type {boolean}
+   */
   const shouldShowLayout = user && !isPublicRoute()
 
+  // Mostrar pantalla de carga mientras se verifica la autenticación
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -65,6 +91,13 @@ function AppContent() {
     )
   }
 
+  /**
+   * Componente para proteger rutas privadas.
+   * Redirige a login si el usuario no está autenticado.
+   * @param {Object} props
+   * @param {JSX.Element} props.children - Elementos hijos a renderizar si está autenticado.
+   * @returns {JSX.Element}
+   */
   const ProtectedRoute = ({ children }) => {
     if (!user) {
       return <Navigate to="/login" replace />
@@ -72,18 +105,19 @@ function AppContent() {
     return children
   }
 
+  // Render principal con layout, rutas y botón de ayuda
   return (
     <div className="flex flex-col min-h-screen w-full bg-black">
       {shouldShowLayout && <Navbar />}
 
       <main className="flex-grow w-full bg-black text-[#C0C0C0] overflow-fix">
         <Routes>
-          {/* Public routes */}
+          {/* Rutas públicas */}
           <Route path="/login" element={!user ? <Login /> : <Navigate to="/" replace />} />
           <Route path="/register" element={!user ? <Register /> : <Navigate to="/" replace />} />
           <Route path="/registro-pendiente" element={<RegistroPendiente />} />
 
-          {/* Protected routes */}
+          {/* Rutas protegidas */}
           <Route path="/" element={<Home user={user} loading={loading} />} />
 
           {/* Perfil de usuario */}
@@ -100,7 +134,7 @@ function AppContent() {
           <Route path="/restablecer-password" element={<RestablecerPassword />} />
           <Route path="/nueva-password" element={<NuevaPassword />} />
 
-          {/* Admin routes - Instrumentos - Ahora accesible para miembros */}
+          {/* Rutas de instrumentos, tipos, eventos, mínimos, préstamos, entidades, composiciones (miembros) */}
           <Route
             path="/instrumentos"
             element={
@@ -117,8 +151,6 @@ function AppContent() {
               </MemberRoute>
             }
           />
-
-          {/* Admin routes - Eventos - Ahora accesible para miembros */}
           <Route
             path="/eventos"
             element={
@@ -135,8 +167,6 @@ function AppContent() {
               </MemberRoute>
             }
           />
-
-          {/* Admin routes - Préstamos - Ahora accesible para miembros */}
           <Route
             path="/prestamos"
             element={
@@ -145,8 +175,6 @@ function AppContent() {
               </MemberRoute>
             }
           />
-
-          {/* Admin routes - Entidades - Ahora accesible para miembros */}
           <Route
             path="/entidades"
             element={
@@ -155,8 +183,6 @@ function AppContent() {
               </MemberRoute>
             }
           />
-
-          {/* Admin routes - Composiciones - Ahora accesible para miembros */}
           <Route
             path="/composiciones"
             element={
@@ -166,7 +192,7 @@ function AppContent() {
             }
           />
 
-          {/* Mensajes routes */}
+          {/* Rutas de mensajes */}
           <Route
             path="/mensajes"
             element={
@@ -200,7 +226,7 @@ function AppContent() {
             }
           />
 
-          {/* Admin routes - Calendario - Ahora accesible para miembros */}
+          {/* Calendario */}
           <Route
             path="/calendario"
             element={
@@ -210,12 +236,13 @@ function AppContent() {
             }
           />
 
-          {/* Admin routes - Gestión de Usuarios - Solo admin */}
+          {/* Gestión de usuarios (solo admin) */}
           <Route
             path="/usuarios"
             element={user && user.role === "admin" ? <GestionUsuarios /> : <Navigate to="/" replace />}
           />
 
+          {/* Asignación y confirmación de eventos */}
           <Route
             path="/usuarios-eventos"
             element={
@@ -241,14 +268,14 @@ function AppContent() {
             }
           />
 
-          {/* Catch-all route */}
+          {/* Ruta para página no encontrada */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
 
       {shouldShowLayout && <Footer />}
 
-      {/* Help Button - Always visible when user is authenticated */}
+      {/* Botón de ayuda, siempre visible si el usuario está autenticado */}
       <HelpButton />
     </div>
   )

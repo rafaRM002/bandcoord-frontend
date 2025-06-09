@@ -1,12 +1,34 @@
-"use client";
+/**
+ * @file AboutModal.jsx
+ * @module components/HelpButton/AboutModal
+ * @description Componente modal "Acerca de" que muestra información sobre la aplicación, desarrollador, instituto, año y tecnologías utilizadas.
+ * @author Rafael Rodriguez Mengual
+ */
 
-import { X, User, School, Calendar, Code } from "lucide-react";
-import { useTranslation } from "../../hooks/useTranslation";
+"use client"; // Indica que este componente se ejecuta en el cliente (útil para Next.js u otros frameworks modernos)
 
+import { X, User, School, Calendar, Code } from "lucide-react"; // Importa iconos de la librería lucide-react
+import { useTranslation } from "../../hooks/useTranslation"; // Hook personalizado para traducciones
+
+/**
+ * Componente modal "Acerca de".
+ * Muestra información sobre la app, desarrollador, instituto, año y tecnologías.
+ * Permite cerrar el modal haciendo clic fuera del contenido o en el botón de cierre.
+ * @component
+ * @param {Object} props
+ * @param {Function} props.onClose - Función para cerrar el modal.
+ * @returns {JSX.Element} Modal con información "Acerca de".
+ */
 export default function AboutModal({ onClose }) {
-  const { t } = useTranslation();
+  /**
+   * Hook de traducción.
+   */
+  const { t } = useTranslation(); // Obtiene la función de traducción
 
-  // Función para cerrar el modal al hacer clic en el fondo
+  /**
+   * Permite cerrar el modal haciendo clic fuera del contenido (en el fondo).
+   * @param {React.MouseEvent} e - Evento de clic.
+   */
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
       onClose();
@@ -14,12 +36,14 @@ export default function AboutModal({ onClose }) {
   };
 
   return (
+    // Fondo semitransparente que cubre toda la pantalla
     <div
       className="fixed inset-0 bg-black/70 flex items-center justify-center z-[10000] p-4"
       onClick={handleBackdropClick}
     >
+      {/* Contenedor principal del modal */}
       <div className="bg-black border border-gray-800 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        {/* Header fijo */}
+        {/* Cabecera fija con título y botón de cierre */}
         <div className="flex justify-between items-center px-6 py-8 border-b border-gray-800 sticky top-0 bg-black">
           <h2 className="text-2xl font-bold text-[#C0C0C0]">
             {t("help.aboutTitle")}
@@ -28,12 +52,13 @@ export default function AboutModal({ onClose }) {
             onClick={onClose}
             className="text-gray-400 hover:text-white transition-colors p-1 rounded-full hover:bg-gray-800"
           >
-            <X size={24} />
+            <X size={24} /> {/* Icono de cierre */}
           </button>
         </div>
 
-        {/* Content */}
+        {/* Contenido del modal */}
         <div className="p-6 space-y-6 text-[#C0C0C0]">
+          {/* Logo y nombre de la app */}
           <div className="text-center">
             <div className="mx-auto mb-4">
               <img
@@ -46,7 +71,9 @@ export default function AboutModal({ onClose }) {
             <p className="text-gray-400">{t("help.aboutSubtitle")}</p>
           </div>
 
+          {/* Información del desarrollador, instituto, año y tecnologías */}
           <div className="grid gap-4">
+            {/* Desarrollador */}
             <div className="bg-gray-900/30 p-4 rounded-lg border border-gray-800">
               <div className="flex items-center gap-3 mb-2">
                 <User className="text-[#C0C0C0]" size={20} />
@@ -59,6 +86,7 @@ export default function AboutModal({ onClose }) {
               </p>
             </div>
 
+            {/* Instituto */}
             <div className="bg-gray-900/30 p-4 rounded-lg border border-gray-800">
               <div className="flex items-center gap-3 mb-2">
                 <School className="text-[#C0C0C0]" size={20} />
@@ -69,6 +97,7 @@ export default function AboutModal({ onClose }) {
               <p className="text-[#C0C0C0] font-medium">IES Trassierra</p>
             </div>
 
+            {/* Año de desarrollo */}
             <div className="bg-gray-900/30 p-4 rounded-lg border border-gray-800">
               <div className="flex items-center gap-3 mb-2">
                 <Calendar className="text-[#C0C0C0]" size={20} />
@@ -79,6 +108,7 @@ export default function AboutModal({ onClose }) {
               <p className="text-[#C0C0C0] font-medium">2025</p>
             </div>
 
+            {/* Tecnologías usadas */}
             <div className="bg-gray-900/30 p-4 rounded-lg border border-gray-800">
               <div className="flex items-center gap-3 mb-2">
                 <Code className="text-[#C0C0C0]" size={20} />
@@ -87,6 +117,7 @@ export default function AboutModal({ onClose }) {
                 </h4>
               </div>
               <div className="flex flex-wrap gap-2 mt-2">
+                {/* Etiquetas de tecnologías */}
                 <span className="px-2 py-1 bg-blue-900/30 text-blue-400 rounded text-sm border border-blue-800">
                   React
                 </span>
@@ -106,6 +137,7 @@ export default function AboutModal({ onClose }) {
             </div>
           </div>
 
+          {/* Descripción del proyecto */}
           <div className="bg-gray-900/50 p-4 rounded-lg border border-gray-700">
             <h4 className="font-semibold text-white mb-2">
               {t("help.projectDescription")}
@@ -115,6 +147,7 @@ export default function AboutModal({ onClose }) {
             </p>
           </div>
 
+          {/* Lista de funcionalidades */}
           <div className="bg-gray-900/50 p-4 rounded-lg border border-gray-700">
             <h4 className="font-semibold text-white mb-2">
               {t("help.features")}

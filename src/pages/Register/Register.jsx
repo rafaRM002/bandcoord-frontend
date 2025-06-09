@@ -1,3 +1,10 @@
+/**
+ * @file Register.jsx
+ * @module pages/Register/Register
+ * @description Página de registro de usuario. Permite crear una cuenta nueva validando datos personales, email, teléfono y contraseña segura. Incluye validaciones, mensajes de error y muestra el estado del proceso. Utiliza traducción internacionalizada.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState } from "react"
@@ -7,7 +14,14 @@ import { useAuth } from "../../context/AuthContext"
 import { useTranslation } from "../../hooks/useTranslation"
 import PasswordValidator from "../../components/PasswordValidator"
 
+/**
+ * Componente de registro de usuario.
+ * Permite crear una cuenta nueva validando todos los campos y mostrando mensajes de error.
+ * @component
+ * @returns {JSX.Element} Página de registro.
+ */
 export default function Register() {
+  /** Estado del formulario de registro */
   const [form, setForm] = useState({
     nombre: "",
     apellido1: "",
@@ -18,27 +32,51 @@ export default function Register() {
     password_confirmation: "",
     fecha_nac: "",
   })
+  /** Estado de carga del proceso de registro */
   const [isLoading, setIsLoading] = useState(false)
+  /** Mostrar/ocultar contraseña */
   const [showPassword, setShowPassword] = useState(false)
+  /** Mensaje de error */
   const [error, setError] = useState("")
+  /** Estado de validación de contraseña */
   const [isPasswordValid, setIsPasswordValid] = useState(false)
+  /** Función de registro del contexto de autenticación */
   const { register } = useAuth()
+  /** Hook de traducción */
   const { t } = useTranslation()
 
+  /**
+   * Maneja el cambio en los campos del formulario.
+   * @param {Object} e - Evento de cambio.
+   */
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
+  /**
+   * Maneja el cambio en el campo de teléfono, permitiendo solo caracteres válidos.
+   * @param {Object} e - Evento de cambio.
+   */
   const handlePhoneChange = (e) => {
     // Permitir números, espacios, guiones, paréntesis y el signo +
     const value = e.target.value.replace(/[^\d\s\-$$$$+]/g, "")
     setForm({ ...form, telefono: value })
   }
 
+  /**
+   * Valida el formato del email.
+   * @param {string} email - Email a validar.
+   * @returns {boolean} True si es válido.
+   */
   const validateEmail = (email) => {
     // Validación más estricta: debe tener @ y al menos un punto después del @
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return emailRegex.test(email)
   }
 
+  /**
+   * Valida el formato del teléfono.
+   * @param {string} phone - Teléfono a validar.
+   * @returns {boolean} True si es válido.
+   */
   const validatePhone = (phone) => {
     // Validación más flexible para teléfonos internacionales
     // Debe tener al menos 7 dígitos y máximo 15 (estándar internacional)
@@ -46,6 +84,11 @@ export default function Register() {
     return cleanPhone.length >= 7 && cleanPhone.length <= 15
   }
 
+  /**
+   * Envía el formulario de registro tras validar todos los campos.
+   * @async
+   * @param {Object} e - Evento de envío.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
@@ -86,7 +129,7 @@ export default function Register() {
         fecha_entrada: new Date().toISOString().split("T")[0],
       }
 
-      console.log("Sending registration data:", userData)
+      // console.log("Sending registration data:", userData)
 
       const result = await register(userData)
 
@@ -101,6 +144,7 @@ export default function Register() {
     }
   }
 
+  // Renderizado principal del formulario de registro
   return (
     <div className="flex justify-center items-center min-h-[calc(100vh-64px)] py-8 px-4">
       <div className="w-full max-w-4xl mx-auto">

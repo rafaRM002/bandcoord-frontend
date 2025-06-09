@@ -1,3 +1,10 @@
+/**
+ * @file DetalleMensaje.jsx
+ * @module pages/Mensajes/DetalleMensaje
+ * @description Página de detalle de un mensaje privado. Permite ver el contenido, emisor, receptor, fecha y responder al mensaje. Marca el mensaje como leído si el usuario es el receptor. Muestra errores si no se encuentra el mensaje o hay problemas de carga.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState, useEffect, useContext } from "react"
@@ -8,18 +15,37 @@ import { toast } from "react-toastify"
 import { AuthContext } from "../../context/AuthContext"
 import { useTranslation } from "../../hooks/useTranslation"
 
+/**
+ * Componente de detalle de mensaje privado.
+ * Muestra el mensaje, emisor, receptor, fecha y permite responder.
+ * Marca como leído si el usuario es el receptor.
+ * @component
+ * @returns {JSX.Element} Vista de detalle de mensaje.
+ */
 export default function DetalleMensaje() {
+  /** ID del mensaje desde la URL */
   const { id } = useParams()
+  /** Hook de navegación */
   const navigate = useNavigate()
+  /** Usuario autenticado */
   const { user } = useContext(AuthContext)
+  /** Hook de traducción */
   const { t } = useTranslation()
 
+  /** Estado del mensaje */
   const [mensaje, setMensaje] = useState(null)
+  /** Estado del emisor */
   const [emisor, setEmisor] = useState(null)
+  /** Estado del receptor */
   const [receptor, setReceptor] = useState(null)
+  /** Estado de carga */
   const [loading, setLoading] = useState(true)
+  /** Mensaje de error */
   const [error, setError] = useState(null)
 
+  /**
+   * Efecto para cargar el mensaje y datos relacionados al montar o cambiar el id.
+   */
   useEffect(() => {
     const fetchMensaje = async () => {
       try {
@@ -48,18 +74,18 @@ export default function DetalleMensaje() {
           // Si el usuario actual es el receptor, marcar como leído
           if (receptorId === user.id || receptorId === Number(user.id)) {
             try {
-              console.log("Marcando mensaje como leído automáticamente:", {
-                mensajeId: id,
-                userId: user.id,
-                url: `/mensaje-usuarios/${id}/${user.id}/`,
-              })
+              // console.log("Marcando mensaje como leído automáticamente:", {
+              //   mensajeId: id,
+              //   userId: user.id,
+              //   url: `/mensaje-usuarios/${id}/${user.id}/`,
+              // })
 
               // CORREGIDO: URL con barra final y payload solo con estado
               const response = await api.put(`/mensaje-usuarios/${id}/${user.id}/`, {
                 estado: 1, // Solo enviamos el estado
               })
 
-              console.log("Respuesta de marcar como leído automáticamente:", response.data)
+              // console.log("Respuesta de marcar como leído automáticamente:", response.data)
             } catch (err) {
               console.error("Error al marcar como leído:", err)
               console.error("Detalles del error:", err.response?.data)
@@ -80,6 +106,9 @@ export default function DetalleMensaje() {
     }
   }, [id, user.id])
 
+  /**
+   * Navega a la pantalla de respuesta al mensaje.
+   */
   const handleResponder = () => {
     navigate("/mensajes/nuevo", {
       state: {
@@ -93,13 +122,18 @@ export default function DetalleMensaje() {
     })
   }
 
-  // Formatear fecha para mostrar
+  /**
+   * Formatea una fecha a DD/MM/YYYY HH:mm.
+   * @param {string} dateString - Fecha en formato ISO.
+   * @returns {string} Fecha formateada.
+   */
   const formatDate = (dateString) => {
     if (!dateString) return ""
     const options = { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }
     return new Date(dateString).toLocaleDateString("es-ES", options)
   }
 
+  // Renderizado de estados de carga y error
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -129,6 +163,7 @@ export default function DetalleMensaje() {
     )
   }
 
+  // Renderizado principal del mensaje
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center mb-6">

@@ -1,3 +1,10 @@
+/**
+ * @file ComposicionesInterpretadas.jsx
+ * @module pages/ComposicionesInterpretadas/ComposicionesInterpretadas
+ * @description Página para la gestión y visualización de composiciones interpretadas por usuarios. Permite asignar, eliminar y buscar asignaciones de composiciones a usuarios, con paginación y control de duplicados.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -19,43 +26,89 @@ import {
   X,
 } from "lucide-react"
 import { useTranslation } from "../../hooks/useTranslation"
-// Importar useAuth
 import { useAuth } from "../../context/AuthContext"
 
+/**
+ * Componente principal para la gestión de composiciones interpretadas.
+ * Permite listar, buscar, asignar y eliminar asignaciones de composiciones a usuarios.
+ * @component
+ * @returns {JSX.Element} Página de composiciones interpretadas.
+ */
 const ComposicionesInterpretadas = () => {
-  const [composiciones, setComposiciones] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [searchTerm, setSearchTerm] = useState("")
+  /** Estado de composiciones agrupadas */
+/** @type {Array} */
+const [composiciones, setComposiciones] = useState([])
 
-  // Estados para expansión y paginación
-  const [expandedComposiciones, setExpandedComposiciones] = useState({})
-  const [currentPage, setCurrentPage] = useState(1)
-  const [usuariosPagination, setUsuariosPagination] = useState({})
+/** Estado de carga */
+/** @type {boolean} */
+const [loading, setLoading] = useState(true)
 
-  // Estados para modal de asignación de usuario
-  const [showAssignModal, setShowAssignModal] = useState(false)
-  const [selectedComposicionForAssign, setSelectedComposicionForAssign] = useState(null)
-  const [usuarios, setUsuarios] = useState([])
-  const [selectedUsuarioId, setSelectedUsuarioId] = useState("")
-  const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
+/** Estado de error */
+/** @type {string|null} */
+const [error, setError] = useState(null)
 
+/** Término de búsqueda */
+/** @type {string} */
+const [searchTerm, setSearchTerm] = useState("")
+
+// Estados para expansión y paginación
+
+/** Estado de expansión de composiciones */
+/** @type {Object} */
+const [expandedComposiciones, setExpandedComposiciones] = useState({})
+
+/** Página actual de composiciones */
+/** @type {number} */
+const [currentPage, setCurrentPage] = useState(1)
+
+/** Paginación de usuarios por composición */
+/** @type {Object} */
+const [usuariosPagination, setUsuariosPagination] = useState({})
+
+// Estados para modal de asignación de usuario
+
+/** Estado del modal de asignación */
+/** @type {boolean} */
+const [showAssignModal, setShowAssignModal] = useState(false)
+
+/** Composición seleccionada para asignar */
+/** @type {Object|null} */
+const [selectedComposicionForAssign, setSelectedComposicionForAssign] = useState(null)
+
+/** Lista de usuarios */
+/** @type {Array} */
+const [usuarios, setUsuarios] = useState([])
+
+/** ID del usuario seleccionado */
+/** @type {string} */
+const [selectedUsuarioId, setSelectedUsuarioId] = useState("")
+
+/** Estado de advertencia por duplicado */
+/** @type {boolean} */
+const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
+
+  /** Hook de traducción */
   const { t } = useTranslation()
-  // Dentro del componente:
+  /** Contexto de autenticación */
   const { user, isAdmin } = useAuth()
 
   // Configuración de paginación
+  /** Número de composiciones por página */
   const composicionesPorPagina = 2
+  /** Número de usuarios por página */
   const usuariosPorPagina = 10
 
-  // Función simplificada para obtener composiciones interpretadas
+  /**
+   * Obtiene y agrupa las composiciones interpretadas, usuarios y relaciones.
+   * @async
+   */
   const fetchComposicionesInterpretadas = async () => {
     try {
       setLoading(true)
 
       // 1. Obtener todas las relaciones composición-usuario
       const composicionUsuarioResponse = await axios.get("/composicion-usuario")
-      console.log("Respuesta de composiciones-usuario:", composicionUsuarioResponse.data)
+      // console.log("Respuesta de composiciones-usuario:", composicionUsuarioResponse.data)
 
       const relaciones = Array.isArray(composicionUsuarioResponse.data)
         ? composicionUsuarioResponse.data
@@ -69,7 +122,7 @@ const ComposicionesInterpretadas = () => {
 
       // 2. Obtener todas las composiciones
       const composicionesResponse = await axios.get("/composiciones")
-      console.log("Respuesta de composiciones:", composicionesResponse.data)
+      // console.log("Respuesta de composiciones:", composicionesResponse.data)
 
       const todasComposiciones = Array.isArray(composicionesResponse.data)
         ? composicionesResponse.data
@@ -77,7 +130,7 @@ const ComposicionesInterpretadas = () => {
 
       // 3. Obtener todos los usuarios
       const usuariosResponse = await axios.get("/usuarios")
-      console.log("Respuesta de usuarios:", usuariosResponse.data)
+      // console.log("Respuesta de usuarios:", usuariosResponse.data)
 
       const todosUsuarios = Array.isArray(usuariosResponse.data)
         ? usuariosResponse.data
@@ -145,7 +198,7 @@ const ComposicionesInterpretadas = () => {
       // 7. Convertir a array y parsear rutas
       const composicionesArray = Object.values(composicionesAgrupadas)
 
-      // 8. Parsear rutas y ordenar alfabéticamente
+      // 8. Parsear rutas y filtrar según permisos
       const composicionesConRutasParsed = composicionesArray
         .map((comp) => ({
           ...comp,
@@ -162,7 +215,7 @@ const ComposicionesInterpretadas = () => {
       // 9. Ordenar alfabéticamente por nombre
       composicionesConRutasParsed.sort((a, b) => a.nombre.localeCompare(b.nombre))
 
-      console.log("Composiciones procesadas:", composicionesConRutasParsed)
+      // console.log("Composiciones procesadas:", composicionesConRutasParsed)
 
       // 10. Inicializar estados de expansión y paginación
       const initialExpanded = {}
@@ -186,6 +239,9 @@ const ComposicionesInterpretadas = () => {
     }
   }
 
+  /**
+   * Efecto para cargar composiciones interpretadas y usuarios al montar el componente.
+   */
   useEffect(() => {
     fetchComposicionesInterpretadas()
 
@@ -203,7 +259,11 @@ const ComposicionesInterpretadas = () => {
     fetchUsuarios()
   }, [])
 
-  // Función para parsear la ruta (JSON o string simple)
+  /**
+   * Parsea la ruta de la composición (JSON, YouTube o archivo simple).
+   * @param {string} ruta - Ruta a parsear.
+   * @returns {Object} Objeto con tipo y urls.
+   */
   const parseRuta = (ruta) => {
     if (!ruta) return { type: "unknown", urls: [] }
 
@@ -221,14 +281,17 @@ const ComposicionesInterpretadas = () => {
         return { type: "file", urls: [ruta] }
       }
     } catch (e) {
-      console.warn("Error al parsear ruta:", e)
+      // console.warn("Error al parsear ruta:", e)
     }
 
     // Por defecto, tratar como archivo único
     return { type: "unknown", urls: [ruta] }
   }
 
-  // Función para alternar la expansión de una composición
+  /**
+   * Alterna la expansión de una composición.
+   * @param {number} composicionId - ID de la composición.
+   */
   const toggleExpand = (composicionId) => {
     setExpandedComposiciones((prev) => ({
       ...prev,
@@ -236,20 +299,28 @@ const ComposicionesInterpretadas = () => {
     }))
   }
 
-  // Funciones para paginación de composiciones
+  /**
+   * Avanza a la siguiente página de composiciones.
+   */
   const nextPage = () => {
     if (currentPage < Math.ceil(filteredComposiciones.length / composicionesPorPagina)) {
       setCurrentPage(currentPage + 1)
     }
   }
 
+  /**
+   * Retrocede a la página anterior de composiciones.
+   */
   const prevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1)
     }
   }
 
-  // Funciones para paginación de usuarios
+  /**
+   * Avanza a la siguiente página de usuarios para una composición.
+   * @param {number} composicionId - ID de la composición.
+   */
   const nextUsuariosPage = (composicionId) => {
     const composicion = composiciones.find((c) => c.composicion_id === composicionId)
     if (!composicion) return
@@ -264,6 +335,10 @@ const ComposicionesInterpretadas = () => {
     }
   }
 
+  /**
+   * Retrocede a la página anterior de usuarios para una composición.
+   * @param {number} composicionId - ID de la composición.
+   */
   const prevUsuariosPage = (composicionId) => {
     if (usuariosPagination[composicionId] > 1) {
       setUsuariosPagination((prev) => ({
@@ -273,7 +348,10 @@ const ComposicionesInterpretadas = () => {
     }
   }
 
-  // Abrir modal de asignación de usuario
+  /**
+   * Abre el modal para asignar un usuario a una composición.
+   * @param {Object} composicion - Composición seleccionada.
+   */
   const handleOpenAssignModal = (composicion) => {
     setSelectedComposicionForAssign(composicion)
     setSelectedUsuarioId("")
@@ -281,7 +359,10 @@ const ComposicionesInterpretadas = () => {
     setShowAssignModal(true)
   }
 
-  // Asignar composición a usuario
+  /**
+   * Asigna una composición a un usuario seleccionado.
+   * @async
+   */
   const handleAssignToUser = async () => {
     if (!selectedComposicionForAssign || !selectedUsuarioId) {
       toast.error(t("interpretedCompositions.selectUser"))
@@ -294,7 +375,7 @@ const ComposicionesInterpretadas = () => {
         usuario_id: selectedUsuarioId,
       })
 
-      console.log("Respuesta al asignar composición:", response.data)
+      // console.log("Respuesta al asignar composición:", response.data)
       toast.success(t("interpretedCompositions.assignmentCreatedSuccessfully"))
       setShowAssignModal(false)
       setShowDuplicateWarning(false)
@@ -319,7 +400,12 @@ const ComposicionesInterpretadas = () => {
     }
   }
 
-  // Eliminar asignación de composición a usuario
+  /**
+   * Elimina la asignación de una composición a un usuario.
+   * @async
+   * @param {number} composicionId - ID de la composición.
+   * @param {number} usuarioId - ID del usuario.
+   */
   const handleDeleteUserComposicion = async (composicionId, usuarioId) => {
     try {
       await axios.delete(`/composicion-usuario/${composicionId}/${usuarioId}`)
@@ -345,7 +431,10 @@ const ComposicionesInterpretadas = () => {
     }
   }
 
-  // Filtrar composiciones por término de búsqueda
+  /**
+   * Filtra las composiciones según el término de búsqueda.
+   * @type {Array}
+   */
   const filteredComposiciones = composiciones.filter((composicion) => {
     const matchesSearch =
       (composicion.nombre && composicion.nombre.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -355,12 +444,19 @@ const ComposicionesInterpretadas = () => {
     return matchesSearch
   })
 
-  // Obtener composiciones para la página actual
+  /**
+   * Obtiene las composiciones para la página actual.
+   * @type {Array}
+   */
   const indexOfLastComposicion = currentPage * composicionesPorPagina
   const indexOfFirstComposicion = indexOfLastComposicion - composicionesPorPagina
   const currentComposiciones = filteredComposiciones.slice(indexOfFirstComposicion, indexOfLastComposicion)
 
-  // Obtener usuarios para una composición específica
+  /**
+   * Obtiene los usuarios para una composición específica y su página actual.
+   * @param {Object} composicion - Composición seleccionada.
+   * @returns {Array} Usuarios de la página actual.
+   */
   const getCurrentUsuarios = (composicion) => {
     const currentPage = usuariosPagination[composicion.composicion_id] || 1
     const indexOfLastUsuario = currentPage * usuariosPorPagina
@@ -369,7 +465,10 @@ const ComposicionesInterpretadas = () => {
     return composicion.usuarios.slice(indexOfFirstUsuario, indexOfLastUsuario)
   }
 
-  // Manejar selección de usuario y verificar duplicados
+  /**
+   * Maneja la selección de usuario y verifica si ya está asignado.
+   * @param {string} usuarioId - ID del usuario seleccionado.
+   */
   const handleUsuarioSelection = (usuarioId) => {
     setSelectedUsuarioId(usuarioId)
 

@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>pages/EventoUsuario/EventoUsuario.jsx - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-App.html">App</a><ul class='methods'><li data-type='method'><a href="module-App.html#~App">App</a></li><li data-type='method'><a href="module-App.html#~AppContent">AppContent</a></li></ul></li><li><a href="module-api_axios.html">api/axios</a></li><li><a href="module-components_AdminRoute.html">components/AdminRoute</a></li><li><a href="module-components_HelpButton_AboutModal.html">components/HelpButton/AboutModal</a></li><li><a href="module-components_HelpButton_HelpButton.html">components/HelpButton/HelpButton</a></li><li><a href="module-components_HelpButton_HelpModal.html">components/HelpButton/HelpModal</a></li><li><a href="module-components_MemberRoute.html">components/MemberRoute</a></li><li><a href="module-components_Navigation_Footer.html">components/Navigation/Footer</a></li><li><a href="module-components_Navigation_Navbar.html">components/Navigation/Navbar</a></li><li><a href="module-components_PasswordValidator.html">components/PasswordValidator</a></li><li><a href="module-components_ProtectedRoute.html">components/ProtectedRoute</a></li><li><a href="module-context_AuthContext.html">context/AuthContext</a><ul class='methods'><li data-type='method'><a href="module-context_AuthContext.html#.useAuth">useAuth</a></li><li data-type='method'><a href="module-context_AuthContext.html#~getCsrfCookie">getCsrfCookie</a></li></ul></li><li><a href="module-context_LanguageContext.html">context/LanguageContext</a><ul class='methods'><li data-type='method'><a href="module-context_LanguageContext.html#.useLanguage">useLanguage</a></li></ul></li><li><a href="module-hooks_useTranslation.html">hooks/useTranslation</a><ul class='methods'><li data-type='method'><a href="module-hooks_useTranslation.html#.useTranslation">useTranslation</a></li></ul></li><li><a href="module-main.html">main</a></li><li><a href="module-pages_Admin_GestionUsuarios.html">pages/Admin/GestionUsuarios</a></li><li><a href="module-pages_Calendario_Calendario.html">pages/Calendario/Calendario</a></li><li><a href="module-pages_Composiciones_Composiciones.html">pages/Composiciones/Composiciones</a></li><li><a href="module-pages_ComposicionesInterpretadas_ComposicionesInterpretadas.html">pages/ComposicionesInterpretadas/ComposicionesInterpretadas</a><ul class='methods'><li data-type='method'><a href="module-pages_ComposicionesInterpretadas_ComposicionesInterpretadas.html#~ComposicionesInterpretadas">ComposicionesInterpretadas</a></li></ul></li><li><a href="module-pages_ConfirmacionEventos_ConfirmacionEventos.html">pages/ConfirmacionEventos/ConfirmacionEventos</a></li><li><a href="module-pages_Entidades_Entidades.html">pages/Entidades/Entidades</a></li><li><a href="module-pages_EventoUsuario_EventoUsuario.html">pages/EventoUsuario/EventoUsuario</a></li><li><a href="module-pages_Eventos_Eventos.html">pages/Eventos/Eventos</a></li><li><a href="module-pages_Eventos_FormularioEvento.html">pages/Eventos/FormularioEvento</a></li><li><a href="module-pages_Home_Home.html">pages/Home/Home</a><ul class='methods'><li data-type='method'><a href="module-pages_Home_Home.html#~AdminCard">AdminCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~FeatureCard">FeatureCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~PublicHome">PublicHome</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~QuickAccessCard">QuickAccessCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~UserDashboard">UserDashboard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~getEventTypeColor">getEventTypeColor</a></li></ul></li><li><a href="module-pages_Instrumentos_Instrumentos.html">pages/Instrumentos/Instrumentos</a></li><li><a href="module-pages_Login_Login.html">pages/Login/Login</a></li><li><a href="module-pages_Mensajes_DetalleMensaje.html">pages/Mensajes/DetalleMensaje</a></li><li><a href="module-pages_Mensajes_FormularioMensaje.html">pages/Mensajes/FormularioMensaje</a></li><li><a href="module-pages_Mensajes_Mensajes.html">pages/Mensajes/Mensajes</a></li><li><a href="module-pages_MensajesUsuario_MensajesUsuario.html">pages/MensajesUsuario/MensajesUsuario</a><ul class='methods'><li data-type='method'><a href="module-pages_MensajesUsuario_MensajesUsuario.html#~MensajesUsuario">MensajesUsuario</a></li></ul></li><li><a href="module-pages_MinimosEvento_MinimosEvento.html">pages/MinimosEvento/MinimosEvento</a></li><li><a href="module-pages_NotFound_NotFound.html">pages/NotFound/NotFound</a></li><li><a href="module-pages_Perfil_Perfil.html">pages/Perfil/Perfil</a></li><li><a href="module-pages_Prestamos_Prestamos.html">pages/Prestamos/Prestamos</a></li><li><a href="module-pages_Register_Register.html">pages/Register/Register</a></li><li><a href="module-pages_RegistroPendiente_RegistroPendiente.html">pages/RegistroPendiente/RegistroPendiente</a></li><li><a href="module-pages_RestablecerPassword_NuevaPassword.html">pages/RestablecerPassword/NuevaPassword</a></li><li><a href="module-pages_RestablecerPassword_RestablecerPassword.html">pages/RestablecerPassword/RestablecerPassword</a></li><li><a href="module-pages_TiposInstrumento_TiposInstrumento.html">pages/TiposInstrumento/TiposInstrumento</a></li><li><a href="module-utils_translations.html">utils/translations</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+
+    
+    <h1 class="page-title">pages/EventoUsuario/EventoUsuario.jsx</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file EventoUsuario.jsx
+ * @module pages/EventoUsuario/EventoUsuario
+ * @description Página para la gestión de asignaciones de usuarios a eventos. Permite crear, editar, eliminar, buscar y visualizar asignaciones, así como ver estadísticas de asistencia por evento y por tipo de instrumento. Solo los administradores pueden modificar datos.
+ * @author Rafael Rodriguez Mengual
+ */
+
+"use client"
+
+import { useState, useEffect, useContext } from "react"
+import { AuthContext, useAuth } from "../../context/AuthContext"
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Search,
+  Filter,
+  Calendar,
+  ChevronDown,
+  ChevronUp,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  MapPin,
+  Info,
+} from "lucide-react"
+import api from "../../api/axios"
+import { toast } from "react-toastify"
+import { useTranslation } from "../../hooks/useTranslation"
+
+/**
+ * Componente principal para la gestión de asignaciones de usuarios a eventos.
+ * Permite listar, buscar, crear, editar, eliminar y visualizar estadísticas de asignaciones.
+ * @component
+ * @returns {JSX.Element} Página de asignaciones evento-usuario.
+ */
+export default function EventoUsuario() {
+  /** Hook de traducción */
+  const { t } = useTranslation()
+  /** Lista de asignaciones evento-usuario */
+  const [eventosUsuario, setEventosUsuario] = useState([])
+  /** Estado de carga */
+  const [loading, setLoading] = useState(true)
+  /** Estado de error */
+  const [error, setError] = useState(null)
+  /** Usuario autenticado */
+  const { user } = useContext(AuthContext)
+  /** Lista de eventos */
+  const [eventos, setEventos] = useState([])
+  /** Lista de usuarios */
+  const [usuarios, setUsuarios] = useState([])
+  /** Lista de tipos de instrumento */
+  const [tiposInstrumento, setTiposInstrumento] = useState([])
+  /** Término de búsqueda */
+  const [searchTerm, setSearchTerm] = useState("")
+  /** Filtro por evento */
+  const [eventoFilter, setEventoFilter] = useState("")
+  /** Filtro por usuario */
+  const [usuarioFilter, setUsuarioFilter] = useState("")
+  /** Estado del modal de asignación */
+  const [showModal, setShowModal] = useState(false)
+  /** Modo del modal: "create" o "edit" */
+  const [modalMode, setModalMode] = useState("create")
+  /** Asignación actual para crear/editar */
+  const [currentEventoUsuario, setCurrentEventoUsuario] = useState({
+    evento_id: "",
+    usuario_id: "",
+    confirmacion: false,
+  })
+  /** Estado del modal de confirmación de borrado */
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  /** Asignación a eliminar */
+  const [eventoUsuarioToDelete, setEventoUsuarioToDelete] = useState(null)
+  /** Estado de expansión de eventos */
+  const [expandedEventos, setExpandedEventos] = useState({})
+  /** Modo de vista: "list" o "stats" */
+  const [viewMode, setViewMode] = useState("list")
+  /** Elementos por página en la vista de lista */
+  const [itemsPerPage] = useState(2)
+  /** Página actual en la vista de lista */
+  const [currentPage, setCurrentPage] = useState(1)
+  /** Página actual en la vista de estadísticas */
+  const [currentStatsPage, setCurrentStatsPage] = useState(1)
+  /** Elementos por página en la vista de estadísticas */
+  const [statsPerPage] = useState(2)
+  /** Estado de advertencia por duplicado */
+  const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
+
+  /** Usuario autenticado y si es admin */
+  const { user: loggedInUser, isAdmin } = useAuth()
+
+  /**
+   * Efecto para cargar datos al montar el componente o cambiar el usuario.
+   */
+  useEffect(() => {
+    fetchData()
+  }, [user])
+
+  /**
+   * Carga los datos de asignaciones, eventos, usuarios y tipos de instrumento.
+   * @async
+   */
+  const fetchData = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      // console.log("Intentando cargar datos de eventos-usuario...")
+
+      const [eventosUsuarioRes, eventosRes, usuariosRes, tiposInstrumentoRes] = await Promise.all([
+        api.get("/evento-usuario"),
+        api.get("/eventos"),
+        api.get("/usuarios"),
+        api.get("/tipo-instrumentos"),
+      ])
+
+      // console.log("Respuesta de evento-usuario:", eventosUsuarioRes)
+      // console.log("Respuesta de eventos:", eventosRes)
+      // console.log("Respuesta de usuarios:", usuariosRes)
+      // console.log("Respuesta de tipos de instrumento:", tiposInstrumentoRes)
+
+      // Procesar datos de eventos-usuario
+      let eventosUsuarioData = []
+      if (eventosUsuarioRes.data &amp;&amp; Array.isArray(eventosUsuarioRes.data)) {
+        eventosUsuarioData = eventosUsuarioRes.data
+      } else if (eventosUsuarioRes.data &amp;&amp; eventosUsuarioRes.data.data &amp;&amp; Array.isArray(eventosUsuarioRes.data.data)) {
+        eventosUsuarioData = eventosUsuarioRes.data.data
+      } else {
+        // console.warn("Formato de respuesta inesperado para eventos-usuario:", eventosUsuarioRes.data)
+      }
+
+      // Mapear los datos para tener una estructura consistente
+      const mappedEventosUsuario = eventosUsuarioData.map((item) => ({
+        evento_id: item.evento_id,
+        usuario_id: item.usuario_id,
+        confirmacion: item.confirmacion || false,
+        evento: item.evento || null,
+        usuario: item.usuario || null,
+      }))
+
+      setEventosUsuario(mappedEventosUsuario)
+
+      // Procesar datos de eventos
+      let eventosData = []
+      if (eventosRes.data &amp;&amp; Array.isArray(eventosRes.data)) {
+        eventosData = eventosRes.data
+      } else if (eventosRes.data &amp;&amp; eventosRes.data.eventos &amp;&amp; Array.isArray(eventosRes.data.eventos)) {
+        eventosData = eventosRes.data.eventos
+      } else if (
+        eventosRes.data &amp;&amp;
+        eventosRes.data.data &amp;&amp;
+        eventosRes.data.data.eventos &amp;&amp;
+        Array.isArray(eventosRes.data.data.eventos)
+      ) {
+        eventosData = eventosRes.data.data.eventos
+      } else if (eventosRes.data &amp;&amp; eventosRes.data.data &amp;&amp; Array.isArray(eventosRes.data.data)) {
+        eventosData = eventosRes.data.data
+      } else {
+        // console.warn("Formato de respuesta inesperado para eventos:", eventosRes.data)
+      }
+
+      // Ordenar eventos por nombre
+      eventosData.sort((a, b) => a.nombre.localeCompare(b.nombre))
+      setEventos(eventosData)
+
+      // Procesar datos de usuarios
+      let usuariosData = []
+      if (usuariosRes.data &amp;&amp; Array.isArray(usuariosRes.data)) {
+        usuariosData = usuariosRes.data
+      } else if (usuariosRes.data &amp;&amp; usuariosRes.data.data &amp;&amp; Array.isArray(usuariosRes.data.data)) {
+        usuariosData = usuariosRes.data.data
+      } else {
+        // console.warn("Formato de respuesta inesperado para usuarios:", usuariosRes.data)
+      }
+      setUsuarios(usuariosData)
+
+      // Procesar datos de tipos de instrumento
+      let tiposData = []
+      if (tiposInstrumentoRes.data &amp;&amp; Array.isArray(tiposInstrumentoRes.data)) {
+        tiposData = tiposInstrumentoRes.data
+      } else if (
+        tiposInstrumentoRes.data &amp;&amp;
+        tiposInstrumentoRes.data.data &amp;&amp;
+        Array.isArray(tiposInstrumentoRes.data.data)
+      ) {
+        tiposData = tiposInstrumentoRes.data.data
+      } else {
+        // console.warn("Formato de respuesta inesperado para tipos de instrumento:", tiposInstrumentoRes.data)
+      }
+      setTiposInstrumento(tiposData)
+
+      // Inicializar todos los eventos como expandidos
+      const initialExpandedState = {}
+      eventosData.forEach((evento) => {
+        initialExpandedState[evento.id] = true
+      })
+      setExpandedEventos(initialExpandedState)
+    } catch (error) {
+      console.error("Error al cargar datos:", error)
+      setError(`Error al cargar datos: ${error.message}`)
+
+      if (error.response) {
+        console.error("Respuesta del servidor:", error.response.status, error.response.data)
+        setError(`Error del servidor: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+      } else if (error.request) {
+        console.error("No se recibió respuesta del servidor")
+        setError("No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.")
+      } else {
+        console.error("Error de configuración:", error.message)
+        setError(`Error de configuración: ${error.message}`)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  /**
+   * Abre el modal para crear o editar una asignación.
+   * @param {"create"|"edit"} mode - Modo del modal.
+   * @param {Object} eventoUsuario - Asignación a editar (opcional).
+   */
+  const handleOpenModal = (
+    mode,
+    eventoUsuario = {
+      evento_id: "",
+      usuario_id: user ? user.id : "",
+      confirmacion: false,
+    },
+  ) => {
+    setModalMode(mode)
+    setCurrentEventoUsuario(eventoUsuario)
+    setShowModal(true)
+  }
+
+  /**
+   * Maneja el cambio en los campos del formulario del modal.
+   * @param {Object} e - Evento de cambio.
+   */
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target
+    const newEventoUsuario = {
+      ...currentEventoUsuario,
+      [name]: type === "checkbox" ? checked : value,
+    }
+
+    setCurrentEventoUsuario(newEventoUsuario)
+
+    // Verificar duplicados solo en modo crear y cuando ambos campos están llenos
+    if (modalMode === "create" &amp;&amp; newEventoUsuario.evento_id &amp;&amp; newEventoUsuario.usuario_id) {
+      const existeAsignacion = eventosUsuario.some(
+        (item) =>
+          item.evento_id === Number.parseInt(newEventoUsuario.evento_id) &amp;&amp;
+          item.usuario_id === Number.parseInt(newEventoUsuario.usuario_id),
+      )
+      setShowDuplicateWarning(existeAsignacion)
+    } else {
+      setShowDuplicateWarning(false)
+    }
+  }
+
+  /**
+   * Envía el formulario para crear o editar una asignación evento-usuario.
+   * @async
+   * @param {Object} e - Evento de envío.
+   */
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    try {
+      // Si hay advertencia de duplicado, no permitir envío
+      if (showDuplicateWarning) {
+        toast.error(t("userEvents.assignmentAlreadyExists"))
+        return
+      }
+
+      if (modalMode === "create") {
+        await api.post("/evento-usuario", {
+          evento_id: currentEventoUsuario.evento_id,
+          usuario_id: currentEventoUsuario.usuario_id,
+          confirmacion: currentEventoUsuario.confirmacion,
+        })
+        toast.success(t("userEvents.assignmentCreatedSuccessfully"))
+      } else {
+        await api.put(`/evento-usuario/${currentEventoUsuario.evento_id}/${currentEventoUsuario.usuario_id}`, {
+          confirmacion: currentEventoUsuario.confirmacion,
+        })
+        toast.success(t("userEvents.assignmentUpdatedSuccessfully"))
+      }
+
+      // Recargar los datos
+      fetchData()
+      handleCloseModal()
+    } catch (error) {
+      console.error("Error al guardar asignación de evento:", error)
+      toast.error(t("userEvents.errorSavingAssignment"))
+    }
+  }
+
+  /**
+   * Abre el modal de confirmación de borrado para una asignación.
+   * @param {number} eventoId - ID del evento.
+   * @param {number} usuarioId - ID del usuario.
+   */
+  const confirmDelete = (eventoId, usuarioId) => {
+    setEventoUsuarioToDelete({ eventoId, usuarioId })
+    setShowDeleteModal(true)
+  }
+
+  /**
+   * Elimina una asignación evento-usuario seleccionada.
+   * @async
+   */
+  const handleDelete = async () => {
+    if (!eventoUsuarioToDelete) return
+
+    try {
+      await api.delete(`/evento-usuario/${eventoUsuarioToDelete.eventoId}/${eventoUsuarioToDelete.usuarioId}`)
+      setEventosUsuario(
+        eventosUsuario.filter(
+          (item) =>
+            !(item.evento_id === eventoUsuarioToDelete.eventoId &amp;&amp; item.usuario_id === eventoUsuarioToDelete.usuarioId),
+        ),
+      )
+      setShowDeleteModal(false)
+      setEventoUsuarioToDelete(null)
+      toast.success(t("userEvents.assignmentDeletedSuccessfully"))
+    } catch (error) {
+      console.error("Error al eliminar asignación de evento:", error)
+      toast.error(t("userEvents.errorDeletingAssignment"))
+    }
+  }
+
+  /**
+   * Alterna la expansión de un evento en la vista.
+   * @param {number} eventoId - ID del evento.
+   */
+  const toggleEventoExpanded = (eventoId) => {
+    setExpandedEventos((prev) => ({
+      ...prev,
+      [eventoId]: !prev[eventoId],
+    }))
+  }
+
+  /**
+   * Filtra los eventos según los criterios de búsqueda y filtros seleccionados.
+   * @type {Array}
+   */
+  const filteredEventos = eventos.filter((evento) => {
+    // Filtrar por término de búsqueda en el nombre del evento
+    const matchesSearch = evento.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+
+    // Filtrar por evento seleccionado
+    const matchesEvento = eventoFilter === "" || evento.id.toString() === eventoFilter
+
+    // Verificar si el evento tiene al menos una asignación
+    let tieneAsignaciones = eventosUsuario.some((item) => item.evento_id === evento.id)
+
+    // Si no es admin, solo mostrar eventos donde el usuario actual está asignado
+    if (!isAdmin) {
+      tieneAsignaciones = eventosUsuario.some(
+        (item) => item.evento_id === evento.id &amp;&amp; item.usuario_id === loggedInUser.id,
+      )
+    }
+
+    return matchesSearch &amp;&amp; matchesEvento &amp;&amp; tieneAsignaciones
+  })
+
+  /**
+   * Devuelve el nombre del usuario por su ID.
+   * @param {number} usuarioId - ID del usuario.
+   * @returns {string} Nombre del usuario.
+   */
+  const getUsuarioNombre = (usuarioId) => {
+    // Primero buscar en los eventosUsuario por si tiene el objeto usuario anidado
+    const itemConUsuario = eventosUsuario.find((item) => item.usuario_id === usuarioId &amp;&amp; item.usuario)
+    if (itemConUsuario &amp;&amp; itemConUsuario.usuario) {
+      return `${itemConUsuario.usuario.nombre} ${itemConUsuario.usuario.apellido1 || ""}`
+    }
+
+    // Si no, buscar en la lista de usuarios
+    const usuario = usuarios.find((u) => u.id === usuarioId)
+    return usuario ? `${usuario.nombre} ${usuario.apellido1 || ""}` : t("userEvents.unknownUser")
+  }
+
+  /**
+   * Formatea una fecha a formato DD/MM/YYYY.
+   * @param {string} dateString - Fecha en formato ISO.
+   * @returns {string} Fecha formateada.
+   */
+  const formatDate = (dateString) => {
+    if (!dateString) return "-"
+    const options = { day: "2-digit", month: "2-digit", year: "numeric" }
+    return new Date(dateString).toLocaleDateString("es-ES", options)
+  }
+
+  /**
+   * Formatea una hora a formato HH:MM.
+   * @param {string} timeString - Hora en formato HH:MM:SS.
+   * @returns {string} Hora formateada.
+   */
+  const formatTime = (timeString) => {
+    if (!timeString) return "-"
+    return timeString.substring(0, 5)
+  }
+
+  /**
+   * Devuelve la fecha del evento por su ID.
+   * @param {number} eventoId - ID del evento.
+   * @returns {string} Fecha formateada.
+   */
+  const getEventoFecha = (eventoId) => {
+    const itemConEvento = eventosUsuario.find((item) => item.evento_id === eventoId &amp;&amp; item.evento)
+    if (itemConEvento &amp;&amp; itemConEvento.evento &amp;&amp; itemConEvento.evento.fecha) {
+      return formatDate(itemConEvento.evento.fecha)
+    }
+    const evento = eventos.find((e) => e.id === eventoId)
+    return evento &amp;&amp; evento.fecha ? formatDate(evento.fecha) : "-"
+  }
+
+  /**
+   * Devuelve la hora del evento por su ID.
+   * @param {number} eventoId - ID del evento.
+   * @returns {string} Hora formateada.
+   */
+  const getEventoHora = (eventoId) => {
+    const evento = eventos.find((e) => e.id === eventoId)
+    return evento &amp;&amp; evento.hora ? formatTime(evento.hora) : "-"
+  }
+
+  /**
+   * Devuelve el lugar del evento por su ID.
+   * @param {number} eventoId - ID del evento.
+   * @returns {string} Lugar del evento.
+   */
+  const getEventoLugar = (eventoId) => {
+    const evento = eventos.find((e) => e.id === eventoId)
+    return evento &amp;&amp; evento.lugar ? evento.lugar : "-"
+  }
+
+  /**
+   * Devuelve el tipo del evento por su ID.
+   * @param {number} eventoId - ID del evento.
+   * @returns {string} Tipo del evento.
+   */
+  const getEventoTipo = (eventoId) => {
+    const evento = eventos.find((e) => e.id === eventoId)
+    return evento &amp;&amp; evento.tipo ? evento.tipo : ""
+  }
+
+  /**
+   * Traduce el tipo de evento.
+   * @param {string} tipo - Tipo de evento.
+   * @returns {string} Traducción del tipo.
+   */
+  const getEventoTipoTranslated = (tipo) => {
+    switch (tipo) {
+      case "concierto":
+        return t("events.concert")
+      case "ensayo":
+        return t("events.rehearsal")
+      case "procesion":
+        return t("events.procession")
+      case "pasacalles":
+        return t("events.parade")
+      default:
+        return tipo ? tipo.charAt(0).toUpperCase() + tipo.slice(1) : ""
+    }
+  }
+
+  /**
+   * Devuelve las asignaciones de un evento.
+   * @param {number} eventoId - ID del evento.
+   * @returns {Array} Asignaciones del evento.
+   */
+  const getAsignacionesPorEvento = (eventoId) => {
+    let asignaciones = eventosUsuario.filter((item) => item.evento_id === eventoId)
+
+    // Si no es admin, verificar que el usuario actual esté asignado al evento
+    if (!isAdmin) {
+      const usuarioAsignado = asignaciones.some((item) => item.usuario_id === loggedInUser.id)
+      if (!usuarioAsignado) {
+        asignaciones = []
+      }
+    }
+
+    return asignaciones
+  }
+
+  /**
+   * Calcula estadísticas de asistencia para un evento.
+   * @param {number} eventoId - ID del evento.
+   * @returns {Object} Estadísticas del evento.
+   */
+  const getEstadisticasEvento = (eventoId) => {
+    const asignaciones = getAsignacionesPorEvento(eventoId)
+    const totalAsignados = asignaciones.length
+    const totalConfirmados = asignaciones.filter((item) => item.confirmacion).length
+    const porcentajeConfirmados = totalAsignados > 0 ? Math.round((totalConfirmados / totalAsignados) * 100) : 0
+
+    // Obtener estadísticas por tipo de instrumento
+    const usuariosInstrumentos = usuarios.reduce((acc, usuario) => {
+      if (usuario.instrumento_tipo_id) {
+        acc[usuario.id] = usuario.instrumento_tipo_id
+      }
+      return acc
+    }, {})
+
+    const porTipoInstrumento = {}
+    asignaciones.forEach((asignacion) => {
+      const usuarioId = asignacion.usuario_id
+      const tipoInstrumentoId = usuariosInstrumentos[usuarioId]
+
+      if (tipoInstrumentoId) {
+        if (!porTipoInstrumento[tipoInstrumentoId]) {
+          porTipoInstrumento[tipoInstrumentoId] = {
+            total: 0,
+            confirmados: 0,
+            nombre: getTipoInstrumentoNombre(tipoInstrumentoId),
+          }
+        }
+
+        porTipoInstrumento[tipoInstrumentoId].total++
+        if (asignacion.confirmacion) {
+          porTipoInstrumento[tipoInstrumentoId].confirmados++
+        }
+      }
+    })
+
+    return {
+      totalAsignados,
+      totalConfirmados,
+      porcentajeConfirmados,
+      porTipoInstrumento,
+    }
+  }
+
+  /**
+   * Devuelve el nombre del tipo de instrumento por su ID.
+   * @param {number|string} tipoId - ID del tipo de instrumento.
+   * @returns {string} Nombre del tipo de instrumento.
+   */
+  const getTipoInstrumentoNombre = (tipoId) => {
+    const tipo = tiposInstrumento.find((t) => t.id === tipoId || t.instrumento === tipoId)
+    return tipo ? tipo.nombre || tipo.instrumento : t("userEvents.unknownInstrument")
+  }
+
+  /**
+   * Agrupa las asignaciones por evento para la vista de lista.
+   * @type {Array}
+   */
+  const eventosAgrupados = filteredEventos.map((evento) => {
+    const asignaciones = getAsignacionesPorEvento(evento.id)
+    return {
+      evento,
+      asignaciones,
+    }
+  })
+
+  // Paginación para vista de lista
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentEventosAgrupados = eventosAgrupados.slice(indexOfFirstItem, indexOfLastItem)
+  const totalPages = Math.ceil(eventosAgrupados.length / itemsPerPage)
+
+  /**
+   * Cambia la página actual en la vista de lista.
+   * @param {number} pageNumber - Número de página.
+   */
+  const paginate = (pageNumber) => {
+    if (pageNumber > 0 &amp;&amp; pageNumber &lt;= totalPages) {
+      setCurrentPage(pageNumber)
+    }
+  }
+
+  // Paginación para vista de estadísticas
+  const indexOfLastStat = currentStatsPage * statsPerPage
+  const indexOfFirstStat = indexOfLastStat - statsPerPage
+  const currentStatsEventos = filteredEventos.slice(indexOfFirstStat, indexOfLastStat)
+  const totalStatsPages = Math.ceil(filteredEventos.length / statsPerPage)
+
+  /**
+   * Cambia la página actual en la vista de estadísticas.
+   * @param {number} pageNumber - Número de página.
+   */
+  const paginateStats = (pageNumber) => {
+    if (pageNumber > 0 &amp;&amp; pageNumber &lt;= totalStatsPages) {
+      setCurrentStatsPage(pageNumber)
+    }
+  }
+
+  /**
+   * Cierra el modal de asignación.
+   */
+  const handleCloseModal = () => {
+    setShowModal(false)
+    setShowDuplicateWarning(false)
+    setCurrentEventoUsuario({
+      evento_id: "",
+      usuario_id: user ? user.id : "",
+      confirmacion: false,
+    })
+  }
+
+  /**
+   * Devuelve los detalles de un evento por su ID.
+   * @param {number} eventoId - ID del evento.
+   * @returns {Object} Detalles del evento.
+   */
+  const getEventoDetalles = (eventoId) => {
+    const evento = eventos.find((e) => e.id === eventoId)
+    return evento || {}
+  }
+
+  return (
+    &lt;div className="container mx-auto px-4 py-8">
+      &lt;div className="flex justify-between items-center mb-6">
+        &lt;h1 className="text-2xl font-bold text-[#C0C0C0]">{t("userEvents.title")}&lt;/h1>
+        &lt;div className="flex space-x-3">
+          &lt;div className="flex border border-gray-800 rounded-md overflow-hidden">
+            &lt;button
+              onClick={() => setViewMode("list")}
+              className={`px-4 py-2 ${
+                viewMode === "list"
+                  ? "bg-black border-r border-gray-800 text-[#C0C0C0]"
+                  : "bg-gray-900/50 text-gray-400 hover:bg-gray-900"
+              }`}
+            >
+              {t("userEvents.list")}
+            &lt;/button>
+            &lt;button
+              onClick={() => setViewMode("stats")}
+              className={`px-4 py-2 ${
+                viewMode === "stats" ? "bg-black text-[#C0C0C0]" : "bg-gray-900/50 text-gray-400 hover:bg-gray-900"
+              }`}
+            >
+              {t("userEvents.statistics")}
+            &lt;/button>
+          &lt;/div>
+          {isAdmin &amp;&amp; (
+            &lt;button
+              onClick={() => handleOpenModal("create")}
+              className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
+            >
+              &lt;Plus size={18} />
+              {t("userEvents.newAssignment")}
+            &lt;/button>
+          )}
+        &lt;/div>
+      &lt;/div>
+
+      {/* Mensaje de error */}
+      {error &amp;&amp; (
+        &lt;div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md mb-6">
+          &lt;h3 className="font-semibold">{t("userEvents.connectionError")}&lt;/h3>
+          &lt;p>{error}&lt;/p>
+          &lt;p className="mt-2 text-sm">
+            {t("userEvents.verifyThat")}:
+            &lt;ul className="list-disc pl-5 mt-1">
+              &lt;li>{t("userEvents.serverRunning")}&lt;/li>
+              &lt;li>{t("userEvents.corsConfiguration")}&lt;/li>
+              &lt;li>{t("userEvents.apiRoutesCorrect")}&lt;/li>
+              &lt;li>{t("userEvents.authenticatedWithToken")}&lt;/li>
+            &lt;/ul>
+          &lt;/p>
+        &lt;/div>
+      )}
+
+      {/* Filtros y búsqueda */}
+      &lt;div className="bg-black/30 border border-gray-800 rounded-lg p-4 mb-6">
+        &lt;div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          &lt;div className="relative">
+            &lt;Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+            &lt;input
+              type="text"
+              placeholder={t("userEvents.searchByEventOrUser")}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+            />
+          &lt;/div>
+          &lt;div className="relative">
+            &lt;Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+            &lt;select
+              value={eventoFilter}
+              onChange={(e) => setEventoFilter(e.target.value)}
+              className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
+            >
+              &lt;option value="">{t("eventMinimums.allEvents")}&lt;/option>
+              {eventos.map((evento) => (
+                &lt;option key={evento.id} value={evento.id.toString()}>
+                  {evento.nombre}
+                &lt;/option>
+              ))}
+            &lt;/select>
+          &lt;/div>
+          {viewMode === "list" &amp;&amp; (
+            &lt;>
+              &lt;div className="relative">
+                &lt;Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+                &lt;select
+                  value={usuarioFilter}
+                  onChange={(e) => setUsuarioFilter(e.target.value)}
+                  className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
+                >
+                  &lt;option value="">{t("userEvents.allUsers")}&lt;/option>
+                  {usuarios.map((usuario) => (
+                    &lt;option key={usuario.id} value={usuario.id.toString()}>
+                      {usuario.nombre} {usuario.apellido1 || ""}
+                    &lt;/option>
+                  ))}
+                &lt;/select>
+              &lt;/div>
+            &lt;/>
+          )}
+        &lt;/div>
+      &lt;/div>
+
+      {/* Contenido según el modo de vista */}
+      {loading ? (
+        &lt;div className="flex justify-center items-center h-64 bg-black/30 border border-gray-800 rounded-lg">
+          &lt;div className="text-[#C0C0C0]">{t("common.loading")}&lt;/div>
+        &lt;/div>
+      ) : viewMode === "list" ? (
+        /* Vista de lista agrupada por evento */
+        &lt;div className="space-y-6">
+          {currentEventosAgrupados.length === 0 ? (
+            &lt;div className="flex flex-col justify-center items-center h-64 bg-black/30 border border-gray-800 rounded-lg">
+              &lt;Calendar size={48} className="text-gray-600 mb-4" />
+              &lt;p className="text-gray-400 text-center">
+                {searchTerm || eventoFilter || usuarioFilter
+                  ? t("userEvents.noAssignmentsWithFilters")
+                  : t("userEvents.noAssignments")}
+              &lt;/p>
+              {isAdmin &amp;&amp; (
+                &lt;button
+                  onClick={() => handleOpenModal("create")}
+                  className="mt-4 text-[#C0C0C0] hover:text-white underline"
+                >
+                  {t("userEvents.addFirstAssignment")}
+                &lt;/button>
+              )}
+            &lt;/div>
+          ) : (
+            currentEventosAgrupados.map(({ evento, asignaciones }) => (
+              &lt;div key={evento.id} className="bg-black/30 border border-gray-800 rounded-lg overflow-hidden">
+                {/* Cabecera del evento */}
+                &lt;div
+                  className="bg-gray-900/50 px-4 py-3 flex justify-between items-center cursor-pointer"
+                  onClick={() => toggleEventoExpanded(evento.id)}
+                >
+                  &lt;div>
+                    &lt;h2 className="text-lg font-semibold text-[#C0C0C0]">{evento.nombre}&lt;/h2>
+                    &lt;div className="flex flex-wrap gap-4 mt-2 text-sm text-gray-400">
+                      &lt;div className="flex items-center">
+                        &lt;Calendar size={16} className="mr-2" />
+                        {getEventoFecha(evento.id)}
+                      &lt;/div>
+                      {getEventoHora(evento.id) !== "-" &amp;&amp; (
+                        &lt;div className="flex items-center">
+                          &lt;Clock size={16} className="mr-2" />
+                          {getEventoHora(evento.id)}
+                        &lt;/div>
+                      )}
+                      {getEventoLugar(evento.id) !== "-" &amp;&amp; (
+                        &lt;div className="flex items-center">
+                          &lt;MapPin size={16} className="mr-2" />
+                          {getEventoLugar(evento.id)}
+                        &lt;/div>
+                      )}
+                      {getEventoTipo(evento.id) &amp;&amp; (
+                        &lt;div className="flex items-center">
+                          &lt;Info size={16} className="mr-2" />
+                          &lt;span
+                            className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              getEventoTipo(evento.id) === "concierto"
+                                ? "bg-purple-900/30 text-purple-400 border border-purple-800"
+                                : getEventoTipo(evento.id) === "ensayo"
+                                  ? "bg-blue-900/30 text-blue-400 border border-blue-800"
+                                  : getEventoTipo(evento.id) === "procesion"
+                                    ? "bg-green-900/30 text-green-400 border border-green-800"
+                                    : getEventoTipo(evento.id) === "pasacalles"
+                                      ? "bg-yellow-900/30 text-yellow-400 border border-yellow-800"
+                                      : "bg-gray-900/30 text-gray-400 border border-gray-800"
+                            }`}
+                          >
+                            {getEventoTipoTranslated(getEventoTipo(evento.id))}
+                          &lt;/span>
+                        &lt;/div>
+                      )}
+                    &lt;/div>
+                  &lt;/div>
+                  &lt;button className="text-gray-400">
+                    {expandedEventos[evento.id] ? &lt;ChevronUp size={20} /> : &lt;ChevronDown size={20} />}
+                  &lt;/button>
+                &lt;/div>
+
+                {/* Tabla de asignaciones (solo visible si está expandido) */}
+                {expandedEventos[evento.id] &amp;&amp; (
+                  &lt;>
+                    &lt;div className="overflow-x-auto">
+                      &lt;table className="w-full">
+                        &lt;thead className="bg-gray-900/30 border-b border-gray-800">
+                          &lt;tr>
+                            &lt;th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                              {t("userEvents.user")}
+                            &lt;/th>
+                            &lt;th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                              {t("userEvents.confirmed")}
+                            &lt;/th>
+                            &lt;th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                              {isAdmin ? t("common.actions") : ""}
+                            &lt;/th>
+                          &lt;/tr>
+                        &lt;/thead>
+                        &lt;tbody className="divide-y divide-gray-800">
+                          {asignaciones.map((item) => (
+                            &lt;tr key={`${item.evento_id}-${item.usuario_id}`} className="hover:bg-gray-900/30">
+                              &lt;td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                                {getUsuarioNombre(item.usuario_id)}
+                              &lt;/td>
+                              &lt;td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                                &lt;span
+                                  className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                    item.confirmacion
+                                      ? "bg-green-900/30 text-green-400 border border-green-800"
+                                      : "bg-yellow-900/30 text-yellow-400 border border-yellow-800"
+                                  }`}
+                                >
+                                  {item.confirmacion ? t("userEvents.confirmed") : t("userEvents.pending")}
+                                &lt;/span>
+                              &lt;/td>
+                              &lt;td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                                {isAdmin &amp;&amp; (
+                                  &lt;div className="flex space-x-2">
+                                    {getEventoDetalles(item.evento_id).estado === "finalizado" ? (
+                                      &lt;span className="text-xs text-red-400">{t("common.eventFinished")}&lt;/span>
+                                    ) : (
+                                      &lt;>
+                                        &lt;button
+                                          onClick={() => handleOpenModal("edit", item)}
+                                          className="p-1 text-gray-400 hover:text-[#C0C0C0]"
+                                          title={t("common.edit")}
+                                        >
+                                          &lt;Edit size={18} />
+                                        &lt;/button>
+                                        &lt;button
+                                          onClick={() => confirmDelete(item.evento_id, item.usuario_id)}
+                                          className="p-1 text-gray-400 hover:text-red-400"
+                                          title={t("common.delete")}
+                                        >
+                                          &lt;Trash2 size={18} />
+                                        &lt;/button>
+                                      &lt;/>
+                                    )}
+                                  &lt;/div>
+                                )}
+                              &lt;/td>
+                            &lt;/tr>
+                          ))}
+                        &lt;/tbody>
+                      &lt;/table>
+                    &lt;/div>
+
+                    {/* Botón para añadir asignación a este evento */}
+                    {isAdmin &amp;&amp; evento.estado !== "finalizado" &amp;&amp; (
+                      &lt;div className="bg-gray-900/20 px-4 py-3 flex justify-center">
+                        &lt;button
+                          onClick={() =>
+                            handleOpenModal("create", {
+                              evento_id: evento.id,
+                              usuario_id: "",
+                              confirmacion: false,
+                            })
+                          }
+                          className="flex items-center gap-1 text-sm text-gray-400 hover:text-[#C0C0C0]"
+                        >
+                          &lt;Plus size={16} />
+                          {t("userEvents.addAssignment")}
+                        &lt;/button>
+                      &lt;/div>
+                    )}
+                  &lt;/>
+                )}
+              &lt;/div>
+            ))
+          )}
+
+          {/* Paginación */}
+          {totalPages > 1 &amp;&amp; (
+            &lt;div className="flex justify-between items-center bg-gray-900/50 px-4 py-3 rounded-md">
+              &lt;div className="text-sm text-gray-400">
+                {t("common.showing")} {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, eventosAgrupados.length)}{" "}
+                {t("common.of")} {eventosAgrupados.length} {t("events.events")}
+              &lt;/div>
+              &lt;div className="flex space-x-1">
+                &lt;button
+                  onClick={() => paginate(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="p-2 rounded-md bg-gray-800 text-gray-400 hover:text-[#C0C0C0] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  &lt;ChevronLeft size={16} />
+                &lt;/button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  &lt;button
+                    key={page}
+                    onClick={() => paginate(page)}
+                    className={`w-8 h-8 rounded-md flex items-center justify-center ${
+                      currentPage === page
+                        ? "bg-black text-[#C0C0C0]"
+                        : "bg-gray-900 text-gray-400 hover:text-[#C0C0C0]"
+                    }`}
+                  >
+                    {page}
+                  &lt;/button>
+                ))}
+                &lt;button
+                  onClick={() => paginate(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="p-2 rounded-md bg-gray-800 text-gray-400 hover:text-[#C0C0C0] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  &lt;ChevronRight size={16} />
+                &lt;/button>
+              &lt;/div>
+            &lt;/div>
+          )}
+        &lt;/div>
+      ) : (
+        /* Vista de estadísticas */
+        &lt;div className="space-y-6">
+          {filteredEventos.length === 0 ? (
+            &lt;div className="flex flex-col justify-center items-center h-64 bg-black/30 border border-gray-800 rounded-lg">
+              &lt;Calendar size={48} className="text-gray-600 mb-4" />
+              &lt;p className="text-gray-400 text-center">
+                {searchTerm || eventoFilter
+                  ? t("userEvents.noEventsWithFilters")
+                  : t("userEvents.noEventsWithAssignments")}
+              &lt;/p>
+              {isAdmin &amp;&amp; (
+                &lt;button
+                  onClick={() => handleOpenModal("create")}
+                  className="mt-4 text-[#C0C0C0] hover:text-white underline"
+                >
+                  {t("userEvents.addFirstAssignment")}
+                &lt;/button>
+              )}
+            &lt;/div>
+          ) : (
+            currentStatsEventos.map((evento) => {
+              const estadisticas = getEstadisticasEvento(evento.id)
+
+              return (
+                &lt;div key={evento.id} className="bg-black/30 border border-gray-800 rounded-lg overflow-hidden">
+                  {/* Cabecera del evento */}
+                  &lt;div
+                    className="bg-gray-900/50 px-4 py-3 flex justify-between items-center cursor-pointer"
+                    onClick={() => toggleEventoExpanded(evento.id)}
+                  >
+                    &lt;div>
+                      &lt;h2 className="text-lg font-semibold text-[#C0C0C0]">{evento.nombre}&lt;/h2>
+                      &lt;p className="text-sm text-gray-400">
+                        {evento.fecha &amp;&amp; `${formatDate(evento.fecha)} · `}
+                        {evento.tipo &amp;&amp; getEventoTipoTranslated(evento.tipo)}
+                        {evento.lugar &amp;&amp; ` · ${evento.lugar}`}
+                      &lt;/p>
+                    &lt;/div>
+                    &lt;div className="flex items-center">
+                      &lt;div className="mr-4 text-right">
+                        &lt;div className="text-sm font-medium text-[#C0C0C0]">
+                          {estadisticas.totalConfirmados} / {estadisticas.totalAsignados} {t("userEvents.confirmed")}
+                        &lt;/div>
+                        &lt;div className="text-xs text-gray-400">
+                          {estadisticas.porcentajeConfirmados}% {t("userEvents.attendance")}
+                        &lt;/div>
+                      &lt;/div>
+                      &lt;button className="text-gray-400">
+                        {expandedEventos[evento.id] ? &lt;ChevronUp size={20} /> : &lt;ChevronDown size={20} />}
+                      &lt;/button>
+                    &lt;/div>
+                  &lt;/div>
+
+                  {/* Contenido expandible con las estadísticas */}
+                  {expandedEventos[evento.id] &amp;&amp; (
+                    &lt;div className="px-4 py-4">
+                      {/* Resumen general */}
+                      &lt;div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        &lt;div className="bg-gray-900/30 border border-gray-800 rounded-lg p-4">
+                          &lt;div className="flex items-center justify-between">
+                            &lt;div className="text-gray-400 text-sm">{t("userEvents.totalAssigned")}&lt;/div>
+                            &lt;div className="text-[#C0C0C0] text-xl font-semibold">{estadisticas.totalAsignados}&lt;/div>
+                          &lt;/div>
+                        &lt;/div>
+                        &lt;div className="bg-gray-900/30 border border-gray-800 rounded-lg p-4">
+                          &lt;div className="flex items-center justify-between">
+                            &lt;div className="text-gray-400 text-sm">{t("userEvents.confirmed")}&lt;/div>
+                            &lt;div className="text-green-400 text-xl font-semibold">{estadisticas.totalConfirmados}&lt;/div>
+                          &lt;/div>
+                        &lt;/div>
+                        &lt;div className="bg-gray-900/30 border border-gray-800 rounded-lg p-4">
+                          &lt;div className="flex items-center justify-between">
+                            &lt;div className="text-gray-400 text-sm">{t("userEvents.attendancePercentage")}&lt;/div>
+                            &lt;div className="text-[#C0C0C0] text-xl font-semibold">
+                              {estadisticas.porcentajeConfirmados}%
+                            &lt;/div>
+                          &lt;/div>
+                        &lt;/div>
+                      &lt;/div>
+
+                      {/* Estadísticas por tipo de instrumento */}
+                      &lt;h3 className="text-[#C0C0C0] font-medium mb-3">{t("userEvents.attendanceByInstrument")}&lt;/h3>
+
+                      {Object.keys(estadisticas.porTipoInstrumento).length === 0 ? (
+                        &lt;p className="text-gray-400 text-center py-4">{t("userEvents.noInstrumentData")}&lt;/p>
+                      ) : (
+                        &lt;div className="space-y-3">
+                          {Object.entries(estadisticas.porTipoInstrumento).map(([tipoId, datos]) => (
+                            &lt;div key={tipoId} className="bg-gray-900/20 border border-gray-800 rounded-lg p-3">
+                              &lt;div className="flex justify-between items-center mb-2">
+                                &lt;div className="text-[#C0C0C0]">{datos.nombre}&lt;/div>
+                                &lt;div className="text-gray-400 text-sm">
+                                  {datos.confirmados} / {datos.total} {t("userEvents.confirmed")}
+                                &lt;/div>
+                              &lt;/div>
+                              &lt;div className="w-full bg-gray-800 rounded-full h-2.5">
+                                &lt;div
+                                  className="bg-green-600 h-2.5 rounded-full"
+                                  style={{ width: `${datos.total > 0 ? (datos.confirmados / datos.total) * 100 : 0}%` }}
+                                >&lt;/div>
+                              &lt;/div>
+                            &lt;/div>
+                          ))}
+                        &lt;/div>
+                      )}
+
+                      {/* Lista de asignaciones */}
+                      &lt;div className="mt-6">
+                        &lt;div className="flex justify-between items-center mb-3">
+                          &lt;h3 className="text-[#C0C0C0] font-medium">{t("userEvents.assignmentList")}&lt;/h3>
+                          {isAdmin &amp;&amp; evento.estado !== "finalizado" &amp;&amp; (
+                            &lt;button
+                              onClick={() =>
+                                handleOpenModal("create", {
+                                  evento_id: evento.id,
+                                  usuario_id: "",
+                                  confirmacion: false,
+                                })
+                              }
+                              className="flex items-center gap-1 text-sm text-gray-400 hover:text-[#C0C0C0]"
+                            >
+                              &lt;Plus size={16} />
+                              {t("userEvents.addAssignment")}
+                            &lt;/button>
+                          )}
+                        &lt;/div>
+
+                        &lt;div className="bg-gray-900/20 border border-gray-800 rounded-lg overflow-hidden">
+                          &lt;table className="w-full">
+                            &lt;thead className="bg-gray-900/50 border-b border-gray-800">
+                              &lt;tr>
+                                &lt;th className="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                  {t("userEvents.user")}
+                                &lt;/th>
+                                &lt;th className="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                  {t("common.status")}
+                                &lt;/th>
+                                &lt;th className="px-4 py-2 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                  {isAdmin ? t("common.actions") : ""}
+                                &lt;/th>
+                              &lt;/tr>
+                            &lt;/thead>
+                            &lt;tbody className="divide-y divide-gray-800">
+                              {getAsignacionesPorEvento(evento.id).map((item) => (
+                                &lt;tr key={`${item.evento_id}-${item.usuario_id}`} className="hover:bg-gray-900/30">
+                                  &lt;td className="px-4 py-2 whitespace-nowrap text-sm text-[#C0C0C0]">
+                                    {getUsuarioNombre(item.usuario_id)}
+                                  &lt;/td>
+                                  &lt;td className="px-4 py-2 whitespace-nowrap text-sm">
+                                    &lt;span
+                                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                        item.confirmacion
+                                          ? "bg-green-900/30 text-green-400 border border-green-800"
+                                          : "bg-yellow-900/30 text-yellow-400 border border-yellow-800"
+                                      }`}
+                                    >
+                                      {item.confirmacion ? t("userEvents.confirmed") : t("userEvents.pending")}
+                                    &lt;/span>
+                                  &lt;/td>
+                                  &lt;td className="px-4 py-2 whitespace-nowrap text-sm">
+                                    {isAdmin &amp;&amp; (
+                                      &lt;div className="flex space-x-2">
+                                        {getEventoDetalles(item.evento_id).estado === "finalizado" ? (
+                                          &lt;span className="text-xs text-red-400">{t("common.eventFinished")}&lt;/span>
+                                        ) : (
+                                          &lt;>
+                                            &lt;button
+                                              onClick={() => handleOpenModal("edit", item)}
+                                              className="p-1 text-gray-400 hover:text-[#C0C0C0]"
+                                              title={t("common.edit")}
+                                            >
+                                              &lt;Edit size={16} />
+                                            &lt;/button>
+                                            &lt;button
+                                              onClick={() => confirmDelete(item.evento_id, item.usuario_id)}
+                                              className="p-1 text-gray-400 hover:text-red-400"
+                                              title={t("common.delete")}
+                                            >
+                                              &lt;Trash2 size={16} />
+                                            &lt;/button>
+                                          &lt;/>
+                                        )}
+                                      &lt;/div>
+                                    )}
+                                  &lt;/td>
+                                &lt;/tr>
+                              ))}
+                            &lt;/tbody>
+                          &lt;/table>
+                        &lt;/div>
+                      &lt;/div>
+                    &lt;/div>
+                  )}
+                &lt;/div>
+              )
+            })
+          )}
+          {/* Paginación para estadísticas */}
+          {totalStatsPages > 1 &amp;&amp; (
+            &lt;div className="flex justify-between items-center bg-gray-900/50 px-4 py-3 rounded-md">
+              &lt;div className="text-sm text-gray-400">
+                {t("common.showing")} {indexOfFirstStat + 1}-{Math.min(indexOfLastStat, filteredEventos.length)}{" "}
+                {t("common.of")} {filteredEventos.length} {t("events.events")}
+              &lt;/div>
+              &lt;div className="flex space-x-1">
+                &lt;button
+                  onClick={() => paginateStats(currentStatsPage - 1)}
+                  disabled={currentStatsPage === 1}
+                  className="p-2 rounded-md bg-gray-800 text-gray-400 hover:text-[#C0C0C0] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  &lt;ChevronLeft size={16} />
+                &lt;/button>
+                {Array.from({ length: totalStatsPages }, (_, i) => i + 1).map((page) => (
+                  &lt;button
+                    key={page}
+                    onClick={() => paginateStats(page)}
+                    className={`w-8 h-8 rounded-md ${
+                      currentStatsPage === page
+                        ? "bg-black text-[#C0C0C0]"
+                        : "bg-gray-900 text-gray-400 hover:text-[#C0C0C0]"
+                    }`}
+                  >
+                    {page}
+                  &lt;/button>
+                ))}
+                &lt;button
+                  onClick={() => paginateStats(currentStatsPage + 1)}
+                  disabled={currentStatsPage === totalStatsPages}
+                  className="p-2 rounded-md bg-gray-800 text-gray-400 hover:text-[#C0C0C0] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  &lt;ChevronRight size={16} />
+                &lt;/button>
+              &lt;/div>
+            &lt;/div>
+          )}
+        &lt;/div>
+      )}
+
+      {/* Modal para crear/editar asignación */}
+      {showModal &amp;&amp; (
+        &lt;div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          &lt;div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
+            &lt;h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">
+              {modalMode === "create" ? t("userEvents.newAssignment") : t("userEvents.editAssignment")}
+            &lt;/h3>
+            &lt;form onSubmit={handleSubmit}>
+              &lt;div className="space-y-4">
+                {/* Mensaje de advertencia para duplicados */}
+                {showDuplicateWarning &amp;&amp; (
+                  &lt;div className="bg-yellow-900/20 border border-yellow-800 text-yellow-100 px-4 py-3 rounded-md flex items-start">
+                    &lt;div className="flex-shrink-0 mr-3 mt-0.5">
+                      &lt;svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        &lt;path
+                          fillRule="evenodd"
+                          d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                          clipRule="evenodd"
+                        />
+                      &lt;/svg>
+                    &lt;/div>
+                    &lt;div>
+                      &lt;p className="text-sm">{t("userEvents.assignmentAlreadyExistsWarning")}&lt;/p>
+                    &lt;/div>
+                  &lt;/div>
+                )}
+                &lt;div className="space-y-2">
+                  &lt;label htmlFor="evento_id" className="block text-[#C0C0C0] text-sm font-medium">
+                    {t("events.name")} *
+                  &lt;/label>
+                  &lt;select
+                    id="evento_id"
+                    name="evento_id"
+                    value={currentEventoUsuario.evento_id}
+                    onChange={handleInputChange}
+                    required
+                    disabled={modalMode === "edit"}
+                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] disabled:opacity-70"
+                  >
+                    &lt;option value="">{t("eventMinimums.selectEvent")}&lt;/option>
+                    {eventos
+                      .filter((evento) => evento.estado !== "finalizado")
+                      .map((evento) => (
+                        &lt;option key={evento.id} value={evento.id}>
+                          {evento.nombre} ({formatDate(evento.fecha)})
+                        &lt;/option>
+                      ))}
+                  &lt;/select>
+                &lt;/div>
+                &lt;div className="space-y-2">
+                  &lt;label htmlFor="usuario_id" className="block text-[#C0C0C0] text-sm font-medium">
+                    {t("userEvents.user")} *
+                  &lt;/label>
+                  &lt;select
+                    id="usuario_id"
+                    name="usuario_id"
+                    value={currentEventoUsuario.usuario_id}
+                    onChange={handleInputChange}
+                    required
+                    disabled={modalMode === "edit"}
+                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] disabled:opacity-70"
+                  >
+                    &lt;option value="">{t("userEvents.selectUser")}&lt;/option>
+                    {usuarios.map((usuario) => (
+                      &lt;option key={usuario.id} value={usuario.id}>
+                        {usuario.nombre} {usuario.apellido1 || ""}
+                      &lt;/option>
+                    ))}
+                  &lt;/select>
+                &lt;/div>
+                &lt;div className="flex items-center">
+                  &lt;input
+                    id="confirmacion"
+                    name="confirmacion"
+                    type="checkbox"
+                    checked={currentEventoUsuario.confirmacion}
+                    onChange={handleInputChange}
+                    className="h-4 w-4 text-[#C0C0C0] focus:ring-[#C0C0C0] border-gray-800 rounded"
+                  />
+                  &lt;label htmlFor="confirmacion" className="ml-2 block text-[#C0C0C0] text-sm">
+                    {t("userEvents.confirmed")}
+                  &lt;/label>
+                &lt;/div>
+              &lt;/div>
+              &lt;div className="mt-6 flex justify-end space-x-3">
+                &lt;button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+                >
+                  {t("common.cancel")}
+                &lt;/button>
+                &lt;button
+                  type="submit"
+                  className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors"
+                >
+                  {modalMode === "create" ? t("common.create") : t("common.save")}
+                &lt;/button>
+              &lt;/div>
+            &lt;/form>
+          &lt;/div>
+        &lt;/div>
+      )}
+
+      {/* Modal de confirmación de eliminación */}
+      {showDeleteModal &amp;&amp; (
+        &lt;div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          &lt;div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
+            &lt;h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("userEvents.confirmDelete")}&lt;/h3>
+            &lt;p className="text-gray-400 mb-6">{t("userEvents.deleteConfirmText")}&lt;/p>
+            &lt;div className="flex justify-end space-x-3">
+              &lt;button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+              >
+                {t("common.cancel")}
+              &lt;/button>
+              &lt;button onClick={handleDelete} className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800">
+                {t("common.delete")}
+              &lt;/button>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      )}
+    &lt;/div>
+  )
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> on Mon Jun 09 2025 13:51:24 GMT+0200 (hora de verano de Europa central) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>pages/Eventos/FormularioEvento.jsx - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-App.html">App</a><ul class='methods'><li data-type='method'><a href="module-App.html#~App">App</a></li><li data-type='method'><a href="module-App.html#~AppContent">AppContent</a></li></ul></li><li><a href="module-api_axios.html">api/axios</a></li><li><a href="module-components_AdminRoute.html">components/AdminRoute</a></li><li><a href="module-components_HelpButton_AboutModal.html">components/HelpButton/AboutModal</a></li><li><a href="module-components_HelpButton_HelpButton.html">components/HelpButton/HelpButton</a></li><li><a href="module-components_HelpButton_HelpModal.html">components/HelpButton/HelpModal</a></li><li><a href="module-components_MemberRoute.html">components/MemberRoute</a></li><li><a href="module-components_Navigation_Footer.html">components/Navigation/Footer</a></li><li><a href="module-components_Navigation_Navbar.html">components/Navigation/Navbar</a></li><li><a href="module-components_PasswordValidator.html">components/PasswordValidator</a></li><li><a href="module-components_ProtectedRoute.html">components/ProtectedRoute</a></li><li><a href="module-context_AuthContext.html">context/AuthContext</a><ul class='methods'><li data-type='method'><a href="module-context_AuthContext.html#.useAuth">useAuth</a></li><li data-type='method'><a href="module-context_AuthContext.html#~getCsrfCookie">getCsrfCookie</a></li></ul></li><li><a href="module-context_LanguageContext.html">context/LanguageContext</a><ul class='methods'><li data-type='method'><a href="module-context_LanguageContext.html#.useLanguage">useLanguage</a></li></ul></li><li><a href="module-hooks_useTranslation.html">hooks/useTranslation</a><ul class='methods'><li data-type='method'><a href="module-hooks_useTranslation.html#.useTranslation">useTranslation</a></li></ul></li><li><a href="module-main.html">main</a></li><li><a href="module-pages_Admin_GestionUsuarios.html">pages/Admin/GestionUsuarios</a></li><li><a href="module-pages_Calendario_Calendario.html">pages/Calendario/Calendario</a></li><li><a href="module-pages_Composiciones_Composiciones.html">pages/Composiciones/Composiciones</a></li><li><a href="module-pages_ComposicionesInterpretadas_ComposicionesInterpretadas.html">pages/ComposicionesInterpretadas/ComposicionesInterpretadas</a><ul class='methods'><li data-type='method'><a href="module-pages_ComposicionesInterpretadas_ComposicionesInterpretadas.html#~ComposicionesInterpretadas">ComposicionesInterpretadas</a></li></ul></li><li><a href="module-pages_ConfirmacionEventos_ConfirmacionEventos.html">pages/ConfirmacionEventos/ConfirmacionEventos</a></li><li><a href="module-pages_Entidades_Entidades.html">pages/Entidades/Entidades</a></li><li><a href="module-pages_EventoUsuario_EventoUsuario.html">pages/EventoUsuario/EventoUsuario</a></li><li><a href="module-pages_Eventos_Eventos.html">pages/Eventos/Eventos</a></li><li><a href="module-pages_Eventos_FormularioEvento.html">pages/Eventos/FormularioEvento</a></li><li><a href="module-pages_Home_Home.html">pages/Home/Home</a><ul class='methods'><li data-type='method'><a href="module-pages_Home_Home.html#~AdminCard">AdminCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~FeatureCard">FeatureCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~PublicHome">PublicHome</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~QuickAccessCard">QuickAccessCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~UserDashboard">UserDashboard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~getEventTypeColor">getEventTypeColor</a></li></ul></li><li><a href="module-pages_Instrumentos_Instrumentos.html">pages/Instrumentos/Instrumentos</a></li><li><a href="module-pages_Login_Login.html">pages/Login/Login</a></li><li><a href="module-pages_Mensajes_DetalleMensaje.html">pages/Mensajes/DetalleMensaje</a></li><li><a href="module-pages_Mensajes_FormularioMensaje.html">pages/Mensajes/FormularioMensaje</a></li><li><a href="module-pages_Mensajes_Mensajes.html">pages/Mensajes/Mensajes</a></li><li><a href="module-pages_MensajesUsuario_MensajesUsuario.html">pages/MensajesUsuario/MensajesUsuario</a><ul class='methods'><li data-type='method'><a href="module-pages_MensajesUsuario_MensajesUsuario.html#~MensajesUsuario">MensajesUsuario</a></li></ul></li><li><a href="module-pages_MinimosEvento_MinimosEvento.html">pages/MinimosEvento/MinimosEvento</a></li><li><a href="module-pages_NotFound_NotFound.html">pages/NotFound/NotFound</a></li><li><a href="module-pages_Perfil_Perfil.html">pages/Perfil/Perfil</a></li><li><a href="module-pages_Prestamos_Prestamos.html">pages/Prestamos/Prestamos</a></li><li><a href="module-pages_Register_Register.html">pages/Register/Register</a></li><li><a href="module-pages_RegistroPendiente_RegistroPendiente.html">pages/RegistroPendiente/RegistroPendiente</a></li><li><a href="module-pages_RestablecerPassword_NuevaPassword.html">pages/RestablecerPassword/NuevaPassword</a></li><li><a href="module-pages_RestablecerPassword_RestablecerPassword.html">pages/RestablecerPassword/RestablecerPassword</a></li><li><a href="module-pages_TiposInstrumento_TiposInstrumento.html">pages/TiposInstrumento/TiposInstrumento</a></li><li><a href="module-utils_translations.html">utils/translations</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+
+    
+    <h1 class="page-title">pages/Eventos/FormularioEvento.jsx</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file FormularioEvento.jsx
+ * @module pages/Eventos/FormularioEvento
+ * @description Componente de formulario para crear o editar eventos. Permite introducir nombre, tipo, fecha, hora, lugar, descripción, estado y entidad asociada. Muestra errores y feedback de guardado. Solo accesible para administradores.
+ * @author Rafael Rodriguez Mengual
+ */
+
+"use client"
+
+import { useState, useEffect } from "react"
+import { Save, MapPin, Calendar, Clock, Info, X } from "lucide-react"
+import api from "../../api/axios"
+import { useTranslation } from "../../hooks/useTranslation"
+
+/**
+ * Formulario para crear o editar un evento.
+ * @component
+ * @param {Object} props
+ * @param {Object|null} props.evento - Evento a editar (si es null, es creación).
+ * @param {Function} props.onClose - Función para cerrar el modal, recibe true si se guardó correctamente.
+ * @returns {JSX.Element} Modal de formulario de evento.
+ */
+export default function FormularioEvento({ evento = null, onClose }) {
+  /** Indica si es edición o creación */
+  const isEditing = !!evento
+  /** Hook de traducción */
+  const { t } = useTranslation()
+
+  /** Estado de carga de datos */
+  const [loading, setLoading] = useState(false)
+  /** Estado de guardado */
+  const [saving, setSaving] = useState(false)
+  /** Mensaje de error */
+  const [error, setError] = useState("")
+  /** Lista de entidades disponibles */
+  const [entidades, setEntidades] = useState([])
+
+  /** Estado del formulario */
+  const [formData, setFormData] = useState({
+    nombre: "",
+    tipo: "concierto",
+    fecha: "",
+    hora: "",
+    lugar: "",
+    descripcion: "",
+    estado: "planificado",
+    entidad_id: "",
+  })
+
+  /**
+   * Carga entidades y, si es edición, los datos del evento.
+   */
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+
+        const entidadesRes = await api.get("/entidades")
+        if (entidadesRes.data &amp;&amp; Array.isArray(entidadesRes.data)) {
+          setEntidades(entidadesRes.data)
+        } else if (entidadesRes.data &amp;&amp; entidadesRes.data.entidades &amp;&amp; Array.isArray(entidadesRes.data.entidades)) {
+          setEntidades(entidadesRes.data.entidades)
+        }
+
+        if (isEditing) {
+          setFormData({
+            nombre: evento.nombre || "",
+            tipo: evento.tipo || "concierto",
+            fecha: evento.fecha || "",
+            hora: evento.hora || "",
+            lugar: evento.lugar || "",
+            descripcion: evento.descripcion || "",
+            estado: evento.estado || "planificado",
+            entidad_id: evento.entidad_id || "",
+          })
+        }
+      } catch (error) {
+        console.error("Error al cargar datos:", error)
+        setError("Error al cargar los datos. Por favor, inténtalo de nuevo.")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [isEditing, evento])
+
+  /**
+   * Maneja el cambio en los campos del formulario.
+   * @param {Object} e - Evento de cambio.
+   */
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  /**
+   * Envía el formulario para crear o editar el evento.
+   * @async
+   * @param {Object} e - Evento de envío.
+   */
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setSaving(true)
+    setError("")
+
+    try {
+      // Formatear la hora para que coincida con el formato H:i esperado por el backend
+      const formDataToSend = {
+        ...formData,
+        hora: formData.hora ? formData.hora.substring(0, 5) : "", // Convertir de HH:MM:SS a HH:MM
+      }
+
+      // console.log("Enviando datos:", formDataToSend)
+
+      if (isEditing) {
+        const response = await api.put(`/eventos/${evento.id}`, formDataToSend)
+        // console.log("Respuesta de actualización:", response)
+      } else {
+        const response = await api.post("/eventos", formDataToSend)
+        // console.log("Respuesta de creación:", response)
+      }
+
+      onClose(true)
+    } catch (error) {
+      console.error("Error al guardar evento:", error)
+
+      if (error.response &amp;&amp; error.response.data) {
+        // Extraer mensajes de error más legibles
+        let errorMessage = "Error al guardar el evento."
+
+        if (error.response.data.message) {
+          errorMessage = error.response.data.message
+        } else if (error.response.data.errors) {
+          const errors = Object.values(error.response.data.errors).flat()
+          errorMessage = errors.join(", ")
+        }
+
+        setError(errorMessage)
+      } else {
+        setError("Error al guardar los datos. Por favor, verifica la información e inténtalo de nuevo.")
+      }
+      setSaving(false)
+    }
+  }
+
+  // Renderizado de la interfaz y modal
+  if (loading) {
+    return (
+      &lt;div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+        &lt;div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-3xl">
+          &lt;div className="flex justify-center items-center h-64">
+            &lt;div className="text-[#C0C0C0]">{t("common.loading")}&lt;/div>
+          &lt;/div>
+        &lt;/div>
+      &lt;/div>
+    )
+  }
+
+  return (
+    &lt;div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+      &lt;div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        &lt;div className="flex justify-between items-center mb-6">
+          &lt;h2 className="text-xl font-bold text-[#C0C0C0]">
+            {isEditing ? t("events.editEvent") : t("events.newEvent")}
+          &lt;/h2>
+          &lt;button
+            onClick={() => onClose(false)}
+            className="p-2 text-gray-400 hover:text-[#C0C0C0] rounded-full hover:bg-gray-900/50"
+          >
+            &lt;X size={20} />
+          &lt;/button>
+        &lt;/div>
+
+        {error &amp;&amp; (
+          &lt;div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md mb-6">{error}&lt;/div>
+        )}
+
+        &lt;form onSubmit={handleSubmit}>
+          &lt;div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Nombre del evento */}
+            &lt;div className="space-y-2">
+              &lt;label htmlFor="nombre" className="block text-[#C0C0C0] text-sm font-medium">
+                {t("events.name")} *
+              &lt;/label>
+              &lt;div className="relative">
+                &lt;div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                  &lt;Info size={18} />
+                &lt;/div>
+                &lt;input
+                  id="nombre"
+                  name="nombre"
+                  value={formData.nombre}
+                  onChange={handleChange}
+                  required
+                  className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                />
+              &lt;/div>
+            &lt;/div>
+
+            {/* Tipo de evento */}
+            &lt;div className="space-y-2">
+              &lt;label htmlFor="tipo" className="block text-[#C0C0C0] text-sm font-medium">
+                {t("events.type")} *
+              &lt;/label>
+              &lt;select
+                id="tipo"
+                name="tipo"
+                value={formData.tipo}
+                onChange={handleChange}
+                required
+                className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+              >
+                &lt;option value="concierto">{t("events.concert")}&lt;/option>
+                &lt;option value="ensayo">{t("events.rehearsal")}&lt;/option>
+                &lt;option value="procesion">{t("events.procession")}&lt;/option>
+                &lt;option value="pasacalles">{t("events.parade")}&lt;/option>
+              &lt;/select>
+            &lt;/div>
+
+            {/* Fecha */}
+            &lt;div className="space-y-2">
+              &lt;label htmlFor="fecha" className="block text-[#C0C0C0] text-sm font-medium">
+                {t("events.date")} *
+              &lt;/label>
+              &lt;div className="relative">
+                &lt;div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                  &lt;Calendar size={18} />
+                &lt;/div>
+                &lt;input
+                  id="fecha"
+                  name="fecha"
+                  type="date"
+                  value={formData.fecha}
+                  onChange={handleChange}
+                  required
+                  className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                />
+              &lt;/div>
+            &lt;/div>
+
+            {/* Hora */}
+            &lt;div className="space-y-2">
+              &lt;label htmlFor="hora" className="block text-[#C0C0C0] text-sm font-medium">
+                {t("events.time")}
+              &lt;/label>
+              &lt;div className="relative">
+                &lt;div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                  &lt;Clock size={18} />
+                &lt;/div>
+                &lt;input
+                  id="hora"
+                  name="hora"
+                  type="time"
+                  value={formData.hora}
+                  onChange={handleChange}
+                  className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                />
+              &lt;/div>
+            &lt;/div>
+
+            {/* Lugar */}
+            &lt;div className="space-y-2">
+              &lt;label htmlFor="lugar" className="block text-[#C0C0C0] text-sm font-medium">
+                {t("events.location")} *
+              &lt;/label>
+              &lt;div className="relative">
+                &lt;div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                  &lt;MapPin size={18} />
+                &lt;/div>
+                &lt;input
+                  id="lugar"
+                  name="lugar"
+                  value={formData.lugar}
+                  onChange={handleChange}
+                  required
+                  className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                />
+              &lt;/div>
+            &lt;/div>
+
+            {/* Estado */}
+            &lt;div className="space-y-2">
+              &lt;label htmlFor="estado" className="block text-[#C0C0C0] text-sm font-medium">
+                {t("events.status")} *
+              &lt;/label>
+              &lt;select
+                id="estado"
+                name="estado"
+                value={formData.estado}
+                onChange={handleChange}
+                required
+                className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+              >
+                &lt;option value="planificado">{t("events.planned")}&lt;/option>
+                &lt;option value="en progreso">{t("events.inProgress")}&lt;/option>
+                &lt;option value="finalizado">{t("events.finished")}&lt;/option>
+              &lt;/select>
+            &lt;/div>
+
+            {/* Entidad */}
+            &lt;div className="space-y-2">
+              &lt;label htmlFor="entidad_id" className="block text-[#C0C0C0] text-sm font-medium">
+                {t("events.entity")}
+              &lt;/label>
+              &lt;select
+                id="entidad_id"
+                name="entidad_id"
+                value={formData.entidad_id}
+                onChange={handleChange}
+                className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+              >
+                &lt;option value="">Ninguna&lt;/option>
+                {entidades.map((entidad) => (
+                  &lt;option key={entidad.id} value={entidad.id}>
+                    {entidad.nombre}
+                  &lt;/option>
+                ))}
+              &lt;/select>
+            &lt;/div>
+          &lt;/div>
+
+          {/* Descripción */}
+          &lt;div className="mt-6 space-y-2">
+            &lt;label htmlFor="descripcion" className="block text-[#C0C0C0] text-sm font-medium">
+              {t("events.description")}
+            &lt;/label>
+            &lt;textarea
+              id="descripcion"
+              name="descripcion"
+              value={formData.descripcion}
+              onChange={handleChange}
+              rows={4}
+              className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+            />
+          &lt;/div>
+
+          &lt;div className="mt-8 flex justify-end">
+            &lt;button
+              type="button"
+              onClick={() => onClose(false)}
+              className="mr-4 px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+            >
+              {t("common.cancel")}
+            &lt;/button>
+            &lt;button
+              type="submit"
+              disabled={saving}
+              className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              &lt;Save size={18} />
+              {saving ? t("events.saving") : t("common.save")}
+            &lt;/button>
+          &lt;/div>
+        &lt;/form>
+      &lt;/div>
+    &lt;/div>
+  )
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> on Mon Jun 09 2025 13:51:24 GMT+0200 (hora de verano de Europa central) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>

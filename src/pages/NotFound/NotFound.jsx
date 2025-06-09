@@ -1,8 +1,22 @@
+/**
+ * @file NotFound.jsx
+ * @module pages/NotFound/NotFound
+ * @description Página de error 404 para rutas no encontradas. Muestra un mensaje amigable y un botón para volver al inicio. Utiliza traducción internacionalizada.
+ * @author Rafael Rodriguez Mengual
+ */
+
 import { Link } from "react-router-dom"
 import { AlertTriangle } from "lucide-react"
 import { useTranslation } from "../../hooks/useTranslation"
 
+/**
+ * Componente de página 404 (no encontrada).
+ * Muestra un mensaje de error y un enlace para volver al inicio.
+ * @component
+ * @returns {JSX.Element} Página de error 404.
+ */
 export default function NotFound() {
+  /** Hook de traducción */
   const { t } = useTranslation()
 
   return (

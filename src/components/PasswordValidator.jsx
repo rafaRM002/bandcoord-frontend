@@ -1,11 +1,31 @@
+/**
+ * @file PasswordValidator.jsx
+ * @module components/PasswordValidator
+ * @description Componente que valida la fortaleza de una contraseña y muestra los requisitos visualmente.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"
 import { Check, X } from "lucide-react"
 import { useTranslation } from "../hooks/useTranslation"
 
+/**
+ * Componente que valida la fortaleza de una contraseña y muestra los requisitos.
+ * @component
+ * @param {Object} props
+ * @param {string} props.password - Contraseña a validar.
+ * @param {Function} [props.onValidationChange] - Callback opcional que recibe true si la contraseña es válida.
+ * @returns {JSX.Element} Lista visual de requisitos de contraseña.
+ */
 export default function PasswordValidator({ password, onValidationChange }) {
   const { t } = useTranslation()
+
+  /**
+   * Estado para guardar el resultado de cada validación.
+   * @type {{length: boolean, lowercase: boolean, uppercase: boolean, number: boolean, special: boolean}}
+   */
   const [validations, setValidations] = useState({
     length: false,
     lowercase: false,
@@ -14,22 +34,30 @@ export default function PasswordValidator({ password, onValidationChange }) {
     special: false,
   })
 
+  /**
+   * Efecto que valida la contraseña cada vez que cambia.
+   */
   useEffect(() => {
     const newValidations = {
-      length: password.length >= 8,
-      lowercase: /[a-z]/.test(password),
-      uppercase: /[A-Z]/.test(password),
-      number: /\d/.test(password),
-      special: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password),
+      length: password.length >= 8, // Al menos 8 caracteres
+      lowercase: /[a-z]/.test(password), // Al menos una minúscula
+      uppercase: /[A-Z]/.test(password), // Al menos una mayúscula
+      number: /\d/.test(password), // Al menos un número
+      special: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password), // Al menos un carácter especial
     }
 
     setValidations(newValidations)
 
-    // Notificar al componente padre si la contraseña es válida
+    // Notifica al componente padre si la contraseña es válida
     const isValid = Object.values(newValidations).every(Boolean)
     onValidationChange?.(isValid)
+    // console.log("Validación de contraseña:", newValidations, "¿Válida?", isValid)
   }, [password, onValidationChange])
 
+  /**
+   * Lista de requisitos a mostrar.
+   * @type {Array<{key: string, text: string, valid: boolean}>}
+   */
   const requirements = [
     {
       key: "length",
@@ -60,7 +88,9 @@ export default function PasswordValidator({ password, onValidationChange }) {
 
   return (
     <div className="mt-2">
+      {/* Título de requisitos */}
       <p className="text-xs text-gray-400 mb-2">{t("password.requirements", "Requisitos de la contraseña:")}</p>
+      {/* Lista de requisitos con iconos de validación */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
         {requirements.map((req) => (
           <div key={req.key} className="flex items-center text-xs">

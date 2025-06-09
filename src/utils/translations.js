@@ -1,3 +1,16 @@
+/**
+ * @file translations.js
+ * @module utils/translations
+ * @description Diccionario de traducciones internacionalizadas para la aplicación BandCoord. Incluye todos los textos de la interfaz en español e inglés, organizados por secciones y funcionalidades (navbar, instrumentos, eventos, usuarios, mensajes, etc). Permite la traducción dinámica de la UI según el idioma seleccionado.
+ * @author Rafael Rodriguez Mengual
+ */
+
+/**
+ * Objeto principal de traducciones.
+ * Contiene las traducciones para los idiomas soportados (es, en).
+ * Cada clave representa una sección o funcionalidad de la aplicación.
+ * @type {Object}
+ */
 export const translations = {
   es: {
     // Navbar
@@ -481,7 +494,6 @@ export const translations = {
 
     // Home Page
     home: {
-      welcome: "Bienvenido a",
       subtitle: "La plataforma integral para gestionar todos los aspectos de tu banda musical",
       login: "Iniciar Sesión",
       register: "Registrarse",
@@ -549,7 +561,6 @@ export const translations = {
       quickStats: "Estadísticas Rápidas",
       totalInstruments: "Total de Instrumentos",
       activeLoans: "Préstamos Activos",
-      upcomingEvents: "Eventos Próximos",
       availableInstruments: "Instrumentos Disponibles",
     },
 
@@ -1407,7 +1418,6 @@ export const translations = {
 
     // Home Page
     home: {
-      welcome: "Welcome to",
       subtitle: "The comprehensive platform to manage all aspects of your musical band",
       login: "Sign In",
       register: "Sign Up",
@@ -1452,7 +1462,6 @@ export const translations = {
       welcomeUser: "Welcome",
       accessAllFeatures: "Access all BandCoord functionalities from your control panel.",
       quickAccess: "Quick access",
-      upcomingEvents: "Upcoming events",
       viewAllEvents: "View all scheduled events",
       recentCompositions: "Recent compositions",
       viewAllCompositions: "Access sheet music and compositions",
@@ -1515,7 +1524,6 @@ export const translations = {
       searchByInstrumentOrUser: "Search by instrument, type or user...",
       noLoans: "No loans registered.",
       noLoansWithFilters: "No loans found with the applied filters.",
-      addFirstLoan: "Add the first loan",
       selectInstrument: "Select an instrument",
       selectUser: "Select a user",
       returnLoan: "Return loan",
@@ -1643,7 +1651,7 @@ export const translations = {
       manageCompositions: "Manage Compositions",
       searchByTitleAuthorDescription: "Search by title, author or description...",
       noInterpretedCompositions: "No interpreted compositions registered.",
-      noCompositionsWithFilters: "No compositions found with the applied filters.",
+      noCompositionsWithFilters: "No compositions found with the filters applied.",
       loadingInterpretedCompositions: "Loading interpreted compositions...",
       errorLoadingInterpretedCompositions: "Error loading interpreted compositions. Please try again later.",
       errorLoadingUsersList: "Error loading users list",

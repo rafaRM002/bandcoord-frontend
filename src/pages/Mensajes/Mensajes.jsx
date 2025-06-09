@@ -1,3 +1,10 @@
+/**
+ * @file Mensajes.jsx
+ * @module pages/Mensajes/Mensajes
+ * @description Página de gestión de mensajes enviados. Permite buscar, paginar, seleccionar, eliminar uno o varios mensajes y ver detalles. Muestra destinatarios, asunto, contenido y fecha de envío. Solo muestra mensajes enviados por el usuario autenticado.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -8,24 +15,49 @@ import { toast } from "react-toastify"
 import { useAuth } from "../../context/AuthContext"
 import { useTranslation } from "../../hooks/useTranslation"
 
+/**
+ * Componente principal para la gestión de mensajes enviados.
+ * Permite buscar, seleccionar, eliminar y paginar mensajes.
+ * @component
+ * @returns {JSX.Element} Página de mensajes enviados.
+ */
 export default function Mensajes() {
+  /** Lista de mensajes enviados */
   const [mensajes, setMensajes] = useState([])
+  /** Estado de carga */
   const [loading, setLoading] = useState(true)
+  /** Término de búsqueda */
   const [searchTerm, setSearchTerm] = useState("")
+  /** Mostrar modal de confirmación de borrado individual */
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  /** ID del mensaje a eliminar */
   const [mensajeToDelete, setMensajeToDelete] = useState(null)
+  /** Lista de usuarios (para mostrar nombres de destinatarios) */
   const [usuarios, setUsuarios] = useState([])
+  /** Página actual de la paginación */
   const [currentPage, setCurrentPage] = useState(1)
+  /** Total de páginas (no usado directamente) */
   const [, setTotalPages] = useState(1)
+  /** Usuario autenticado */
   const { user } = useAuth()
+  /** Mensajes por página */
   const itemsPerPage = 6
+  /** IDs de mensajes seleccionados para borrado múltiple */
   const [selectedMensajes, setSelectedMensajes] = useState([])
-  const [filtroActual,] = useState("enviados") // enviados, archivados
+  /** Filtro actual (solo "enviados" en este caso) */
+  const [filtroActual,] = useState("enviados")
+  /** Estado de selección global de mensajes */
   const [selectAll, setSelectAll] = useState(false)
+  /** Mostrar modal de confirmación de borrado múltiple */
   const [showDeleteSelectedModal, setShowDeleteSelectedModal] = useState(false)
+  /** Relación mensaje-usuario para obtener destinatarios */
   const [mensajeUsuarios, setMensajeUsuarios] = useState([])
+  /** Hook de traducción */
   const { t } = useTranslation()
 
+  /**
+   * Efecto para cargar mensajes, usuarios y relaciones mensaje-usuario al montar o cambiar usuario.
+   */
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -36,7 +68,11 @@ export default function Mensajes() {
           api.get("/mensaje-usuarios"),
         ])
 
-        // Check if response.data is an array or if it has a data property
+        // console.log("Mensajes:", mensajesRes.data)
+        // console.log("Usuarios:", usuariosRes.data)
+        // console.log("MensajeUsuarios:", mensajeUsuariosRes.data)
+
+        // Procesar mensajes
         const mensajesData = Array.isArray(mensajesRes.data) ? mensajesRes.data : mensajesRes.data.data || []
         const mensajeUsuariosData = Array.isArray(mensajeUsuariosRes.data)
           ? mensajeUsuariosRes.data
@@ -50,7 +86,7 @@ export default function Mensajes() {
         setMensajes(mensajesEnviados)
         setTotalPages(Math.ceil(mensajesEnviados.length / itemsPerPage))
 
-        // Check if response.data is an array or if it has a data property
+        // Procesar usuarios
         const usuariosData = Array.isArray(usuariosRes.data) ? usuariosRes.data : usuariosRes.data.data || []
         setUsuarios(usuariosData)
       } catch (error) {
@@ -66,6 +102,10 @@ export default function Mensajes() {
     }
   }, [user])
 
+  /**
+   * Elimina un mensaje individual.
+   * @async
+   */
   const handleDelete = async () => {
     if (!mensajeToDelete) return
 
@@ -81,6 +121,10 @@ export default function Mensajes() {
     }
   }
 
+  /**
+   * Selecciona o deselecciona un mensaje para borrado múltiple.
+   * @param {number} id - ID del mensaje.
+   */
   const handleSelectMensaje = (id) => {
     if (selectedMensajes.includes(id)) {
       setSelectedMensajes(selectedMensajes.filter((mensajeId) => mensajeId !== id))
@@ -89,6 +133,9 @@ export default function Mensajes() {
     }
   }
 
+  /**
+   * Selecciona o deselecciona todos los mensajes de la página actual.
+   */
   const handleSelectAll = () => {
     if (selectAll) {
       setSelectedMensajes([])
@@ -98,10 +145,17 @@ export default function Mensajes() {
     setSelectAll(!selectAll)
   }
 
+  /**
+   * Muestra el modal de confirmación para borrar mensajes seleccionados.
+   */
   const handleDeleteSelected = async () => {
     setShowDeleteSelectedModal(true)
   }
 
+  /**
+   * Confirma y elimina todos los mensajes seleccionados.
+   * @async
+   */
   const confirmDeleteSelected = async () => {
     if (selectedMensajes.length === 0) return
 
@@ -118,6 +172,10 @@ export default function Mensajes() {
     }
   }
 
+  /**
+   * Filtra los mensajes según el término de búsqueda y el filtro actual.
+   * @type {Array}
+   */
   const filteredMensajes = mensajes.filter((mensaje) => {
     const matchesSearch =
       mensaje.asunto?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -130,24 +188,42 @@ export default function Mensajes() {
     return matchesSearch
   })
 
-  // Paginación
+  // Paginación de mensajes filtrados
   const paginatedMensajes = filteredMensajes.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
+  /**
+   * Cambia la página actual de la paginación.
+   * @param {number} page - Página a mostrar.
+   */
   const handlePageChange = (page) => {
     setCurrentPage(page)
   }
 
-  // Formatear fecha para mostrar
+  /**
+   * Formatea una fecha a DD/MM/YYYY HH:mm.
+   * @param {string} dateString - Fecha en formato ISO.
+   * @returns {string} Fecha formateada.
+   */
   const formatDate = (dateString) => {
     const options = { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }
     return new Date(dateString).toLocaleDateString("es-ES", options)
   }
 
+  /**
+   * Obtiene el ID del receptor de un mensaje a partir de la relación mensaje-usuario.
+   * @param {number} mensajeId - ID del mensaje.
+   * @returns {number|null} ID del receptor.
+   */
   const getReceptorId = (mensajeId) => {
     const mensajeUsuario = mensajeUsuarios.find((mu) => mu.mensaje_id === mensajeId)
     return mensajeUsuario ? mensajeUsuario.usuario_id_receptor : null
   }
 
+  /**
+   * Obtiene el nombre del usuario receptor de un mensaje.
+   * @param {number} mensajeId - ID del mensaje.
+   * @returns {string} Nombre del receptor o "Desconocido".
+   */
   const getUsuarioNombre = (mensajeId) => {
     const receptorId = getReceptorId(mensajeId)
     if (!receptorId) return "Desconocido"
@@ -159,6 +235,10 @@ export default function Mensajes() {
     return `${usuario.nombre || ""} ${usuario.apellido1 || ""}`.trim() || `Usuario #${receptorId}`
   }
 
+  /**
+   * Renderiza la paginación de la lista de mensajes.
+   * @returns {JSX.Element|null}
+   */
   const renderPagination = () => {
     const totalFilteredPages = Math.ceil(filteredMensajes.length / itemsPerPage)
 
@@ -197,6 +277,7 @@ export default function Mensajes() {
     )
   }
 
+  // Renderizado principal de la página de mensajes enviados
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">

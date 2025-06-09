@@ -1,3 +1,10 @@
+/**
+ * @file FormularioEvento.jsx
+ * @module pages/Eventos/FormularioEvento
+ * @description Componente de formulario para crear o editar eventos. Permite introducir nombre, tipo, fecha, hora, lugar, descripción, estado y entidad asociada. Muestra errores y feedback de guardado. Solo accesible para administradores.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -5,15 +12,30 @@ import { Save, MapPin, Calendar, Clock, Info, X } from "lucide-react"
 import api from "../../api/axios"
 import { useTranslation } from "../../hooks/useTranslation"
 
+/**
+ * Formulario para crear o editar un evento.
+ * @component
+ * @param {Object} props
+ * @param {Object|null} props.evento - Evento a editar (si es null, es creación).
+ * @param {Function} props.onClose - Función para cerrar el modal, recibe true si se guardó correctamente.
+ * @returns {JSX.Element} Modal de formulario de evento.
+ */
 export default function FormularioEvento({ evento = null, onClose }) {
+  /** Indica si es edición o creación */
   const isEditing = !!evento
+  /** Hook de traducción */
   const { t } = useTranslation()
 
+  /** Estado de carga de datos */
   const [loading, setLoading] = useState(false)
+  /** Estado de guardado */
   const [saving, setSaving] = useState(false)
+  /** Mensaje de error */
   const [error, setError] = useState("")
+  /** Lista de entidades disponibles */
   const [entidades, setEntidades] = useState([])
 
+  /** Estado del formulario */
   const [formData, setFormData] = useState({
     nombre: "",
     tipo: "concierto",
@@ -25,6 +47,9 @@ export default function FormularioEvento({ evento = null, onClose }) {
     entidad_id: "",
   })
 
+  /**
+   * Carga entidades y, si es edición, los datos del evento.
+   */
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -60,11 +85,20 @@ export default function FormularioEvento({ evento = null, onClose }) {
     fetchData()
   }, [isEditing, evento])
 
+  /**
+   * Maneja el cambio en los campos del formulario.
+   * @param {Object} e - Evento de cambio.
+   */
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
+  /**
+   * Envía el formulario para crear o editar el evento.
+   * @async
+   * @param {Object} e - Evento de envío.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSaving(true)
@@ -77,14 +111,14 @@ export default function FormularioEvento({ evento = null, onClose }) {
         hora: formData.hora ? formData.hora.substring(0, 5) : "", // Convertir de HH:MM:SS a HH:MM
       }
 
-      console.log("Enviando datos:", formDataToSend)
+      // console.log("Enviando datos:", formDataToSend)
 
       if (isEditing) {
         const response = await api.put(`/eventos/${evento.id}`, formDataToSend)
-        console.log("Respuesta de actualización:", response)
+        // console.log("Respuesta de actualización:", response)
       } else {
         const response = await api.post("/eventos", formDataToSend)
-        console.log("Respuesta de creación:", response)
+        // console.log("Respuesta de creación:", response)
       }
 
       onClose(true)
@@ -110,6 +144,7 @@ export default function FormularioEvento({ evento = null, onClose }) {
     }
   }
 
+  // Renderizado de la interfaz y modal
   if (loading) {
     return (
       <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">

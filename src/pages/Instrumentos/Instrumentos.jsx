@@ -1,3 +1,10 @@
+/**
+ * @file Instrumentos.jsx
+ * @module pages/Instrumentos/Instrumentos
+ * @description Página para la gestión de instrumentos musicales. Permite crear, editar, eliminar, buscar, filtrar y paginar instrumentos, así como gestionar préstamos asociados y actualizar cantidades de tipos de instrumento. Solo los administradores pueden modificar datos.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -17,56 +24,86 @@ import {
 } from "lucide-react"
 import api from "../../api/axios"
 import { useTranslation } from "../../hooks/useTranslation"
-// Corregir la importación de useAuth
 import { useAuth } from "../../context/AuthContext"
 
+/**
+ * Componente principal para la gestión de instrumentos musicales.
+ * Permite listar, buscar, filtrar, crear, editar, eliminar y gestionar préstamos de instrumentos.
+ * @component
+ * @returns {JSX.Element} Página de instrumentos.
+ */
 export default function Instrumentos() {
+  /** Lista de instrumentos */
   const [instrumentos, setInstrumentos] = useState([])
+  /** Estado de carga */
   const [loading, setLoading] = useState(true)
+  /** Mensaje de error de conexión */
   const [error, setError] = useState(null)
+  /** Término de búsqueda */
   const [searchTerm, setSearchTerm] = useState("")
+  /** Filtro por tipo de instrumento */
   const [tipoFilter, setTipoFilter] = useState("")
+  /** Lista de tipos de instrumento */
   const [tiposInstrumento, setTiposInstrumento] = useState([])
+  /** Estado del modal de confirmación de borrado */
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  /** Número de serie del instrumento a eliminar */
   const [instrumentoToDelete, setInstrumentoToDelete] = useState(null)
+  /** Hook de traducción */
   const { t } = useTranslation()
+  /** Lista de usuarios */
   const [usuarios, setUsuarios] = useState([])
+  /** Lista de préstamos */
   const [prestamos, setPrestamos] = useState([])
+  /** Mensaje de éxito */
   const [successMessage, setSuccessMessage] = useState(null)
+  /** Mensaje de error de operación */
   const [errorMessage, setErrorMessage] = useState(null)
 
-  // Pagination
+  // Paginación
+  /** Página actual */
   const [currentPage, setCurrentPage] = useState(1)
+  /** Elementos por página */
   const [itemsPerPage] = useState(10)
 
   // Modal para crear/editar instrumento
+  /** Estado del modal de formulario */
   const [showModal, setShowModal] = useState(false)
+  /** Modo del modal: "create" o "edit" */
   const [modalMode, setModalMode] = useState("create")
+  /** Instrumento actual para crear/editar */
   const [currentInstrumento, setCurrentInstrumento] = useState({
     numero_serie: "",
     instrumento_tipo_id: "",
     estado: "disponible",
   })
 
-  // Estado separado para el usuario del préstamo (no va en la tabla instrumentos)
+  /** Usuario seleccionado para préstamo */
   const [selectedLoanUser, setSelectedLoanUser] = useState("")
 
-  // Nuevo estado para el modal de confirmación de creación
+  /** Estado del modal de confirmación de creación */
   const [showCreateConfirmModal, setShowCreateConfirmModal] = useState(false)
 
-  // Dentro del componente, después de las declaraciones de estado:
+  /** Si el usuario es administrador */
   const { isAdmin } = useAuth()
 
+  /**
+   * Efecto para cargar datos al montar el componente.
+   */
   useEffect(() => {
     fetchData()
   }, [])
 
+  /**
+   * Carga los datos de instrumentos, tipos, usuarios y préstamos.
+   * @async
+   */
   const fetchData = async () => {
     try {
       setLoading(true)
       setError(null)
 
-      console.log("Intentando conectar a:", `${api.defaults.baseURL}/instrumentos`)
+      // console.log("Intentando conectar a:", `${api.defaults.baseURL}/instrumentos`)
 
       const [instrumentosRes, tiposRes, usuariosRes, prestamosRes] = await Promise.all([
         api.get("/instrumentos"),
@@ -75,22 +112,21 @@ export default function Instrumentos() {
         api.get("/prestamos"),
       ])
 
-      console.log("Respuesta de instrumentos:", instrumentosRes)
-      console.log("Respuesta de tipos:", tiposRes)
-      console.log("Respuesta de usuarios:", usuariosRes)
-      console.log("Respuesta de préstamos:", prestamosRes)
+      // console.log("Respuesta de instrumentos:", instrumentosRes)
+      // console.log("Respuesta de tipos:", tiposRes)
+      // console.log("Respuesta de usuarios:", usuariosRes)
+      // console.log("Respuesta de préstamos:", prestamosRes)
 
       setInstrumentos(instrumentosRes.data)
       setTiposInstrumento(tiposRes.data)
 
-      // Debug: Log the structure of tipos de instrumento
-      console.log("🔍 Estructura de tipos de instrumento:", tiposRes.data)
-      if (tiposRes.data && tiposRes.data.length > 0) {
-        console.log("🔍 Primer tipo de instrumento:", tiposRes.data[0])
-        console.log("🔍 Claves disponibles:", Object.keys(tiposRes.data[0]))
-      }
+      // console.log("🔍 Estructura de tipos de instrumento:", tiposRes.data)
+      // if (tiposRes.data && tiposRes.data.length > 0) {
+      //   console.log("🔍 Primer tipo de instrumento:", tiposRes.data[0])
+      //   console.log("🔍 Claves disponibles:", Object.keys(tiposRes.data[0]))
+      // }
 
-      // Procesar datos de usuarios igual que en Prestamos.jsx
+      // Procesar datos de usuarios
       let usuariosData = []
       if (usuariosRes.data && Array.isArray(usuariosRes.data)) {
         usuariosData = usuariosRes.data
@@ -99,7 +135,7 @@ export default function Instrumentos() {
       }
       setUsuarios(usuariosData)
 
-      // Procesar datos de préstamos igual que en Prestamos.jsx
+      // Procesar datos de préstamos
       let prestamosData = []
       if (prestamosRes.data && Array.isArray(prestamosRes.data)) {
         prestamosData = prestamosRes.data
@@ -108,7 +144,7 @@ export default function Instrumentos() {
       }
       setPrestamos(prestamosData)
 
-      console.log("Préstamos procesados:", prestamosData)
+      // console.log("Préstamos procesados:", prestamosData)
     } catch (error) {
       console.error("Error al cargar datos:", error)
       setError(`Error al cargar datos: ${error.message}`)
@@ -128,50 +164,53 @@ export default function Instrumentos() {
     }
   }
 
+  /**
+   * Elimina un instrumento y sus préstamos asociados, y actualiza la cantidad del tipo.
+   * @async
+   */
   const handleDelete = async () => {
     if (!instrumentoToDelete) return
 
     try {
       // Obtener información del instrumento antes de eliminarlo para decrementar la cantidad
       const instrumentoAEliminar = instrumentos.find((i) => i.numero_serie === instrumentoToDelete)
-      console.log("🔍 Instrumento a eliminar:", instrumentoAEliminar)
+      // console.log("🔍 Instrumento a eliminar:", instrumentoAEliminar)
 
-      // First, delete any active loans for this instrument
+      // Eliminar préstamos activos asociados
       const prestamosActivos = prestamos.filter(
         (prestamo) =>
           String(prestamo.num_serie) === String(instrumentoToDelete) &&
           (!prestamo.fecha_devolucion || prestamo.fecha_devolucion === ""),
       )
 
-      console.log(`🔄 Eliminando ${prestamosActivos.length} préstamos activos para instrumento ${instrumentoToDelete}`)
+      // console.log(`🔄 Eliminando ${prestamosActivos.length} préstamos activos para instrumento ${instrumentoToDelete}`)
 
       for (const prestamo of prestamosActivos) {
         try {
           await api.delete(`/prestamos/${prestamo.num_serie}/${prestamo.usuario_id}`)
-          console.log(`✅ Préstamo eliminado: ${prestamo.num_serie}/${prestamo.usuario_id}`)
+          // console.log(`✅ Préstamo eliminado: ${prestamo.num_serie}/${prestamo.usuario_id}`)
         } catch (error) {
           console.error(`❌ Error al eliminar préstamo ${prestamo.num_serie}/${prestamo.usuario_id}:`, error)
         }
       }
 
-      // Then delete the instrument
+      // Eliminar el instrumento
       await api.delete(`/instrumentos/${instrumentoToDelete}`)
-      console.log(`✅ Instrumento ${instrumentoToDelete} eliminado`)
+      // console.log(`✅ Instrumento ${instrumentoToDelete} eliminado`)
 
       // Decrementar la cantidad del tipo de instrumento
       if (instrumentoAEliminar && instrumentoAEliminar.instrumento_tipo_id) {
         try {
-          console.log(`📊 Decrementando cantidad de tipo ${instrumentoAEliminar.instrumento_tipo_id}`)
+          // console.log(`📊 Decrementando cantidad de tipo ${instrumentoAEliminar.instrumento_tipo_id}`)
 
-          // Obtener la cantidad actual del tipo
           const tipoActual = tiposInstrumento.find((t) => t.instrumento === instrumentoAEliminar.instrumento_tipo_id)
           if (tipoActual && tipoActual.cantidad > 0) {
             await api.put(`/tipo-instrumentos/${encodeURIComponent(instrumentoAEliminar.instrumento_tipo_id)}`, {
               cantidad: tipoActual.cantidad - 1,
             })
-            console.log(`✅ Cantidad de tipo ${instrumentoAEliminar.instrumento_tipo_id} decrementada`)
+            // console.log(`✅ Cantidad de tipo ${instrumentoAEliminar.instrumento_tipo_id} decrementada`)
           } else {
-            console.warn(`⚠️ No se pudo decrementar la cantidad del tipo ${instrumentoAEliminar.instrumento_tipo_id}`)
+            // console.warn(`⚠️ No se pudo decrementar la cantidad del tipo ${instrumentoAEliminar.instrumento_tipo_id}`)
           }
         } catch (error) {
           console.error("❌ Error al decrementar cantidad de tipo:", error)
@@ -182,11 +221,9 @@ export default function Instrumentos() {
       setShowDeleteModal(false)
       setInstrumentoToDelete(null)
 
-      // Mostrar mensaje de éxito
       setSuccessMessage(t("instruments.deleteConfirmation.successMessage"))
       setTimeout(() => setSuccessMessage(null), 3000)
 
-      // Reload data to ensure consistency
       await fetchData()
     } catch (error) {
       console.error("Error al eliminar instrumento:", error)
@@ -195,72 +232,76 @@ export default function Instrumentos() {
     }
   }
 
+  /**
+   * Abre el modal de confirmación de borrado para un instrumento.
+   * @param {string} numSerie - Número de serie del instrumento.
+   */
   const confirmDelete = (numSerie) => {
     setInstrumentoToDelete(numSerie)
     setShowDeleteModal(true)
   }
 
-  // Modificar la función para mostrar primero el modal de confirmación
+  /**
+   * Muestra el modal de confirmación antes de crear un instrumento.
+   */
   const handleCreateInstrument = () => {
     setShowCreateConfirmModal(true)
   }
 
-  // Nueva función para confirmar la creación y abrir el modal principal
+  /**
+   * Confirma la creación y abre el modal principal.
+   */
   const confirmCreateInstrument = () => {
     setShowCreateConfirmModal(false)
     handleOpenModal("create")
   }
 
+  /**
+   * Abre el modal para crear o editar un instrumento.
+   * @param {"create"|"edit"} mode - Modo del modal.
+   * @param {Object|null} instrumento - Instrumento a editar (opcional).
+   */
   const handleOpenModal = async (mode, instrumento = null) => {
     setModalMode(mode)
     if (mode === "edit" && instrumento) {
-      console.log("Opening edit modal for instrument:", instrumento)
-
+      // console.log("Opening edit modal for instrument:", instrumento)
       let usuarioPrestamo = ""
 
-      // If the instrument is loaned, find the current loan using the same logic as Prestamos.jsx
+      // Si el instrumento está prestado, buscar el préstamo activo
       if (instrumento.estado === "prestado") {
-        console.log("Fetching loan info for instrument:", instrumento.numero_serie)
-        console.log("Available loans:", prestamos)
-
-        // Find active loan for this instrument
-        // Note: prestamos uses 'num_serie' while instrumentos uses 'numero_serie'
+        // console.log("Fetching loan info for instrument:", instrumento.numero_serie)
+        // console.log("Available loans:", prestamos)
         const prestamoActivo = prestamos.find((prestamo) => {
-          console.log("Comparing loan:", {
-            prestamoNumSerie: prestamo.num_serie,
-            instrumentoNumSerie: instrumento.numero_serie,
-            fechaDevolucion: prestamo.fecha_devolucion,
-            isActive: !prestamo.fecha_devolucion || prestamo.fecha_devolucion === "",
-          })
-
-          // Check if num_serie matches numero_serie and loan is active (no fecha_devolucion)
+          // console.log("Comparing loan:", {
+          //   prestamoNumSerie: prestamo.num_serie,
+          //   instrumentoNumSerie: instrumento.numero_serie,
+          //   fechaDevolucion: prestamo.fecha_devolucion,
+          //   isActive: !prestamo.fecha_devolucion || prestamo.fecha_devolucion === "",
+          // })
           return (
             String(prestamo.num_serie) === String(instrumento.numero_serie) &&
             (!prestamo.fecha_devolucion || prestamo.fecha_devolucion === "")
           )
         })
 
-        console.log("Active loan found:", prestamoActivo)
+        // console.log("Active loan found:", prestamoActivo)
 
         if (prestamoActivo && prestamoActivo.usuario_id) {
           usuarioPrestamo = String(prestamoActivo.usuario_id)
-          console.log("Setting user loan to:", usuarioPrestamo)
-
-          // Verify the user exists in the users list
-          const usuarioEncontrado = usuarios.find((u) => String(u.id) === usuarioPrestamo)
-          console.log("User found in users list:", usuarioEncontrado)
+          // console.log("Setting user loan to:", usuarioPrestamo)
+          // const usuarioEncontrado = usuarios.find((u) => String(u.id) === usuarioPrestamo)
+          // console.log("User found in users list:", usuarioEncontrado)
         } else {
-          console.log("No active loan found for instrument:", instrumento.numero_serie)
+          // console.log("No active loan found for instrument:", instrumento.numero_serie)
         }
       }
 
       setCurrentInstrumento({
         numero_serie: instrumento.numero_serie,
-        instrumento_tipo_id: String(instrumento.instrumento_tipo_id), // Asegurar que sea string
-        estado: String(instrumento.estado), // Asegurar que sea string
+        instrumento_tipo_id: String(instrumento.instrumento_tipo_id),
+        estado: String(instrumento.estado),
       })
 
-      // Set the loan user separately
       setSelectedLoanUser(usuarioPrestamo)
     } else {
       setCurrentInstrumento({
@@ -273,6 +314,9 @@ export default function Instrumentos() {
     setShowModal(true)
   }
 
+  /**
+   * Cierra el modal de formulario de instrumento.
+   */
   const handleCloseModal = () => {
     setShowModal(false)
     setCurrentInstrumento({
@@ -283,64 +327,79 @@ export default function Instrumentos() {
     setSelectedLoanUser("")
   }
 
+  /**
+   * Maneja el cambio en los campos del formulario de instrumento.
+   * @param {Object} e - Evento de cambio.
+   */
   const handleInputChange = (e) => {
     const { name, value } = e.target
-    console.log(`🔍 Input change: ${name} = ${value} (type: ${typeof value})`) // Debug log
+    // console.log(`🔍 Input change: ${name} = ${value} (type: ${typeof value})`)
     setCurrentInstrumento((prev) => ({
       ...prev,
-      [name]: String(value), // Asegurar que siempre sea string
+      [name]: String(value),
     }))
   }
 
+  /**
+   * Maneja el cambio de usuario para préstamo.
+   * @param {Object} e - Evento de cambio.
+   */
   const handleLoanUserChange = (e) => {
     setSelectedLoanUser(e.target.value)
   }
 
-  // Add useEffect to clear user when status changes
+  /**
+   * Limpia el usuario del préstamo si el estado cambia a distinto de "prestado".
+   */
   useEffect(() => {
     if (currentInstrumento.estado !== "prestado") {
       setSelectedLoanUser("")
     }
   }, [currentInstrumento.estado])
 
+  /**
+   * Envía el formulario para crear o editar un instrumento y gestiona préstamos y cantidades.
+   * @async
+   * @param {Object} e - Evento de envío.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault()
 
     try {
       if (modalMode === "create") {
-        // Determinar si necesitamos crear un préstamo
+        // Determinar si se debe crear un préstamo
         const needsLoan = currentInstrumento.estado === "prestado" && selectedLoanUser
 
-        // Si necesitamos crear un préstamo, primero creamos el instrumento como disponible
+        // Crear instrumento como disponible si va a ser prestado
         const instrumentoData = {
           numero_serie: currentInstrumento.numero_serie,
           instrumento_tipo_id: currentInstrumento.instrumento_tipo_id,
-          estado: needsLoan ? "disponible" : currentInstrumento.estado, // Temporalmente disponible si va a ser prestado
+          estado: needsLoan ? "disponible" : currentInstrumento.estado,
         }
 
-        console.log("📝 Creando nuevo instrumento:", instrumentoData)
+        // console.log("📝 Creando nuevo instrumento:", instrumentoData)
         const response = await api.post("/instrumentos", instrumentoData)
-        console.log("✅ Instrumento creado:", response.data)
+        // console.log("✅ Instrumento creado:", response.data)
 
-        // Increment quantity in tipo_instrumentos
+        // Incrementar cantidad en tipo_instrumentos
         try {
           const tipoActual = tiposInstrumento.find((t) => t.instrumento === currentInstrumento.instrumento_tipo_id)
           if (tipoActual) {
-            console.log(`📊 Actualizando cantidad de tipo ${currentInstrumento.instrumento_tipo_id}`)
+            // console.log(`📊 Actualizando cantidad de tipo ${currentInstrumento.instrumento_tipo_id}`)
             await api.put(`/tipo-instrumentos/${encodeURIComponent(currentInstrumento.instrumento_tipo_id)}`, {
               cantidad: tipoActual.cantidad + 1,
             })
-            console.log(`✅ Cantidad de tipo actualizada`)
+            // console.log(`✅ Cantidad de tipo actualizada`)
           }
         } catch (error) {
           console.error("❌ Error al actualizar cantidad de tipo:", error)
         }
 
-        // Si necesitamos crear un préstamo, lo hacemos ahora que el instrumento está disponible
+        // Si se debe crear un préstamo, hacerlo ahora
         if (needsLoan) {
           try {
             const fechaPrestamo = new Date().toISOString().split("T")[0]
-            console.log(`🔄 Creando nuevo préstamo para instrumento ${currentInstrumento.numero_serie}`)
+            // console.log(`🔄 Creando nuevo préstamo para instrumento ${currentInstrumento.numero_serie}`)
 
             const prestamoData = {
               num_serie: currentInstrumento.numero_serie,
@@ -349,23 +408,22 @@ export default function Instrumentos() {
               fecha_devolucion: "",
             }
 
-            console.log("📝 Datos del préstamo:", prestamoData)
+            // console.log("📝 Datos del préstamo:", prestamoData)
             await api.post("/prestamos", prestamoData)
-            console.log("✅ Préstamo creado exitosamente")
+            // console.log("✅ Préstamo creado exitosamente")
 
-            // Ahora actualizamos el instrumento a estado prestado
-            console.log(`🔄 Actualizando instrumento ${currentInstrumento.numero_serie} a estado prestado`)
+            // Actualizar el instrumento a estado prestado
+            // console.log(`🔄 Actualizando instrumento ${currentInstrumento.numero_serie} a estado prestado`)
             await api.put(`/instrumentos/${currentInstrumento.numero_serie}`, {
               estado: "prestado",
               instrumento_tipo_id: currentInstrumento.instrumento_tipo_id,
             })
-            console.log(`✅ Instrumento actualizado a estado prestado`)
+            // console.log(`✅ Instrumento actualizado a estado prestado`)
           } catch (error) {
             console.error("❌ Error al crear préstamo:", error)
             if (error.response) {
               console.error("Detalles del error:", error.response.data)
             }
-            // Mostrar mensaje de error específico para préstamo
             setErrorMessage(
               `Error al crear préstamo: ${error.response?.data ? JSON.stringify(error.response.data) : error.message}`,
             )
@@ -376,11 +434,10 @@ export default function Instrumentos() {
         // Actualizar el estado local con el nuevo instrumento
         const finalInstrumento = {
           ...response.data,
-          estado: needsLoan ? "prestado" : currentInstrumento.estado, // Asegurar que el estado local refleje el estado final
+          estado: needsLoan ? "prestado" : currentInstrumento.estado,
         }
         setInstrumentos([...instrumentos, finalInstrumento])
 
-        // Mostrar mensaje de éxito
         if (needsLoan) {
           setSuccessMessage("Instrumento creado y préstamo registrado correctamente")
         } else {
@@ -388,34 +445,29 @@ export default function Instrumentos() {
         }
         setTimeout(() => setSuccessMessage(null), 3000)
       } else {
-        // Handle edit mode with proper database updates
+        // Edición de instrumento
         const originalInstrumento = instrumentos.find((i) => i.numero_serie === currentInstrumento.numero_serie)
 
-        // Incluir TODOS los campos requeridos por el backend
         const instrumentoToUpdate = {
           estado: currentInstrumento.estado,
-          instrumento_tipo_id: String(currentInstrumento.instrumento_tipo_id), // Asegurar que sea string
+          instrumento_tipo_id: String(currentInstrumento.instrumento_tipo_id),
         }
 
-        console.log(`📝 Actualizando instrumento ${currentInstrumento.numero_serie}:`, instrumentoToUpdate)
-
-        // SIEMPRE usar la URL simple sin usuario_id
+        // console.log(`📝 Actualizando instrumento ${currentInstrumento.numero_serie}:`, instrumentoToUpdate)
         const updateUrl = `/instrumentos/${currentInstrumento.numero_serie}`
 
-        // Update instrument first (except when changing to prestado - that's handled in the status change logic)
+        // Actualizar instrumento si no es cambio a prestado (eso se gestiona aparte)
         if (!(originalInstrumento.estado !== "prestado" && currentInstrumento.estado === "prestado")) {
           await api.put(updateUrl, instrumentoToUpdate)
-          console.log(`✅ Instrumento ${currentInstrumento.numero_serie} actualizado`)
+          // console.log(`✅ Instrumento ${currentInstrumento.numero_serie} actualizado`)
         }
 
-        // Handle type change - update quantities in tipo_instrumentos
+        // Si cambia el tipo, actualizar cantidades
         if (originalInstrumento.instrumento_tipo_id !== currentInstrumento.instrumento_tipo_id) {
           try {
-            console.log(
-              `📊 Actualizando cantidades por cambio de tipo: ${originalInstrumento.instrumento_tipo_id} -> ${currentInstrumento.instrumento_tipo_id}`,
-            )
-
-            // Get current quantities from API to ensure accuracy
+            // console.log(
+            //   `📊 Actualizando cantidades por cambio de tipo: ${originalInstrumento.instrumento_tipo_id} -> ${currentInstrumento.instrumento_tipo_id}`,
+            // )
             const tipoAnteriorRes = await api.get(
               `/tipo-instrumentos/${encodeURIComponent(originalInstrumento.instrumento_tipo_id)}`,
             )
@@ -423,33 +475,30 @@ export default function Instrumentos() {
               `/tipo-instrumentos/${encodeURIComponent(currentInstrumento.instrumento_tipo_id)}`,
             )
 
-            // Decrease old type quantity
             if (tipoAnteriorRes.data.data && tipoAnteriorRes.data.data.cantidad > 0) {
               await api.put(`/tipo-instrumentos/${encodeURIComponent(originalInstrumento.instrumento_tipo_id)}`, {
                 cantidad: tipoAnteriorRes.data.data.cantidad - 1,
               })
-              console.log(`✅ Cantidad de tipo ${originalInstrumento.instrumento_tipo_id} decrementada`)
+              // console.log(`✅ Cantidad de tipo ${originalInstrumento.instrumento_tipo_id} decrementada`)
             }
 
-            // Increase new type quantity
             if (tipoNuevoRes.data.data) {
               await api.put(`/tipo-instrumentos/${encodeURIComponent(currentInstrumento.instrumento_tipo_id)}`, {
                 cantidad: tipoNuevoRes.data.data.cantidad + 1,
               })
-              console.log(`✅ Cantidad de tipo ${currentInstrumento.instrumento_tipo_id} incrementada`)
+              // console.log(`✅ Cantidad de tipo ${currentInstrumento.instrumento_tipo_id} incrementada`)
             }
           } catch (error) {
             console.error("❌ Error al actualizar cantidades de tipos:", error)
           }
         }
 
-        // Handle status change - SEPARATE operations for instrument and loans
+        // Gestionar cambios de estado y préstamos
         if (originalInstrumento.estado !== currentInstrumento.estado) {
           if (originalInstrumento.estado === "prestado" && currentInstrumento.estado !== "prestado") {
-            // Return instrument - end the loan
+            // Finalizar préstamo
             try {
-              console.log(`🔄 Finalizando préstamo para instrumento ${currentInstrumento.numero_serie}`)
-
+              // console.log(`🔄 Finalizando préstamo para instrumento ${currentInstrumento.numero_serie}`)
               const prestamoActivo = prestamos.find(
                 (prestamo) =>
                   String(prestamo.num_serie) === String(currentInstrumento.numero_serie) &&
@@ -457,45 +506,42 @@ export default function Instrumentos() {
               )
 
               if (prestamoActivo) {
-                // End the loan by updating its return date
                 await api.put(`/prestamos/${prestamoActivo.num_serie}/${prestamoActivo.usuario_id}`, {
                   fecha_prestamo: prestamoActivo.fecha_prestamo,
                   fecha_devolucion: new Date().toISOString().split("T")[0],
                 })
-                console.log("✅ Préstamo finalizado automáticamente desde Instrumentos")
+                // console.log("✅ Préstamo finalizado automáticamente desde Instrumentos")
               } else {
-                console.log("⚠️ No se encontró un préstamo activo para finalizar")
+                // console.log("⚠️ No se encontró un préstamo activo para finalizar")
               }
             } catch (error) {
               console.error("❌ Error al finalizar préstamo:", error)
             }
           } else if (originalInstrumento.estado !== "prestado" && currentInstrumento.estado === "prestado") {
-            // Create new loan FIRST, then update instrument
+            // Crear nuevo préstamo
             if (selectedLoanUser) {
               try {
                 const fechaPrestamo = new Date().toISOString().split("T")[0]
-                console.log(`🔄 Creando nuevo préstamo para instrumento ${currentInstrumento.numero_serie}`)
+                // console.log(`🔄 Creando nuevo préstamo para instrumento ${currentInstrumento.numero_serie}`)
 
-                // Crear préstamo PRIMERO (mientras el instrumento aún está disponible)
                 const prestamoData = {
                   num_serie: currentInstrumento.numero_serie,
                   usuario_id: Number.parseInt(selectedLoanUser),
                   fecha_prestamo: fechaPrestamo,
                 }
 
-                console.log("📝 Datos del préstamo:", prestamoData)
-                console.log("📝 Endpoint del préstamo:", `/prestamos`)
+                // console.log("📝 Datos del préstamo:", prestamoData)
+                // console.log("📝 Endpoint del préstamo:", `/prestamos`)
 
-                // POST para crear el préstamo ANTES de actualizar el instrumento
                 await api.post(`/prestamos`, prestamoData)
-                console.log("✅ Nuevo préstamo creado automáticamente desde Instrumentos")
+                // console.log("✅ Nuevo préstamo creado automáticamente desde Instrumentos")
 
-                // Ahora actualizar el instrumento a prestado
-                console.log(
-                  `📝 Actualizando instrumento ${currentInstrumento.numero_serie} a prestado después de crear préstamo`,
-                )
+                // Actualizar instrumento a prestado
+                // console.log(
+                //   `📝 Actualizando instrumento ${currentInstrumento.numero_serie} a prestado después de crear préstamo`,
+                // )
                 await api.put(updateUrl, instrumentoToUpdate)
-                console.log(`✅ Instrumento ${currentInstrumento.numero_serie} actualizado a prestado`)
+                // console.log(`✅ Instrumento ${currentInstrumento.numero_serie} actualizado a prestado`)
               } catch (error) {
                 console.error("❌ Error al crear préstamo:", error)
                 if (error.response) {
@@ -503,16 +549,16 @@ export default function Instrumentos() {
                   setErrorMessage(`Error al crear préstamo: ${JSON.stringify(error.response.data)}`)
                   setTimeout(() => setErrorMessage(null), 5000)
                 }
-                return // No continuar si falla la creación del préstamo
+                return
               }
             } else {
               console.error("❌ Error: Se intentó crear un préstamo sin seleccionar usuario")
               setErrorMessage("Error: Debe seleccionar un usuario para prestar el instrumento")
               setTimeout(() => setErrorMessage(null), 5000)
-              return // Detener la ejecución si no hay usuario seleccionado
+              return
             }
           } else if (originalInstrumento.estado === "prestado" && currentInstrumento.estado === "prestado") {
-            // Update existing loan with new user (if user changed)
+            // Actualizar préstamo con nuevo usuario
             const prestamoActivo = prestamos.find(
               (prestamo) =>
                 String(prestamo.num_serie) === String(currentInstrumento.numero_serie) &&
@@ -521,18 +567,16 @@ export default function Instrumentos() {
 
             if (prestamoActivo && String(prestamoActivo.usuario_id) !== selectedLoanUser) {
               try {
-                console.log(
-                  `🔄 Actualizando préstamo con nuevo usuario: ${prestamoActivo.usuario_id} -> ${selectedLoanUser}`,
-                )
+                // console.log(
+                //   `🔄 Actualizando préstamo con nuevo usuario: ${prestamoActivo.usuario_id} -> ${selectedLoanUser}`,
+                // )
 
-                // End current loan
                 await api.put(`/prestamos/${prestamoActivo.num_serie}/${prestamoActivo.usuario_id}`, {
                   fecha_prestamo: prestamoActivo.fecha_prestamo,
                   fecha_devolucion: new Date().toISOString().split("T")[0],
                 })
-                console.log("✅ Préstamo anterior finalizado")
+                // console.log("✅ Préstamo anterior finalizado")
 
-                // Create new loan with new user
                 const fechaPrestamo = new Date().toISOString().split("T")[0]
                 const prestamoData = {
                   num_serie: currentInstrumento.numero_serie,
@@ -541,16 +585,16 @@ export default function Instrumentos() {
                 }
 
                 await api.post("/prestamos", prestamoData)
-                console.log("✅ Nuevo préstamo creado con el nuevo usuario")
+                // console.log("✅ Nuevo préstamo creado con el nuevo usuario")
               } catch (error) {
                 console.error("❌ Error al actualizar préstamo:", error)
               }
             } else if (!prestamoActivo) {
-              // No hay préstamo activo pero el estado es "prestado" - crear uno nuevo
+              // Crear préstamo si no existe pero el estado es prestado
               try {
-                console.log(
-                  `⚠️ Estado inconsistente: instrumento marcado como prestado sin préstamo activo. Creando nuevo préstamo.`,
-                )
+                // console.log(
+                //   `⚠️ Estado inconsistente: instrumento marcado como prestado sin préstamo activo. Creando nuevo préstamo.`,
+                // )
 
                 const fechaPrestamo = new Date().toISOString().split("T")[0]
                 const prestamoData = {
@@ -560,7 +604,7 @@ export default function Instrumentos() {
                 }
 
                 await api.post("/prestamos", prestamoData)
-                console.log("✅ Préstamo creado para corregir inconsistencia")
+                // console.log("✅ Préstamo creado para corregir inconsistencia")
               } catch (error) {
                 console.error("❌ Error al crear préstamo para corregir inconsistencia:", error)
               }
@@ -568,14 +612,12 @@ export default function Instrumentos() {
           }
         }
 
-        // Update local state with the new instrument data
         setInstrumentos(
           instrumentos.map((item) =>
             item.numero_serie === currentInstrumento.numero_serie ? { ...item, ...instrumentoToUpdate } : item,
           ),
         )
 
-        // Mostrar mensaje de éxito según el cambio realizado
         if (originalInstrumento.estado !== currentInstrumento.estado) {
           if (currentInstrumento.estado === "prestado") {
             setSuccessMessage("Instrumento marcado como prestado y préstamo creado")
@@ -591,8 +633,6 @@ export default function Instrumentos() {
       }
 
       handleCloseModal()
-
-      // Recargar todos los datos para mantener sincronización entre páginas
       await fetchData()
     } catch (error) {
       console.error("❌ Error al guardar instrumento:", error)
@@ -606,6 +646,10 @@ export default function Instrumentos() {
     }
   }
 
+  /**
+   * Filtra los instrumentos según los criterios de búsqueda y filtros seleccionados.
+   * @type {Array}
+   */
   const filteredInstrumentos = instrumentos.filter((instrumento) => {
     const matchesSearch =
       String(instrumento.numero_serie).toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -618,17 +662,23 @@ export default function Instrumentos() {
     return matchesSearch && matchesTipo
   })
 
+  // Paginación
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
   const currentInstrumentos = filteredInstrumentos.slice(indexOfFirstItem, indexOfLastItem)
   const totalPages = Math.ceil(filteredInstrumentos.length / itemsPerPage)
 
+  /**
+   * Cambia la página actual de la paginación.
+   * @param {number} pageNumber - Número de página a mostrar.
+   */
   const paginate = (pageNumber) => {
     if (pageNumber > 0 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber)
     }
   }
 
+  // Renderizado de la interfaz y modales
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Modificar el botón "Nuevo Instrumento" para que llame a la nueva función: */}

@@ -1,3 +1,10 @@
+<!--
+  @file index.html
+  @module index
+  @description Documento HTML principal para la aplicación BandCoord. Define la estructura base del DOM, incluye el punto de montaje de React, metadatos, favicon, estilos globales y el script de entrada principal. Establece el layout y el comportamiento responsive inicial de la aplicación.
+  @author Rafael Rodriguez Mengual
+-->
+
 <!doctype html>
 <html lang="es">
   <head>
@@ -6,6 +13,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
     <title>BandCoord</title>
     <style>
+      /**
+       * Estilos globales para html, body y contenedor principal.
+       * Fondo negro, sin scroll horizontal, y layout flexible para la SPA.
+       */
       html {
         margin: 0;
         padding: 0;
@@ -35,7 +46,7 @@
         overflow-x: hidden;
       }
       
-      /* Restaurar espaciado */
+      /* Restaurar espaciado para contenedores principales */
       .container {
         width: 100%;
         max-width: 1280px;
@@ -45,7 +56,9 @@
     </style>
   </head>
   <body>
+    <!-- Punto de montaje principal para la aplicación React -->
     <div id="root"></div>
+    <!-- Script de entrada principal de la aplicación -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

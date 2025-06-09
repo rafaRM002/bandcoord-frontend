@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>pages/Composiciones/Composiciones.jsx - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-App.html">App</a><ul class='methods'><li data-type='method'><a href="module-App.html#~App">App</a></li><li data-type='method'><a href="module-App.html#~AppContent">AppContent</a></li></ul></li><li><a href="module-api_axios.html">api/axios</a></li><li><a href="module-components_AdminRoute.html">components/AdminRoute</a></li><li><a href="module-components_HelpButton_AboutModal.html">components/HelpButton/AboutModal</a></li><li><a href="module-components_HelpButton_HelpButton.html">components/HelpButton/HelpButton</a></li><li><a href="module-components_HelpButton_HelpModal.html">components/HelpButton/HelpModal</a></li><li><a href="module-components_MemberRoute.html">components/MemberRoute</a></li><li><a href="module-components_Navigation_Footer.html">components/Navigation/Footer</a></li><li><a href="module-components_Navigation_Navbar.html">components/Navigation/Navbar</a></li><li><a href="module-components_PasswordValidator.html">components/PasswordValidator</a></li><li><a href="module-components_ProtectedRoute.html">components/ProtectedRoute</a></li><li><a href="module-context_AuthContext.html">context/AuthContext</a><ul class='methods'><li data-type='method'><a href="module-context_AuthContext.html#.useAuth">useAuth</a></li><li data-type='method'><a href="module-context_AuthContext.html#~getCsrfCookie">getCsrfCookie</a></li></ul></li><li><a href="module-context_LanguageContext.html">context/LanguageContext</a><ul class='methods'><li data-type='method'><a href="module-context_LanguageContext.html#.useLanguage">useLanguage</a></li></ul></li><li><a href="module-hooks_useTranslation.html">hooks/useTranslation</a><ul class='methods'><li data-type='method'><a href="module-hooks_useTranslation.html#.useTranslation">useTranslation</a></li></ul></li><li><a href="module-main.html">main</a></li><li><a href="module-pages_Admin_GestionUsuarios.html">pages/Admin/GestionUsuarios</a></li><li><a href="module-pages_Calendario_Calendario.html">pages/Calendario/Calendario</a></li><li><a href="module-pages_Composiciones_Composiciones.html">pages/Composiciones/Composiciones</a></li><li><a href="module-pages_ComposicionesInterpretadas_ComposicionesInterpretadas.html">pages/ComposicionesInterpretadas/ComposicionesInterpretadas</a><ul class='methods'><li data-type='method'><a href="module-pages_ComposicionesInterpretadas_ComposicionesInterpretadas.html#~ComposicionesInterpretadas">ComposicionesInterpretadas</a></li></ul></li><li><a href="module-pages_ConfirmacionEventos_ConfirmacionEventos.html">pages/ConfirmacionEventos/ConfirmacionEventos</a></li><li><a href="module-pages_Entidades_Entidades.html">pages/Entidades/Entidades</a></li><li><a href="module-pages_EventoUsuario_EventoUsuario.html">pages/EventoUsuario/EventoUsuario</a></li><li><a href="module-pages_Eventos_Eventos.html">pages/Eventos/Eventos</a></li><li><a href="module-pages_Eventos_FormularioEvento.html">pages/Eventos/FormularioEvento</a></li><li><a href="module-pages_Home_Home.html">pages/Home/Home</a><ul class='methods'><li data-type='method'><a href="module-pages_Home_Home.html#~AdminCard">AdminCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~FeatureCard">FeatureCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~PublicHome">PublicHome</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~QuickAccessCard">QuickAccessCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~UserDashboard">UserDashboard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~getEventTypeColor">getEventTypeColor</a></li></ul></li><li><a href="module-pages_Instrumentos_Instrumentos.html">pages/Instrumentos/Instrumentos</a></li><li><a href="module-pages_Login_Login.html">pages/Login/Login</a></li><li><a href="module-pages_Mensajes_DetalleMensaje.html">pages/Mensajes/DetalleMensaje</a></li><li><a href="module-pages_Mensajes_FormularioMensaje.html">pages/Mensajes/FormularioMensaje</a></li><li><a href="module-pages_Mensajes_Mensajes.html">pages/Mensajes/Mensajes</a></li><li><a href="module-pages_MensajesUsuario_MensajesUsuario.html">pages/MensajesUsuario/MensajesUsuario</a><ul class='methods'><li data-type='method'><a href="module-pages_MensajesUsuario_MensajesUsuario.html#~MensajesUsuario">MensajesUsuario</a></li></ul></li><li><a href="module-pages_MinimosEvento_MinimosEvento.html">pages/MinimosEvento/MinimosEvento</a></li><li><a href="module-pages_NotFound_NotFound.html">pages/NotFound/NotFound</a></li><li><a href="module-pages_Perfil_Perfil.html">pages/Perfil/Perfil</a></li><li><a href="module-pages_Prestamos_Prestamos.html">pages/Prestamos/Prestamos</a></li><li><a href="module-pages_Register_Register.html">pages/Register/Register</a></li><li><a href="module-pages_RegistroPendiente_RegistroPendiente.html">pages/RegistroPendiente/RegistroPendiente</a></li><li><a href="module-pages_RestablecerPassword_NuevaPassword.html">pages/RestablecerPassword/NuevaPassword</a></li><li><a href="module-pages_RestablecerPassword_RestablecerPassword.html">pages/RestablecerPassword/RestablecerPassword</a></li><li><a href="module-pages_TiposInstrumento_TiposInstrumento.html">pages/TiposInstrumento/TiposInstrumento</a></li><li><a href="module-utils_translations.html">utils/translations</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+
+    
+    <h1 class="page-title">pages/Composiciones/Composiciones.jsx</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file Composiciones.jsx
+ * @module pages/Composiciones/Composiciones
+ * @description Página para la gestión y visualización de composiciones musicales. Permite buscar, crear, editar, eliminar y visualizar composiciones, así como gestionar archivos y enlaces de YouTube asociados.
+ * @author Rafael Rodriguez Mengual
+ */
+
+"use client"
+
+import { useState, useEffect, useRef } from "react"
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Search,
+  Music,
+  FileMusic,
+  Youtube,
+  ImageIcon,
+  X,
+  Save,
+  ArrowLeft,
+  ArrowRight,
+  File,
+  Upload,
+  Loader2,
+  RefreshCw,
+} from "lucide-react"
+import api, { IMAGES_URL } from "../../api/axios"
+import { toast } from "react-toastify"
+import { useTranslation } from "../../hooks/useTranslation"
+import { useAuth } from "../../context/AuthContext"
+
+/**
+ * Componente principal para la gestión de composiciones musicales.
+ * Permite listar, buscar, crear, editar, eliminar y visualizar composiciones.
+ * @component
+ * @returns {JSX.Element} Página de composiciones.
+ */
+export default function Composiciones() {
+  /** Estado que almacena el listado de composiciones */
+/** @type {Array} */
+const [composiciones, setComposiciones] = useState([])
+
+/** Estado de carga */
+/** @type {boolean} */
+const [loading, setLoading] = useState(true)
+
+/** Estado de error */
+/** @type {string|null} */
+const [error, setError] = useState(null)
+
+/** Término de búsqueda */
+/** @type {string} */
+const [searchTerm, setSearchTerm] = useState("")
+
+/** Estado del modal de eliminación */
+/** @type {boolean} */
+const [showDeleteModal, setShowDeleteModal] = useState(false)
+
+/** ID de la composición a eliminar */
+/** @type {number|null} */
+const [composicionToDelete, setComposicionToDelete] = useState(null)
+
+/** ID de la composición de audio actual */
+/** @type {number|null} */
+const [currentAudio, setCurrentAudio] = useState(null)
+
+/** Estado de reproducción de audio */
+/** @type {boolean} */
+const [isPlaying, setIsPlaying] = useState(false)
+
+/** Elemento de audio actual */
+/** @type {Audio|null} */
+const [audioElement, setAudioElement] = useState(null)
+
+/** Página actual de la paginación */
+/** @type {number} */
+const [currentPage, setCurrentPage] = useState(1)
+
+/** Número de elementos por página */
+/** @type {number} */
+const [itemsPerPage] = useState(9)
+
+/** Progreso de subida de archivos */
+/** @type {number} */
+const [uploadProgress, setUploadProgress] = useState(0)
+
+/** Estado de subida de archivos */
+/** @type {boolean} */
+const [isUploading, setIsUploading] = useState(false)
+
+/** Trigger para recargar datos */
+/** @type {number} */
+const [refreshTrigger, setRefreshTrigger] = useState(0)
+
+
+  /** Hook de traducción */
+  const { t } = useTranslation()
+  /** Contexto de autenticación para saber si es admin */
+  const { isAdmin } = useAuth()
+
+ /** Estado del modal de composición */
+/** @type {boolean} */
+const [showModal, setShowModal] = useState(false)
+
+/** Composición en edición */
+/** @type {Object|null} */
+const [editingComposicion, setEditingComposicion] = useState(null)
+
+/** Datos del formulario de composición */
+/** @type {{ nombre: string, descripcion: string, nombre_autor: string }} */
+const [formData, setFormData] = useState({
+  nombre: "",
+  descripcion: "",
+  nombre_autor: "",
+})
+
+/** Incluir YouTube en la composición */
+/** @type {boolean} */
+const [includeYoutube, setIncludeYoutube] = useState(false)
+
+/** Incluir archivos en la composición */
+/** @type {boolean} */
+const [includeFiles, setIncludeFiles] = useState(false)
+
+/** URL de YouTube */
+/** @type {string} */
+const [youtubeUrl, setYoutubeUrl] = useState("")
+
+/** Archivos nuevos a subir */
+/** @type {Array} */
+const [newFiles, setNewFiles] = useState([])
+
+/** Archivos existentes */
+/** @type {Array} */
+const [existingFiles, setExistingFiles] = useState([])
+
+
+  /** Referencia al input de archivos */
+  const fileInputRef = useRef(null)
+
+  /** Estado del modal de archivos */
+/** @type {boolean} */
+const [showFilesModal, setShowFilesModal] = useState(false)
+
+/** Composición seleccionada para ver archivos */
+/** @type {Object|null} */
+const [selectedComposicion, setSelectedComposicion] = useState(null)
+
+
+  /**
+   * Carga las composiciones desde la API y las procesa.
+   * @async
+   */
+  const fetchComposiciones = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      // console.log("Intentando conectar a:", `${api.defaults.baseURL}/composiciones`)
+
+      const response = await api.get("/composiciones")
+      // console.log("Respuesta completa de composiciones:", response)
+
+      // Verificar la estructura de la respuesta
+      let composicionesData = []
+
+      // Primero tratamos de obtener los datos directamente de response.data
+      if (response.data &amp;&amp; Array.isArray(response.data)) {
+        composicionesData = response.data
+      }
+      // Si response.data no es un array, pero response.data.data lo es
+      else if (response.data &amp;&amp; response.data.data &amp;&amp; Array.isArray(response.data.data)) {
+        composicionesData = response.data.data
+      }
+      // Si response.data.originalData.data es un array (estructura vista en la respuesta que mostraste)
+      else if (
+        response.data &amp;&amp;
+        response.data.originalData &amp;&amp;
+        response.data.originalData.data &amp;&amp;
+        Array.isArray(response.data.originalData.data)
+      ) {
+        composicionesData = response.data.originalData.data
+      } else {
+        // console.warn("Formato de respuesta inesperado para composiciones:", response.data)
+        setError(t("compositions.unexpectedResponseFormat"))
+      }
+
+      // Ordenar composiciones alfabéticamente por nombre
+      composicionesData.sort((a, b) => {
+        const nombreA = a.nombre || a.titulo || ""
+        const nombreB = b.nombre || b.titulo || ""
+        return nombreA.localeCompare(nombreB)
+      })
+
+      // Procesar las rutas para identificar YouTube vs imágenes
+      composicionesData = composicionesData.map((comp) => {
+        const ruta = comp.ruta || ""
+        let parsedRuta = { youtube: null, files: [] }
+
+        try {
+          // Intentar parsear la ruta como JSON si es un string
+          if (ruta &amp;&amp; typeof ruta === "string" &amp;&amp; (ruta.startsWith("[") || ruta.startsWith("{"))) {
+            const parsed = JSON.parse(ruta)
+
+            // Nuevo formato con youtube y files separados
+            if (parsed.youtube !== undefined || parsed.files !== undefined) {
+              parsedRuta = {
+                youtube: parsed.youtube || null,
+                files: Array.isArray(parsed.files) ? parsed.files : [],
+              }
+            }
+            // Formato anterior con type y urls
+            else if (parsed.type &amp;&amp; parsed.urls) {
+              if (parsed.type === "youtube" &amp;&amp; parsed.urls.length > 0) {
+                parsedRuta = { youtube: parsed.urls[0], files: [] }
+              } else if (parsed.type === "file") {
+                parsedRuta = { youtube: null, files: parsed.urls || [] }
+              }
+            }
+          }
+          // Si es una URL de YouTube (formato simple)
+          else if (ruta &amp;&amp; typeof ruta === "string" &amp;&amp; (ruta.includes("youtube.com") || ruta.includes("youtu.be"))) {
+            parsedRuta = { youtube: ruta, files: [] }
+          }
+          // Si es una ruta de archivo (formato simple)
+          else if (ruta) {
+            parsedRuta = { youtube: null, files: [ruta] }
+          }
+        } catch (e) {
+          // console.warn("Error al parsear ruta:", e)
+          // Si hay error, mantener la ruta original como una sola URL
+          parsedRuta = { youtube: null, files: ruta ? [ruta] : [] }
+        }
+
+        return {
+          ...comp,
+          parsedRuta: parsedRuta,
+        }
+      })
+
+      // console.log("Datos de composiciones procesados:", composicionesData)
+      setComposiciones(composicionesData)
+    } catch (error) {
+      // console.error("Error al cargar composiciones:", error)
+      setError(`${t("compositions.errorLoadingCompositions")}: ${error.message}`)
+
+      if (error.response) {
+        // console.error("Respuesta del servidor:", error.response.status, error.response.data)
+        setError(`${t("compositions.serverError")}: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+      } else if (error.request) {
+        // console.error("No se recibió respuesta del servidor")
+        setError(t("compositions.noServerResponse"))
+      } else {
+        // console.error("Error de configuración:", error.message)
+        setError(`${t("compositions.configurationError")}: ${error.message}`)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  /**
+   * Efecto para cargar las composiciones al montar el componente o al refrescar.
+   */
+  useEffect(() => {
+    fetchComposiciones()
+
+    // Limpiar audio al desmontar
+    return () => {
+      if (audioElement) {
+        audioElement.pause()
+        audioElement.src = ""
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshTrigger])
+
+  /**
+   * Fuerza la recarga de los datos de composiciones.
+   */
+  const refreshData = () => {
+    setRefreshTrigger((prev) => prev + 1)
+  }
+
+  /**
+   * Elimina una composición seleccionada.
+   * @async
+   */
+  const handleDelete = async () => {
+    if (!composicionToDelete) return
+
+    try {
+      await api.delete(`/composiciones/${composicionToDelete}`)
+      setComposiciones(composiciones.filter((comp) => comp.id !== composicionToDelete))
+      setShowDeleteModal(false)
+      setComposicionToDelete(null)
+      toast.success(t("compositions.compositionDeletedSuccessfully"))
+    } catch (error) {
+      // console.error("Error al eliminar composición:", error)
+      toast.error(t("compositions.errorDeletingComposition"))
+    }
+  }
+
+  /**
+   * Abre el modal de confirmación de eliminación para una composición.
+   * @param {number} id - ID de la composición a eliminar.
+   */
+  const confirmDelete = (id) => {
+    setComposicionToDelete(id)
+    setShowDeleteModal(true)
+  }
+
+  /**
+   * Reproduce el audio de una composición.
+   * @param {Object} composicion - Composición seleccionada.
+   */
+  const handlePlayAudio = (composicion) => {
+    // Si no hay archivos de audio, no hacer nada
+    if (!composicion.parsedRuta || !composicion.parsedRuta.files || composicion.parsedRuta.files.length === 0) {
+      toast.error(t("compositions.noAudioFilesAvailable"))
+      return
+    }
+
+    // Si ya hay un audio reproduciéndose, detenerlo
+    if (audioElement) {
+      audioElement.pause()
+      audioElement.src = ""
+    }
+
+    // Si estamos reproduciendo la misma composición, solo pausar
+    if (currentAudio === composicion.id &amp;&amp; isPlaying) {
+      setIsPlaying(false)
+      setCurrentAudio(null)
+      return
+    }
+
+    // Obtener la URL del archivo de audio (primera URL si hay varias)
+    const audioUrl = composicion.parsedRuta.files[0]
+
+    // Crear nuevo elemento de audio
+    const audio = new Audio(`${api.defaults.baseURL}${audioUrl}`)
+
+    audio.onended = () => {
+      setIsPlaying(false)
+      setCurrentAudio(null)
+    }
+    audio.onerror = () => {
+      toast.error(t("compositions.errorPlayingAudio"))
+      setIsPlaying(false)
+      setCurrentAudio(null)
+    }
+
+    audio
+      .play()
+      .then(() => {
+        setIsPlaying(true)
+        setCurrentAudio(composicion.id)
+        setAudioElement(audio)
+      })
+      .catch((err) => {
+        // console.error("Error al reproducir:", err)
+        toast.error(t("compositions.audioPlaybackFailed"))
+      })
+  }
+
+  /**
+   * Abre el enlace de YouTube de una composición en una nueva pestaña.
+   * @param {Object} composicion - Composición seleccionada.
+   */
+  const handleOpenYoutube = (composicion) => {
+    if (composicion.parsedRuta &amp;&amp; composicion.parsedRuta.youtube) {
+      window.open(composicion.parsedRuta.youtube, "_blank")
+    } else {
+      toast.error(t("compositions.noYoutubeLinkAvailable"))
+    }
+  }
+
+  /**
+   * Abre el modal para crear una nueva composición.
+   */
+  const handleNewComposicion = () => {
+    setEditingComposicion(null)
+    setFormData({
+      nombre: "",
+      descripcion: "",
+      nombre_autor: "",
+    })
+    setIncludeYoutube(false)
+    setIncludeFiles(false)
+    setYoutubeUrl("")
+    setNewFiles([])
+    setExistingFiles([])
+    setShowModal(true)
+  }
+
+  /**
+   * Abre el modal para editar una composición existente.
+   * @param {Object} composicion - Composición a editar.
+   */
+  const handleEditComposicion = (composicion) => {
+    setEditingComposicion(composicion)
+
+    // Determinar si incluye YouTube y/o archivos
+    const hasYoutube = composicion.parsedRuta &amp;&amp; composicion.parsedRuta.youtube
+    const hasFiles = composicion.parsedRuta &amp;&amp; composicion.parsedRuta.files &amp;&amp; composicion.parsedRuta.files.length > 0
+
+    setIncludeYoutube(hasYoutube)
+    setIncludeFiles(hasFiles)
+    setYoutubeUrl(hasYoutube ? composicion.parsedRuta.youtube : "")
+
+    // Separar archivos existentes
+    setNewFiles([])
+    setExistingFiles(hasFiles ? composicion.parsedRuta.files : [])
+
+    setFormData({
+      nombre: composicion.nombre || "",
+      descripcion: composicion.descripcion || "",
+      nombre_autor: composicion.nombre_autor || "",
+    })
+
+    setShowModal(true)
+  }
+
+  /**
+   * Maneja el cambio en los campos del formulario de composición.
+   * @param {Object} e - Evento de cambio.
+   */
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  /**
+   * Maneja el cambio en la URL de YouTube.
+   * @param {Object} e - Evento de cambio.
+   */
+  const handleYoutubeUrlChange = (e) => {
+    setYoutubeUrl(e.target.value)
+  }
+
+  /**
+   * Valida el tipo de archivo permitido.
+   * @param {File} file - Archivo a validar.
+   * @returns {boolean} Si el archivo es válido.
+   */
+  const isValidFileType = (file) => {
+    const acceptedTypes = [
+      "audio/mpeg",
+      "audio/mp3",
+      "audio/wav",
+      "audio/ogg",
+      "application/pdf",
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "video/mp4",
+      "video/webm",
+      "video/quicktime",
+    ]
+    return acceptedTypes.includes(file.type)
+  }
+
+  /**
+   * Valida el tamaño del archivo (máximo 20MB).
+   * @param {File} file - Archivo a validar.
+   * @returns {boolean} Si el archivo es válido.
+   */
+  const isValidFileSize = (file) => {
+    const maxSize = 20 * 1024 * 1024 // 20MB en bytes
+    return file.size &lt;= maxSize
+  }
+
+  /**
+   * Agrega archivos seleccionados al estado.
+   * @param {Object} e - Evento de cambio.
+   */
+  const handleAddFiles = (e) => {
+    if (e.target.files &amp;&amp; e.target.files.length > 0) {
+      const selectedFiles = Array.from(e.target.files)
+      const validFiles = []
+
+      // Validar archivos
+      selectedFiles.forEach((file) => {
+        if (!isValidFileType(file)) {
+          toast.error(`${t("compositions.invalidFileType")}: ${file.name}`)
+          return
+        }
+
+        if (!isValidFileSize(file)) {
+          toast.error(`${t("compositions.fileTooLarge")} (máx. 20MB): ${file.name}`)
+          return
+        }
+
+        // Verificar duplicados
+        const isDuplicate = newFiles.some(
+          (existingFile) => existingFile.name === file.name &amp;&amp; existingFile.size === file.size,
+        )
+
+        if (!isDuplicate) {
+          validFiles.push(file)
+        }
+      })
+
+      if (validFiles.length > 0) {
+        setNewFiles((prev) => [...prev, ...validFiles])
+      }
+    }
+  }
+
+  /**
+   * Elimina un archivo nuevo del estado.
+   * @param {number} index - Índice del archivo a eliminar.
+   */
+  const handleRemoveNewFile = (index) => {
+    setNewFiles((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  /**
+   * Elimina un archivo existente del estado.
+   * @param {number} index - Índice del archivo a eliminar.
+   */
+  const handleRemoveExistingFile = (index) => {
+    setExistingFiles((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  /**
+   * Envía el formulario para crear o editar una composición.
+   * @async
+   * @param {Object} e - Evento de envío.
+   */
+  const handleSubmitComposicion = async (e) => {
+    e.preventDefault()
+
+    try {
+      // Validaciones mejoradas con mensajes más específicos
+      if (!formData.nombre.trim()) {
+        toast.error(t("compositions.name") + " " + t("compositions.isRequired"))
+        return
+      }
+
+      if (!formData.descripcion.trim()) {
+        toast.error(t("compositions.description") + " " + t("compositions.isRequired"))
+        return
+      }
+
+      if (!formData.nombre_autor.trim()) {
+        toast.error(t("compositions.author") + " " + t("compositions.isRequired"))
+        return
+      }
+
+      if (!includeYoutube &amp;&amp; !includeFiles) {
+        toast.error(t("compositions.mustIncludeContent"))
+        return
+      }
+
+      if (includeYoutube &amp;&amp; !youtubeUrl.trim()) {
+        toast.error(t("compositions.mustProvideYoutubeUrl"))
+        return
+      }
+
+      if (includeFiles &amp;&amp; newFiles.length === 0 &amp;&amp; existingFiles.length === 0) {
+        toast.error(t("compositions.mustAddFiles"))
+        return
+      }
+
+      setIsUploading(true)
+      setUploadProgress(0)
+
+      const composicionData = new FormData()
+      composicionData.append("nombre", formData.nombre.trim())
+      composicionData.append("descripcion", formData.descripcion.trim())
+      composicionData.append("nombre_autor", formData.nombre_autor.trim())
+
+      // Agregar iframe (URL de YouTube) si está incluido
+      if (includeYoutube &amp;&amp; youtubeUrl) {
+        composicionData.append("iframe", youtubeUrl)
+      }
+
+      // Agregar archivos existentes si hay
+      if (includeFiles &amp;&amp; existingFiles.length > 0) {
+        existingFiles.forEach((filePath) => {
+          composicionData.append("existing_files[]", filePath)
+        })
+      }
+
+      // Agregar nuevos archivos si hay
+      if (includeFiles &amp;&amp; newFiles.length > 0) {
+        newFiles.forEach((file) => {
+          composicionData.append("files[]", file)
+        })
+      }
+
+      // Configurar opciones para seguimiento de progreso
+      const config = {
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+          setUploadProgress(percentCompleted)
+        },
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+
+      // console.log("Datos a enviar:")
+      // console.log("nombre:", formData.nombre)
+      // console.log("descripcion:", formData.descripcion)
+      // console.log("nombre_autor:", formData.nombre_autor)
+      // if (includeYoutube) console.log("iframe:", youtubeUrl)
+      // if (includeFiles &amp;&amp; existingFiles.length > 0) console.log("existing_files[]:", existingFiles)
+      // if (includeFiles &amp;&amp; newFiles.length > 0) {
+      //   console.log(
+      //     "files[]:",
+      //     newFiles.map((file) => `File: ${file.name} (${file.size} bytes)`),
+      //   )
+      // }
+
+      let response
+
+      if (editingComposicion) {
+        composicionData.append("_method", "PUT")
+        response = await api.post(`/composiciones/${editingComposicion.id}`, composicionData, config)
+        // console.log("Respuesta al actualizar composición:", response.data)
+
+        // Actualizar con los datos del servidor
+        if (response.data &amp;&amp; (response.data.data || response.data)) {
+          const updatedComposicion = response.data.data || response.data
+
+          // Parsear la ruta devuelta por el servidor
+          let parsedRuta = { youtube: null, files: [] }
+          if (updatedComposicion.ruta) {
+            try {
+              const rutaObj = JSON.parse(updatedComposicion.ruta)
+              parsedRuta = {
+                youtube: rutaObj.youtube || null,
+                files: Array.isArray(rutaObj.files) ? rutaObj.files : [],
+              }
+            } catch (e) {
+              // console.warn("Error al parsear ruta devuelta:", e)
+            }
+          }
+
+          // Actualizar la composición en el estado
+          setComposiciones((prev) =>
+            prev.map((comp) =>
+              comp.id === editingComposicion.id
+                ? {
+                    ...comp,
+                    ...updatedComposicion,
+                    parsedRuta: parsedRuta,
+                  }
+                : comp,
+            ),
+          )
+
+          toast.success(t("compositions.compositionUpdatedSuccessfully"))
+        } else {
+          // Si no hay datos en la respuesta, recargar todos los datos
+          refreshData()
+          toast.success(`${t("compositions.compositionUpdatedSuccessfully")} ${t("compositions.reloadingData")}...`)
+        }
+      } else {
+        response = await api.post("/composiciones", composicionData, config)
+        // console.log("Respuesta al crear composición:", response.data)
+
+        // Añadir la nueva composición con los datos del servidor
+        if (response.data &amp;&amp; (response.data.data || response.data)) {
+          const newComposicion = response.data.data || response.data
+
+          // Parsear la ruta devuelta por el servidor
+          let parsedRuta = { youtube: null, files: [] }
+          if (newComposicion.ruta) {
+            try {
+              const rutaObj = JSON.parse(newComposicion.ruta)
+              parsedRuta = {
+                youtube: rutaObj.youtube || null,
+                files: Array.isArray(rutaObj.files) ? rutaObj.files : [],
+              }
+            } catch (e) {
+              // console.warn("Error al parsear ruta devuelta:", e)
+            }
+          }
+
+          // Añadir la nueva composición al estado
+          setComposiciones((prev) => [
+            ...prev,
+            {
+              ...newComposicion,
+              parsedRuta: parsedRuta,
+            },
+          ])
+
+          toast.success(t("compositions.compositionCreatedSuccessfully"))
+        } else {
+          // Si no hay datos en la respuesta, recargar todos los datos
+          refreshData()
+          toast.success(`${t("compositions.compositionCreatedSuccessfully")} ${t("compositions.reloadingData")}...`)
+        }
+      }
+
+      setShowModal(false)
+    } catch (error) {
+      // console.error("Error al guardar composición:", error)
+
+      // Mejorar el manejo de errores
+      let errorMessage = t("compositions.errorSavingComposition")
+
+      if (error.response &amp;&amp; error.response.data) {
+        if (error.response.data.message) {
+          errorMessage = error.response.data.message
+        } else if (error.response.data.errors) {
+          const errors = Object.values(error.response.data.errors).flat()
+          errorMessage = errors.join(", ")
+        }
+      }
+
+      toast.error(errorMessage)
+    } finally {
+      setIsUploading(false)
+      setUploadProgress(0)
+    }
+  }
+
+  /**
+   * Abre un archivo en una nueva pestaña.
+   * @param {string} fileName - Nombre del archivo.
+   */
+  const handleOpenFile = (fileName) => {
+    if (fileName) {
+      const fileUrl = `${IMAGES_URL}/${fileName}`
+      window.open(fileUrl, "_blank")
+    }
+  }
+
+  /**
+   * Muestra el modal de archivos de una composición.
+   * @param {Object} composicion - Composición seleccionada.
+   */
+  const handleShowFilesModal = (composicion) => {
+    setSelectedComposicion(composicion)
+    setShowFilesModal(true)
+  }
+
+  /**
+   * Filtra las composiciones según el término de búsqueda.
+   * @type {Array}
+   */
+  const filteredComposiciones = composiciones.filter((composicion) => {
+    if (!composicion) return false
+
+    const matchesSearch =
+      (composicion.nombre &amp;&amp; composicion.nombre.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (composicion.nombre_autor &amp;&amp; composicion.nombre_autor.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (composicion.descripcion &amp;&amp; composicion.descripcion.toLowerCase().includes(searchTerm.toLowerCase()))
+
+    return matchesSearch
+  })
+
+  // Paginación
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const paginatedComposiciones = filteredComposiciones.slice(indexOfFirstItem, indexOfLastItem)
+  const totalPages = Math.ceil(filteredComposiciones.length / itemsPerPage)
+
+  // Renderizar paginación con números
+  const renderPagination = () => {
+    if (totalPages &lt;= 1) return null
+
+    return (
+      &lt;div className="flex justify-center mt-6 space-x-2">
+        &lt;button
+          onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+          disabled={currentPage === 1}
+          className="w-10 h-10 flex items-center justify-center bg-gray-900 border border-gray-700 rounded-md text-[#C0C0C0] disabled:opacity-50"
+        >
+          &lt;ArrowLeft size={18} />
+        &lt;/button>
+
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          &lt;button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            className={`w-10 h-10 flex items-center justify-center rounded-md ${
+              currentPage === page ? "bg-[#C0C0C0] text-black" : "bg-gray-900 border border-gray-700 text-[#C0C0C0]"
+            }`}
+          >
+            {page}
+          &lt;/button>
+        ))}
+
+        &lt;button
+          onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+          disabled={currentPage === totalPages}
+          className="w-10 h-10 flex items-center justify-center bg-gray-900 border border-gray-700 rounded-md text-[#C0C0C0] disabled:opacity-50"
+        >
+          &lt;ArrowRight size={18} />
+        &lt;/button>
+      &lt;/div>
+    )
+  }
+
+  const getYoutubeEmbedUrl = (youtubeUrl) => {
+    if (!youtubeUrl) return ""
+
+    let videoId = ""
+
+    // Extraer ID de video de diferentes formatos de URL de YouTube
+    if (youtubeUrl.includes("youtube.com/watch")) {
+      const url = new URL(youtubeUrl)
+      videoId = url.searchParams.get("v")
+    } else if (youtubeUrl.includes("youtu.be")) {
+      videoId = youtubeUrl.split("/").pop().split("?")[0]
+    }
+
+    if (videoId) {
+      return `https://www.youtube.com/embed/${videoId}`
+    }
+
+    return youtubeUrl // Si no se pudo procesar, devolver la URL original
+  }
+
+  // Obtener icono según tipo de archivo
+  const getFileIcon = (fileName) => {
+    if (!fileName) return &lt;File size={16} className="mr-2 text-gray-400" />
+
+    const fileExtension = fileName.split(".").pop().toLowerCase()
+
+    if (["mp3", "wav", "ogg"].includes(fileExtension)) {
+      return &lt;FileMusic size={16} className="mr-2 text-green-400" />
+    } else if (["jpg", "jpeg", "png", "gif", "webp"].includes(fileExtension)) {
+      return &lt;ImageIcon size={16} className="mr-2 text-blue-400" />
+    } else if (fileExtension === "pdf") {
+      return &lt;File size={16} className="mr-2 text-red-400" />
+    } else if (["mp4", "webm", "mov"].includes(fileExtension)) {
+      return &lt;File size={16} className="mr-2 text-purple-400" />
+    }
+
+    return &lt;File size={16} className="mr-2 text-gray-400" />
+  }
+
+  return (
+    &lt;div className="container mx-auto px-4 py-8">
+      &lt;div className="flex justify-between items-center mb-6">
+        &lt;h1 className="text-2xl font-bold text-[#C0C0C0]">{t("compositions.title")}&lt;/h1>
+        {/* Modificar los botones en la cabecera: */}
+        &lt;div className="flex space-x-2">
+          &lt;button
+            onClick={refreshData}
+            className="flex items-center gap-2 bg-gray-900 border border-gray-700 text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-800 transition-colors"
+            disabled={loading}
+          >
+            &lt;RefreshCw size={18} className={loading ? "animate-spin" : ""} />
+            {t("compositions.reload")}
+          &lt;/button>
+          {isAdmin &amp;&amp; (
+            &lt;button
+              onClick={handleNewComposicion}
+              className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
+            >
+              &lt;Plus size={18} />
+              {t("compositions.newComposition")}
+            &lt;/button>
+          )}
+        &lt;/div>
+      &lt;/div>
+
+      {/* Mostrar mensaje de error si existe */}
+      {error &amp;&amp; (
+        &lt;div className="bg-red-900/30 border border-red-800 text-red-400 p-4 rounded-md mb-6">
+          &lt;p className="font-medium">{t("compositions.error")}:&lt;/p>
+          &lt;p>{error}&lt;/p>
+        &lt;/div>
+      )}
+
+      {/* Filtros y búsqueda */}
+      &lt;div className="bg-black/30 border border-gray-800 rounded-lg p-4 mb-6">
+        &lt;div className="flex flex-col md:flex-row gap-4">
+          &lt;div className="flex-1">
+            &lt;div className="relative">
+              &lt;Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+              &lt;input
+                type="text"
+                placeholder={t("compositions.searchByTitleAuthorDescription")}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+              />
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      &lt;/div>
+
+      {/* Lista de composiciones */}
+      &lt;div className="bg-black/30 border border-gray-800 rounded-lg overflow-hidden">
+        {loading ? (
+          &lt;div className="flex justify-center items-center h-64">
+            &lt;div className="flex flex-col items-center">
+              &lt;Loader2 size={36} className="text-[#C0C0C0] animate-spin mb-4" />
+              &lt;div className="text-[#C0C0C0]">{t("compositions.loadingCompositions")}&lt;/div>
+            &lt;/div>
+          &lt;/div>
+        ) : filteredComposiciones.length === 0 ? (
+          &lt;div className="flex flex-col justify-center items-center h-64">
+            &lt;Music size={48} className="text-gray-600 mb-4" />
+            &lt;p className="text-gray-400 text-center">
+              {searchTerm ? t("compositions.noCompositionsWithFilters") : t("compositions.noRegisteredCompositions")}
+            &lt;/p>
+            {/* Modificar el mensaje cuando no hay composiciones: */}
+            {isAdmin &amp;&amp; (
+              &lt;button onClick={handleNewComposicion} className="mt-4 text-[#C0C0C0] hover:text-white underline">
+                {t("compositions.addFirstComposition")}
+              &lt;/button>
+            )}
+          &lt;/div>
+        ) : (
+          &lt;div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+            {paginatedComposiciones.map((composicion) => (
+              &lt;div key={composicion.id} className="bg-gray-900/30 border border-gray-800 rounded-lg overflow-hidden">
+                &lt;div className="p-4">
+                  &lt;div className="flex justify-between items-start mb-3">
+                    &lt;h3 className="text-lg font-medium text-[#C0C0C0] truncate">{composicion.nombre}&lt;/h3>
+
+                    {/* Botones de acción según el contenido disponible */}
+                    &lt;div className="flex space-x-2">
+                      {/* Botón para YouTube si está disponible */}
+                      {composicion.parsedRuta &amp;&amp; composicion.parsedRuta.youtube &amp;&amp; (
+                        &lt;button
+                          onClick={() => handleOpenYoutube(composicion)}
+                          className="p-2 rounded-full bg-red-900/30 text-red-400 hover:bg-red-900/50"
+                          title={t("compositions.viewOnYoutube")}
+                        >
+                          &lt;Youtube size={16} />
+                        &lt;/button>
+                      )}
+
+                      {/* Botón para archivos si están disponibles */}
+                      {composicion.parsedRuta &amp;&amp;
+                        composicion.parsedRuta.files &amp;&amp;
+                        composicion.parsedRuta.files.length > 0 &amp;&amp; (
+                          &lt;button
+                            onClick={() => handleShowFilesModal(composicion)}
+                            className="p-2 rounded-full bg-green-900/30 text-green-400 hover:bg-green-900/50"
+                            title={t("compositions.viewFiles")}
+                          >
+                            &lt;File size={16} />
+                          &lt;/button>
+                        )}
+                    &lt;/div>
+                  &lt;/div>
+
+                  {composicion.nombre_autor &amp;&amp; (
+                    &lt;p className="text-sm text-gray-400 mb-2">
+                      &lt;span className="font-medium">{t("compositions.author")}:&lt;/span> {composicion.nombre_autor}
+                    &lt;/p>
+                  )}
+
+                  {composicion.descripcion &amp;&amp; (
+                    &lt;p className="text-sm text-gray-400 mb-4 line-clamp-2">{composicion.descripcion}&lt;/p>
+                  )}
+
+                  {/* Mostrar tipo de contenido */}
+                  &lt;div className="flex flex-wrap gap-2 mb-4">
+                    {composicion.parsedRuta &amp;&amp; composicion.parsedRuta.youtube &amp;&amp; (
+                      &lt;div className="flex items-center text-sm text-red-400 bg-red-900/20 px-2 py-1 rounded">
+                        &lt;Youtube size={14} className="mr-1" />
+                        &lt;span className="truncate">{t("compositions.youtubeVideo")}&lt;/span>
+                      &lt;/div>
+                    )}
+
+                    {composicion.parsedRuta &amp;&amp;
+                      composicion.parsedRuta.files &amp;&amp;
+                      composicion.parsedRuta.files.length > 0 &amp;&amp; (
+                        &lt;div className="flex items-center text-sm text-green-400 bg-green-900/20 px-2 py-1 rounded">
+                          &lt;FileMusic size={14} className="mr-1" />
+                          &lt;span className="truncate">
+                            {composicion.parsedRuta.files.length}{" "}
+                            {t("compositions.file", { count: composicion.parsedRuta.files.length })}
+                          &lt;/span>
+                        &lt;/div>
+                      )}
+                  &lt;/div>
+
+                  {/* Modificar los botones de acción en cada composición: */}
+                  &lt;div className="flex justify-end space-x-2 mt-4">
+                    {isAdmin &amp;&amp; (
+                      &lt;>
+                        &lt;button
+                          onClick={() => handleEditComposicion(composicion)}
+                          className="p-2 bg-gray-800 text-gray-400 rounded-md hover:bg-gray-700 hover:text-[#C0C0C0]"
+                        >
+                          &lt;Edit size={16} />
+                        &lt;/button>
+                        &lt;button
+                          onClick={() => confirmDelete(composicion.id)}
+                          className="p-2 bg-gray-800 text-gray-400 rounded-md hover:bg-red-900/50 hover:text-red-400"
+                        >
+                          &lt;Trash2 size={16} />
+                        &lt;/button>
+                      &lt;/>
+                    )}
+                  &lt;/div>
+                &lt;/div>
+              &lt;/div>
+            ))}
+          &lt;/div>
+        )}
+      &lt;/div>
+
+      {/* Paginación */}
+      {renderPagination()}
+
+      {/* Modal de confirmación de eliminación */}
+      {showDeleteModal &amp;&amp; (
+        &lt;div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          &lt;div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
+            &lt;h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("compositions.confirmDelete")}&lt;/h3>
+            &lt;p className="text-gray-400 mb-6">{t("compositions.deleteConfirmText")}&lt;/p>
+            &lt;div className="flex justify-end space-x-3">
+              &lt;button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+              >
+                {t("compositions.cancel")}
+              &lt;/button>
+              &lt;button onClick={handleDelete} className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800">
+                {t("compositions.delete")}
+              &lt;/button>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      )}
+
+      {/* Modal para crear/editar composición */}
+      {showModal &amp;&amp; (
+        &lt;div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 overflow-y-auto">
+          &lt;div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-4xl m-4 max-h-[90vh] overflow-y-auto">
+            &lt;div className="flex justify-between items-center mb-6">
+              &lt;h3 className="text-xl font-semibold text-[#C0C0C0]">
+                {editingComposicion ? t("compositions.editComposition") : t("compositions.newComposition")}
+              &lt;/h3>
+              &lt;button
+                onClick={() => setShowModal(false)}
+                className="p-2 text-gray-400 hover:text-[#C0C0C0] rounded-full hover:bg-gray-900/50"
+              >
+                &lt;X size={20} />
+              &lt;/button>
+            &lt;/div>
+
+            &lt;form onSubmit={handleSubmitComposicion}>
+              &lt;div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Nombre */}
+                &lt;div className="space-y-2">
+                  &lt;label htmlFor="nombre" className="block text-[#C0C0C0] text-sm font-medium">
+                    {t("compositions.name")} *
+                  &lt;/label>
+                  &lt;div className="relative">
+                    &lt;div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                      &lt;Music size={18} />
+                    &lt;/div>
+                    &lt;input
+                      id="nombre"
+                      name="nombre"
+                      value={formData.nombre}
+                      onChange={handleChange}
+                      required
+                      className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    />
+                  &lt;/div>
+                &lt;/div>
+
+                {/* Autor */}
+                &lt;div className="space-y-2">
+                  &lt;label htmlFor="nombre_autor" className="block text-[#C0C0C0] text-sm font-medium">
+                    {t("compositions.author")} *
+                  &lt;/label>
+                  &lt;input
+                    id="nombre_autor"
+                    name="nombre_autor"
+                    value={formData.nombre_autor}
+                    onChange={handleChange}
+                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    required
+                  />
+                &lt;/div>
+              &lt;/div>
+
+              {/* Descripción */}
+              &lt;div className="mt-6 space-y-2">
+                &lt;label htmlFor="descripcion" className="block text-[#C0C0C0] text-sm font-medium">
+                  {t("compositions.description")} *
+                &lt;/label>
+                &lt;textarea
+                  id="descripcion"
+                  name="descripcion"
+                  value={formData.descripcion}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                  required
+                />
+              &lt;/div>
+
+              {/* Selector de tipo de contenido */}
+              &lt;div className="mt-6 space-y-2">
+                &lt;label className="block text-[#C0C0C0] text-sm font-medium">
+                  {t("compositions.contentType")} *{" "}
+                  &lt;span className="text-xs text-gray-500">{t("(compositions.bothOptions)")}&lt;/span>
+                &lt;/label>
+                &lt;div className="flex flex-wrap gap-4">
+                  &lt;div className="flex items-center space-x-2">
+                    &lt;input
+                      type="checkbox"
+                      id="includeYoutube"
+                      checked={includeYoutube}
+                      onChange={() => setIncludeYoutube(!includeYoutube)}
+                      className="w-4 h-4 bg-gray-900 border border-gray-700 rounded"
+                    />
+                    &lt;label htmlFor="includeYoutube" className="text-[#C0C0C0] flex items-center">
+                      &lt;Youtube size={18} className="mr-2 text-red-400" />
+                      {t("compositions.includeYoutubeVideo")}
+                    &lt;/label>
+                  &lt;/div>
+
+                  &lt;div className="flex items-center space-x-2">
+                    &lt;input
+                      type="checkbox"
+                      id="includeFiles"
+                      checked={includeFiles}
+                      onChange={() => setIncludeFiles(!includeFiles)}
+                      className="w-4 h-4 bg-gray-900 border border-gray-700 rounded"
+                    />
+                    &lt;label htmlFor="includeFiles" className="text-[#C0C0C0] flex items-center">
+                      &lt;FileMusic size={18} className="mr-2 text-green-400" />
+                      {t("compositions.includeFiles")}
+                    &lt;/label>
+                  &lt;/div>
+                &lt;/div>
+              &lt;/div>
+
+              {/* Formulario de YouTube */}
+              {includeYoutube &amp;&amp; (
+                &lt;div className="mt-4 space-y-2 p-4 border border-red-900/30 bg-red-900/10 rounded-md">
+                  &lt;label htmlFor="youtubeUrl" className="block text-[#C0C0C0] text-sm font-medium">
+                    {t("compositions.youtubeUrl")} *
+                  &lt;/label>
+                  &lt;div className="relative">
+                    &lt;div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-red-500">
+                      &lt;Youtube size={18} />
+                    &lt;/div>
+                    &lt;input
+                      id="youtubeUrl"
+                      name="youtubeUrl"
+                      type="url"
+                      value={youtubeUrl}
+                      onChange={handleYoutubeUrlChange}
+                      placeholder="https://www.youtube.com/watch?v=..."
+                      className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-red-700 focus:border-red-700"
+                      required={includeYoutube}
+                    />
+                  &lt;/div>
+
+                  {/* Previsualización de YouTube */}
+                  {youtubeUrl &amp;&amp; (
+                    &lt;div className="mt-4 p-2 bg-gray-900/50 border border-gray-800 rounded-md">
+                      &lt;p className="text-sm text-gray-400 mb-2">{t("compositions.preview")}:&lt;/p>
+                      &lt;div className="aspect-video w-full">
+                        &lt;iframe
+                          src={getYoutubeEmbedUrl(youtubeUrl)}
+                          title="YouTube video player"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          className="w-full h-full rounded-md"
+                        >&lt;/iframe>
+                      &lt;/div>
+                    &lt;/div>
+                  )}
+                &lt;/div>
+              )}
+
+              {/* Formulario de archivos */}
+              {includeFiles &amp;&amp; (
+                &lt;div className="mt-4 space-y-2 p-4 border border-green-900/30 bg-green-900/10 rounded-md">
+                  &lt;label className="block text-[#C0C0C0] text-sm font-medium">
+                    {t("compositions.files")} (MP3 y partituras) *
+                  &lt;/label>
+                  &lt;div className="space-y-4">
+                    {/* Input de archivo */}
+                    &lt;div className="flex items-center space-x-4">
+                      &lt;div className="flex-1">
+                        &lt;div className="relative">
+                          &lt;input
+                            id="archivo"
+                            type="file"
+                            ref={fileInputRef}
+                            accept=".mp3,audio/mpeg,.pdf,.jpg,.jpeg,.png, .mp4, .webm"
+                            onChange={handleAddFiles}
+                            className="hidden"
+                            multiple
+                          />
+                          &lt;label
+                            htmlFor="archivo"
+                            className="flex items-center justify-center w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] cursor-pointer hover:bg-gray-800/50 transition-colors"
+                          >
+                            &lt;Upload size={18} className="mr-2" />
+                            {t("compositions.selectFiles")}
+                          &lt;/label>
+                        &lt;/div>
+                        &lt;p className="text-xs text-gray-500 mt-1">{t("compositions.acceptedFiles")}&lt;/p>
+                      &lt;/div>
+                    &lt;/div>
+
+                    {/* Lista de archivos existentes */}
+                    {existingFiles.length > 0 &amp;&amp; (
+                      &lt;div className="p-3 bg-gray-900/30 border border-gray-800 rounded-md">
+                        &lt;p className="text-sm text-gray-400 mb-2">{t("compositions.existingFiles")}:&lt;/p>
+                        &lt;ul className="space-y-2">
+                          {existingFiles.map((filePath, index) => {
+                            const fileName = filePath.split("/").pop()
+
+                            return (
+                              &lt;li
+                                key={`existing-${index}`}
+                                className="flex items-center justify-between text-sm text-gray-400 p-2 bg-gray-900/50 rounded"
+                              >
+                                &lt;div className="flex items-center">
+                                  {getFileIcon(fileName)}
+                                  &lt;span className="truncate">{fileName}&lt;/span>
+                                &lt;/div>
+                                &lt;button
+                                  type="button"
+                                  onClick={() => handleRemoveExistingFile(index)}
+                                  className="p-1 text-gray-500 hover:text-red-500 transition-colors"
+                                >
+                                  &lt;X size={16} />
+                                &lt;/button>
+                              &lt;/li>
+                            )
+                          })}
+                        &lt;/ul>
+                      &lt;/div>
+                    )}
+
+                    {/* Lista de archivos nuevos */}
+                    {newFiles.length > 0 &amp;&amp; (
+                      &lt;div className="p-3 bg-gray-900/30 border border-gray-800 rounded-md">
+                        &lt;p className="text-sm text-gray-400 mb-2">{t("compositions.newFiles")}:&lt;/p>
+                        &lt;ul className="space-y-2">
+                          {newFiles.map((file, index) => (
+                            &lt;li
+                              key={`new-${index}`}
+                              className="flex items-center justify-between text-sm text-gray-400 p-2 bg-gray-900/50 rounded"
+                            >
+                              &lt;div className="flex items-center">
+                                {getFileIcon(file.name)}
+                                &lt;span className="truncate">{file.name}&lt;/span>
+                                &lt;span className="ml-2 text-xs text-gray-500">({Math.round(file.size / 1024)} KB)&lt;/span>
+                              &lt;/div>
+                              &lt;button
+                                type="button"
+                                onClick={() => handleRemoveNewFile(index)}
+                                className="p-1 text-gray-500 hover:text-red-500 transition-colors"
+                              >
+                                &lt;X size={16} />
+                              &lt;/button>
+                            &lt;/li>
+                          ))}
+                        &lt;/ul>
+                      &lt;/div>
+                    )}
+                  &lt;/div>
+                &lt;/div>
+              )}
+
+              {/* Barra de progreso para la subida */}
+              {isUploading &amp;&amp; (
+                &lt;div className="mt-4">
+                  &lt;div className="flex items-center justify-between mb-1">
+                    &lt;p className="text-sm text-gray-400">{t("compositions.uploadingFiles")}...&lt;/p>
+                    &lt;p className="text-sm text-gray-400">{uploadProgress}%&lt;/p>
+                  &lt;/div>
+                  &lt;div className="w-full bg-gray-900 rounded-full h-2.5">
+                    &lt;div className="bg-green-600 h-2.5 rounded-full" style={{ width: `${uploadProgress}%` }}>&lt;/div>
+                  &lt;/div>
+                &lt;/div>
+              )}
+
+              &lt;div className="mt-8 flex justify-end">
+                &lt;button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  className="mr-4 px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+                  disabled={isUploading}
+                >
+                  {t("common.cancel")}
+                &lt;/button>
+                &lt;button
+                  type="submit"
+                  className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors flex items-center gap-2"
+                  disabled={isUploading}
+                >
+                  {isUploading ? (
+                    &lt;>
+                      &lt;Loader2 size={18} className="animate-spin" />
+                      {t("compositions.uploading")}...
+                    &lt;/>
+                  ) : (
+                    &lt;>
+                      &lt;Save size={18} />
+                      {t("common.save")}
+                    &lt;/>
+                  )}
+                &lt;/button>
+              &lt;/div>
+            &lt;/form>
+          &lt;/div>
+        &lt;/div>
+      )}
+
+      {/* Modal para mostrar archivos */}
+      {showFilesModal &amp;&amp; selectedComposicion &amp;&amp; (
+        &lt;div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          &lt;div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-4xl m-4">
+            &lt;div className="flex justify-between items-center mb-6">
+              &lt;h3 className="text-xl font-semibold text-[#C0C0C0]">
+                {t("compositions.filesOf")} {selectedComposicion.nombre}
+              &lt;/h3>
+              &lt;button
+                onClick={() => setShowFilesModal(false)}
+                className="p-2 text-gray-400 hover:text-[#C0C0C0] rounded-full hover:bg-gray-900/50"
+              >
+                &lt;X size={20} />
+              &lt;/button>
+            &lt;/div>
+
+            &lt;div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {selectedComposicion.parsedRuta &amp;&amp;
+                selectedComposicion.parsedRuta.files &amp;&amp;
+                selectedComposicion.parsedRuta.files.map((fileName, index) => {
+                  const fileExtension = fileName.split(".").pop().toLowerCase()
+                  const isPDF = fileExtension === "pdf"
+                  const isImage = ["jpg", "jpeg", "png", "gif", "webp"].includes(fileExtension)
+                  const isVideo = ["mp4", "webm", "mov"].includes(fileExtension)
+                  const isAudio = ["mp3", "wav", "ogg"].includes(fileExtension)
+
+                  return (
+                    &lt;div
+                      key={index}
+                      className="bg-gray-900/30 border border-gray-800 rounded-lg overflow-hidden cursor-pointer hover:border-[#C0C0C0] transition-colors"
+                      onClick={() => handleOpenFile(fileName)}
+                    >
+                      &lt;div className="p-4 flex flex-col items-center">
+                        {isImage &amp;&amp; (
+                          &lt;div className="w-full h-32 mb-2 flex items-center justify-center overflow-hidden">
+                            &lt;img
+                              src={`${IMAGES_URL || "/placeholder.svg"}/${fileName}`}
+                              alt={fileName}
+                              className="max-h-full object-contain"
+                            />
+                          &lt;/div>
+                        )}
+
+                        {isPDF &amp;&amp; (
+                          &lt;div className="w-full h-32 mb-2 flex items-center justify-center bg-red-900/20 text-red-400">
+                            &lt;File size={48} />
+                          &lt;/div>
+                        )}
+
+                        {isVideo &amp;&amp; (
+                          &lt;div className="w-full h-32 mb-2 flex items-center justify-center bg-blue-900/20 text-blue-400">
+                            &lt;File size={48} />
+                          &lt;/div>
+                        )}
+
+                        {isAudio &amp;&amp; (
+                          &lt;div className="w-full h-32 mb-2 flex items-center justify-center bg-green-900/20 text-green-400">
+                            &lt;FileMusic size={48} />
+                          &lt;/div>
+                        )}
+
+                        {!isImage &amp;&amp; !isPDF &amp;&amp; !isVideo &amp;&amp; !isAudio &amp;&amp; (
+                          &lt;div className="w-full h-32 mb-2 flex items-center justify-center bg-gray-900/50 text-gray-400">
+                            &lt;File size={48} />
+                          &lt;/div>
+                        )}
+
+                        &lt;p className="text-sm text-gray-400 truncate w-full text-center">{fileName.split("/").pop()}&lt;/p>
+                      &lt;/div>
+                    &lt;/div>
+                  )
+                })}
+            &lt;/div>
+
+            &lt;div className="mt-6 flex justify-end">
+              &lt;button
+                onClick={() => setShowFilesModal(false)}
+                className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+              >
+                {t("compositions.close")}
+              &lt;/button>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      )}
+    &lt;/div>
+  )
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> on Mon Jun 09 2025 13:51:24 GMT+0200 (hora de verano de Europa central) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>

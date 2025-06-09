@@ -1,8 +1,17 @@
+/**
+ * @file index.css
+ * @module index
+ * @description Estilos globales y variables CSS para la aplicación BandCoord. Incluye configuración de fuentes, colores, temas (claro/oscuro), solución a scrollbars, layout principal, botones, contenedores, y utilidades para modales y overlays. Integra TailwindCSS y variantes personalizadas. Utiliza variables oklch para colores y soporta media queries para temas claros y oscuros.
+ * @author Rafael Rodriguez Mengual
+ */
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Variante personalizada para modo oscuro */
 @custom-variant dark (&:is(.dark *));
 
+/* Variables globales y configuración de fuentes y colores */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -61,6 +70,7 @@ html {
   background-color: #000;
 }
 
+/* Estilos base para el body */
 body {
   margin: 0;
   padding: 0;
@@ -71,6 +81,7 @@ body {
   overflow: hidden; /* Evita scrollbar en body */
 }
 
+/* Contenedor principal de React */
 #root {
   display: flex;
   flex-direction: column;
@@ -81,7 +92,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Restauramos el espaciado original */
+/* Restauramos el espaciado original en main */
 main {
   flex: 1;
   display: flex;
@@ -89,10 +100,12 @@ main {
   overflow: visible; /* Evitar scrollbar en main */
 }
 
+/* Espaciado para secciones */
 section {
   padding: 2rem 0;
 }
 
+/* Contenedor responsive */
 .container {
   width: 100%;
   max-width: 1280px;
@@ -100,11 +113,13 @@ section {
   padding: 0 1rem;
 }
 
+/* Títulos principales */
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
 
+/* Estilos base para botones */
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -124,6 +139,7 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* Tema claro: colores y fondos */
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -137,6 +153,7 @@ button:focus-visible {
   }
 }
 
+/* Variables de tema inline para compatibilidad con librerías */
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -175,6 +192,7 @@ button:focus-visible {
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* Tema oscuro: redefine variables para modo dark */
 .dark {
   --background: oklch(0.13 0.028 261.692);
   --foreground: oklch(0.985 0.002 247.839);
@@ -209,6 +227,7 @@ button:focus-visible {
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+/* Tailwind base layer para bordes y colores */
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -218,7 +237,7 @@ button:focus-visible {
   }
 }
 
-/* Evitar scrollbars en elementos que no los necesitan */
+/* Utilidad para evitar scrollbars innecesarios */
 .overflow-fix {
   overflow: visible !important;
 }

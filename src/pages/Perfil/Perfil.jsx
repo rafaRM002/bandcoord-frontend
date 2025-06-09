@@ -1,3 +1,10 @@
+/**
+ * @file Perfil.jsx
+ * @module pages/Perfil/Perfil
+ * @description Página de perfil de usuario. Permite ver y editar datos personales, cambiar contraseña y, si es administrador, gestionar permisos de otros usuarios. Incluye validaciones, mensajes de éxito/error y gestión de administradores.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -23,27 +30,52 @@ import { toast } from "react-toastify"
 import { useTranslation } from "../../hooks/useTranslation"
 import PasswordValidator from "../../components/PasswordValidator"
 
+/**
+ * Componente de perfil de usuario.
+ * Permite editar datos personales, cambiar contraseña y gestionar administradores.
+ * @component
+ * @returns {JSX.Element} Página de perfil.
+ */
 export default function Perfil() {
+  /** Hook de navegación */
   const navigate = useNavigate()
+  /** Usuario autenticado */
   const { user } = useAuth()
+  /** Hook de traducción y lenguaje */
   const { t, language } = useTranslation()
 
+  /** Estado de carga de datos */
   const [loading, setLoading] = useState(true)
+  /** Estado de guardado */
   const [saving, setSaving] = useState(false)
+  /** Mensaje de error */
   const [error, setError] = useState("")
+  /** Mensaje de éxito */
   const [success, setSuccess] = useState("")
+  /** Mostrar/ocultar nueva contraseña */
   const [showNewPassword, setShowNewPassword] = useState(false)
+  /** Mostrar/ocultar confirmación de contraseña */
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  /** Pestaña activa: datos, password, admin */
   const [activeTab, setActiveTab] = useState("datos")
+  /** Mostrar spinner de guardado */
   const [showSpinner, setShowSpinner] = useState(false)
+  /** Lista de usuarios activos */
   const [usuarios, setUsuarios] = useState([])
+  /** Lista de administradores (excepto el usuario actual) */
   const [adminUsers, setAdminUsers] = useState([])
+  /** Estado de carga de usuarios */
   const [loadingUsers, setLoadingUsers] = useState(false)
+  /** ID de usuario seleccionado para acción admin */
   const [selectedUserId, setSelectedUserId] = useState("")
+  /** Mostrar modal de gestión admin */
   const [showAdminModal, setShowAdminModal] = useState(false)
+  /** Acción admin: add o remove */
   const [adminAction, setAdminAction] = useState("add")
+  /** Estado de validación de contraseña */
   const [isPasswordValid, setIsPasswordValid] = useState(false)
 
+  /** Estado del formulario de datos personales */
   const [formData, setFormData] = useState({
     nombre: "",
     apellido1: "",
@@ -54,11 +86,15 @@ export default function Perfil() {
     fecha_entrada: "",
   })
 
+  /** Estado del formulario de cambio de contraseña */
   const [passwordData, setPasswordData] = useState({
     new_password: "",
     new_password_confirmation: "",
   })
 
+  /**
+   * Efecto para inicializar datos del usuario al cargar el componente.
+   */
   useEffect(() => {
     if (user) {
       setFormData({
@@ -74,6 +110,9 @@ export default function Perfil() {
     }
   }, [user])
 
+  /**
+   * Efecto para cargar usuarios y administradores si la pestaña activa es "admin".
+   */
   useEffect(() => {
     if (activeTab === "admin" && user && user.role === "admin") {
       const fetchUsuarios = async () => {
@@ -100,38 +139,68 @@ export default function Perfil() {
     }
   }, [activeTab, user])
 
+  /**
+   * Maneja el cambio en los campos del formulario de datos personales.
+   * @param {Object} e - Evento de cambio.
+   */
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
+  /**
+   * Maneja el cambio en los campos del formulario de contraseña.
+   * @param {Object} e - Evento de cambio.
+   */
   const handlePasswordChange = (e) => {
     const { name, value } = e.target
     setPasswordData((prev) => ({ ...prev, [name]: value }))
   }
 
+  /**
+   * Maneja el cambio en el campo de teléfono, permitiendo solo caracteres válidos.
+   * @param {Object} e - Evento de cambio.
+   */
   const handlePhoneChange = (e) => {
     // Permitir números, espacios, guiones, paréntesis y el signo +
     const value = e.target.value.replace(/[^\d\s\-$$$$+]/g, "")
     setFormData((prev) => ({ ...prev, telefono: value }))
   }
 
+  /**
+   * Valida el formato del email.
+   * @param {string} email - Email a validar.
+   * @returns {boolean} True si es válido.
+   */
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return emailRegex.test(email)
   }
 
+  /**
+   * Valida el formato del teléfono.
+   * @param {string} phone - Teléfono a validar.
+   * @returns {boolean} True si es válido.
+   */
   const validatePhone = (phone) => {
     const cleanPhone = phone.replace(/[^\d]/g, "")
     return cleanPhone.length >= 7 && cleanPhone.length <= 15
   }
 
+  /**
+   * Abre el modal de gestión de administradores.
+   * @param {"add"|"remove"} action - Acción a realizar.
+   */
   const handleOpenAdminModal = (action) => {
     setAdminAction(action)
     setSelectedUserId("")
     setShowAdminModal(true)
   }
 
+  /**
+   * Ejecuta la acción de añadir o quitar permisos de administrador.
+   * @async
+   */
   const handleAdminAction = async () => {
     if (!selectedUserId) {
       toast.error(t("profile.mustSelectUser", "Debes seleccionar un usuario"))
@@ -164,6 +233,11 @@ export default function Perfil() {
     }
   }
 
+  /**
+   * Envía el formulario para actualizar los datos personales del usuario.
+   * @async
+   * @param {Object} e - Evento de envío.
+   */
   const handleSubmitProfile = async (e) => {
     e.preventDefault()
     setSaving(true)
@@ -233,6 +307,11 @@ export default function Perfil() {
     }
   }
 
+  /**
+   * Envía el formulario para cambiar la contraseña del usuario.
+   * @async
+   * @param {Object} e - Evento de envío.
+   */
   const handleSubmitPassword = async (e) => {
     e.preventDefault()
     setSaving(true)
@@ -263,6 +342,7 @@ export default function Perfil() {
       })
 
       try {
+        // Enviar email de confirmación de cambio de contraseña
         const emailMessage =
           language === "en"
             ? `Dear user:\n\nYour password has been successfully changed in BandCoord. If you did not make this change, please contact the administrator immediately.\n\nIf you have any questions or need assistance, do not hesitate to contact us.\n\nThank you for trusting BandCoord.`
@@ -275,7 +355,7 @@ export default function Perfil() {
           mensaje: formattedMessage,
         })
       } catch (emailError) {
-        console.warn("Error al enviar email de confirmación:", emailError)
+        // console.warn("Error al enviar email de confirmación:", emailError)
       }
 
       setSuccess(t("profile.passwordUpdatedSuccessfully", "Contraseña actualizada correctamente"))
@@ -314,6 +394,7 @@ export default function Perfil() {
     }
   }
 
+  // Renderizado de estado de carga
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -324,6 +405,7 @@ export default function Perfil() {
     )
   }
 
+  // Renderizado principal del perfil
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center mb-6">

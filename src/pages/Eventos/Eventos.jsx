@@ -1,3 +1,10 @@
+/**
+ * @file Eventos.jsx
+ * @module pages/Eventos/Eventos
+ * @description Página para la gestión de eventos. Permite listar, buscar, filtrar, crear, editar, eliminar y paginar eventos. Los eventos expirados se actualizan automáticamente a "finalizado". Solo los administradores pueden modificar datos.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -5,32 +12,58 @@ import { Plus, Edit, Trash2, Search, Calendar, Filter, MapPin, ChevronLeft, Chev
 import api from "../../api/axios"
 import FormularioEvento from "./FormularioEvento"
 import { useTranslation } from "../../hooks/useTranslation"
-// Importar useAuth
 import { useAuth } from "../../context/AuthContext"
 
+/**
+ * Componente principal para la gestión de eventos.
+ * Permite listar, buscar, filtrar, crear, editar, eliminar y paginar eventos.
+ * @component
+ * @returns {JSX.Element} Página de eventos.
+ */
 export default function Eventos() {
+  /** Lista de eventos */
   const [eventos, setEventos] = useState([])
+  /** Estado de carga */
   const [loading, setLoading] = useState(true)
+  /** Estado de error */
   const [error, setError] = useState(null)
+  /** Término de búsqueda */
   const [searchTerm, setSearchTerm] = useState("")
+  /** Filtro por tipo de evento */
   const [tipoFilter, setTipoFilter] = useState("")
+  /** Filtro por estado de evento */
   const [estadoFilter, setEstadoFilter] = useState("")
+  /** Estado del modal de confirmación de borrado */
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  /** ID del evento a eliminar */
   const [eventoToDelete, setEventoToDelete] = useState(null)
+  /** Estado del modal de formulario */
   const [showFormModal, setShowFormModal] = useState(false)
+  /** Evento actual para editar */
   const [currentEvento, setCurrentEvento] = useState(null)
+  /** Hook de traducción */
   const { t } = useTranslation()
-  // Dentro del componente:
+  /** Si el usuario es administrador */
   const { isAdmin } = useAuth()
 
-  // Pagination
+  // Paginación
+  /** Página actual */
   const [currentPage, setCurrentPage] = useState(1)
+  /** Elementos por página */
   const [itemsPerPage] = useState(10)
 
+  /**
+   * Efecto para cargar los eventos al montar el componente.
+   */
   useEffect(() => {
     fetchEventos()
   }, [])
 
+  /**
+   * Actualiza automáticamente los eventos expirados a estado "finalizado".
+   * @param {Array} eventosData - Lista de eventos.
+   * @returns {Promise<Array>} Lista de eventos actualizada.
+   */
   const updateExpiredEvents = async (eventosData) => {
     const today = new Date()
     today.setHours(0, 0, 0, 0) // Set to start of day for comparison
@@ -41,15 +74,15 @@ export default function Eventos() {
       const eventoDate = new Date(evento.fecha)
       eventoDate.setHours(0, 0, 0, 0)
 
-      // If event date is before today and not already finished
+      // Si la fecha del evento es anterior a hoy y no está finalizado
       return eventoDate < today && evento.estado !== "finalizado"
     })
 
     if (eventosToUpdate.length === 0) return eventosData
 
-    console.log(`Actualizando ${eventosToUpdate.length} eventos expirados a estado 'finalizado'`)
+    // console.log(`Actualizando ${eventosToUpdate.length} eventos expirados a estado 'finalizado'`)
 
-    // Update each expired event
+    // Actualizar cada evento expirado
     const updatePromises = eventosToUpdate.map(async (evento) => {
       try {
         // Solo enviamos los campos necesarios en el formato correcto
@@ -57,20 +90,20 @@ export default function Eventos() {
           nombre: evento.nombre,
           fecha: evento.fecha,
           lugar: evento.lugar,
-          hora: evento.hora ? evento.hora.substring(0, 5) : "00:00", // Aseguramos formato H:i
-          estado: "finalizado", // Cambiamos a finalizado
+          hora: evento.hora ? evento.hora.substring(0, 5) : "00:00",
+          estado: "finalizado",
           tipo: evento.tipo,
           entidad_id: evento.entidad_id,
         }
 
-        console.log(`Actualizando evento ${evento.id} con datos:`, eventoData)
+        // console.log(`Actualizando evento ${evento.id} con datos:`, eventoData)
 
         const response = await api.put(`/eventos/${evento.id}`, eventoData)
-        console.log(`Evento ${evento.id} actualizado correctamente:`, response.data)
+        // console.log(`Evento ${evento.id} actualizado correctamente:`, response.data)
 
         return { ...evento, estado: "finalizado" }
       } catch (error) {
-        console.error(`Error al actualizar evento ${evento.id}:`, error)
+        // console.error(`Error al actualizar evento ${evento.id}:`, error)
         // Si hay error, marcamos localmente como finalizado pero no actualizamos en BD
         return { ...evento, estado: "finalizado", _updateFailed: true }
       }
@@ -78,53 +111,58 @@ export default function Eventos() {
 
     const updatedEventos = await Promise.all(updatePromises)
 
-    // Return the updated events array
+    // Devolver el array de eventos actualizado
     return eventosData.map((evento) => {
       const updatedEvento = updatedEventos.find((updated) => updated.id === evento.id)
       return updatedEvento || evento
     })
   }
 
+  /**
+   * Obtiene los eventos desde la API y los procesa.
+   * @async
+   */
   const fetchEventos = async () => {
     try {
       setLoading(true)
       setError(null)
-      console.log("Intentando conectar a:", `${api.defaults.baseURL}/eventos`)
+      // console.log("Intentando conectar a:", `${api.defaults.baseURL}/eventos`)
 
       const response = await api.get("/eventos")
-      console.log("Respuesta completa de eventos:", response)
+      // console.log("Respuesta completa de eventos:", response)
 
       let eventosData = []
 
       if (response.data && response.data.eventos && Array.isArray(response.data.eventos)) {
         eventosData = response.data.eventos
-        console.log("Eventos cargados correctamente:", eventosData.length)
+        // console.log("Eventos cargados correctamente:", eventosData.length)
       } else if (response.data && Array.isArray(response.data)) {
         eventosData = response.data
       } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
         eventosData = response.data.data
       } else {
-        console.warn("Formato de respuesta inesperado para eventos:", response.data)
+        // console.warn("Formato de respuesta inesperado para eventos:", response.data)
         setError("Formato de respuesta inesperado. Verifica la consola para más detalles.")
       }
 
-      // Update expired events automatically
+      // Actualizar eventos expirados automáticamente
       eventosData = await updateExpiredEvents(eventosData)
 
+      // Ordenar eventos alfabéticamente por nombre
       eventosData.sort((a, b) => a.nombre.localeCompare(b.nombre))
       setEventos(eventosData)
     } catch (error) {
-      console.error("Error al cargar eventos:", error)
+      // console.error("Error al cargar eventos:", error)
       setError(`Error al cargar eventos: ${error.message}`)
 
       if (error.response) {
-        console.error("Respuesta del servidor:", error.response.status, error.response.data)
+        // console.error("Respuesta del servidor:", error.response.status, error.response.data)
         setError(`Error del servidor: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
       } else if (error.request) {
-        console.error("No se recibió respuesta del servidor")
+        // console.error("No se recibió respuesta del servidor")
         setError("No se pudo conectar con el servidor. Verifica que el backend esté en ejecución.")
       } else {
-        console.error("Error de configuración:", error.message)
+        // console.error("Error de configuración:", error.message)
         setError(`Error de configuración: ${error.message}`)
       }
     } finally {
@@ -132,6 +170,10 @@ export default function Eventos() {
     }
   }
 
+  /**
+   * Elimina un evento seleccionado.
+   * @async
+   */
   const handleDelete = async () => {
     if (!eventoToDelete) return
 
@@ -141,20 +183,32 @@ export default function Eventos() {
       setShowDeleteModal(false)
       setEventoToDelete(null)
     } catch (error) {
-      console.error("Error al eliminar evento:", error)
+      // console.error("Error al eliminar evento:", error)
     }
   }
 
+  /**
+   * Abre el modal de confirmación de borrado para un evento.
+   * @param {number} id - ID del evento a eliminar.
+   */
   const confirmDelete = (id) => {
     setEventoToDelete(id)
     setShowDeleteModal(true)
   }
 
+  /**
+   * Abre el modal de formulario para crear o editar un evento.
+   * @param {Object|null} evento - Evento a editar (opcional).
+   */
   const handleOpenFormModal = (evento = null) => {
     setCurrentEvento(evento)
     setShowFormModal(true)
   }
 
+  /**
+   * Cierra el modal de formulario de evento.
+   * @param {boolean} shouldRefresh - Si debe refrescar la lista tras cerrar.
+   */
   const handleCloseFormModal = (shouldRefresh = false) => {
     setShowFormModal(false)
     setCurrentEvento(null)
@@ -163,6 +217,10 @@ export default function Eventos() {
     }
   }
 
+  /**
+   * Filtra los eventos según los criterios de búsqueda y filtros seleccionados.
+   * @type {Array}
+   */
   const filteredEventos = eventos.filter((evento) => {
     const matchesSearch =
       evento.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -174,28 +232,48 @@ export default function Eventos() {
     return matchesSearch && matchesTipo && matchesEstado
   })
 
+  // Paginación
+  /** Índice del último elemento de la página */
   const indexOfLastItem = currentPage * itemsPerPage
+  /** Índice del primer elemento de la página */
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  /** Eventos a mostrar en la página actual */
   const currentEventos = filteredEventos.slice(indexOfFirstItem, indexOfLastItem)
+  /** Total de páginas */
   const totalPages = Math.ceil(filteredEventos.length / itemsPerPage)
 
+  /**
+   * Cambia la página current de la paginación.
+   * @param {number} pageNumber - Número de página a mostrar.
+   */
   const paginate = (pageNumber) => {
     if (pageNumber > 0 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber)
     }
   }
 
+  /**
+   * Formatea una fecha a formato DD/MM/YYYY.
+   * @param {string} dateString - Fecha en formato ISO.
+   * @returns {string} Fecha formateada.
+   */
   const formatDate = (dateString) => {
     if (!dateString) return "-"
     const options = { day: "2-digit", month: "2-digit", year: "numeric" }
     return new Date(dateString).toLocaleDateString("es-ES", options)
   }
 
+  /**
+   * Formatea una hora a formato HH:MM.
+   * @param {string} timeString - Hora en formato HH:MM:SS.
+   * @returns {string} Hora formateada.
+   */
   const formatTime = (timeString) => {
     if (!timeString) return "-"
     return timeString.substring(0, 5)
   }
 
+  // Renderizado de la interfaz y modales
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>pages/Entidades.jsx/Entidades.jsx - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-App.html">App</a><ul class='methods'><li data-type='method'><a href="module-App.html#~App">App</a></li><li data-type='method'><a href="module-App.html#~AppContent">AppContent</a></li></ul></li><li><a href="module-api_axios.html">api/axios</a></li><li><a href="module-components_AdminRoute.html">components/AdminRoute</a></li><li><a href="module-components_HelpButton_AboutModal.html">components/HelpButton/AboutModal</a></li><li><a href="module-components_HelpButton_HelpButton.html">components/HelpButton/HelpButton</a></li><li><a href="module-components_HelpButton_HelpModal.html">components/HelpButton/HelpModal</a></li><li><a href="module-components_MemberRoute.html">components/MemberRoute</a></li><li><a href="module-components_Navigation_Footer.html">components/Navigation/Footer</a></li><li><a href="module-components_Navigation_Navbar.html">components/Navigation/Navbar</a></li><li><a href="module-components_PasswordValidator.html">components/PasswordValidator</a></li><li><a href="module-components_ProtectedRoute.html">components/ProtectedRoute</a></li><li><a href="module-context_AuthContext.html">context/AuthContext</a><ul class='methods'><li data-type='method'><a href="module-context_AuthContext.html#.useAuth">useAuth</a></li><li data-type='method'><a href="module-context_AuthContext.html#~getCsrfCookie">getCsrfCookie</a></li></ul></li><li><a href="module-context_LanguageContext.html">context/LanguageContext</a><ul class='methods'><li data-type='method'><a href="module-context_LanguageContext.html#.useLanguage">useLanguage</a></li></ul></li><li><a href="module-hooks_useTranslation.html">hooks/useTranslation</a><ul class='methods'><li data-type='method'><a href="module-hooks_useTranslation.html#.useTranslation">useTranslation</a></li></ul></li><li><a href="module-main.html">main</a></li><li><a href="module-pages_Admin_GestionUsuarios.html">pages/Admin/GestionUsuarios</a></li><li><a href="module-pages_Calendario_Calendario.html">pages/Calendario/Calendario</a></li><li><a href="module-pages_Composiciones_Composiciones.html">pages/Composiciones/Composiciones</a></li><li><a href="module-pages_ComposicionesInterpretadas_ComposicionesInterpretadas.html">pages/ComposicionesInterpretadas/ComposicionesInterpretadas</a><ul class='methods'><li data-type='method'><a href="module-pages_ComposicionesInterpretadas_ComposicionesInterpretadas.html#~ComposicionesInterpretadas">ComposicionesInterpretadas</a></li></ul></li><li><a href="module-pages_ConfirmacionEventos_ConfirmacionEventos.html">pages/ConfirmacionEventos/ConfirmacionEventos</a></li><li><a href="module-pages_Entidades_Entidades.html">pages/Entidades/Entidades</a></li><li><a href="module-pages_EventoUsuario_EventoUsuario.html">pages/EventoUsuario/EventoUsuario</a></li><li><a href="module-pages_Eventos_Eventos.html">pages/Eventos/Eventos</a></li><li><a href="module-pages_Eventos_FormularioEvento.html">pages/Eventos/FormularioEvento</a></li><li><a href="module-pages_Home_Home.html">pages/Home/Home</a><ul class='methods'><li data-type='method'><a href="module-pages_Home_Home.html#~AdminCard">AdminCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~FeatureCard">FeatureCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~PublicHome">PublicHome</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~QuickAccessCard">QuickAccessCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~UserDashboard">UserDashboard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~getEventTypeColor">getEventTypeColor</a></li></ul></li><li><a href="module-pages_Instrumentos_Instrumentos.html">pages/Instrumentos/Instrumentos</a></li><li><a href="module-pages_Login_Login.html">pages/Login/Login</a></li><li><a href="module-pages_Mensajes_DetalleMensaje.html">pages/Mensajes/DetalleMensaje</a></li><li><a href="module-pages_Mensajes_FormularioMensaje.html">pages/Mensajes/FormularioMensaje</a></li><li><a href="module-pages_Mensajes_Mensajes.html">pages/Mensajes/Mensajes</a></li><li><a href="module-pages_MensajesUsuario_MensajesUsuario.html">pages/MensajesUsuario/MensajesUsuario</a><ul class='methods'><li data-type='method'><a href="module-pages_MensajesUsuario_MensajesUsuario.html#~MensajesUsuario">MensajesUsuario</a></li></ul></li><li><a href="module-pages_MinimosEvento_MinimosEvento.html">pages/MinimosEvento/MinimosEvento</a></li><li><a href="module-pages_NotFound_NotFound.html">pages/NotFound/NotFound</a></li><li><a href="module-pages_Perfil_Perfil.html">pages/Perfil/Perfil</a></li><li><a href="module-pages_Prestamos_Prestamos.html">pages/Prestamos/Prestamos</a></li><li><a href="module-pages_Register_Register.html">pages/Register/Register</a></li><li><a href="module-pages_RegistroPendiente_RegistroPendiente.html">pages/RegistroPendiente/RegistroPendiente</a></li><li><a href="module-pages_RestablecerPassword_NuevaPassword.html">pages/RestablecerPassword/NuevaPassword</a></li><li><a href="module-pages_RestablecerPassword_RestablecerPassword.html">pages/RestablecerPassword/RestablecerPassword</a></li><li><a href="module-pages_TiposInstrumento_TiposInstrumento.html">pages/TiposInstrumento/TiposInstrumento</a></li><li><a href="module-utils_translations.html">utils/translations</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+
+    
+    <h1 class="page-title">pages/Entidades.jsx/Entidades.jsx</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file Entidades.jsx
+ * @module pages/Entidades/Entidades
+ * @description Página para la gestión de entidades (hermandades, ayuntamientos, etc). Permite crear, editar, eliminar, buscar y paginar entidades. Solo los administradores pueden modificar datos.
+ * @author Rafael Rodriguez Mengual
+ */
+
+"use client"
+
+import { useState, useEffect } from "react"
+import { Plus, Edit, Trash2, Search, Building2, ArrowLeft, ArrowRight, Save, Phone, Mail, User } from "lucide-react"
+import api from "../../api/axios"
+import { toast } from "react-toastify"
+import { useTranslation } from "../../hooks/useTranslation"
+import { useAuth } from "../../context/AuthContext"
+
+/**
+ * Componente principal para la gestión de entidades.
+ * Permite listar, buscar, crear, editar y eliminar entidades.
+ * @component
+ * @returns {JSX.Element} Página de entidades.
+ */
+export default function Entidades() {
+  /** Hook de traducción */
+  const { t } = useTranslation()
+  /** Lista de entidades */
+  const [entidades, setEntidades] = useState([])
+  /** Estado de carga */
+  const [loading, setLoading] = useState(true)
+  /** Término de búsqueda */
+  const [searchTerm, setSearchTerm] = useState("")
+  /** Estado del modal de confirmación de borrado */
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  /** ID de la entidad a eliminar */
+  const [entidadToDelete, setEntidadToDelete] = useState(null)
+  /** Estado del modal de formulario */
+  const [showFormModal, setShowFormModal] = useState(false)
+  /** Modo del modal: "create" o "edit" */
+  const [modalMode, setModalMode] = useState("create")
+  /** Estado de guardado */
+  const [saving, setSaving] = useState(false)
+  /** Mensaje de error */
+  const [error, setError] = useState("")
+
+  // Paginación
+  /** Página actual */
+  const [currentPage, setCurrentPage] = useState(1)
+  /** Elementos por página */
+  const itemsPerPage = 10
+
+  /** Datos del formulario de entidad */
+  const [formData, setFormData] = useState({
+    id: null,
+    nombre: "",
+    tipo: "hermandad",
+    persona_contacto: "",
+    telefono: "",
+    email_contacto: "",
+  })
+
+  /** Si el usuario es administrador */
+  const { isAdmin } = useAuth()
+
+  /**
+   * Efecto para cargar entidades al montar el componente.
+   */
+  useEffect(() => {
+    const fetchEntidades = async () => {
+      try {
+        setLoading(true)
+        const response = await api.get("/entidades")
+
+        // Check if response.data is an array or if it has a data property
+        const entidadesData = Array.isArray(response.data) ? response.data : response.data.data || []
+
+        // Ordenar entidades alfabéticamente por nombre
+        entidadesData.sort((a, b) => a.nombre.localeCompare(b.nombre))
+
+        setEntidades(entidadesData)
+      } catch (error) {
+        console.error("Error al cargar entidades:", error)
+        toast.error("Error al cargar las entidades")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchEntidades()
+  }, [])
+
+  /**
+   * Abre el modal de formulario en modo crear o editar.
+   * @param {"create"|"edit"} mode - Modo del modal.
+   * @param {Object|null} entidad - Entidad a editar (opcional).
+   */
+  const handleOpenModal = (mode, entidad = null) => {
+    setModalMode(mode)
+    if (mode === "edit" &amp;&amp; entidad) {
+      setFormData({
+        id: entidad.id,
+        nombre: entidad.nombre || "",
+        tipo: entidad.tipo || "hermandad",
+        persona_contacto: entidad.persona_contacto || "",
+        telefono: entidad.telefono || "",
+        email_contacto: entidad.email_contacto || "",
+      })
+    } else {
+      setFormData({
+        id: null,
+        nombre: "",
+        tipo: "hermandad",
+        persona_contacto: "",
+        telefono: "",
+        email_contacto: "",
+      })
+    }
+    setShowFormModal(true)
+  }
+
+  /**
+   * Cierra el modal de formulario.
+   */
+  const handleCloseModal = () => {
+    setShowFormModal(false)
+    setError("")
+  }
+
+  /**
+   * Maneja el cambio en los campos del formulario.
+   * @param {Object} e - Evento de cambio.
+   */
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  /**
+   * Envía el formulario para crear o editar una entidad.
+   * @async
+   * @param {Object} e - Evento de envío.
+   */
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setSaving(true)
+    setError("")
+
+    try {
+      if (modalMode === "edit") {
+        await api.put(`/entidades/${formData.id}`, formData)
+
+        // Actualizar la entidad en el estado local
+        setEntidades(entidades.map((entidad) => (entidad.id === formData.id ? { ...entidad, ...formData } : entidad)))
+
+        toast.success("Entidad actualizada correctamente")
+      } else {
+        const response = await api.post("/entidades", formData)
+
+        // Añadir la nueva entidad al estado local
+        const nuevaEntidad = response.data
+        setEntidades([...entidades, nuevaEntidad])
+
+        toast.success("Entidad creada correctamente")
+      }
+
+      handleCloseModal()
+    } catch (error) {
+      console.error("Error al guardar entidad:", error)
+      setError("Error al guardar los datos. Por favor, verifica la información e inténtalo de nuevo.")
+      toast.error("Error al guardar la entidad")
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  /**
+   * Elimina una entidad seleccionada.
+   * @async
+   */
+  const handleDelete = async () => {
+    if (!entidadToDelete) return
+
+    try {
+      await api.delete(`/entidades/${entidadToDelete}`)
+      setEntidades(entidades.filter((entidad) => entidad.id !== entidadToDelete))
+      setShowDeleteModal(false)
+      setEntidadToDelete(null)
+      toast.success("Entidad eliminada correctamente")
+    } catch (error) {
+      console.error("Error al eliminar entidad:", error)
+      toast.error("Error al eliminar la entidad")
+    }
+  }
+
+  /**
+   * Abre el modal de confirmación de borrado para una entidad.
+   * @param {number} id - ID de la entidad a eliminar.
+   */
+  const confirmDelete = (id) => {
+    setEntidadToDelete(id)
+    setShowDeleteModal(true)
+  }
+
+  /**
+   * Filtra las entidades según el término de búsqueda.
+   * @type {Array}
+   */
+  const filteredEntidades = entidades.filter(
+    (entidad) =>
+      entidad.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (entidad.tipo &amp;&amp; entidad.tipo.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (entidad.persona_contacto &amp;&amp; entidad.persona_contacto.toLowerCase().includes(searchTerm.toLowerCase())),
+  )
+
+  // Paginación
+  /** Índice del último elemento de la página */
+  const indexOfLastItem = currentPage * itemsPerPage
+  /** Índice del primer elemento de la página */
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  /** Entidades a mostrar en la página actual */
+  const currentItems = filteredEntidades.slice(indexOfFirstItem, indexOfLastItem)
+  /** Total de páginas */
+  const totalPages = Math.ceil(filteredEntidades.length / itemsPerPage)
+
+  /**
+   * Devuelve la traducción del tipo de entidad.
+   * @param {string} tipo - Tipo de entidad.
+   * @returns {string} Traducción del tipo.
+   */
+  const getTipoEntidad = (tipo) => {
+    switch (tipo) {
+      case "hermandad":
+        return t("entities.brotherhood")
+      case "ayuntamiento":
+        return t("entities.cityHall")
+      case "otro":
+        return t("entities.other")
+      default:
+        return tipo
+    }
+  }
+
+  // Renderizado de la interfaz y modales
+  return (
+    &lt;div className="container mx-auto px-4 py-8">
+      &lt;div className="flex justify-between items-center mb-6">
+        &lt;h1 className="text-2xl font-bold text-[#C0C0C0]">{t("entities.title")}&lt;/h1>
+        {isAdmin &amp;&amp; (
+          &lt;button
+            onClick={() => handleOpenModal("create")}
+            className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
+          >
+            &lt;Plus size={18} />
+            {t("entities.newEntity")}
+          &lt;/button>
+        )}
+      &lt;/div>
+
+      {/* Búsqueda */}
+      &lt;div className="bg-black/30 border border-gray-800 rounded-lg p-4 mb-6">
+        &lt;div className="relative">
+          &lt;Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+          &lt;input
+            type="text"
+            placeholder={t("entities.searchByNameTypeOrContact")}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+          />
+        &lt;/div>
+      &lt;/div>
+
+      {/* Tabla de entidades */}
+      &lt;div className="bg-black/30 border border-gray-800 rounded-lg overflow-hidden">
+        {loading ? (
+          &lt;div className="flex justify-center items-center h-64">
+            &lt;div className="text-[#C0C0C0]">Cargando entidades...&lt;/div>
+          &lt;/div>
+        ) : filteredEntidades.length === 0 ? (
+          &lt;div className="flex flex-col justify-center items-center h-64">
+            &lt;Building2 size={48} className="text-gray-600 mb-4" />
+            &lt;p className="text-gray-400 text-center">
+              {searchTerm ? t("entities.noEntitiesWithFilters") : t("entities.noEntities")}
+            &lt;/p>
+            {isAdmin &amp;&amp; (
+              &lt;button
+                onClick={() => handleOpenModal("create")}
+                className="mt-4 text-[#C0C0C0] hover:text-white underline"
+              >
+                {t("entities.addFirstEntity")}
+              &lt;/button>
+            )}
+          &lt;/div>
+        ) : (
+          &lt;div className="overflow-x-auto">
+            &lt;table className="w-full">
+              &lt;thead className="bg-gray-900/50 border-b border-gray-800">
+                &lt;tr>
+                  &lt;th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    {t("common.name")}
+                  &lt;/th>
+                  &lt;th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    {t("entities.type")}
+                  &lt;/th>
+                  &lt;th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    {t("entities.contactPerson")}
+                  &lt;/th>
+                  &lt;th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    {t("entities.phone")}
+                  &lt;/th>
+                  &lt;th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                    {isAdmin ? t("common.actions") : ""}
+                  &lt;/th>
+                &lt;/tr>
+              &lt;/thead>
+              &lt;tbody className="divide-y divide-gray-800">
+                {currentItems.map((entidad) => (
+                  &lt;tr key={entidad.id} className="hover:bg-gray-900/30">
+                    &lt;td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{entidad.nombre}&lt;/td>
+                    &lt;td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                      {getTipoEntidad(entidad.tipo)}
+                    &lt;/td>
+                    &lt;td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                      {entidad.persona_contacto || "-"}
+                    &lt;/td>
+                    &lt;td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">{entidad.telefono || "-"}&lt;/td>
+                    &lt;td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                      {isAdmin &amp;&amp; (
+                        &lt;div className="flex space-x-2">
+                          &lt;button
+                            onClick={() => handleOpenModal("edit", entidad)}
+                            className="p-1 text-gray-400 hover:text-[#C0C0C0]"
+                          >
+                            &lt;Edit size={18} />
+                          &lt;/button>
+                          &lt;button
+                            onClick={() => confirmDelete(entidad.id)}
+                            className="p-1 text-gray-400 hover:text-red-400"
+                          >
+                            &lt;Trash2 size={18} />
+                          &lt;/button>
+                        &lt;/div>
+                      )}
+                    &lt;/td>
+                  &lt;/tr>
+                ))}
+              &lt;/tbody>
+            &lt;/table>
+          &lt;/div>
+        )}
+
+        {/* Paginación */}
+        {filteredEntidades.length > 0 &amp;&amp; (
+          &lt;div className="px-4 py-3 flex items-center justify-between border-t border-gray-800">
+            &lt;div className="text-sm text-gray-400">
+              Mostrando {indexOfFirstItem + 1} a {Math.min(indexOfLastItem, filteredEntidades.length)} de{" "}
+              {filteredEntidades.length} entidades
+            &lt;/div>
+            &lt;div className="flex space-x-2">
+              &lt;button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1 rounded-md bg-gray-900/50 text-[#C0C0C0] border border-gray-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+              >
+                &lt;ArrowLeft size={16} className="mr-1" /> Anterior
+              &lt;/button>
+              &lt;button
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1 rounded-md bg-gray-900/50 text-[#C0C0C0] border border-gray-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+              >
+                Siguiente &lt;ArrowRight size={16} className="ml-1" />
+              &lt;/button>
+            &lt;/div>
+          &lt;/div>
+        )}
+      &lt;/div>
+
+      {/* Modal de formulario para crear/editar entidad */}
+      {showFormModal &amp;&amp; (
+        &lt;div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          &lt;div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
+            &lt;h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">
+              {modalMode === "create" ? t("entities.newEntity") : t("entities.editEntity")}
+            &lt;/h3>
+
+            {error &amp;&amp; (
+              &lt;div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md mb-6">{error}&lt;/div>
+            )}
+
+            &lt;form onSubmit={handleSubmit}>
+              &lt;div className="space-y-4">
+                {/* Nombre */}
+                &lt;div className="space-y-2">
+                  &lt;label htmlFor="nombre" className="block text-[#C0C0C0] text-sm font-medium">
+                    {t("common.name")} *
+                  &lt;/label>
+                  &lt;div className="relative">
+                    &lt;div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                      &lt;Building2 size={18} />
+                    &lt;/div>
+                    &lt;input
+                      id="nombre"
+                      name="nombre"
+                      value={formData.nombre}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    />
+                  &lt;/div>
+                &lt;/div>
+
+                {/* Tipo */}
+                &lt;div className="space-y-2">
+                  &lt;label htmlFor="tipo" className="block text-[#C0C0C0] text-sm font-medium">
+                    {t("entities.type")} *
+                  &lt;/label>
+                  &lt;select
+                    id="tipo"
+                    name="tipo"
+                    value={formData.tipo}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                  >
+                    &lt;option value="hermandad">{t("entities.brotherhood")}&lt;/option>
+                    &lt;option value="ayuntamiento">{t("entities.cityHall")}&lt;/option>
+                    &lt;option value="otro">{t("entities.other")}&lt;/option>
+                  &lt;/select>
+                &lt;/div>
+
+                {/* Persona de contacto */}
+                &lt;div className="space-y-2">
+                  &lt;label htmlFor="persona_contacto" className="block text-[#C0C0C0] text-sm font-medium">
+                    {t("entities.contactPerson")} *
+                  &lt;/label>
+                  &lt;div className="relative">
+                    &lt;div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                      &lt;User size={18} />
+                    &lt;/div>
+                    &lt;input
+                      id="persona_contacto"
+                      name="persona_contacto"
+                      value={formData.persona_contacto}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    />
+                  &lt;/div>
+                &lt;/div>
+
+                {/* Teléfono */}
+                &lt;div className="space-y-2">
+                  &lt;label htmlFor="telefono" className="block text-[#C0C0C0] text-sm font-medium">
+                    {t("entities.phone")} *
+                  &lt;/label>
+                  &lt;div className="relative">
+                    &lt;div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                      &lt;Phone size={18} />
+                    &lt;/div>
+                    &lt;input
+                      id="telefono"
+                      name="telefono"
+                      value={formData.telefono}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    />
+                  &lt;/div>
+                &lt;/div>
+
+                {/* Email de contacto */}
+                &lt;div className="space-y-2">
+                  &lt;label htmlFor="email_contacto" className="block text-[#C0C0C0] text-sm font-medium">
+                    {t("entities.contactEmail")} *
+                  &lt;/label>
+                  &lt;div className="relative">
+                    &lt;div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                      &lt;Mail size={18} />
+                    &lt;/div>
+                    &lt;input
+                      id="email_contacto"
+                      name="email_contacto"
+                      type="email"
+                      value={formData.email_contacto}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    />
+                  &lt;/div>
+                &lt;/div>
+              &lt;/div>
+
+              &lt;div className="mt-6 flex justify-end space-x-3">
+                &lt;button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+                >
+                  {t("common.cancel")}
+                &lt;/button>
+                &lt;button
+                  type="submit"
+                  disabled={saving}
+                  className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  &lt;Save size={18} />
+                  {saving ? "Guardando..." : t("common.save")}
+                &lt;/button>
+              &lt;/div>
+            &lt;/form>
+          &lt;/div>
+        &lt;/div>
+      )}
+
+      {/* Modal de confirmación de eliminación */}
+      {showDeleteModal &amp;&amp; (
+        &lt;div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          &lt;div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
+            &lt;h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("entities.confirmDelete")}&lt;/h3>
+            &lt;p className="text-gray-400 mb-6">{t("entities.deleteConfirmText")}&lt;/p>
+            &lt;div className="flex justify-end space-x-3">
+              &lt;button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+              >
+                {t("common.cancel")}
+              &lt;/button>
+              &lt;button onClick={handleDelete} className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800">
+                {t("common.delete")}
+              &lt;/button>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      )}
+    &lt;/div>
+  )
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> on Mon Jun 09 2025 13:51:24 GMT+0200 (hora de verano de Europa central) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>

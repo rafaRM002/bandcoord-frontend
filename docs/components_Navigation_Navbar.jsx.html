@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>components/Navigation/Navbar.jsx - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-App.html">App</a><ul class='methods'><li data-type='method'><a href="module-App.html#~App">App</a></li><li data-type='method'><a href="module-App.html#~AppContent">AppContent</a></li></ul></li><li><a href="module-api_axios.html">api/axios</a></li><li><a href="module-components_AdminRoute.html">components/AdminRoute</a></li><li><a href="module-components_HelpButton_AboutModal.html">components/HelpButton/AboutModal</a></li><li><a href="module-components_HelpButton_HelpButton.html">components/HelpButton/HelpButton</a></li><li><a href="module-components_HelpButton_HelpModal.html">components/HelpButton/HelpModal</a></li><li><a href="module-components_MemberRoute.html">components/MemberRoute</a></li><li><a href="module-components_Navigation_Footer.html">components/Navigation/Footer</a></li><li><a href="module-components_Navigation_Navbar.html">components/Navigation/Navbar</a></li><li><a href="module-components_PasswordValidator.html">components/PasswordValidator</a></li><li><a href="module-components_ProtectedRoute.html">components/ProtectedRoute</a></li><li><a href="module-context_AuthContext.html">context/AuthContext</a><ul class='methods'><li data-type='method'><a href="module-context_AuthContext.html#.useAuth">useAuth</a></li><li data-type='method'><a href="module-context_AuthContext.html#~getCsrfCookie">getCsrfCookie</a></li></ul></li><li><a href="module-context_LanguageContext.html">context/LanguageContext</a><ul class='methods'><li data-type='method'><a href="module-context_LanguageContext.html#.useLanguage">useLanguage</a></li></ul></li><li><a href="module-hooks_useTranslation.html">hooks/useTranslation</a><ul class='methods'><li data-type='method'><a href="module-hooks_useTranslation.html#.useTranslation">useTranslation</a></li></ul></li><li><a href="module-main.html">main</a></li><li><a href="module-pages_Admin_GestionUsuarios.html">pages/Admin/GestionUsuarios</a></li><li><a href="module-pages_Calendario_Calendario.html">pages/Calendario/Calendario</a></li><li><a href="module-pages_Composiciones_Composiciones.html">pages/Composiciones/Composiciones</a></li><li><a href="module-pages_ComposicionesInterpretadas_ComposicionesInterpretadas.html">pages/ComposicionesInterpretadas/ComposicionesInterpretadas</a><ul class='methods'><li data-type='method'><a href="module-pages_ComposicionesInterpretadas_ComposicionesInterpretadas.html#~ComposicionesInterpretadas">ComposicionesInterpretadas</a></li></ul></li><li><a href="module-pages_ConfirmacionEventos_ConfirmacionEventos.html">pages/ConfirmacionEventos/ConfirmacionEventos</a></li><li><a href="module-pages_Entidades_Entidades.html">pages/Entidades/Entidades</a></li><li><a href="module-pages_EventoUsuario_EventoUsuario.html">pages/EventoUsuario/EventoUsuario</a></li><li><a href="module-pages_Eventos_Eventos.html">pages/Eventos/Eventos</a></li><li><a href="module-pages_Eventos_FormularioEvento.html">pages/Eventos/FormularioEvento</a></li><li><a href="module-pages_Home_Home.html">pages/Home/Home</a><ul class='methods'><li data-type='method'><a href="module-pages_Home_Home.html#~AdminCard">AdminCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~FeatureCard">FeatureCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~PublicHome">PublicHome</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~QuickAccessCard">QuickAccessCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~UserDashboard">UserDashboard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~getEventTypeColor">getEventTypeColor</a></li></ul></li><li><a href="module-pages_Instrumentos_Instrumentos.html">pages/Instrumentos/Instrumentos</a></li><li><a href="module-pages_Login_Login.html">pages/Login/Login</a></li><li><a href="module-pages_Mensajes_DetalleMensaje.html">pages/Mensajes/DetalleMensaje</a></li><li><a href="module-pages_Mensajes_FormularioMensaje.html">pages/Mensajes/FormularioMensaje</a></li><li><a href="module-pages_Mensajes_Mensajes.html">pages/Mensajes/Mensajes</a></li><li><a href="module-pages_MensajesUsuario_MensajesUsuario.html">pages/MensajesUsuario/MensajesUsuario</a><ul class='methods'><li data-type='method'><a href="module-pages_MensajesUsuario_MensajesUsuario.html#~MensajesUsuario">MensajesUsuario</a></li></ul></li><li><a href="module-pages_MinimosEvento_MinimosEvento.html">pages/MinimosEvento/MinimosEvento</a></li><li><a href="module-pages_NotFound_NotFound.html">pages/NotFound/NotFound</a></li><li><a href="module-pages_Perfil_Perfil.html">pages/Perfil/Perfil</a></li><li><a href="module-pages_Prestamos_Prestamos.html">pages/Prestamos/Prestamos</a></li><li><a href="module-pages_Register_Register.html">pages/Register/Register</a></li><li><a href="module-pages_RegistroPendiente_RegistroPendiente.html">pages/RegistroPendiente/RegistroPendiente</a></li><li><a href="module-pages_RestablecerPassword_NuevaPassword.html">pages/RestablecerPassword/NuevaPassword</a></li><li><a href="module-pages_RestablecerPassword_RestablecerPassword.html">pages/RestablecerPassword/RestablecerPassword</a></li><li><a href="module-pages_TiposInstrumento_TiposInstrumento.html">pages/TiposInstrumento/TiposInstrumento</a></li><li><a href="module-utils_translations.html">utils/translations</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+
+    
+    <h1 class="page-title">components/Navigation/Navbar.jsx</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file Navbar.jsx
+ * @module components/Navigation/Navbar
+ * @description Componente Navbar: barra de navegación principal de la aplicación. Incluye navegación, menús desplegables, selector de idioma, gestión de usuario y soporte para móvil.
+ * @author Rafael Rodriguez Mengual
+ */
+
+"use client";
+
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { ChevronDown, User, LogOut, Menu, X, Shield } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import { useLanguage } from "../../context/LanguageContext";
+import { useTranslation } from "../../hooks/useTranslation";
+
+/**
+ * Componente Navbar que muestra la barra de navegación principal.
+ * Incluye menús desplegables, enlaces, selector de idioma y menú móvil.
+ * @component
+ * @returns {JSX.Element} Barra de navegación.
+ */
+export default function Navbar() {
+  /**
+   * Muestra la pantalla de carga.
+   * @type {boolean}
+   */
+  const [loading, setLoading] = useState(true);
+
+  /**
+   * Nombre del menú actualmente desplegado (hover), o `null`.
+   * @type {string|null}
+   */
+  const [hoveredMenu, setHoveredMenu] = useState(null);
+
+  /**
+   * Indica si el menú móvil está abierto.
+   * @type {boolean}
+   */
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  /**
+   * Hook para saber la ruta actual.
+   */
+  const location = useLocation();
+  /**
+   * Contexto de autenticación: usuario, logout y si es admin.
+   */
+  const { user, logout, isAdmin } = useAuth();
+  /**
+   * Contexto de idioma.
+   */
+  const { language, changeLanguage } = useLanguage();
+  /**
+   * Hook de traducción.
+   */
+  const { t } = useTranslation();
+
+  /**
+   * Clases para los botones de navegación.
+   * @type {string}
+   */
+  const buttonClass =
+    "inline-flex items-center text-[#C0C0C0] hover:text-white border border-gray-800 rounded-md px-3 py-1 transition-colors hover:bg-gray-900/50 whitespace-nowrap";
+  const mobileButtonClass =
+    "flex items-center w-full text-left text-[#C0C0C0] hover:text-white border border-gray-800 rounded-md px-3 py-2 transition-colors hover:bg-gray-900/50";
+
+  /**
+   * Muestra el menú correspondiente al hacer hover.
+   * @param {string} menuName - Nombre del menú a mostrar.
+   */
+  const handleMenuHover = (menuName) => {
+    setHoveredMenu(menuName);
+  };
+
+  /**
+   * Oculta el menú al salir del hover.
+   */
+  const handleMenuLeave = () => {
+    setHoveredMenu(null);
+  };
+
+  /**
+   * Alterna el menú móvil.
+   */
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  /**
+   * Cambia el idioma.
+   * @param {string} newLanguage - Nuevo idioma a establecer.
+   */
+  const handleLanguageChange = (newLanguage) => {
+    changeLanguage(newLanguage);
+  };
+
+  /**
+   * Cierra menús al cambiar de ruta.
+   */
+  useEffect(() => {
+    setHoveredMenu(null);
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  /**
+   * Quita la pantalla de carga y muestra logs de usuario/admin (solo para depuración).
+   */
+  useEffect(() => {
+    setLoading(false);
+    // console.log("Navbar - isAdmin:", isAdmin)
+    // console.log("Navbar - user:", user)
+  }, [isAdmin, user]);
+
+  /**
+   * Lógica para cerrar sesión.
+   * @async
+   */
+  const handleLogout = async () => {
+    await logout();
+  };
+
+  /**
+   * Muestra pantalla de carga si está cargando.
+   */
+  if (loading) {
+    return (
+      &lt;header className="bg-black border-b border-gray-800 sticky top-0 z-50">
+        &lt;div className="container mx-auto px-4 py-3 flex justify-between items-center">
+          &lt;div className="text-[#C0C0C0] font-bold text-xl">BandCoord&lt;/div>
+          &lt;div className="text-[#C0C0C0]">{t("common.loading")}&lt;/div>
+        &lt;/div>
+      &lt;/header>
+    );
+  }
+
+  // Render principal del Navbar
+  return (
+    &lt;header className="bg-black border-b border-gray-800 sticky top-0 z-50 overflow-visible">
+      &lt;div className="w-full px-4">
+        &lt;div className="flex items-center h-16 justify-between overflow-visible w-full">
+          {/* Logo y nombre de la app */}
+          &lt;Link
+            to="/"
+            className="flex items-center space-x-2 min-w-[150px] whitespace-nowrap"
+          >
+            &lt;img
+              src={`${import.meta.env.BASE_URL}1-removebg-preview.png`}
+              alt="BandCoord logo"
+              className="h-8 w-auto"
+            />
+            &lt;span className="text-[#C0C0C0] font-bold text-xl whitespace-nowrap">
+              BandCoord
+            &lt;/span>
+            {/* Etiqueta ADMIN si el usuario es admin */}
+            {isAdmin &amp;&amp; (
+              &lt;span className="bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-full ml-2">
+                ADMIN
+              &lt;/span>
+            )}
+          &lt;/Link>
+
+          {/* Botón para abrir/cerrar menú móvil */}
+          &lt;button
+            onClick={toggleMobileMenu}
+            className="xl:hidden p-2 text-[#C0C0C0] hover:text-white hover:bg-gray-900/50 rounded-md"
+          >
+            {mobileMenuOpen ? &lt;X size={24} /> : &lt;Menu size={24} />}
+          &lt;/button>
+
+          {/* Navegación de escritorio */}
+          &lt;nav className="hidden xl:flex items-center space-x-4 flex-wrap">
+            {/* Menú Instrumentos con submenú */}
+            &lt;div
+              className="relative"
+              onMouseEnter={() => handleMenuHover("instrumentos")}
+              onMouseLeave={handleMenuLeave}
+            >
+              &lt;Link to="/instrumentos" className={buttonClass}>
+                {t("navbar.instruments")}
+                &lt;ChevronDown size={16} className="ml-1" />
+              &lt;/Link>
+              {hoveredMenu === "instrumentos" &amp;&amp; (
+                &lt;div className="absolute left-0 mt-1 w-60 bg-black border border-gray-800 rounded-md shadow-lg py-1 z-10">
+                  &lt;Link
+                    to="/tipos-instrumentos"
+                    className="block px-4 py-2 hover:bg-gray-900/50 text-[#C0C0C0] whitespace-nowrap"
+                  >
+                    {t("navbar.instrumentTypes")}
+                  &lt;/Link>
+                &lt;/div>
+              )}
+            &lt;/div>
+
+            {/* Menú Eventos con submenú */}
+            &lt;div
+              className="relative"
+              onMouseEnter={() => handleMenuHover("eventos")}
+              onMouseLeave={handleMenuLeave}
+            >
+              &lt;Link to="/eventos" className={buttonClass}>
+                {t("navbar.events")}
+                &lt;ChevronDown size={16} className="ml-1" />
+              &lt;/Link>
+              {hoveredMenu === "eventos" &amp;&amp; (
+                &lt;div className="absolute left-0 mt-1 w-72 bg-black border border-gray-800 rounded-md shadow-lg py-1 z-10">
+                  &lt;Link
+                    to="/minimos-eventos"
+                    className="block px-4 py-2 hover:bg-gray-900/50 text-[#C0C0C0] whitespace-nowrap"
+                  >
+                    {t("navbar.eventMinimums")}
+                  &lt;/Link>
+                  &lt;Link
+                    to="/usuarios-eventos"
+                    className="block px-4 py-2 hover:bg-gray-900/50 text-[#C0C0C0] whitespace-nowrap"
+                  >
+                    {t("navbar.eventAssignment")}
+                  &lt;/Link>
+                  &lt;Link
+                    to="/confirmacion-eventos"
+                    className="block px-4 py-2 hover:bg-gray-900/50 text-[#C0C0C0] whitespace-nowrap"
+                  >
+                    {t("navbar.eventConfirmation")}
+                  &lt;/Link>
+                &lt;/div>
+              )}
+            &lt;/div>
+
+            {/* Enlace directo a Préstamos */}
+            &lt;Link to="/prestamos" className={buttonClass}>
+              {t("navbar.loans")}
+            &lt;/Link>
+
+            {/* Enlace directo a Entidades */}
+            &lt;Link to="/entidades" className={buttonClass}>
+              {t("navbar.entities")}
+            &lt;/Link>
+
+            {/* Menú Composiciones con submenú */}
+            &lt;div
+              className="relative"
+              onMouseEnter={() => handleMenuHover("composiciones")}
+              onMouseLeave={handleMenuLeave}
+            >
+              &lt;Link to="/composiciones" className={buttonClass}>
+                {t("navbar.compositions")}
+                &lt;ChevronDown size={16} className="ml-1" />
+              &lt;/Link>
+              {hoveredMenu === "composiciones" &amp;&amp; (
+                &lt;div className="absolute left-0 mt-1 w-72 bg-black border border-gray-800 rounded-md shadow-lg py-1 z-10">
+                  &lt;Link
+                    to="/composiciones-interpretadas"
+                    className="block px-4 py-2 hover:bg-gray-900/50 text-[#C0C0C0] whitespace-nowrap"
+                  >
+                    {t("navbar.compositionsPlayed")}
+                  &lt;/Link>
+                &lt;/div>
+              )}
+            &lt;/div>
+
+            {/* Menú Mensajes con submenú */}
+            &lt;div
+              className="relative"
+              onMouseEnter={() => handleMenuHover("mensajes")}
+              onMouseLeave={handleMenuLeave}
+            >
+              &lt;Link to="/mensajes" className={buttonClass}>
+                {t("navbar.messages")}
+                &lt;ChevronDown size={16} className="ml-1" />
+              &lt;/Link>
+              {hoveredMenu === "mensajes" &amp;&amp; (
+                &lt;div className="absolute left-0 mt-1 w-72 bg-black border border-gray-800 rounded-md shadow-lg py-1 z-10">
+                  &lt;Link
+                    to="/mensajes-usuarios"
+                    className="block px-4 py-2 hover:bg-gray-900/50 text-[#C0C0C0] whitespace-nowrap"
+                  >
+                    {t("navbar.receivedMessages")}
+                  &lt;/Link>
+                &lt;/div>
+              )}
+            &lt;/div>
+
+            {/* Enlace directo a Calendario */}
+            &lt;Link to="/calendario" className={buttonClass}>
+              {t("navbar.calendar")}
+            &lt;/Link>
+
+            {/* Selector de idioma con banderas */}
+            &lt;div className="flex items-center space-x-2 ml-2">
+              {/* Español */}
+              &lt;div
+                onClick={() => handleLanguageChange("es")}
+                className={`w-8 h-8 rounded-full overflow-hidden border transition-colors cursor-pointer flex items-center justify-center ${
+                  language === "es"
+                    ? "border-yellow-500 ring-2 ring-yellow-500"
+                    : "border-gray-700 hover:border-[#C0C0C0]"
+                }`}
+              >
+                &lt;img
+                  src={`${import.meta.env.BASE_URL}flags/es.png`}
+                  alt="Español"
+                  className="w-full h-full object-cover"
+                />
+              &lt;/div>
+              {/* Inglés */}
+              &lt;div
+                onClick={() => handleLanguageChange("en")}
+                className={`w-8 h-8 rounded-full overflow-hidden border transition-colors cursor-pointer flex items-center justify-center ${
+                  language === "en"
+                    ? "border-yellow-500 ring-2 ring-yellow-500"
+                    : "border-gray-700 hover:border-[#C0C0C0]"
+                }`}
+              >
+                &lt;img
+                  src={`${import.meta.env.BASE_URL}flags/gb.png`}
+                  alt="English"
+                  className="w-full h-full object-cover"
+                />
+              &lt;/div>
+            &lt;/div>
+
+            {/* Menú de usuario con submenú */}
+            &lt;div
+              className="relative"
+              onMouseEnter={() => handleMenuHover("usuario")}
+              onMouseLeave={handleMenuLeave}
+            >
+              &lt;Link to="/perfil" className={buttonClass}>
+                {t("navbar.user")}
+                &lt;ChevronDown size={16} className="ml-1" />
+              &lt;/Link>
+              {hoveredMenu === "usuario" &amp;&amp; (
+                &lt;div className="absolute right-0 mt-1 w-60 bg-black border border-gray-800 rounded-md shadow-lg py-1 z-10">
+                  {/* Perfil */}
+                  &lt;Link
+                    to="/perfil"
+                    className="flex items-center px-3 py-2 text-[#C0C0C0] hover:text-white hover:bg-gray-900/50 transition-colors duration-300 rounded-md whitespace-nowrap"
+                  >
+                    &lt;User size={18} className="mr-2" /> {t("navbar.profile")}
+                  &lt;/Link>
+                  {/* Gestión de usuarios solo para admin */}
+                  {isAdmin &amp;&amp; (
+                    &lt;Link
+                      to="/usuarios"
+                      className="flex items-center px-3 py-2 text-[#C0C0C0] hover:text-white hover:bg-gray-900/50 transition-colors duration-300 rounded-md whitespace-nowrap"
+                    >
+                      &lt;Shield size={18} className="mr-2" />{" "}
+                      {t("navbar.userManagement")}
+                    &lt;/Link>
+                  )}
+                  {/* Botón de cerrar sesión */}
+                  &lt;button
+                    onClick={handleLogout}
+                    className="flex items-center px-3 py-2 text-[#C0C0C0] hover:text-white hover:bg-gray-900/50 transition-colors duration-300 rounded-md whitespace-nowrap w-full text-left"
+                  >
+                    &lt;LogOut size={18} className="mr-2" /> {t("navbar.logout")}
+                  &lt;/button>
+                &lt;/div>
+              )}
+            &lt;/div>
+          &lt;/nav>
+        &lt;/div>
+
+        {/* Menú de navegación móvil */}
+        {mobileMenuOpen &amp;&amp; (
+          &lt;div className="xl:hidden bg-black border-t border-gray-800 py-4 px-2 space-y-3">
+            {/* Enlaces y subenlaces para móvil */}
+            &lt;Link to="/instrumentos" className={mobileButtonClass}>
+              {t("navbar.instruments")}
+            &lt;/Link>
+            &lt;Link
+              to="/tipos-instrumentos"
+              className={`${mobileButtonClass} ml-4 text-sm`}
+            >
+              {t("navbar.instrumentTypes")}
+            &lt;/Link>
+
+            &lt;Link to="/eventos" className={mobileButtonClass}>
+              {t("navbar.events")}
+            &lt;/Link>
+            &lt;Link
+              to="/minimos-eventos"
+              className={`${mobileButtonClass} ml-4 text-sm`}
+            >
+              {t("navbar.eventMinimums")}
+            &lt;/Link>
+            &lt;Link
+              to="/usuarios-eventos"
+              className={`${mobileButtonClass} ml-4 text-sm`}
+            >
+              {t("navbar.eventAssignment")}
+            &lt;/Link>
+            &lt;Link
+              to="/confirmacion-eventos"
+              className={`${mobileButtonClass} ml-4 text-sm`}
+            >
+              {t("navbar.eventConfirmation")}
+            &lt;/Link>
+
+            &lt;Link to="/prestamos" className={mobileButtonClass}>
+              {t("navbar.loans")}
+            &lt;/Link>
+
+            &lt;Link to="/entidades" className={mobileButtonClass}>
+              {t("navbar.entities")}
+            &lt;/Link>
+
+            &lt;Link to="/composiciones" className={mobileButtonClass}>
+              {t("navbar.compositions")}
+            &lt;/Link>
+            &lt;Link
+              to="/composiciones-interpretadas"
+              className={`${mobileButtonClass} ml-4 text-sm`}
+            >
+              {t("navbar.compositionsPlayed")}
+            &lt;/Link>
+
+            &lt;Link to="/mensajes" className={mobileButtonClass}>
+              {t("navbar.messages")}
+            &lt;/Link>
+            &lt;Link
+              to="/mensajes-usuarios"
+              className={`${mobileButtonClass} ml-4 text-sm`}
+            >
+              {t("navbar.receivedMessages")}
+            &lt;/Link>
+
+            &lt;Link to="/calendario" className={mobileButtonClass}>
+              {t("navbar.calendar")}
+            &lt;/Link>
+
+            {/* Selector de idioma en menú móvil */}
+            &lt;div className="flex items-center space-x-4 px-3 py-2">
+              &lt;div
+                onClick={() => handleLanguageChange("es")}
+                className={`w-8 h-8 rounded-full overflow-hidden border transition-colors cursor-pointer flex items-center justify-center ${
+                  language === "es"
+                    ? "border-yellow-500 ring-2 ring-yellow-500"
+                    : "border-gray-700 hover:border-[#C0C0C0]"
+                }`}
+              >
+                &lt;img
+                  src={`${import.meta.env.BASE_URL}flags/es.png`}
+                  alt="Español"
+                  className="w-full h-full object-cover"
+                />
+              &lt;/div>
+              &lt;div
+                onClick={() => handleLanguageChange("en")}
+                className={`w-8 h-8 rounded-full overflow-hidden border transition-colors cursor-pointer flex items-center justify-center ${
+                  language === "en"
+                    ? "border-yellow-500 ring-2 ring-yellow-500"
+                    : "border-gray-700 hover:border-[#C0C0C0]"
+                }`}
+              >
+                &lt;img
+                  src={`${import.meta.env.BASE_URL}flags/gb.png`}
+                  alt="English"
+                  className="w-full h-full object-cover"
+                />
+              &lt;/div>
+            &lt;/div>
+
+            {/* Menú de usuario en móvil */}
+            &lt;div className="border-t border-gray-800 pt-3">
+              &lt;Link
+                to="/perfil"
+                className="flex items-center px-3 py-2 text-[#C0C0C0] hover:text-white"
+              >
+                &lt;User size={18} className="mr-2" /> {t("navbar.profile")}
+              &lt;/Link>
+              {/* Gestión de usuarios solo para admin */}
+              {isAdmin &amp;&amp; (
+                &lt;Link
+                  to="/usuarios"
+                  className="flex items-center px-3 py-2 text-[#C0C0C0] hover:text-white"
+                >
+                  &lt;Shield size={18} className="mr-2" />{" "}
+                  {t("navbar.userManagement")}
+                &lt;/Link>
+              )}
+              {/* Botón de cerrar sesión */}
+              &lt;button
+                onClick={handleLogout}
+                className="flex items-center w-full text-left px-3 py-2 text-[#C0C0C0] hover:text-white hover:bg-gray-900/50 transition-colors duration-300 rounded-md"
+              >
+                &lt;LogOut size={18} className="mr-2" /> {t("navbar.logout")}
+              &lt;/button>
+            &lt;/div>
+          &lt;/div>
+        )}
+      &lt;/div>
+    &lt;/header>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> on Mon Jun 09 2025 13:51:24 GMT+0200 (hora de verano de Europa central) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>

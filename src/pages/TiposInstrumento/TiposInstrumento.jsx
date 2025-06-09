@@ -1,51 +1,88 @@
+/**
+ * @file TiposInstrumento.jsx
+ * @module pages/TiposInstrumento/TiposInstrumento
+ * @description Página para la gestión de tipos de instrumentos musicales. Permite crear, editar, eliminar y ajustar cantidades de tipos de instrumentos, así como gestionar los instrumentos asociados. Incluye paginación, búsqueda, modales y validaciones. Solo los administradores pueden modificar los tipos.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"
 import { Plus, Edit, Trash2, Search, Music, ChevronLeft, ChevronRight } from "lucide-react"
 import api from "../../api/axios"
 import { useTranslation } from "../../hooks/useTranslation"
-// Importar useAuth
 import { useAuth } from "../../context/AuthContext"
 
+/**
+ * Componente principal para la gestión de tipos de instrumentos.
+ * Permite listar, buscar, crear, editar, eliminar y ajustar cantidades de tipos de instrumentos.
+ * @component
+ * @returns {JSX.Element} Página de tipos de instrumentos.
+ */
 export default function TiposInstrumento() {
+  /** Lista de tipos de instrumentos */
   const [tipos, setTipos] = useState([])
+  /** Estado de carga */
   const [loading, setLoading] = useState(true)
+  /** Mensaje de error */
   const [error, setError] = useState(null)
+  /** Término de búsqueda */
   const [searchTerm, setSearchTerm] = useState("")
+  /** Estado del modal de creación/edición */
   const [showModal, setShowModal] = useState(false)
-  const [modalMode, setModalMode] = useState("create") // "create" o "edit"
+  /** Modo del modal: "create" o "edit" */
+  const [modalMode, setModalMode] = useState("create")
+  /** Tipo de instrumento actual para crear/editar */
   const [currentTipo, setCurrentTipo] = useState({ instrumento: "", cantidad: 0 })
+  /** Estado del modal de confirmación de borrado */
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  /** Tipo de instrumento a eliminar */
   const [tipoToDelete, setTipoToDelete] = useState(null)
 
-  // Pagination
+  // Paginación
+  /** Página actual */
   const [currentPage, setCurrentPage] = useState(1)
+  /** Tipos por página */
   const [itemsPerPage] = useState(5)
 
+  /** Hook de traducción */
   const { t } = useTranslation()
-  // Dentro del componente:
+  /** Si el usuario es administrador */
   const { isAdmin } = useAuth()
 
+  /** Estado del modal de gestión de cantidad */
   const [showQuantityModal, setShowQuantityModal] = useState(false)
-  const [quantityAction, setQuantityAction] = useState(null) // 'increase' or 'decrease'
+  /** Acción de cantidad: 'increase' o 'decrease' */
+  const [quantityAction, setQuantityAction] = useState(null)
+  /** Instrumentos seleccionados para eliminar */
   const [selectedInstruments, setSelectedInstruments] = useState([])
+  /** Nueva cantidad a ajustar */
   const [newQuantity, setNewQuantity] = useState(0)
+  /** Tipo de instrumento actual para gestión de cantidad */
   const [currentTipoForQuantity, setCurrentTipoForQuantity] = useState(null)
-  const [instrumentos, setInstrumentos] = useState([]) // Added instrumentos state
+  /** Lista de instrumentos (para gestión de cantidad) */
+  const [instrumentos, setInstrumentos] = useState([])
 
+  /**
+   * Efecto para cargar tipos e instrumentos al montar el componente.
+   */
   useEffect(() => {
     fetchTipos()
-    fetchInstrumentos() // Fetch instrumentos on component mount
+    fetchInstrumentos()
   }, [])
 
+  /**
+   * Obtiene los tipos de instrumentos desde la API.
+   * @async
+   */
   const fetchTipos = async () => {
     try {
       setLoading(true)
       setError(null)
-      console.log("Intentando conectar a:", `${api.defaults.baseURL}/tipo-instrumentos`)
+      // console.log("Intentando conectar a:", `${api.defaults.baseURL}/tipo-instrumentos`)
 
       const response = await api.get("/tipo-instrumentos")
-      console.log("Respuesta completa de tipos:", response)
+      // console.log("Respuesta completa de tipos:", response)
 
       // Verificar la estructura de la respuesta
       let tiposData = []
@@ -54,7 +91,7 @@ export default function TiposInstrumento() {
       } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
         tiposData = response.data.data
       } else {
-        console.warn("Formato de respuesta inesperado para tipos:", response.data)
+        // console.warn("Formato de respuesta inesperado para tipos:", response.data)
         setError("Formato de respuesta inesperado. Verifica la consola para más detalles.")
       }
 
@@ -79,6 +116,10 @@ export default function TiposInstrumento() {
     }
   }
 
+  /**
+   * Obtiene los instrumentos desde la API.
+   * @async
+   */
   const fetchInstrumentos = async () => {
     try {
       const response = await api.get("/instrumentos")
@@ -88,18 +129,30 @@ export default function TiposInstrumento() {
     }
   }
 
+  /**
+   * Abre el modal para crear o editar un tipo de instrumento.
+   * @param {"create"|"edit"} mode - Modo del modal.
+   * @param {Object} tipo - Tipo de instrumento a editar (opcional).
+   */
   const handleOpenModal = (mode, tipo = { instrumento: "", cantidad: 0 }) => {
     setModalMode(mode)
     setCurrentTipo(tipo)
-    setCurrentTipoForQuantity(tipo) // Store original data
+    setCurrentTipoForQuantity(tipo)
     setShowModal(true)
   }
 
+  /**
+   * Cierra el modal de creación/edición.
+   */
   const handleCloseModal = () => {
     setShowModal(false)
     setCurrentTipo({ instrumento: "", cantidad: 0 })
   }
 
+  /**
+   * Maneja el cambio en los campos del formulario del modal.
+   * @param {Object} e - Evento de cambio.
+   */
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setCurrentTipo((prev) => ({
@@ -108,6 +161,12 @@ export default function TiposInstrumento() {
     }))
   }
 
+  /**
+   * Envía el formulario para crear o editar un tipo de instrumento.
+   * Si se cambia la cantidad, gestiona la creación/eliminación de instrumentos asociados.
+   * @async
+   * @param {Object} e - Evento de envío.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -119,26 +178,26 @@ export default function TiposInstrumento() {
         const newQuantityValue = currentTipo.cantidad
 
         if (newQuantityValue > oldQuantity) {
-          // Increasing quantity - need to create new instruments
+          // Aumentar cantidad: crear nuevos instrumentos
           setQuantityAction("increase")
           setNewQuantity(newQuantityValue - oldQuantity)
           setCurrentTipoForQuantity(currentTipo)
           setShowQuantityModal(true)
           return
         } else if (newQuantityValue < oldQuantity) {
-          // Decreasing quantity - need to select which instruments to remove
+          // Disminuir cantidad: seleccionar instrumentos a eliminar
           setQuantityAction("decrease")
           setNewQuantity(oldQuantity - newQuantityValue)
           setCurrentTipoForQuantity(currentTipo)
 
-          // Get instruments of this type
+          // Obtener instrumentos de este tipo
           const instrumentsOfType = instrumentos.filter((i) => i.instrumento_tipo_id === currentTipo.instrumento)
           setSelectedInstruments(instrumentsOfType)
           setShowQuantityModal(true)
           return
         }
 
-        // Same quantity, just update
+        // Misma cantidad, solo actualizar
         await api.put(`/tipo-instrumentos/${encodeURIComponent(currentTipo.instrumento)}`, {
           cantidad: currentTipo.cantidad,
         })
@@ -151,11 +210,19 @@ export default function TiposInstrumento() {
     }
   }
 
+  /**
+   * Abre el modal de confirmación de borrado para un tipo de instrumento.
+   * @param {string} instrumento - Nombre del instrumento a eliminar.
+   */
   const confirmDelete = (instrumento) => {
     setTipoToDelete(instrumento)
     setShowDeleteModal(true)
   }
 
+  /**
+   * Elimina un tipo de instrumento.
+   * @async
+   */
   const handleDelete = async () => {
     if (!tipoToDelete) return
 
@@ -170,20 +237,26 @@ export default function TiposInstrumento() {
     }
   }
 
+  /** Filtra los tipos de instrumentos según el término de búsqueda */
   const filteredTipos = tipos.filter((tipo) => tipo.instrumento.toLowerCase().includes(searchTerm.toLowerCase()))
 
-  // Pagination logic
+  // Lógica de paginación
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
   const currentTipos = filteredTipos.slice(indexOfFirstItem, indexOfLastItem)
   const totalPages = Math.ceil(filteredTipos.length / itemsPerPage)
 
+  /**
+   * Cambia la página actual de la paginación.
+   * @param {number} pageNumber - Número de página a mostrar.
+   */
   const paginate = (pageNumber) => {
     if (pageNumber > 0 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber)
     }
   }
 
+  // Renderizado principal de la página de tipos de instrumentos
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">

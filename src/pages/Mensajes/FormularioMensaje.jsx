@@ -1,3 +1,10 @@
+/**
+ * @file FormularioMensaje.jsx
+ * @module pages/Mensajes/FormularioMensaje
+ * @description Formulario para enviar mensajes privados a uno o varios usuarios. Permite redactar, seleccionar destinatarios, responder mensajes y muestra mensajes de error y éxito. Solo usuarios autenticados pueden enviar mensajes.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -8,24 +15,44 @@ import { toast } from "react-toastify"
 import { useAuth } from "../../context/AuthContext"
 import { useTranslation } from "../../hooks/useTranslation"
 
+/**
+ * Componente de formulario para enviar o responder mensajes privados.
+ * Permite seleccionar destinatarios, redactar asunto y contenido, y gestionar el envío.
+ * @component
+ * @returns {JSX.Element} Formulario de mensaje.
+ */
 export default function FormularioMensaje() {
+  /** Hook de navegación */
   const navigate = useNavigate()
+  /** Hook de localización para obtener datos de navegación */
   const location = useLocation()
+  /** Usuario autenticado */
   const { user } = useAuth()
+  /** Hook de traducción */
   const { t } = useTranslation()
 
+  /** Estado de carga de usuarios */
   const [loading, setLoading] = useState(true)
+  /** Estado de guardado/envío */
   const [saving, setSaving] = useState(false)
+  /** Mensaje de error */
   const [error, setError] = useState("")
+  /** Lista de usuarios disponibles como destinatarios */
   const [usuarios, setUsuarios] = useState([])
+  /** Indica si es una respuesta a un mensaje */
   const [esRespuesta, setEsRespuesta] = useState(false)
 
+  /** Estado del formulario */
   const [formData, setFormData] = useState({
     asunto: "",
     contenido: "",
     receptores: [],
   })
 
+  /**
+   * Efecto para inicializar el formulario y cargar usuarios.
+   * Si es respuesta, precarga el destinatario y asunto.
+   */
   useEffect(() => {
     // Verificar si estamos respondiendo a un mensaje
     if (location.state && location.state.destinatario) {
@@ -37,6 +64,10 @@ export default function FormularioMensaje() {
       })
     }
 
+    /**
+     * Carga la lista de usuarios disponibles como destinatarios.
+     * @async
+     */
     const fetchUsuarios = async () => {
       try {
         setLoading(true)
@@ -58,11 +89,20 @@ export default function FormularioMensaje() {
     fetchUsuarios()
   }, [user, location.state])
 
+  /**
+   * Maneja el cambio en los campos de asunto y contenido.
+   * @param {Object} e - Evento de cambio.
+   */
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
+  /**
+   * Maneja el cambio en los destinatarios seleccionados.
+   * Si es respuesta, no permite modificar el receptor.
+   * @param {Object} e - Evento de cambio.
+   */
   const handleReceptorChange = (e) => {
     // Si es una respuesta, no permitir cambiar el receptor
     if (esRespuesta) return
@@ -82,6 +122,12 @@ export default function FormularioMensaje() {
     }
   }
 
+  /**
+   * Envía el formulario para crear y enviar el mensaje.
+   * Crea el mensaje y las relaciones mensaje-usuario para cada receptor.
+   * @async
+   * @param {Object} e - Evento de envío.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSaving(true)
@@ -121,6 +167,7 @@ export default function FormularioMensaje() {
     }
   }
 
+  // Renderizado de estado de carga
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -131,6 +178,7 @@ export default function FormularioMensaje() {
     )
   }
 
+  // Renderizado principal del formulario
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center mb-6">

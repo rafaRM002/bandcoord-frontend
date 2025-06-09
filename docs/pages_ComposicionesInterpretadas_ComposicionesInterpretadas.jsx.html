@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>pages/ComposicionesInterpretadas/ComposicionesInterpretadas.jsx - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-App.html">App</a><ul class='methods'><li data-type='method'><a href="module-App.html#~App">App</a></li><li data-type='method'><a href="module-App.html#~AppContent">AppContent</a></li></ul></li><li><a href="module-api_axios.html">api/axios</a></li><li><a href="module-components_AdminRoute.html">components/AdminRoute</a></li><li><a href="module-components_HelpButton_AboutModal.html">components/HelpButton/AboutModal</a></li><li><a href="module-components_HelpButton_HelpButton.html">components/HelpButton/HelpButton</a></li><li><a href="module-components_HelpButton_HelpModal.html">components/HelpButton/HelpModal</a></li><li><a href="module-components_MemberRoute.html">components/MemberRoute</a></li><li><a href="module-components_Navigation_Footer.html">components/Navigation/Footer</a></li><li><a href="module-components_Navigation_Navbar.html">components/Navigation/Navbar</a></li><li><a href="module-components_PasswordValidator.html">components/PasswordValidator</a></li><li><a href="module-components_ProtectedRoute.html">components/ProtectedRoute</a></li><li><a href="module-context_AuthContext.html">context/AuthContext</a><ul class='methods'><li data-type='method'><a href="module-context_AuthContext.html#.useAuth">useAuth</a></li><li data-type='method'><a href="module-context_AuthContext.html#~getCsrfCookie">getCsrfCookie</a></li></ul></li><li><a href="module-context_LanguageContext.html">context/LanguageContext</a><ul class='methods'><li data-type='method'><a href="module-context_LanguageContext.html#.useLanguage">useLanguage</a></li></ul></li><li><a href="module-hooks_useTranslation.html">hooks/useTranslation</a><ul class='methods'><li data-type='method'><a href="module-hooks_useTranslation.html#.useTranslation">useTranslation</a></li></ul></li><li><a href="module-main.html">main</a></li><li><a href="module-pages_Admin_GestionUsuarios.html">pages/Admin/GestionUsuarios</a></li><li><a href="module-pages_Calendario_Calendario.html">pages/Calendario/Calendario</a></li><li><a href="module-pages_Composiciones_Composiciones.html">pages/Composiciones/Composiciones</a></li><li><a href="module-pages_ComposicionesInterpretadas_ComposicionesInterpretadas.html">pages/ComposicionesInterpretadas/ComposicionesInterpretadas</a><ul class='methods'><li data-type='method'><a href="module-pages_ComposicionesInterpretadas_ComposicionesInterpretadas.html#~ComposicionesInterpretadas">ComposicionesInterpretadas</a></li></ul></li><li><a href="module-pages_ConfirmacionEventos_ConfirmacionEventos.html">pages/ConfirmacionEventos/ConfirmacionEventos</a></li><li><a href="module-pages_Entidades_Entidades.html">pages/Entidades/Entidades</a></li><li><a href="module-pages_EventoUsuario_EventoUsuario.html">pages/EventoUsuario/EventoUsuario</a></li><li><a href="module-pages_Eventos_Eventos.html">pages/Eventos/Eventos</a></li><li><a href="module-pages_Eventos_FormularioEvento.html">pages/Eventos/FormularioEvento</a></li><li><a href="module-pages_Home_Home.html">pages/Home/Home</a><ul class='methods'><li data-type='method'><a href="module-pages_Home_Home.html#~AdminCard">AdminCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~FeatureCard">FeatureCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~PublicHome">PublicHome</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~QuickAccessCard">QuickAccessCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~UserDashboard">UserDashboard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~getEventTypeColor">getEventTypeColor</a></li></ul></li><li><a href="module-pages_Instrumentos_Instrumentos.html">pages/Instrumentos/Instrumentos</a></li><li><a href="module-pages_Login_Login.html">pages/Login/Login</a></li><li><a href="module-pages_Mensajes_DetalleMensaje.html">pages/Mensajes/DetalleMensaje</a></li><li><a href="module-pages_Mensajes_FormularioMensaje.html">pages/Mensajes/FormularioMensaje</a></li><li><a href="module-pages_Mensajes_Mensajes.html">pages/Mensajes/Mensajes</a></li><li><a href="module-pages_MensajesUsuario_MensajesUsuario.html">pages/MensajesUsuario/MensajesUsuario</a><ul class='methods'><li data-type='method'><a href="module-pages_MensajesUsuario_MensajesUsuario.html#~MensajesUsuario">MensajesUsuario</a></li></ul></li><li><a href="module-pages_MinimosEvento_MinimosEvento.html">pages/MinimosEvento/MinimosEvento</a></li><li><a href="module-pages_NotFound_NotFound.html">pages/NotFound/NotFound</a></li><li><a href="module-pages_Perfil_Perfil.html">pages/Perfil/Perfil</a></li><li><a href="module-pages_Prestamos_Prestamos.html">pages/Prestamos/Prestamos</a></li><li><a href="module-pages_Register_Register.html">pages/Register/Register</a></li><li><a href="module-pages_RegistroPendiente_RegistroPendiente.html">pages/RegistroPendiente/RegistroPendiente</a></li><li><a href="module-pages_RestablecerPassword_NuevaPassword.html">pages/RestablecerPassword/NuevaPassword</a></li><li><a href="module-pages_RestablecerPassword_RestablecerPassword.html">pages/RestablecerPassword/RestablecerPassword</a></li><li><a href="module-pages_TiposInstrumento_TiposInstrumento.html">pages/TiposInstrumento/TiposInstrumento</a></li><li><a href="module-utils_translations.html">utils/translations</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+
+    
+    <h1 class="page-title">pages/ComposicionesInterpretadas/ComposicionesInterpretadas.jsx</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file ComposicionesInterpretadas.jsx
+ * @module pages/ComposicionesInterpretadas/ComposicionesInterpretadas
+ * @description Página para la gestión y visualización de composiciones interpretadas por usuarios. Permite asignar, eliminar y buscar asignaciones de composiciones a usuarios, con paginación y control de duplicados.
+ * @author Rafael Rodriguez Mengual
+ */
+
+"use client"
+
+import { useState, useEffect } from "react"
+import axios from "../../api/axios"
+import { toast } from "react-toastify"
+import { Link } from "react-router-dom"
+import {
+  Music,
+  FileMusic,
+  Youtube,
+  ChevronDown,
+  ChevronUp,
+  ChevronLeft,
+  ChevronRight,
+  User,
+  Calendar,
+  Search,
+  UserPlus,
+  X,
+} from "lucide-react"
+import { useTranslation } from "../../hooks/useTranslation"
+import { useAuth } from "../../context/AuthContext"
+
+/**
+ * Componente principal para la gestión de composiciones interpretadas.
+ * Permite listar, buscar, asignar y eliminar asignaciones de composiciones a usuarios.
+ * @component
+ * @returns {JSX.Element} Página de composiciones interpretadas.
+ */
+const ComposicionesInterpretadas = () => {
+  /** Estado de composiciones agrupadas */
+/** @type {Array} */
+const [composiciones, setComposiciones] = useState([])
+
+/** Estado de carga */
+/** @type {boolean} */
+const [loading, setLoading] = useState(true)
+
+/** Estado de error */
+/** @type {string|null} */
+const [error, setError] = useState(null)
+
+/** Término de búsqueda */
+/** @type {string} */
+const [searchTerm, setSearchTerm] = useState("")
+
+// Estados para expansión y paginación
+
+/** Estado de expansión de composiciones */
+/** @type {Object} */
+const [expandedComposiciones, setExpandedComposiciones] = useState({})
+
+/** Página actual de composiciones */
+/** @type {number} */
+const [currentPage, setCurrentPage] = useState(1)
+
+/** Paginación de usuarios por composición */
+/** @type {Object} */
+const [usuariosPagination, setUsuariosPagination] = useState({})
+
+// Estados para modal de asignación de usuario
+
+/** Estado del modal de asignación */
+/** @type {boolean} */
+const [showAssignModal, setShowAssignModal] = useState(false)
+
+/** Composición seleccionada para asignar */
+/** @type {Object|null} */
+const [selectedComposicionForAssign, setSelectedComposicionForAssign] = useState(null)
+
+/** Lista de usuarios */
+/** @type {Array} */
+const [usuarios, setUsuarios] = useState([])
+
+/** ID del usuario seleccionado */
+/** @type {string} */
+const [selectedUsuarioId, setSelectedUsuarioId] = useState("")
+
+/** Estado de advertencia por duplicado */
+/** @type {boolean} */
+const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
+
+  /** Hook de traducción */
+  const { t } = useTranslation()
+  /** Contexto de autenticación */
+  const { user, isAdmin } = useAuth()
+
+  // Configuración de paginación
+  /** Número de composiciones por página */
+  const composicionesPorPagina = 2
+  /** Número de usuarios por página */
+  const usuariosPorPagina = 10
+
+  /**
+   * Obtiene y agrupa las composiciones interpretadas, usuarios y relaciones.
+   * @async
+   */
+  const fetchComposicionesInterpretadas = async () => {
+    try {
+      setLoading(true)
+
+      // 1. Obtener todas las relaciones composición-usuario
+      const composicionUsuarioResponse = await axios.get("/composicion-usuario")
+      // console.log("Respuesta de composiciones-usuario:", composicionUsuarioResponse.data)
+
+      const relaciones = Array.isArray(composicionUsuarioResponse.data)
+        ? composicionUsuarioResponse.data
+        : composicionUsuarioResponse.data.data || []
+
+      if (relaciones.length === 0) {
+        setComposiciones([])
+        setLoading(false)
+        return
+      }
+
+      // 2. Obtener todas las composiciones
+      const composicionesResponse = await axios.get("/composiciones")
+      // console.log("Respuesta de composiciones:", composicionesResponse.data)
+
+      const todasComposiciones = Array.isArray(composicionesResponse.data)
+        ? composicionesResponse.data
+        : composicionesResponse.data.data || []
+
+      // 3. Obtener todos los usuarios
+      const usuariosResponse = await axios.get("/usuarios")
+      // console.log("Respuesta de usuarios:", usuariosResponse.data)
+
+      const todosUsuarios = Array.isArray(usuariosResponse.data)
+        ? usuariosResponse.data
+        : usuariosResponse.data.data || []
+
+      // 4. Crear un mapa de composiciones por ID para acceso rápido
+      const composicionesMap = {}
+      todasComposiciones.forEach((comp) => {
+        composicionesMap[comp.id] = comp
+      })
+
+      // 5. Crear un mapa de usuarios por ID para acceso rápido
+      const usuariosMap = {}
+      todosUsuarios.forEach((user) => {
+        usuariosMap[user.id] = user
+      })
+
+      // 6. Agrupar por composición_id
+      const composicionesAgrupadas = {}
+
+      relaciones.forEach((relacion) => {
+        const composicionId = relacion.composicion_id
+
+        // Si es la primera vez que vemos esta composición, inicializarla
+        if (!composicionesAgrupadas[composicionId]) {
+          const composicion = composicionesMap[composicionId]
+
+          // Si no encontramos la composición, usar valores por defecto
+          composicionesAgrupadas[composicionId] = {
+            composicion_id: composicionId,
+            nombre: composicion ? composicion.nombre : `Composición ${composicionId}`,
+            descripcion: composicion ? composicion.descripcion : "",
+            nombre_autor: composicion ? composicion.nombre_autor : "",
+            ruta: composicion ? composicion.ruta : "",
+            anio: composicion ? composicion.anio : "",
+            usuarios: [],
+          }
+        }
+
+        // Añadir usuario a la composición
+        const usuario = usuariosMap[relacion.usuario_id]
+
+        if (usuario) {
+          composicionesAgrupadas[composicionId].usuarios.push({
+            usuario_id: relacion.usuario_id,
+            nombre: usuario.nombre || "Usuario",
+            apellidos: `${usuario.apellido1 || ""} ${usuario.apellido2 || ""}`.trim(),
+            email: usuario.email || "",
+            created_at: relacion.created_at,
+            updated_at: relacion.updated_at,
+          })
+        } else {
+          // Si no encontramos el usuario, usar valores por defecto
+          composicionesAgrupadas[composicionId].usuarios.push({
+            usuario_id: relacion.usuario_id,
+            nombre: "Usuario",
+            apellidos: `#${relacion.usuario_id}`,
+            email: "",
+            created_at: relacion.created_at,
+            updated_at: relacion.updated_at,
+          })
+        }
+      })
+
+      // 7. Convertir a array y parsear rutas
+      const composicionesArray = Object.values(composicionesAgrupadas)
+
+      // 8. Parsear rutas y filtrar según permisos
+      const composicionesConRutasParsed = composicionesArray
+        .map((comp) => ({
+          ...comp,
+          parsedRuta: parseRuta(comp.ruta),
+        }))
+        .filter((comp) => {
+          // Si no es admin, solo mostrar composiciones que interpreta el usuario actual
+          if (!isAdmin) {
+            return comp.usuarios.some((usuario) => usuario.usuario_id === user.id)
+          }
+          return true
+        })
+
+      // 9. Ordenar alfabéticamente por nombre
+      composicionesConRutasParsed.sort((a, b) => a.nombre.localeCompare(b.nombre))
+
+      // console.log("Composiciones procesadas:", composicionesConRutasParsed)
+
+      // 10. Inicializar estados de expansión y paginación
+      const initialExpanded = {}
+      const initialPagination = {}
+
+      composicionesConRutasParsed.forEach((comp) => {
+        initialExpanded[comp.composicion_id] = false
+        initialPagination[comp.composicion_id] = 1
+      })
+
+      setExpandedComposiciones(initialExpanded)
+      setUsuariosPagination(initialPagination)
+      setComposiciones(composicionesConRutasParsed)
+      setError(null)
+    } catch (err) {
+      console.error("Error al cargar composiciones interpretadas:", err)
+      setError(t("interpretedCompositions.errorLoadingCompositionsMessage"))
+      toast.error(t("interpretedCompositions.errorLoadingCompositions"))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  /**
+   * Efecto para cargar composiciones interpretadas y usuarios al montar el componente.
+   */
+  useEffect(() => {
+    fetchComposicionesInterpretadas()
+
+    // Cargar usuarios para asignación
+    const fetchUsuarios = async () => {
+      try {
+        const response = await axios.get("/usuarios")
+        setUsuarios(response.data.data || response.data)
+      } catch (error) {
+        console.error("Error al cargar usuarios:", error)
+        toast.error(t("interpretedCompositions.errorLoadingUserList"))
+      }
+    }
+
+    fetchUsuarios()
+  }, [])
+
+  /**
+   * Parsea la ruta de la composición (JSON, YouTube o archivo simple).
+   * @param {string} ruta - Ruta a parsear.
+   * @returns {Object} Objeto con tipo y urls.
+   */
+  const parseRuta = (ruta) => {
+    if (!ruta) return { type: "unknown", urls: [] }
+
+    try {
+      // Intentar parsear como JSON
+      if (typeof ruta === "string" &amp;&amp; (ruta.startsWith("[") || ruta.startsWith("{"))) {
+        return JSON.parse(ruta)
+      }
+      // URL de YouTube
+      else if (typeof ruta === "string" &amp;&amp; (ruta.includes("youtube.com") || ruta.includes("youtu.be"))) {
+        return { type: "youtube", urls: [ruta] }
+      }
+      // Ruta de archivo simple
+      else if (ruta) {
+        return { type: "file", urls: [ruta] }
+      }
+    } catch (e) {
+      // console.warn("Error al parsear ruta:", e)
+    }
+
+    // Por defecto, tratar como archivo único
+    return { type: "unknown", urls: [ruta] }
+  }
+
+  /**
+   * Alterna la expansión de una composición.
+   * @param {number} composicionId - ID de la composición.
+   */
+  const toggleExpand = (composicionId) => {
+    setExpandedComposiciones((prev) => ({
+      ...prev,
+      [composicionId]: !prev[composicionId],
+    }))
+  }
+
+  /**
+   * Avanza a la siguiente página de composiciones.
+   */
+  const nextPage = () => {
+    if (currentPage &lt; Math.ceil(filteredComposiciones.length / composicionesPorPagina)) {
+      setCurrentPage(currentPage + 1)
+    }
+  }
+
+  /**
+   * Retrocede a la página anterior de composiciones.
+   */
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1)
+    }
+  }
+
+  /**
+   * Avanza a la siguiente página de usuarios para una composición.
+   * @param {number} composicionId - ID de la composición.
+   */
+  const nextUsuariosPage = (composicionId) => {
+    const composicion = composiciones.find((c) => c.composicion_id === composicionId)
+    if (!composicion) return
+
+    const totalPages = Math.ceil(composicion.usuarios.length / usuariosPorPagina)
+
+    if (usuariosPagination[composicionId] &lt; totalPages) {
+      setUsuariosPagination((prev) => ({
+        ...prev,
+        [composicionId]: prev[composicionId] + 1,
+      }))
+    }
+  }
+
+  /**
+   * Retrocede a la página anterior de usuarios para una composición.
+   * @param {number} composicionId - ID de la composición.
+   */
+  const prevUsuariosPage = (composicionId) => {
+    if (usuariosPagination[composicionId] > 1) {
+      setUsuariosPagination((prev) => ({
+        ...prev,
+        [composicionId]: prev[composicionId] - 1,
+      }))
+    }
+  }
+
+  /**
+   * Abre el modal para asignar un usuario a una composición.
+   * @param {Object} composicion - Composición seleccionada.
+   */
+  const handleOpenAssignModal = (composicion) => {
+    setSelectedComposicionForAssign(composicion)
+    setSelectedUsuarioId("")
+    setShowDuplicateWarning(false)
+    setShowAssignModal(true)
+  }
+
+  /**
+   * Asigna una composición a un usuario seleccionado.
+   * @async
+   */
+  const handleAssignToUser = async () => {
+    if (!selectedComposicionForAssign || !selectedUsuarioId) {
+      toast.error(t("interpretedCompositions.selectUser"))
+      return
+    }
+
+    try {
+      const response = await axios.post("/composicion-usuario", {
+        composicion_id: selectedComposicionForAssign.composicion_id,
+        usuario_id: selectedUsuarioId,
+      })
+
+      // console.log("Respuesta al asignar composición:", response.data)
+      toast.success(t("interpretedCompositions.assignmentCreatedSuccessfully"))
+      setShowAssignModal(false)
+      setShowDuplicateWarning(false)
+
+      // Recargar datos para mostrar la nueva asignación
+      fetchComposicionesInterpretadas()
+    } catch (error) {
+      console.error("Error al asignar composición:", error)
+
+      // Si es un error de duplicado (el mensaje puede variar según tu backend)
+      if (
+        error.response &amp;&amp;
+        error.response.data &amp;&amp;
+        (error.response.data.message?.includes("duplicate") || error.response.status === 422)
+      ) {
+        const usuarioNombre = usuarios.find((u) => u.id === Number.parseInt(selectedUsuarioId))
+        const nombreCompleto = usuarioNombre ? `${usuarioNombre.nombre} ${usuarioNombre.apellido1}` : "Este usuario"
+        toast.error(`${nombreCompleto} ya está asignado a esta composición.`)
+      } else {
+        toast.error(t("interpretedCompositions.errorAssigningComposition"))
+      }
+    }
+  }
+
+  /**
+   * Elimina la asignación de una composición a un usuario.
+   * @async
+   * @param {number} composicionId - ID de la composición.
+   * @param {number} usuarioId - ID del usuario.
+   */
+  const handleDeleteUserComposicion = async (composicionId, usuarioId) => {
+    try {
+      await axios.delete(`/composicion-usuario/${composicionId}/${usuarioId}`)
+      toast.success(t("interpretedCompositions.assignmentDeletedSuccessfully"))
+
+      // Actualizar composiciones en pantalla eliminando el usuario
+      setComposiciones((prevComposiciones) => {
+        return prevComposiciones
+          .map((comp) => {
+            if (comp.composicion_id === composicionId) {
+              return {
+                ...comp,
+                usuarios: comp.usuarios.filter((usuario) => usuario.usuario_id !== usuarioId),
+              }
+            }
+            return comp
+          })
+          .filter((comp) => comp.usuarios.length > 0) // Eliminar composiciones sin usuarios
+      })
+    } catch (error) {
+      console.error("Error al eliminar asignación:", error)
+      toast.error(t("interpretedCompositions.errorDeletingAssignment"))
+    }
+  }
+
+  /**
+   * Filtra las composiciones según el término de búsqueda.
+   * @type {Array}
+   */
+  const filteredComposiciones = composiciones.filter((composicion) => {
+    const matchesSearch =
+      (composicion.nombre &amp;&amp; composicion.nombre.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (composicion.nombre_autor &amp;&amp; composicion.nombre_autor.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (composicion.descripcion &amp;&amp; composicion.descripcion.toLowerCase().includes(searchTerm.toLowerCase()))
+
+    return matchesSearch
+  })
+
+  /**
+   * Obtiene las composiciones para la página actual.
+   * @type {Array}
+   */
+  const indexOfLastComposicion = currentPage * composicionesPorPagina
+  const indexOfFirstComposicion = indexOfLastComposicion - composicionesPorPagina
+  const currentComposiciones = filteredComposiciones.slice(indexOfFirstComposicion, indexOfLastComposicion)
+
+  /**
+   * Obtiene los usuarios para una composición específica y su página actual.
+   * @param {Object} composicion - Composición seleccionada.
+   * @returns {Array} Usuarios de la página actual.
+   */
+  const getCurrentUsuarios = (composicion) => {
+    const currentPage = usuariosPagination[composicion.composicion_id] || 1
+    const indexOfLastUsuario = currentPage * usuariosPorPagina
+    const indexOfFirstUsuario = indexOfLastUsuario - usuariosPorPagina
+
+    return composicion.usuarios.slice(indexOfFirstUsuario, indexOfLastUsuario)
+  }
+
+  /**
+   * Maneja la selección de usuario y verifica si ya está asignado.
+   * @param {string} usuarioId - ID del usuario seleccionado.
+   */
+  const handleUsuarioSelection = (usuarioId) => {
+    setSelectedUsuarioId(usuarioId)
+
+    if (usuarioId &amp;&amp; selectedComposicionForAssign) {
+      // Verificar si el usuario ya está asignado a esta composición
+      const yaAsignado = selectedComposicionForAssign.usuarios.some(
+        (usuario) => usuario.usuario_id === Number.parseInt(usuarioId),
+      )
+      setShowDuplicateWarning(yaAsignado)
+    } else {
+      setShowDuplicateWarning(false)
+    }
+  }
+
+  if (loading)
+    return (
+      &lt;div className="container mx-auto p-4">
+        &lt;div className="flex justify-center items-center h-64 bg-black/30 border border-gray-800 rounded-lg">
+          &lt;div className="text-[#C0C0C0]">{t("interpretedCompositions.loadingInterpretedCompositions")}&lt;/div>
+        &lt;/div>
+      &lt;/div>
+    )
+
+  if (error)
+    return (
+      &lt;div className="container mx-auto p-4">
+        &lt;div className="bg-red-900/30 border border-red-800 text-red-400 p-4 rounded-md">
+          &lt;p className="font-medium">{t("interpretedCompositions.error")}:&lt;/p>
+          &lt;p>{error}&lt;/p>
+        &lt;/div>
+      &lt;/div>
+    )
+
+  return (
+    &lt;div className="container mx-auto p-4">
+      &lt;div className="flex justify-between items-center mb-6">
+        &lt;h1 className="text-2xl font-bold text-[#C0C0C0]">{t("interpretedCompositions.title")}&lt;/h1>
+        {isAdmin &amp;&amp; (
+          &lt;Link
+            to="/composiciones"
+            className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
+          >
+            &lt;Music size={18} />
+            {t("interpretedCompositions.manageCompositions")}
+          &lt;/Link>
+        )}
+      &lt;/div>
+
+      {/* Buscador */}
+      &lt;div className="bg-black/30 border border-gray-800 rounded-lg p-4 mb-6">
+        &lt;div className="relative">
+          &lt;Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+          &lt;input
+            type="text"
+            placeholder={t("interpretedCompositions.searchByTitleAuthorDescription")}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+          />
+        &lt;/div>
+      &lt;/div>
+
+      {filteredComposiciones.length === 0 ? (
+        &lt;div className="flex flex-col items-center justify-center py-12 bg-black/30 border border-gray-800 rounded-lg">
+          &lt;Music size={48} className="text-gray-600 mb-4" />
+          &lt;p className="text-gray-400">
+            {searchTerm
+              ? t("interpretedCompositions.noCompositionsFoundWithFilters")
+              : t("interpretedCompositions.noInterpretedCompositionsRegistered")}
+          &lt;/p>
+        &lt;/div>
+      ) : (
+        &lt;>
+          {/* Lista de composiciones */}
+          &lt;div className="space-y-4">
+            {currentComposiciones.map((composicion) => (
+              &lt;div
+                key={composicion.composicion_id}
+                className="bg-black/30 border border-gray-800 rounded-lg overflow-hidden"
+              >
+                {/* Cabecera de la composición */}
+                &lt;div className="p-4 bg-gray-900/30 flex justify-between items-center">
+                  &lt;div className="flex-1">
+                    &lt;div className="flex items-center">
+                      &lt;h3 className="text-lg font-medium text-[#C0C0C0]">{composicion.nombre}&lt;/h3>
+
+                      {/* Contador de usuarios */}
+                      &lt;div className="ml-3 px-2 py-0.5 bg-gray-800 rounded-full text-xs text-gray-400">
+                        {composicion.usuarios.length}{" "}
+                        {composicion.usuarios.length === 1
+                          ? t("interpretedCompositions.user")
+                          : t("interpretedCompositions.users")}
+                      &lt;/div>
+                    &lt;/div>
+
+                    {composicion.nombre_autor &amp;&amp; (
+                      &lt;p className="text-sm text-gray-400 mt-1">
+                        &lt;span className="font-medium">{t("interpretedCompositions.author")}:&lt;/span>{" "}
+                        {composicion.nombre_autor}
+                        {composicion.anio &amp;&amp; ` (${composicion.anio})`}
+                      &lt;/p>
+                    )}
+                  &lt;/div>
+
+                  &lt;div className="flex items-center space-x-2">
+                    {/* Botón para asignar usuario */}
+                    {isAdmin &amp;&amp; (
+                      &lt;button
+                        onClick={() => handleOpenAssignModal(composicion)}
+                        className="p-2 bg-gray-800 text-gray-400 rounded-full hover:bg-blue-900/50 hover:text-blue-400"
+                        title={t("interpretedCompositions.assignToUser")}
+                      >
+                        &lt;UserPlus size={16} />
+                      &lt;/button>
+                    )}
+
+                    {/* Botón para expandir/colapsar - SIEMPRE VISIBLE */}
+                    &lt;button
+                      onClick={() => toggleExpand(composicion.composicion_id)}
+                      className="p-2 bg-gray-800 text-gray-400 rounded-full hover:bg-gray-700 hover:text-[#C0C0C0]"
+                    >
+                      {expandedComposiciones[composicion.composicion_id] ? (
+                        &lt;ChevronUp size={16} />
+                      ) : (
+                        &lt;ChevronDown size={16} />
+                      )}
+                    &lt;/button>
+                  &lt;/div>
+                &lt;/div>
+
+                {/* Descripción y tipo de contenido */}
+                &lt;div className="px-4 py-2 border-t border-gray-800 bg-gray-900/10">
+                  {composicion.descripcion &amp;&amp; &lt;p className="text-sm text-gray-400 mb-2">{composicion.descripcion}&lt;/p>}
+
+                  {/* Eliminar o modificar esta sección en el componente */}
+                  &lt;div className="flex items-center text-xs text-gray-500">
+                    {composicion.parsedRuta &amp;&amp; composicion.parsedRuta.type === "youtube" ? (
+                      &lt;>
+                        &lt;Youtube size={14} className="mr-1 text-red-400" />
+                        &lt;span>{t("interpretedCompositions.youtubeVideo")}&lt;/span>
+                      &lt;/>
+                    ) : composicion.parsedRuta &amp;&amp;
+                      composicion.parsedRuta.urls &amp;&amp;
+                      composicion.parsedRuta.urls.length > 0 ? (
+                      &lt;>
+                        &lt;FileMusic size={14} className="mr-1" />
+                        &lt;span>
+                          {composicion.parsedRuta.urls.length > 1
+                            ? `${composicion.parsedRuta.urls.length} ${t("interpretedCompositions.files")}`
+                            : t("interpretedCompositions.attachedFile")}
+                        &lt;/span>
+                      &lt;/>
+                    ) : null}
+                  &lt;/div>
+                &lt;/div>
+
+                {/* Sección expandible con usuarios */}
+                {expandedComposiciones[composicion.composicion_id] &amp;&amp; (
+                  &lt;div className="border-t border-gray-800">
+                    &lt;div className="p-3 bg-gray-900/20 border-b border-gray-800 flex justify-between items-center">
+                      &lt;h4 className="text-sm font-medium text-[#C0C0C0]">
+                        {t("interpretedCompositions.usersWhoInterpretThisComposition")}
+                      &lt;/h4>
+
+                      {/* Paginación de usuarios */}
+                      {composicion.usuarios.length > usuariosPorPagina &amp;&amp; (
+                        &lt;div className="flex items-center space-x-1">
+                          &lt;button
+                            onClick={() => prevUsuariosPage(composicion.composicion_id)}
+                            disabled={usuariosPagination[composicion.composicion_id] === 1}
+                            className="p-1 bg-gray-800 text-gray-400 rounded hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            &lt;ChevronLeft size={16} />
+                          &lt;/button>
+                          &lt;span className="text-xs text-gray-400">
+                            {usuariosPagination[composicion.composicion_id] || 1} /
+                            {Math.ceil(composicion.usuarios.length / usuariosPorPagina)}
+                          &lt;/span>
+                          &lt;button
+                            onClick={() => nextUsuariosPage(composicion.composicion_id)}
+                            disabled={
+                              (usuariosPagination[composicion.composicion_id] || 1) >=
+                              Math.ceil(composicion.usuarios.length / usuariosPorPagina)
+                            }
+                            className="p-1 bg-gray-800 text-gray-400 rounded hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            &lt;ChevronRight size={16} />
+                          &lt;/button>
+                        &lt;/div>
+                      )}
+                    &lt;/div>
+
+                    {/* Lista de usuarios */}
+                    &lt;div className="divide-y divide-gray-800">
+                      {getCurrentUsuarios(composicion).map((usuario) => (
+                        &lt;div
+                          key={usuario.usuario_id}
+                          className="p-3 flex justify-between items-center hover:bg-gray-900/10"
+                        >
+                          &lt;div>
+                            &lt;div className="flex items-center">
+                              &lt;User size={16} className="mr-2 text-gray-500" />
+                              &lt;span className="text-[#C0C0C0]">
+                                {usuario.nombre} {usuario.apellidos}
+                              &lt;/span>
+                            &lt;/div>
+                            {usuario.email &amp;&amp; &lt;p className="text-xs text-gray-500 mt-1 ml-6">{usuario.email}&lt;/p>}
+                          &lt;/div>
+
+                          &lt;div className="flex items-center space-x-2">
+                            &lt;div className="text-xs text-gray-500 flex items-center">
+                              &lt;Calendar size={14} className="mr-1" />
+                              {new Date(usuario.created_at).toLocaleDateString("es-ES", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                              })}
+                            &lt;/div>
+
+                            {/* Botón para eliminar asignación */}
+                            {isAdmin &amp;&amp; (
+                              &lt;button
+                                onClick={() =>
+                                  handleDeleteUserComposicion(composicion.composicion_id, usuario.usuario_id)
+                                }
+                                className="p-1.5 text-gray-400 hover:text-red-400 transition-colors"
+                                title={t("interpretedCompositions.deleteAssignment")}
+                              >
+                                &lt;X size={14} />
+                              &lt;/button>
+                            )}
+                          &lt;/div>
+                        &lt;/div>
+                      ))}
+                    &lt;/div>
+                  &lt;/div>
+                )}
+              &lt;/div>
+            ))}
+          &lt;/div>
+
+          {/* Paginación de composiciones */}
+          {filteredComposiciones.length > composicionesPorPagina &amp;&amp; (
+            &lt;div className="mt-6 flex justify-center">
+              &lt;div className="flex items-center space-x-2">
+                &lt;button
+                  onClick={prevPage}
+                  disabled={currentPage === 1}
+                  className="p-2 bg-gray-800 text-gray-400 rounded-md hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  &lt;ChevronLeft size={18} />
+                &lt;/button>
+
+                &lt;div className="px-4 py-2 bg-gray-900/30 border border-gray-800 rounded-md">
+                  &lt;span className="text-[#C0C0C0]">
+                    {currentPage} / {Math.ceil(filteredComposiciones.length / composicionesPorPagina)}
+                  &lt;/span>
+                &lt;/div>
+
+                &lt;button
+                  onClick={nextPage}
+                  disabled={currentPage >= Math.ceil(filteredComposiciones.length / composicionesPorPagina)}
+                  className="p-2 bg-gray-800 text-gray-400 rounded-md hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  &lt;ChevronRight size={18} />
+                &lt;/button>
+              &lt;/div>
+            &lt;/div>
+          )}
+        &lt;/>
+      )}
+
+      {/* Modal para asignar a usuario */}
+      {showAssignModal &amp;&amp; (
+        &lt;div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          &lt;div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
+            &lt;div className="flex justify-between items-center mb-4">
+              &lt;h3 className="text-xl font-semibold text-[#C0C0C0]">
+                {t("interpretedCompositions.assignCompositionToUser")}
+              &lt;/h3>
+              &lt;button onClick={() => setShowAssignModal(false)} className="p-1 text-gray-400 hover:text-[#C0C0C0]">
+                &lt;X size={20} />
+              &lt;/button>
+            &lt;/div>
+
+            {/* Warning message for duplicate assignment */}
+            {showDuplicateWarning &amp;&amp; (
+              &lt;div className="mb-4 p-3 bg-yellow-900/30 border border-yellow-600 rounded-md flex items-start">
+                &lt;div className="flex-shrink-0 mr-3 mt-0.5">
+                  &lt;svg className="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                    &lt;path
+                      fillRule="evenodd"
+                      d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  &lt;/svg>
+                &lt;/div>
+                &lt;div className="text-yellow-200 text-sm">{t("interpretedCompositions.userAlreadyAssignedWarning")}&lt;/div>
+              &lt;/div>
+            )}
+
+            &lt;div className="mb-4">
+              &lt;p className="text-gray-400 mb-2">
+                {t("interpretedCompositions.composition")}:{" "}
+                &lt;span className="text-[#C0C0C0] font-medium">{selectedComposicionForAssign?.nombre}&lt;/span>
+              &lt;/p>
+            &lt;/div>
+
+            &lt;div className="mb-6">
+              &lt;label htmlFor="usuario" className="block text-[#C0C0C0] text-sm font-medium mb-2">
+                {t("interpretedCompositions.selectUser")}
+              &lt;/label>
+              &lt;select
+                id="usuario"
+                value={selectedUsuarioId}
+                onChange={(e) => handleUsuarioSelection(e.target.value)}
+                className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+              >
+                &lt;option value="">{t("interpretedCompositions.selectUserPlaceholder")}&lt;/option>
+                {usuarios.map((usuario) => (
+                  &lt;option key={usuario.id} value={usuario.id}>
+                    {usuario.nombre} {usuario.apellido1} {usuario.apellido2} - {usuario.email}
+                  &lt;/option>
+                ))}
+              &lt;/select>
+            &lt;/div>
+
+            &lt;div className="flex justify-end space-x-3">
+              &lt;button
+                onClick={() => setShowAssignModal(false)}
+                className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+              >
+                {t("interpretedCompositions.cancel")}
+              &lt;/button>
+              &lt;button
+                onClick={handleAssignToUser}
+                disabled={!selectedUsuarioId || showDuplicateWarning}
+                className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {t("interpretedCompositions.assign")}
+              &lt;/button>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      )}
+    &lt;/div>
+  )
+}
+
+export default ComposicionesInterpretadas
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> on Mon Jun 09 2025 13:51:24 GMT+0200 (hora de verano de Europa central) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>

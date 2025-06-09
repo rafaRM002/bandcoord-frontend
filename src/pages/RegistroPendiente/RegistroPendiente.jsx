@@ -1,8 +1,22 @@
+/**
+ * @file RegistroPendiente.jsx
+ * @module pages/RegistroPendiente/RegistroPendiente
+ * @description Página que informa al usuario que su registro está pendiente de aprobación por un administrador. Muestra mensajes informativos y un botón para volver al inicio. Utiliza traducción internacionalizada.
+ * @author Rafael Rodriguez Mengual
+ */
+
 import { Link } from "react-router-dom"
 import { AlertTriangle } from "lucide-react"
 import { useTranslation } from "../../hooks/useTranslation"
 
+/**
+ * Componente de aviso de registro pendiente.
+ * Informa al usuario que su cuenta está pendiente de aprobación y muestra mensajes útiles.
+ * @component
+ * @returns {JSX.Element} Página de registro pendiente.
+ */
 export default function RegistroPendiente() {
+  /** Hook de traducción */
   const { t } = useTranslation()
 
   return (

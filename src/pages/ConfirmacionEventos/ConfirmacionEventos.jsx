@@ -1,3 +1,10 @@
+/**
+ * @file ConfirmacionEventos.jsx
+ * @module pages/ConfirmacionEventos/ConfirmacionEventos
+ * @description Página para que el usuario confirme o rechace su asistencia a eventos asignados. Permite filtrar, buscar y paginar eventos, así como confirmar o cancelar la asistencia. Solo muestra los eventos del usuario autenticado.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState, useEffect, useContext } from "react"
@@ -7,20 +14,40 @@ import api from "../../api/axios"
 import { toast } from "react-toastify"
 import { useTranslation } from "../../hooks/useTranslation"
 
+/**
+ * Componente principal para la confirmación de asistencia a eventos por parte del usuario.
+ * Permite buscar, filtrar, paginar y confirmar/cancelar asistencia a eventos asignados.
+ * @component
+ * @returns {JSX.Element} Página de confirmación de eventos.
+ */
 export default function ConfirmacionEventos() {
+  /** Hook de traducción */
   const { t } = useTranslation()
+  /** Eventos asignados al usuario */
   const [eventosUsuario, setEventosUsuario] = useState([])
+  /** Estado de carga */
   const [loading, setLoading] = useState(true)
+  /** Estado de error */
   const [error, setError] = useState(null)
+  /** Usuario autenticado */
   const { user } = useContext(AuthContext)
+  /** Lista de eventos con detalles */
   const [eventos, setEventos] = useState([])
 
+  /** Término de búsqueda */
   const [searchTerm, setSearchTerm] = useState("")
+  /** Filtro por tipo de evento */
   const [tipoFilter, setTipoFilter] = useState("")
+  /** Filtro por estado de confirmación */
   const [confirmadoFilter, setConfirmadoFilter] = useState("")
+  /** Página actual de la paginación */
   const [currentPage, setCurrentPage] = useState(1)
+  /** Elementos por página */
   const [itemsPerPage] = useState(6)
 
+  /**
+   * Efecto para cargar los eventos asignados al usuario y sus detalles al montar el componente o cambiar el usuario.
+   */
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -34,7 +61,7 @@ export default function ConfirmacionEventos() {
 
         // Obtener solo los eventos-usuario del usuario autenticado
         const eventosUsuarioRes = await api.get(`/evento-usuario?usuario_id=${user.id}`)
-        console.log("Respuesta de eventos del usuario:", eventosUsuarioRes)
+        // console.log("Respuesta de eventos del usuario:", eventosUsuarioRes)
 
         // Procesar datos de eventos-usuario
         let eventosUsuarioData = []
@@ -47,7 +74,7 @@ export default function ConfirmacionEventos() {
         ) {
           eventosUsuarioData = eventosUsuarioRes.data.data
         } else {
-          console.warn("Formato de respuesta inesperado para eventos-usuario:", eventosUsuarioRes.data)
+          // console.warn("Formato de respuesta inesperado para eventos-usuario:", eventosUsuarioRes.data)
         }
 
         // Filtrar explícitamente para asegurar que solo se muestran los eventos del usuario actual
@@ -87,6 +114,12 @@ export default function ConfirmacionEventos() {
     fetchData()
   }, [user])
 
+  /**
+   * Confirma o cancela la asistencia del usuario a un evento.
+   * @async
+   * @param {number} eventoId - ID del evento.
+   * @param {boolean} confirmado - true para confirmar, false para cancelar.
+   */
   const confirmarAsistencia = async (eventoId, confirmado) => {
     try {
       if (!user || !user.id) {
@@ -124,24 +157,40 @@ export default function ConfirmacionEventos() {
     }
   }
 
-  // Formatear fecha para mostrar
+  /**
+   * Formatea una fecha a formato DD/MM/YYYY.
+   * @param {string} dateString - Fecha en formato ISO.
+   * @returns {string} Fecha formateada.
+   */
   const formatDate = (dateString) => {
     if (!dateString) return "-"
     const options = { day: "2-digit", month: "2-digit", year: "numeric" }
     return new Date(dateString).toLocaleDateString("es-ES", options)
   }
 
-  // Formatear hora para mostrar
+  /**
+   * Formatea una hora a formato HH:MM.
+   * @param {string} timeString - Hora en formato HH:MM:SS.
+   * @returns {string} Hora formateada.
+   */
   const formatTime = (timeString) => {
     if (!timeString) return "-"
     return timeString.substring(0, 5) // Extraer solo HH:MM
   }
 
+  /**
+   * Obtiene los detalles de un evento por su ID.
+   * @param {number} eventoId - ID del evento.
+   * @returns {Object} Detalles del evento.
+   */
   const getEventoDetalles = (eventoId) => {
     return eventos.find((evento) => evento.id === eventoId) || {}
   }
 
-  // Combinar datos de eventos y eventosUsuario para tener toda la información
+  /**
+   * Combina los datos de eventos y eventosUsuario para tener toda la información necesaria.
+   * @type {Array}
+   */
   const eventosConDetalles = eventosUsuario.map((item) => {
     const eventoDetalle = getEventoDetalles(item.evento_id)
     return {
@@ -157,7 +206,10 @@ export default function ConfirmacionEventos() {
     }
   })
 
-  // Filtrar eventos según criterios de búsqueda
+  /**
+   * Filtra los eventos según los criterios de búsqueda y filtros seleccionados.
+   * @type {Array}
+   */
   const filteredEventos = eventosConDetalles.filter((evento) => {
     const matchesSearch =
       evento.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -172,17 +224,26 @@ export default function ConfirmacionEventos() {
   })
 
   // Paginación
+  /** Índice del último elemento de la página */
   const indexOfLastItem = currentPage * itemsPerPage
+  /** Índice del primer elemento de la página */
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  /** Eventos a mostrar en la página actual */
   const currentEventos = filteredEventos.slice(indexOfFirstItem, indexOfLastItem)
+  /** Total de páginas */
   const totalPages = Math.ceil(filteredEventos.length / itemsPerPage)
 
+  /**
+   * Cambia la página actual de la paginación.
+   * @param {number} pageNumber - Número de página a mostrar.
+   */
   const paginate = (pageNumber) => {
     if (pageNumber > 0 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber)
     }
   }
 
+  // Renderizado de la interfaz
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">

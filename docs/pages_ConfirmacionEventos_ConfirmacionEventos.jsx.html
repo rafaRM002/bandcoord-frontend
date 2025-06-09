@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>pages/ConfirmacionEventos/ConfirmacionEventos.jsx - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-App.html">App</a><ul class='methods'><li data-type='method'><a href="module-App.html#~App">App</a></li><li data-type='method'><a href="module-App.html#~AppContent">AppContent</a></li></ul></li><li><a href="module-api_axios.html">api/axios</a></li><li><a href="module-components_AdminRoute.html">components/AdminRoute</a></li><li><a href="module-components_HelpButton_AboutModal.html">components/HelpButton/AboutModal</a></li><li><a href="module-components_HelpButton_HelpButton.html">components/HelpButton/HelpButton</a></li><li><a href="module-components_HelpButton_HelpModal.html">components/HelpButton/HelpModal</a></li><li><a href="module-components_MemberRoute.html">components/MemberRoute</a></li><li><a href="module-components_Navigation_Footer.html">components/Navigation/Footer</a></li><li><a href="module-components_Navigation_Navbar.html">components/Navigation/Navbar</a></li><li><a href="module-components_PasswordValidator.html">components/PasswordValidator</a></li><li><a href="module-components_ProtectedRoute.html">components/ProtectedRoute</a></li><li><a href="module-context_AuthContext.html">context/AuthContext</a><ul class='methods'><li data-type='method'><a href="module-context_AuthContext.html#.useAuth">useAuth</a></li><li data-type='method'><a href="module-context_AuthContext.html#~getCsrfCookie">getCsrfCookie</a></li></ul></li><li><a href="module-context_LanguageContext.html">context/LanguageContext</a><ul class='methods'><li data-type='method'><a href="module-context_LanguageContext.html#.useLanguage">useLanguage</a></li></ul></li><li><a href="module-hooks_useTranslation.html">hooks/useTranslation</a><ul class='methods'><li data-type='method'><a href="module-hooks_useTranslation.html#.useTranslation">useTranslation</a></li></ul></li><li><a href="module-main.html">main</a></li><li><a href="module-pages_Admin_GestionUsuarios.html">pages/Admin/GestionUsuarios</a></li><li><a href="module-pages_Calendario_Calendario.html">pages/Calendario/Calendario</a></li><li><a href="module-pages_Composiciones_Composiciones.html">pages/Composiciones/Composiciones</a></li><li><a href="module-pages_ComposicionesInterpretadas_ComposicionesInterpretadas.html">pages/ComposicionesInterpretadas/ComposicionesInterpretadas</a><ul class='methods'><li data-type='method'><a href="module-pages_ComposicionesInterpretadas_ComposicionesInterpretadas.html#~ComposicionesInterpretadas">ComposicionesInterpretadas</a></li></ul></li><li><a href="module-pages_ConfirmacionEventos_ConfirmacionEventos.html">pages/ConfirmacionEventos/ConfirmacionEventos</a></li><li><a href="module-pages_Entidades_Entidades.html">pages/Entidades/Entidades</a></li><li><a href="module-pages_EventoUsuario_EventoUsuario.html">pages/EventoUsuario/EventoUsuario</a></li><li><a href="module-pages_Eventos_Eventos.html">pages/Eventos/Eventos</a></li><li><a href="module-pages_Eventos_FormularioEvento.html">pages/Eventos/FormularioEvento</a></li><li><a href="module-pages_Home_Home.html">pages/Home/Home</a><ul class='methods'><li data-type='method'><a href="module-pages_Home_Home.html#~AdminCard">AdminCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~FeatureCard">FeatureCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~PublicHome">PublicHome</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~QuickAccessCard">QuickAccessCard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~UserDashboard">UserDashboard</a></li><li data-type='method'><a href="module-pages_Home_Home.html#~getEventTypeColor">getEventTypeColor</a></li></ul></li><li><a href="module-pages_Instrumentos_Instrumentos.html">pages/Instrumentos/Instrumentos</a></li><li><a href="module-pages_Login_Login.html">pages/Login/Login</a></li><li><a href="module-pages_Mensajes_DetalleMensaje.html">pages/Mensajes/DetalleMensaje</a></li><li><a href="module-pages_Mensajes_FormularioMensaje.html">pages/Mensajes/FormularioMensaje</a></li><li><a href="module-pages_Mensajes_Mensajes.html">pages/Mensajes/Mensajes</a></li><li><a href="module-pages_MensajesUsuario_MensajesUsuario.html">pages/MensajesUsuario/MensajesUsuario</a><ul class='methods'><li data-type='method'><a href="module-pages_MensajesUsuario_MensajesUsuario.html#~MensajesUsuario">MensajesUsuario</a></li></ul></li><li><a href="module-pages_MinimosEvento_MinimosEvento.html">pages/MinimosEvento/MinimosEvento</a></li><li><a href="module-pages_NotFound_NotFound.html">pages/NotFound/NotFound</a></li><li><a href="module-pages_Perfil_Perfil.html">pages/Perfil/Perfil</a></li><li><a href="module-pages_Prestamos_Prestamos.html">pages/Prestamos/Prestamos</a></li><li><a href="module-pages_Register_Register.html">pages/Register/Register</a></li><li><a href="module-pages_RegistroPendiente_RegistroPendiente.html">pages/RegistroPendiente/RegistroPendiente</a></li><li><a href="module-pages_RestablecerPassword_NuevaPassword.html">pages/RestablecerPassword/NuevaPassword</a></li><li><a href="module-pages_RestablecerPassword_RestablecerPassword.html">pages/RestablecerPassword/RestablecerPassword</a></li><li><a href="module-pages_TiposInstrumento_TiposInstrumento.html">pages/TiposInstrumento/TiposInstrumento</a></li><li><a href="module-utils_translations.html">utils/translations</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+
+    
+    <h1 class="page-title">pages/ConfirmacionEventos/ConfirmacionEventos.jsx</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file ConfirmacionEventos.jsx
+ * @module pages/ConfirmacionEventos/ConfirmacionEventos
+ * @description Página para que el usuario confirme o rechace su asistencia a eventos asignados. Permite filtrar, buscar y paginar eventos, así como confirmar o cancelar la asistencia. Solo muestra los eventos del usuario autenticado.
+ * @author Rafael Rodriguez Mengual
+ */
+
+"use client"
+
+import { useState, useEffect, useContext } from "react"
+import { AuthContext } from "../../context/AuthContext"
+import { Check, X, Calendar, MapPin, Clock, Info, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react"
+import api from "../../api/axios"
+import { toast } from "react-toastify"
+import { useTranslation } from "../../hooks/useTranslation"
+
+/**
+ * Componente principal para la confirmación de asistencia a eventos por parte del usuario.
+ * Permite buscar, filtrar, paginar y confirmar/cancelar asistencia a eventos asignados.
+ * @component
+ * @returns {JSX.Element} Página de confirmación de eventos.
+ */
+export default function ConfirmacionEventos() {
+  /** Hook de traducción */
+  const { t } = useTranslation()
+  /** Eventos asignados al usuario */
+  const [eventosUsuario, setEventosUsuario] = useState([])
+  /** Estado de carga */
+  const [loading, setLoading] = useState(true)
+  /** Estado de error */
+  const [error, setError] = useState(null)
+  /** Usuario autenticado */
+  const { user } = useContext(AuthContext)
+  /** Lista de eventos con detalles */
+  const [eventos, setEventos] = useState([])
+
+  /** Término de búsqueda */
+  const [searchTerm, setSearchTerm] = useState("")
+  /** Filtro por tipo de evento */
+  const [tipoFilter, setTipoFilter] = useState("")
+  /** Filtro por estado de confirmación */
+  const [confirmadoFilter, setConfirmadoFilter] = useState("")
+  /** Página actual de la paginación */
+  const [currentPage, setCurrentPage] = useState(1)
+  /** Elementos por página */
+  const [itemsPerPage] = useState(6)
+
+  /**
+   * Efecto para cargar los eventos asignados al usuario y sus detalles al montar el componente o cambiar el usuario.
+   */
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+
+        if (!user || !user.id) {
+          setError("Debes iniciar sesión para ver tus eventos pendientes")
+          return
+        }
+
+        // Obtener solo los eventos-usuario del usuario autenticado
+        const eventosUsuarioRes = await api.get(`/evento-usuario?usuario_id=${user.id}`)
+        // console.log("Respuesta de eventos del usuario:", eventosUsuarioRes)
+
+        // Procesar datos de eventos-usuario
+        let eventosUsuarioData = []
+        if (eventosUsuarioRes.data &amp;&amp; Array.isArray(eventosUsuarioRes.data)) {
+          eventosUsuarioData = eventosUsuarioRes.data
+        } else if (
+          eventosUsuarioRes.data &amp;&amp;
+          eventosUsuarioRes.data.data &amp;&amp;
+          Array.isArray(eventosUsuarioRes.data.data)
+        ) {
+          eventosUsuarioData = eventosUsuarioRes.data.data
+        } else {
+          // console.warn("Formato de respuesta inesperado para eventos-usuario:", eventosUsuarioRes.data)
+        }
+
+        // Filtrar explícitamente para asegurar que solo se muestran los eventos del usuario actual
+        eventosUsuarioData = eventosUsuarioData.filter((item) => item.usuario_id === user.id)
+
+        // Obtener detalles de los eventos
+        const eventosIds = eventosUsuarioData.map((item) => item.evento_id)
+        if (eventosIds.length > 0) {
+          const eventosRes = await api.get("/eventos")
+
+          let eventosData = []
+          if (eventosRes.data &amp;&amp; Array.isArray(eventosRes.data)) {
+            eventosData = eventosRes.data
+          } else if (eventosRes.data &amp;&amp; eventosRes.data.eventos &amp;&amp; Array.isArray(eventosRes.data.eventos)) {
+            eventosData = eventosRes.data.eventos
+          } else if (eventosRes.data &amp;&amp; eventosRes.data.data &amp;&amp; Array.isArray(eventosRes.data.data)) {
+            eventosData = eventosRes.data.data
+          }
+
+          // Filtrar solo los eventos que están en eventosIds
+          eventosData = eventosData.filter((evento) => eventosIds.includes(evento.id))
+
+          // Ordenar eventos por nombre
+          eventosData.sort((a, b) => a.nombre.localeCompare(b.nombre))
+          setEventos(eventosData)
+        }
+
+        setEventosUsuario(eventosUsuarioData)
+      } catch (error) {
+        console.error("Error al cargar eventos pendientes:", error)
+        setError(`Error al cargar eventos pendientes: ${error.message}`)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [user])
+
+  /**
+   * Confirma o cancela la asistencia del usuario a un evento.
+   * @async
+   * @param {number} eventoId - ID del evento.
+   * @param {boolean} confirmado - true para confirmar, false para cancelar.
+   */
+  const confirmarAsistencia = async (eventoId, confirmado) => {
+    try {
+      if (!user || !user.id) {
+        toast.error("Debes iniciar sesión para confirmar eventos")
+        return
+      }
+
+      // Verificar si el evento está finalizado
+      const evento = eventosConDetalles.find((e) => e.evento_id === eventoId)
+      if (evento &amp;&amp; evento.estado === "finalizado") {
+        toast.error("No se puede modificar la asistencia de un evento finalizado")
+        return
+      }
+
+      await api.put(`/evento-usuario/${eventoId}/${user.id}`, {
+        confirmacion: confirmado,
+      })
+
+      // Actualizar el estado local en lugar de eliminar
+      setEventosUsuario(
+        eventosUsuario.map((item) => {
+          if (item.evento_id === eventoId) {
+            return { ...item, confirmacion: confirmado }
+          }
+          return item
+        }),
+      )
+
+      toast.success(
+        confirmado ? t("eventConfirmation.attendanceConfirmed") : t("eventConfirmation.attendanceCancelled"),
+      )
+    } catch (error) {
+      console.error("Error al actualizar asistencia:", error)
+      toast.error(t("eventConfirmation.errorUpdatingAttendance"))
+    }
+  }
+
+  /**
+   * Formatea una fecha a formato DD/MM/YYYY.
+   * @param {string} dateString - Fecha en formato ISO.
+   * @returns {string} Fecha formateada.
+   */
+  const formatDate = (dateString) => {
+    if (!dateString) return "-"
+    const options = { day: "2-digit", month: "2-digit", year: "numeric" }
+    return new Date(dateString).toLocaleDateString("es-ES", options)
+  }
+
+  /**
+   * Formatea una hora a formato HH:MM.
+   * @param {string} timeString - Hora en formato HH:MM:SS.
+   * @returns {string} Hora formateada.
+   */
+  const formatTime = (timeString) => {
+    if (!timeString) return "-"
+    return timeString.substring(0, 5) // Extraer solo HH:MM
+  }
+
+  /**
+   * Obtiene los detalles de un evento por su ID.
+   * @param {number} eventoId - ID del evento.
+   * @returns {Object} Detalles del evento.
+   */
+  const getEventoDetalles = (eventoId) => {
+    return eventos.find((evento) => evento.id === eventoId) || {}
+  }
+
+  /**
+   * Combina los datos de eventos y eventosUsuario para tener toda la información necesaria.
+   * @type {Array}
+   */
+  const eventosConDetalles = eventosUsuario.map((item) => {
+    const eventoDetalle = getEventoDetalles(item.evento_id)
+    return {
+      ...item,
+      nombre: eventoDetalle.nombre || "Evento sin nombre",
+      fecha: eventoDetalle.fecha || null,
+      lugar: eventoDetalle.lugar || "",
+      hora: eventoDetalle.hora || null,
+      tipo: eventoDetalle.tipo || "",
+      estado: eventoDetalle.estado || "",
+      descripcion: eventoDetalle.descripcion || "",
+      confirmacion: item.confirmacion || false,
+    }
+  })
+
+  /**
+   * Filtra los eventos según los criterios de búsqueda y filtros seleccionados.
+   * @type {Array}
+   */
+  const filteredEventos = eventosConDetalles.filter((evento) => {
+    const matchesSearch =
+      evento.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (evento.lugar &amp;&amp; evento.lugar.toLowerCase().includes(searchTerm.toLowerCase()))
+    const matchesTipo = tipoFilter === "" || evento.tipo === tipoFilter
+    const matchesConfirmado =
+      confirmadoFilter === "" ||
+      (confirmadoFilter === "true" &amp;&amp; evento.confirmacion) ||
+      (confirmadoFilter === "false" &amp;&amp; !evento.confirmacion)
+
+    return matchesSearch &amp;&amp; matchesTipo &amp;&amp; matchesConfirmado
+  })
+
+  // Paginación
+  /** Índice del último elemento de la página */
+  const indexOfLastItem = currentPage * itemsPerPage
+  /** Índice del primer elemento de la página */
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  /** Eventos a mostrar en la página actual */
+  const currentEventos = filteredEventos.slice(indexOfFirstItem, indexOfLastItem)
+  /** Total de páginas */
+  const totalPages = Math.ceil(filteredEventos.length / itemsPerPage)
+
+  /**
+   * Cambia la página actual de la paginación.
+   * @param {number} pageNumber - Número de página a mostrar.
+   */
+  const paginate = (pageNumber) => {
+    if (pageNumber > 0 &amp;&amp; pageNumber &lt;= totalPages) {
+      setCurrentPage(pageNumber)
+    }
+  }
+
+  // Renderizado de la interfaz
+  if (loading) {
+    return (
+      &lt;div className="container mx-auto px-4 py-8">
+        &lt;div className="flex justify-center items-center h-64">
+          &lt;div className="text-[#C0C0C0]">Cargando eventos pendientes...&lt;/div>
+        &lt;/div>
+      &lt;/div>
+    )
+  }
+
+  if (error) {
+    return (
+      &lt;div className="container mx-auto px-4 py-8">
+        &lt;div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md mb-6">
+          &lt;h3 className="font-semibold">Error&lt;/h3>
+          &lt;p>{error}&lt;/p>
+        &lt;/div>
+      &lt;/div>
+    )
+  }
+
+  return (
+    &lt;div className="container mx-auto px-4 py-8">
+      &lt;h1 className="text-2xl font-bold text-[#C0C0C0] mb-6">{t("eventConfirmation.title")}&lt;/h1>
+
+      {/* Filtros y búsqueda */}
+      &lt;div className="bg-black/30 border border-gray-800 rounded-lg p-4 mb-6">
+        &lt;div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          &lt;div className="relative">
+            &lt;Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+            &lt;input
+              type="text"
+              placeholder={t("eventConfirmation.searchByNameOrLocation")}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+            />
+          &lt;/div>
+          &lt;div className="relative">
+            &lt;Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+            &lt;select
+              value={tipoFilter}
+              onChange={(e) => setTipoFilter(e.target.value)}
+              className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
+            >
+              &lt;option value="">{t("eventConfirmation.allTypes")}&lt;/option>
+              &lt;option value="concierto">{t("eventConfirmation.concert")}&lt;/option>
+              &lt;option value="ensayo">{t("eventConfirmation.rehearsal")}&lt;/option>
+              &lt;option value="procesion">{t("eventConfirmation.procession")}&lt;/option>
+              &lt;option value="pasacalles">{t("eventConfirmation.parade")}&lt;/option>
+            &lt;/select>
+          &lt;/div>
+          &lt;div className="relative">
+            &lt;Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
+            &lt;select
+              value={confirmadoFilter}
+              onChange={(e) => setConfirmadoFilter(e.target.value)}
+              className="w-full pl-10 py-2 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] appearance-none"
+            >
+              &lt;option value="">{t("eventConfirmation.allStatuses")}&lt;/option>
+              &lt;option value="true">{t("eventConfirmation.confirmed")}&lt;/option>
+              &lt;option value="false">{t("eventConfirmation.pending")}&lt;/option>
+            &lt;/select>
+          &lt;/div>
+        &lt;/div>
+      &lt;/div>
+
+      {currentEventos.length === 0 ? (
+        &lt;div className="bg-black/30 border border-gray-800 rounded-lg p-8 text-center">
+          &lt;Calendar size={48} className="mx-auto text-gray-600 mb-4" />
+          &lt;p className="text-gray-400 text-lg">{t("eventConfirmation.noEventsToConfirm")}&lt;/p>
+        &lt;/div>
+      ) : (
+        &lt;div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {currentEventos.map((item) => (
+            &lt;div
+              key={`${item.evento_id}-${item.usuario_id}`}
+              className="bg-black/30 border border-gray-800 rounded-lg overflow-hidden"
+            >
+              &lt;div className="p-5">
+                &lt;h2 className="text-xl font-semibold text-[#C0C0C0] mb-2">{item.nombre}&lt;/h2>
+
+                &lt;div className="space-y-3 mb-4">
+                  &lt;div className="flex items-center text-gray-400">
+                    &lt;Calendar size={16} className="mr-2 flex-shrink-0" />
+                    &lt;span>{formatDate(item.fecha)}&lt;/span>
+                  &lt;/div>
+
+                  {item.hora &amp;&amp; (
+                    &lt;div className="flex items-center text-gray-400">
+                      &lt;Clock size={16} className="mr-2 flex-shrink-0" />
+                      &lt;span>{formatTime(item.hora)}&lt;/span>
+                    &lt;/div>
+                  )}
+
+                  {item.lugar &amp;&amp; (
+                    &lt;div className="flex items-center text-gray-400">
+                      &lt;MapPin size={16} className="mr-2 flex-shrink-0" />
+                      &lt;span>{item.lugar}&lt;/span>
+                    &lt;/div>
+                  )}
+
+                  {item.tipo &amp;&amp; (
+                    &lt;div className="flex items-center text-gray-400">
+                      &lt;Info size={16} className="mr-2 flex-shrink-0" />
+                      &lt;span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          item.tipo === "concierto"
+                            ? "bg-purple-900/30 text-purple-400 border border-purple-800"
+                            : item.tipo === "ensayo"
+                              ? "bg-blue-900/30 text-blue-400 border border-blue-800"
+                              : item.tipo === "procesion"
+                                ? "bg-green-900/30 text-green-400 border border-green-800"
+                                : item.tipo === "pasacalles"
+                                  ? "bg-yellow-900/30 text-yellow-400 border border-yellow-800"
+                                  : "bg-gray-900/30 text-gray-400 border border-gray-800"
+                        }`}
+                      >
+                        {item.tipo.charAt(0).toUpperCase() + item.tipo.slice(1)}
+                      &lt;/span>
+                    &lt;/div>
+                  )}
+                &lt;/div>
+
+                &lt;div className="flex space-x-3 mt-4">
+                  {item.estado === "finalizado" ? (
+                    &lt;div className="flex-1 flex items-center justify-center py-2">
+                      &lt;span className="text-red-400 font-medium"> {t("common.eventFinished")}&lt;/span>
+                    &lt;/div>
+                  ) : item.confirmacion ? (
+                    &lt;button
+                      onClick={() => confirmarAsistencia(item.evento_id, false)}
+                      className="flex-1 flex items-center justify-center gap-2 bg-red-900/30 border border-red-800 text-red-400 px-4 py-2 rounded-md hover:bg-red-900/50 transition-colors"
+                    >
+                      &lt;X size={18} />
+                      {t("eventConfirmation.cancelAttendance")}
+                    &lt;/button>
+                  ) : (
+                    &lt;button
+                      onClick={() => confirmarAsistencia(item.evento_id, true)}
+                      className="flex-1 flex items-center justify-center gap-2 bg-green-900/30 border border-green-800 text-green-400 px-4 py-2 rounded-md hover:bg-green-900/50 transition-colors"
+                    >
+                      &lt;Check size={18} />
+                      {t("eventConfirmation.confirmAttendance")}
+                    &lt;/button>
+                  )}
+                &lt;/div>
+              &lt;/div>
+            &lt;/div>
+          ))}
+        &lt;/div>
+      )}
+
+      {/* Paginación */}
+      {totalPages > 1 &amp;&amp; (
+        &lt;div className="flex justify-between items-center bg-gray-900/50 px-4 py-3 mt-6 rounded-md">
+          &lt;div className="text-sm text-gray-400">
+            Mostrando {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredEventos.length)} de{" "}
+            {filteredEventos.length} eventos
+          &lt;/div>
+          &lt;div className="flex space-x-1">
+            &lt;button
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="p-2 rounded-md bg-gray-800 text-gray-400 hover:text-[#C0C0C0] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              &lt;ChevronLeft size={16} />
+            &lt;/button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              &lt;button
+                key={page}
+                onClick={() => paginate(page)}
+                className={`w-8 h-8 rounded-md flex items-center justify-center ${
+                  currentPage === page ? "bg-black text-[#C0C0C0]" : "bg-gray-900 text-gray-400 hover:text-[#C0C0C0]"
+                }`}
+              >
+                {page}
+              &lt;/button>
+            ))}
+            &lt;button
+              onClick={() => paginate(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="p-2 rounded-md bg-gray-800 text-gray-400 hover:text-[#C0C0C0] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              &lt;ChevronRight size={16} />
+            &lt;/button>
+          &lt;/div>
+        &lt;/div>
+      )}
+    &lt;/div>
+  )
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.4</a> on Mon Jun 09 2025 13:51:24 GMT+0200 (hora de verano de Europa central) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>

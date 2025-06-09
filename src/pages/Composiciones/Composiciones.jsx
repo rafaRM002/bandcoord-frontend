@@ -1,3 +1,10 @@
+/**
+ * @file Composiciones.jsx
+ * @module pages/Composiciones/Composiciones
+ * @description Página para la gestión y visualización de composiciones musicales. Permite buscar, crear, editar, eliminar y visualizar composiciones, así como gestionar archivos y enlaces de YouTube asociados.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState, useEffect, useRef } from "react"
@@ -22,62 +29,138 @@ import {
 import api, { IMAGES_URL } from "../../api/axios"
 import { toast } from "react-toastify"
 import { useTranslation } from "../../hooks/useTranslation"
-// Importar useAuth
 import { useAuth } from "../../context/AuthContext"
 
+/**
+ * Componente principal para la gestión de composiciones musicales.
+ * Permite listar, buscar, crear, editar, eliminar y visualizar composiciones.
+ * @component
+ * @returns {JSX.Element} Página de composiciones.
+ */
 export default function Composiciones() {
-  const [composiciones, setComposiciones] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [composicionToDelete, setComposicionToDelete] = useState(null)
-  const [currentAudio, setCurrentAudio] = useState(null)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [audioElement, setAudioElement] = useState(null)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage] = useState(9)
-  const [uploadProgress, setUploadProgress] = useState(0)
-  const [isUploading, setIsUploading] = useState(useState(false)[0])
-  const [refreshTrigger, setRefreshTrigger] = useState(0)
+  /** Estado que almacena el listado de composiciones */
+/** @type {Array} */
+const [composiciones, setComposiciones] = useState([])
 
+/** Estado de carga */
+/** @type {boolean} */
+const [loading, setLoading] = useState(true)
+
+/** Estado de error */
+/** @type {string|null} */
+const [error, setError] = useState(null)
+
+/** Término de búsqueda */
+/** @type {string} */
+const [searchTerm, setSearchTerm] = useState("")
+
+/** Estado del modal de eliminación */
+/** @type {boolean} */
+const [showDeleteModal, setShowDeleteModal] = useState(false)
+
+/** ID de la composición a eliminar */
+/** @type {number|null} */
+const [composicionToDelete, setComposicionToDelete] = useState(null)
+
+/** ID de la composición de audio actual */
+/** @type {number|null} */
+const [currentAudio, setCurrentAudio] = useState(null)
+
+/** Estado de reproducción de audio */
+/** @type {boolean} */
+const [isPlaying, setIsPlaying] = useState(false)
+
+/** Elemento de audio actual */
+/** @type {Audio|null} */
+const [audioElement, setAudioElement] = useState(null)
+
+/** Página actual de la paginación */
+/** @type {number} */
+const [currentPage, setCurrentPage] = useState(1)
+
+/** Número de elementos por página */
+/** @type {number} */
+const [itemsPerPage] = useState(9)
+
+/** Progreso de subida de archivos */
+/** @type {number} */
+const [uploadProgress, setUploadProgress] = useState(0)
+
+/** Estado de subida de archivos */
+/** @type {boolean} */
+const [isUploading, setIsUploading] = useState(false)
+
+/** Trigger para recargar datos */
+/** @type {number} */
+const [refreshTrigger, setRefreshTrigger] = useState(0)
+
+
+  /** Hook de traducción */
   const { t } = useTranslation()
-  // Dentro del componente:
+  /** Contexto de autenticación para saber si es admin */
   const { isAdmin } = useAuth()
 
-  // Estados para el modal de composición
-  const [showModal, setShowModal] = useState(false)
-  const [editingComposicion, setEditingComposicion] = useState(null)
-  const [formData, setFormData] = useState({
-    nombre: "",
-    descripcion: "",
-    nombre_autor: "",
-  })
+ /** Estado del modal de composición */
+/** @type {boolean} */
+const [showModal, setShowModal] = useState(false)
 
-  // Estado para el tipo de ruta (YouTube y/o archivo)
-  const [includeYoutube, setIncludeYoutube] = useState(false)
-  const [includeFiles, setIncludeFiles] = useState(false)
-  const [youtubeUrl, setYoutubeUrl] = useState("")
+/** Composición en edición */
+/** @type {Object|null} */
+const [editingComposicion, setEditingComposicion] = useState(null)
 
-  // Nuevo estado para manejar archivos
-  const [newFiles, setNewFiles] = useState([])
-  const [existingFiles, setExistingFiles] = useState([])
+/** Datos del formulario de composición */
+/** @type {{ nombre: string, descripcion: string, nombre_autor: string }} */
+const [formData, setFormData] = useState({
+  nombre: "",
+  descripcion: "",
+  nombre_autor: "",
+})
 
+/** Incluir YouTube en la composición */
+/** @type {boolean} */
+const [includeYoutube, setIncludeYoutube] = useState(false)
+
+/** Incluir archivos en la composición */
+/** @type {boolean} */
+const [includeFiles, setIncludeFiles] = useState(false)
+
+/** URL de YouTube */
+/** @type {string} */
+const [youtubeUrl, setYoutubeUrl] = useState("")
+
+/** Archivos nuevos a subir */
+/** @type {Array} */
+const [newFiles, setNewFiles] = useState([])
+
+/** Archivos existentes */
+/** @type {Array} */
+const [existingFiles, setExistingFiles] = useState([])
+
+
+  /** Referencia al input de archivos */
   const fileInputRef = useRef(null)
 
-  // Estado para el modal de archivos
-  const [showFilesModal, setShowFilesModal] = useState(false)
-  const [selectedComposicion, setSelectedComposicion] = useState(null)
+  /** Estado del modal de archivos */
+/** @type {boolean} */
+const [showFilesModal, setShowFilesModal] = useState(false)
 
-  // Función para cargar las composiciones
+/** Composición seleccionada para ver archivos */
+/** @type {Object|null} */
+const [selectedComposicion, setSelectedComposicion] = useState(null)
+
+
+  /**
+   * Carga las composiciones desde la API y las procesa.
+   * @async
+   */
   const fetchComposiciones = async () => {
     try {
       setLoading(true)
       setError(null)
-      console.log("Intentando conectar a:", `${api.defaults.baseURL}/composiciones`)
+      // console.log("Intentando conectar a:", `${api.defaults.baseURL}/composiciones`)
 
       const response = await api.get("/composiciones")
-      console.log("Respuesta completa de composiciones:", response)
+      // console.log("Respuesta completa de composiciones:", response)
 
       // Verificar la estructura de la respuesta
       let composicionesData = []
@@ -99,7 +182,7 @@ export default function Composiciones() {
       ) {
         composicionesData = response.data.originalData.data
       } else {
-        console.warn("Formato de respuesta inesperado para composiciones:", response.data)
+        // console.warn("Formato de respuesta inesperado para composiciones:", response.data)
         setError(t("compositions.unexpectedResponseFormat"))
       }
 
@@ -145,7 +228,7 @@ export default function Composiciones() {
             parsedRuta = { youtube: null, files: [ruta] }
           }
         } catch (e) {
-          console.warn("Error al parsear ruta:", e)
+          // console.warn("Error al parsear ruta:", e)
           // Si hay error, mantener la ruta original como una sola URL
           parsedRuta = { youtube: null, files: ruta ? [ruta] : [] }
         }
@@ -156,20 +239,20 @@ export default function Composiciones() {
         }
       })
 
-      console.log("Datos de composiciones procesados:", composicionesData)
+      // console.log("Datos de composiciones procesados:", composicionesData)
       setComposiciones(composicionesData)
     } catch (error) {
-      console.error("Error al cargar composiciones:", error)
+      // console.error("Error al cargar composiciones:", error)
       setError(`${t("compositions.errorLoadingCompositions")}: ${error.message}`)
 
       if (error.response) {
-        console.error("Respuesta del servidor:", error.response.status, error.response.data)
+        // console.error("Respuesta del servidor:", error.response.status, error.response.data)
         setError(`${t("compositions.serverError")}: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
       } else if (error.request) {
-        console.error("No se recibió respuesta del servidor")
+        // console.error("No se recibió respuesta del servidor")
         setError(t("compositions.noServerResponse"))
       } else {
-        console.error("Error de configuración:", error.message)
+        // console.error("Error de configuración:", error.message)
         setError(`${t("compositions.configurationError")}: ${error.message}`)
       }
     } finally {
@@ -177,7 +260,9 @@ export default function Composiciones() {
     }
   }
 
-  // Efecto para cargar las composiciones
+  /**
+   * Efecto para cargar las composiciones al montar el componente o al refrescar.
+   */
   useEffect(() => {
     fetchComposiciones()
 
@@ -191,11 +276,17 @@ export default function Composiciones() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshTrigger])
 
-  // Función para recargar los datos
+  /**
+   * Fuerza la recarga de los datos de composiciones.
+   */
   const refreshData = () => {
     setRefreshTrigger((prev) => prev + 1)
   }
 
+  /**
+   * Elimina una composición seleccionada.
+   * @async
+   */
   const handleDelete = async () => {
     if (!composicionToDelete) return
 
@@ -206,16 +297,24 @@ export default function Composiciones() {
       setComposicionToDelete(null)
       toast.success(t("compositions.compositionDeletedSuccessfully"))
     } catch (error) {
-      console.error("Error al eliminar composición:", error)
+      // console.error("Error al eliminar composición:", error)
       toast.error(t("compositions.errorDeletingComposition"))
     }
   }
 
+  /**
+   * Abre el modal de confirmación de eliminación para una composición.
+   * @param {number} id - ID de la composición a eliminar.
+   */
   const confirmDelete = (id) => {
     setComposicionToDelete(id)
     setShowDeleteModal(true)
   }
 
+  /**
+   * Reproduce el audio de una composición.
+   * @param {Object} composicion - Composición seleccionada.
+   */
   const handlePlayAudio = (composicion) => {
     // Si no hay archivos de audio, no hacer nada
     if (!composicion.parsedRuta || !composicion.parsedRuta.files || composicion.parsedRuta.files.length === 0) {
@@ -260,11 +359,15 @@ export default function Composiciones() {
         setAudioElement(audio)
       })
       .catch((err) => {
-        console.error("Error al reproducir:", err)
+        // console.error("Error al reproducir:", err)
         toast.error(t("compositions.audioPlaybackFailed"))
       })
   }
 
+  /**
+   * Abre el enlace de YouTube de una composición en una nueva pestaña.
+   * @param {Object} composicion - Composición seleccionada.
+   */
   const handleOpenYoutube = (composicion) => {
     if (composicion.parsedRuta && composicion.parsedRuta.youtube) {
       window.open(composicion.parsedRuta.youtube, "_blank")
@@ -273,7 +376,9 @@ export default function Composiciones() {
     }
   }
 
-  // Manejador para abrir modal de nueva composición
+  /**
+   * Abre el modal para crear una nueva composición.
+   */
   const handleNewComposicion = () => {
     setEditingComposicion(null)
     setFormData({
@@ -289,7 +394,10 @@ export default function Composiciones() {
     setShowModal(true)
   }
 
-  // Manejador para editar composición
+  /**
+   * Abre el modal para editar una composición existente.
+   * @param {Object} composicion - Composición a editar.
+   */
   const handleEditComposicion = (composicion) => {
     setEditingComposicion(composicion)
 
@@ -314,18 +422,28 @@ export default function Composiciones() {
     setShowModal(true)
   }
 
-  // Cambio en los campos del formulario
+  /**
+   * Maneja el cambio en los campos del formulario de composición.
+   * @param {Object} e - Evento de cambio.
+   */
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  // Manejar cambio en URL de YouTube
+  /**
+   * Maneja el cambio en la URL de YouTube.
+   * @param {Object} e - Evento de cambio.
+   */
   const handleYoutubeUrlChange = (e) => {
     setYoutubeUrl(e.target.value)
   }
 
-  // Validar tipo de archivo
+  /**
+   * Valida el tipo de archivo permitido.
+   * @param {File} file - Archivo a validar.
+   * @returns {boolean} Si el archivo es válido.
+   */
   const isValidFileType = (file) => {
     const acceptedTypes = [
       "audio/mpeg",
@@ -345,13 +463,20 @@ export default function Composiciones() {
     return acceptedTypes.includes(file.type)
   }
 
-  // Validar tamaño de archivo (máximo 20MB)
+  /**
+   * Valida el tamaño del archivo (máximo 20MB).
+   * @param {File} file - Archivo a validar.
+   * @returns {boolean} Si el archivo es válido.
+   */
   const isValidFileSize = (file) => {
     const maxSize = 20 * 1024 * 1024 // 20MB en bytes
     return file.size <= maxSize
   }
 
-  // Agregar archivos
+  /**
+   * Agrega archivos seleccionados al estado.
+   * @param {Object} e - Evento de cambio.
+   */
   const handleAddFiles = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFiles = Array.from(e.target.files)
@@ -385,17 +510,27 @@ export default function Composiciones() {
     }
   }
 
-  // Eliminar archivo nuevo
+  /**
+   * Elimina un archivo nuevo del estado.
+   * @param {number} index - Índice del archivo a eliminar.
+   */
   const handleRemoveNewFile = (index) => {
     setNewFiles((prev) => prev.filter((_, i) => i !== index))
   }
 
-  // Eliminar archivo existente
+  /**
+   * Elimina un archivo existente del estado.
+   * @param {number} index - Índice del archivo a eliminar.
+   */
   const handleRemoveExistingFile = (index) => {
     setExistingFiles((prev) => prev.filter((_, i) => i !== index))
   }
 
-  // Enviar formulario de composición
+  /**
+   * Envía el formulario para crear o editar una composición.
+   * @async
+   * @param {Object} e - Evento de envío.
+   */
   const handleSubmitComposicion = async (e) => {
     e.preventDefault()
 
@@ -431,7 +566,6 @@ export default function Composiciones() {
         return
       }
 
-      // Resto del código permanece igual...
       setIsUploading(true)
       setUploadProgress(0)
 
@@ -470,26 +604,25 @@ export default function Composiciones() {
         },
       }
 
-      // LOG del contenido que se manda
-      console.log("Datos a enviar:")
-      console.log("nombre:", formData.nombre)
-      console.log("descripcion:", formData.descripcion)
-      console.log("nombre_autor:", formData.nombre_autor)
-      if (includeYoutube) console.log("iframe:", youtubeUrl)
-      if (includeFiles && existingFiles.length > 0) console.log("existing_files[]:", existingFiles)
-      if (includeFiles && newFiles.length > 0) {
-        console.log(
-          "files[]:",
-          newFiles.map((file) => `File: ${file.name} (${file.size} bytes)`),
-        )
-      }
+      // console.log("Datos a enviar:")
+      // console.log("nombre:", formData.nombre)
+      // console.log("descripcion:", formData.descripcion)
+      // console.log("nombre_autor:", formData.nombre_autor)
+      // if (includeYoutube) console.log("iframe:", youtubeUrl)
+      // if (includeFiles && existingFiles.length > 0) console.log("existing_files[]:", existingFiles)
+      // if (includeFiles && newFiles.length > 0) {
+      //   console.log(
+      //     "files[]:",
+      //     newFiles.map((file) => `File: ${file.name} (${file.size} bytes)`),
+      //   )
+      // }
 
       let response
 
       if (editingComposicion) {
         composicionData.append("_method", "PUT")
         response = await api.post(`/composiciones/${editingComposicion.id}`, composicionData, config)
-        console.log("Respuesta al actualizar composición:", response.data)
+        // console.log("Respuesta al actualizar composición:", response.data)
 
         // Actualizar con los datos del servidor
         if (response.data && (response.data.data || response.data)) {
@@ -505,7 +638,7 @@ export default function Composiciones() {
                 files: Array.isArray(rutaObj.files) ? rutaObj.files : [],
               }
             } catch (e) {
-              console.warn("Error al parsear ruta devuelta:", e)
+              // console.warn("Error al parsear ruta devuelta:", e)
             }
           }
 
@@ -530,7 +663,7 @@ export default function Composiciones() {
         }
       } else {
         response = await api.post("/composiciones", composicionData, config)
-        console.log("Respuesta al crear composición:", response.data)
+        // console.log("Respuesta al crear composición:", response.data)
 
         // Añadir la nueva composición con los datos del servidor
         if (response.data && (response.data.data || response.data)) {
@@ -546,7 +679,7 @@ export default function Composiciones() {
                 files: Array.isArray(rutaObj.files) ? rutaObj.files : [],
               }
             } catch (e) {
-              console.warn("Error al parsear ruta devuelta:", e)
+              // console.warn("Error al parsear ruta devuelta:", e)
             }
           }
 
@@ -569,7 +702,7 @@ export default function Composiciones() {
 
       setShowModal(false)
     } catch (error) {
-      console.error("Error al guardar composición:", error)
+      // console.error("Error al guardar composición:", error)
 
       // Mejorar el manejo de errores
       let errorMessage = t("compositions.errorSavingComposition")
@@ -590,7 +723,10 @@ export default function Composiciones() {
     }
   }
 
-  // Función para abrir archivos en una nueva pestaña
+  /**
+   * Abre un archivo en una nueva pestaña.
+   * @param {string} fileName - Nombre del archivo.
+   */
   const handleOpenFile = (fileName) => {
     if (fileName) {
       const fileUrl = `${IMAGES_URL}/${fileName}`
@@ -598,12 +734,19 @@ export default function Composiciones() {
     }
   }
 
-  // Función para mostrar el modal de archivos
+  /**
+   * Muestra el modal de archivos de una composición.
+   * @param {Object} composicion - Composición seleccionada.
+   */
   const handleShowFilesModal = (composicion) => {
     setSelectedComposicion(composicion)
     setShowFilesModal(true)
   }
 
+  /**
+   * Filtra las composiciones según el término de búsqueda.
+   * @type {Array}
+   */
   const filteredComposiciones = composiciones.filter((composicion) => {
     if (!composicion) return false
 

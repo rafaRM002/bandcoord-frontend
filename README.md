@@ -1,3 +1,10 @@
+<!--
+  @file README.md
+  @module readme
+  @description Documentación principal del proyecto BandCoord. Incluye descripción general, características, tecnologías, instalación, estructura, funcionalidades por rol, internacionalización, responsive design, seguridad, despliegue, contribución, roadmap, reporte de bugs, licencia y equipo de desarrollo. Proporciona una guía completa para usuarios y desarrolladores sobre el uso y mantenimiento de la aplicación.
+  @author Rafael Rodriguez Mengual
+-->
+
 # BandCoord 🎵
 
 **Sistema de Gestión Integral para Bandas de Música**
@@ -224,7 +231,7 @@ Para reportar bugs o solicitar funcionalidades:
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+Este proyecto está bajo la Licencia MIT. Ver el archivo [`LICENSE`](./LICENSE) para más detalles.
 
 ## 👥 Equipo de Desarrollo
 
@@ -239,4 +246,3 @@ Para soporte técnico o consultas:
 ---
 
 **BandCoord** - Coordinando la música, simplificando la gestión 🎵
-```

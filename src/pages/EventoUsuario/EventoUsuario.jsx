@@ -1,3 +1,10 @@
+/**
+ * @file EventoUsuario.jsx
+ * @module pages/EventoUsuario/EventoUsuario
+ * @description Página para la gestión de asignaciones de usuarios a eventos. Permite crear, editar, eliminar, buscar y visualizar asignaciones, así como ver estadísticas de asistencia por evento y por tipo de instrumento. Solo los administradores pueden modificar datos.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState, useEffect, useContext } from "react"
@@ -21,46 +28,83 @@ import api from "../../api/axios"
 import { toast } from "react-toastify"
 import { useTranslation } from "../../hooks/useTranslation"
 
+/**
+ * Componente principal para la gestión de asignaciones de usuarios a eventos.
+ * Permite listar, buscar, crear, editar, eliminar y visualizar estadísticas de asignaciones.
+ * @component
+ * @returns {JSX.Element} Página de asignaciones evento-usuario.
+ */
 export default function EventoUsuario() {
+  /** Hook de traducción */
   const { t } = useTranslation()
+  /** Lista de asignaciones evento-usuario */
   const [eventosUsuario, setEventosUsuario] = useState([])
+  /** Estado de carga */
   const [loading, setLoading] = useState(true)
+  /** Estado de error */
   const [error, setError] = useState(null)
+  /** Usuario autenticado */
   const { user } = useContext(AuthContext)
+  /** Lista de eventos */
   const [eventos, setEventos] = useState([])
+  /** Lista de usuarios */
   const [usuarios, setUsuarios] = useState([])
+  /** Lista de tipos de instrumento */
   const [tiposInstrumento, setTiposInstrumento] = useState([])
+  /** Término de búsqueda */
   const [searchTerm, setSearchTerm] = useState("")
+  /** Filtro por evento */
   const [eventoFilter, setEventoFilter] = useState("")
+  /** Filtro por usuario */
   const [usuarioFilter, setUsuarioFilter] = useState("")
+  /** Estado del modal de asignación */
   const [showModal, setShowModal] = useState(false)
-  const [modalMode, setModalMode] = useState("create") // "create" o "edit"
+  /** Modo del modal: "create" o "edit" */
+  const [modalMode, setModalMode] = useState("create")
+  /** Asignación actual para crear/editar */
   const [currentEventoUsuario, setCurrentEventoUsuario] = useState({
     evento_id: "",
     usuario_id: "",
     confirmacion: false,
   })
+  /** Estado del modal de confirmación de borrado */
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  /** Asignación a eliminar */
   const [eventoUsuarioToDelete, setEventoUsuarioToDelete] = useState(null)
+  /** Estado de expansión de eventos */
   const [expandedEventos, setExpandedEventos] = useState({})
-  const [viewMode, setViewMode] = useState("list") // "list" o "stats"
+  /** Modo de vista: "list" o "stats" */
+  const [viewMode, setViewMode] = useState("list")
+  /** Elementos por página en la vista de lista */
   const [itemsPerPage] = useState(2)
+  /** Página actual en la vista de lista */
   const [currentPage, setCurrentPage] = useState(1)
+  /** Página actual en la vista de estadísticas */
   const [currentStatsPage, setCurrentStatsPage] = useState(1)
+  /** Elementos por página en la vista de estadísticas */
   const [statsPerPage] = useState(2)
+  /** Estado de advertencia por duplicado */
   const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
 
+  /** Usuario autenticado y si es admin */
   const { user: loggedInUser, isAdmin } = useAuth()
 
+  /**
+   * Efecto para cargar datos al montar el componente o cambiar el usuario.
+   */
   useEffect(() => {
     fetchData()
   }, [user])
 
+  /**
+   * Carga los datos de asignaciones, eventos, usuarios y tipos de instrumento.
+   * @async
+   */
   const fetchData = async () => {
     try {
       setLoading(true)
       setError(null)
-      console.log("Intentando cargar datos de eventos-usuario...")
+      // console.log("Intentando cargar datos de eventos-usuario...")
 
       const [eventosUsuarioRes, eventosRes, usuariosRes, tiposInstrumentoRes] = await Promise.all([
         api.get("/evento-usuario"),
@@ -69,10 +113,10 @@ export default function EventoUsuario() {
         api.get("/tipo-instrumentos"),
       ])
 
-      console.log("Respuesta de evento-usuario:", eventosUsuarioRes)
-      console.log("Respuesta de eventos:", eventosRes)
-      console.log("Respuesta de usuarios:", usuariosRes)
-      console.log("Respuesta de tipos de instrumento:", tiposInstrumentoRes)
+      // console.log("Respuesta de evento-usuario:", eventosUsuarioRes)
+      // console.log("Respuesta de eventos:", eventosRes)
+      // console.log("Respuesta de usuarios:", usuariosRes)
+      // console.log("Respuesta de tipos de instrumento:", tiposInstrumentoRes)
 
       // Procesar datos de eventos-usuario
       let eventosUsuarioData = []
@@ -81,7 +125,7 @@ export default function EventoUsuario() {
       } else if (eventosUsuarioRes.data && eventosUsuarioRes.data.data && Array.isArray(eventosUsuarioRes.data.data)) {
         eventosUsuarioData = eventosUsuarioRes.data.data
       } else {
-        console.warn("Formato de respuesta inesperado para eventos-usuario:", eventosUsuarioRes.data)
+        // console.warn("Formato de respuesta inesperado para eventos-usuario:", eventosUsuarioRes.data)
       }
 
       // Mapear los datos para tener una estructura consistente
@@ -111,7 +155,7 @@ export default function EventoUsuario() {
       } else if (eventosRes.data && eventosRes.data.data && Array.isArray(eventosRes.data.data)) {
         eventosData = eventosRes.data.data
       } else {
-        console.warn("Formato de respuesta inesperado para eventos:", eventosRes.data)
+        // console.warn("Formato de respuesta inesperado para eventos:", eventosRes.data)
       }
 
       // Ordenar eventos por nombre
@@ -125,7 +169,7 @@ export default function EventoUsuario() {
       } else if (usuariosRes.data && usuariosRes.data.data && Array.isArray(usuariosRes.data.data)) {
         usuariosData = usuariosRes.data.data
       } else {
-        console.warn("Formato de respuesta inesperado para usuarios:", usuariosRes.data)
+        // console.warn("Formato de respuesta inesperado para usuarios:", usuariosRes.data)
       }
       setUsuarios(usuariosData)
 
@@ -140,7 +184,7 @@ export default function EventoUsuario() {
       ) {
         tiposData = tiposInstrumentoRes.data.data
       } else {
-        console.warn("Formato de respuesta inesperado para tipos de instrumento:", tiposInstrumentoRes.data)
+        // console.warn("Formato de respuesta inesperado para tipos de instrumento:", tiposInstrumentoRes.data)
       }
       setTiposInstrumento(tiposData)
 
@@ -154,7 +198,6 @@ export default function EventoUsuario() {
       console.error("Error al cargar datos:", error)
       setError(`Error al cargar datos: ${error.message}`)
 
-      // Intentar determinar el tipo de error
       if (error.response) {
         console.error("Respuesta del servidor:", error.response.status, error.response.data)
         setError(`Error del servidor: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
@@ -170,6 +213,11 @@ export default function EventoUsuario() {
     }
   }
 
+  /**
+   * Abre el modal para crear o editar una asignación.
+   * @param {"create"|"edit"} mode - Modo del modal.
+   * @param {Object} eventoUsuario - Asignación a editar (opcional).
+   */
   const handleOpenModal = (
     mode,
     eventoUsuario = {
@@ -183,6 +231,10 @@ export default function EventoUsuario() {
     setShowModal(true)
   }
 
+  /**
+   * Maneja el cambio en los campos del formulario del modal.
+   * @param {Object} e - Evento de cambio.
+   */
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target
     const newEventoUsuario = {
@@ -205,6 +257,11 @@ export default function EventoUsuario() {
     }
   }
 
+  /**
+   * Envía el formulario para crear o editar una asignación evento-usuario.
+   * @async
+   * @param {Object} e - Evento de envío.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -238,11 +295,20 @@ export default function EventoUsuario() {
     }
   }
 
+  /**
+   * Abre el modal de confirmación de borrado para una asignación.
+   * @param {number} eventoId - ID del evento.
+   * @param {number} usuarioId - ID del usuario.
+   */
   const confirmDelete = (eventoId, usuarioId) => {
     setEventoUsuarioToDelete({ eventoId, usuarioId })
     setShowDeleteModal(true)
   }
 
+  /**
+   * Elimina una asignación evento-usuario seleccionada.
+   * @async
+   */
   const handleDelete = async () => {
     if (!eventoUsuarioToDelete) return
 
@@ -263,6 +329,10 @@ export default function EventoUsuario() {
     }
   }
 
+  /**
+   * Alterna la expansión de un evento en la vista.
+   * @param {number} eventoId - ID del evento.
+   */
   const toggleEventoExpanded = (eventoId) => {
     setExpandedEventos((prev) => ({
       ...prev,
@@ -270,7 +340,10 @@ export default function EventoUsuario() {
     }))
   }
 
-  // Filtrar eventos según los criterios de búsqueda
+  /**
+   * Filtra los eventos según los criterios de búsqueda y filtros seleccionados.
+   * @type {Array}
+   */
   const filteredEventos = eventos.filter((evento) => {
     // Filtrar por término de búsqueda en el nombre del evento
     const matchesSearch = evento.nombre.toLowerCase().includes(searchTerm.toLowerCase())
@@ -291,6 +364,11 @@ export default function EventoUsuario() {
     return matchesSearch && matchesEvento && tieneAsignaciones
   })
 
+  /**
+   * Devuelve el nombre del usuario por su ID.
+   * @param {number} usuarioId - ID del usuario.
+   * @returns {string} Nombre del usuario.
+   */
   const getUsuarioNombre = (usuarioId) => {
     // Primero buscar en los eventosUsuario por si tiene el objeto usuario anidado
     const itemConUsuario = eventosUsuario.find((item) => item.usuario_id === usuarioId && item.usuario)
@@ -303,46 +381,76 @@ export default function EventoUsuario() {
     return usuario ? `${usuario.nombre} ${usuario.apellido1 || ""}` : t("userEvents.unknownUser")
   }
 
-  // Formatear fecha para mostrar
+  /**
+   * Formatea una fecha a formato DD/MM/YYYY.
+   * @param {string} dateString - Fecha en formato ISO.
+   * @returns {string} Fecha formateada.
+   */
   const formatDate = (dateString) => {
     if (!dateString) return "-"
     const options = { day: "2-digit", month: "2-digit", year: "numeric" }
     return new Date(dateString).toLocaleDateString("es-ES", options)
   }
 
-  // Formatear hora para mostrar
+  /**
+   * Formatea una hora a formato HH:MM.
+   * @param {string} timeString - Hora en formato HH:MM:SS.
+   * @returns {string} Hora formateada.
+   */
   const formatTime = (timeString) => {
     if (!timeString) return "-"
-    return timeString.substring(0, 5) // Extraer solo HH:MM
+    return timeString.substring(0, 5)
   }
 
+  /**
+   * Devuelve la fecha del evento por su ID.
+   * @param {number} eventoId - ID del evento.
+   * @returns {string} Fecha formateada.
+   */
   const getEventoFecha = (eventoId) => {
-    // Primero buscar en los eventosUsuario por si tiene el objeto evento anidado
     const itemConEvento = eventosUsuario.find((item) => item.evento_id === eventoId && item.evento)
     if (itemConEvento && itemConEvento.evento && itemConEvento.evento.fecha) {
       return formatDate(itemConEvento.evento.fecha)
     }
-
-    // Si no, buscar en la lista de eventos
     const evento = eventos.find((e) => e.id === eventoId)
     return evento && evento.fecha ? formatDate(evento.fecha) : "-"
   }
 
+  /**
+   * Devuelve la hora del evento por su ID.
+   * @param {number} eventoId - ID del evento.
+   * @returns {string} Hora formateada.
+   */
   const getEventoHora = (eventoId) => {
     const evento = eventos.find((e) => e.id === eventoId)
     return evento && evento.hora ? formatTime(evento.hora) : "-"
   }
 
+  /**
+   * Devuelve el lugar del evento por su ID.
+   * @param {number} eventoId - ID del evento.
+   * @returns {string} Lugar del evento.
+   */
   const getEventoLugar = (eventoId) => {
     const evento = eventos.find((e) => e.id === eventoId)
     return evento && evento.lugar ? evento.lugar : "-"
   }
 
+  /**
+   * Devuelve el tipo del evento por su ID.
+   * @param {number} eventoId - ID del evento.
+   * @returns {string} Tipo del evento.
+   */
   const getEventoTipo = (eventoId) => {
     const evento = eventos.find((e) => e.id === eventoId)
     return evento && evento.tipo ? evento.tipo : ""
   }
 
+  /**
+   * Traduce el tipo de evento.
+   * @param {string} tipo - Tipo de evento.
+   * @returns {string} Traducción del tipo.
+   */
   const getEventoTipoTranslated = (tipo) => {
     switch (tipo) {
       case "concierto":
@@ -358,24 +466,30 @@ export default function EventoUsuario() {
     }
   }
 
+  /**
+   * Devuelve las asignaciones de un evento.
+   * @param {number} eventoId - ID del evento.
+   * @returns {Array} Asignaciones del evento.
+   */
   const getAsignacionesPorEvento = (eventoId) => {
     let asignaciones = eventosUsuario.filter((item) => item.evento_id === eventoId)
 
     // Si no es admin, verificar que el usuario actual esté asignado al evento
     if (!isAdmin) {
       const usuarioAsignado = asignaciones.some((item) => item.usuario_id === loggedInUser.id)
-      // Si el usuario actual está asignado, mostrar todas las asignaciones del evento
-      // Si no está asignado, no mostrar ninguna asignación
       if (!usuarioAsignado) {
         asignaciones = []
       }
-      // Si está asignado, devolver todas las asignaciones (no filtrar)
     }
 
     return asignaciones
   }
 
-  // Calcular estadísticas para un evento
+  /**
+   * Calcula estadísticas de asistencia para un evento.
+   * @param {number} eventoId - ID del evento.
+   * @returns {Object} Estadísticas del evento.
+   */
   const getEstadisticasEvento = (eventoId) => {
     const asignaciones = getAsignacionesPorEvento(eventoId)
     const totalAsignados = asignaciones.length
@@ -383,7 +497,6 @@ export default function EventoUsuario() {
     const porcentajeConfirmados = totalAsignados > 0 ? Math.round((totalConfirmados / totalAsignados) * 100) : 0
 
     // Obtener estadísticas por tipo de instrumento
-    // Primero necesitamos saber qué instrumento toca cada usuario
     const usuariosInstrumentos = usuarios.reduce((acc, usuario) => {
       if (usuario.instrumento_tipo_id) {
         acc[usuario.id] = usuario.instrumento_tipo_id
@@ -391,7 +504,6 @@ export default function EventoUsuario() {
       return acc
     }, {})
 
-    // Contar por tipo de instrumento
     const porTipoInstrumento = {}
     asignaciones.forEach((asignacion) => {
       const usuarioId = asignacion.usuario_id
@@ -421,12 +533,20 @@ export default function EventoUsuario() {
     }
   }
 
+  /**
+   * Devuelve el nombre del tipo de instrumento por su ID.
+   * @param {number|string} tipoId - ID del tipo de instrumento.
+   * @returns {string} Nombre del tipo de instrumento.
+   */
   const getTipoInstrumentoNombre = (tipoId) => {
     const tipo = tiposInstrumento.find((t) => t.id === tipoId || t.instrumento === tipoId)
     return tipo ? tipo.nombre || tipo.instrumento : t("userEvents.unknownInstrument")
   }
 
-  // Agrupar asignaciones por evento para la vista de lista
+  /**
+   * Agrupa las asignaciones por evento para la vista de lista.
+   * @type {Array}
+   */
   const eventosAgrupados = filteredEventos.map((evento) => {
     const asignaciones = getAsignacionesPorEvento(evento.id)
     return {
@@ -435,31 +555,41 @@ export default function EventoUsuario() {
     }
   })
 
-  // Calcular los índices para la paginación
+  // Paginación para vista de lista
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
   const currentEventosAgrupados = eventosAgrupados.slice(indexOfFirstItem, indexOfLastItem)
   const totalPages = Math.ceil(eventosAgrupados.length / itemsPerPage)
 
-  // Función para cambiar la página
+  /**
+   * Cambia la página actual en la vista de lista.
+   * @param {number} pageNumber - Número de página.
+   */
   const paginate = (pageNumber) => {
     if (pageNumber > 0 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber)
     }
   }
 
+  // Paginación para vista de estadísticas
   const indexOfLastStat = currentStatsPage * statsPerPage
   const indexOfFirstStat = indexOfLastStat - statsPerPage
   const currentStatsEventos = filteredEventos.slice(indexOfFirstStat, indexOfLastStat)
   const totalStatsPages = Math.ceil(filteredEventos.length / statsPerPage)
 
-  // Función para cambiar la página de estadísticas
+  /**
+   * Cambia la página actual en la vista de estadísticas.
+   * @param {number} pageNumber - Número de página.
+   */
   const paginateStats = (pageNumber) => {
     if (pageNumber > 0 && pageNumber <= totalStatsPages) {
       setCurrentStatsPage(pageNumber)
     }
   }
 
+  /**
+   * Cierra el modal de asignación.
+   */
   const handleCloseModal = () => {
     setShowModal(false)
     setShowDuplicateWarning(false)
@@ -470,6 +600,11 @@ export default function EventoUsuario() {
     })
   }
 
+  /**
+   * Devuelve los detalles de un evento por su ID.
+   * @param {number} eventoId - ID del evento.
+   * @returns {Object} Detalles del evento.
+   */
   const getEventoDetalles = (eventoId) => {
     const evento = eventos.find((e) => e.id === eventoId)
     return evento || {}

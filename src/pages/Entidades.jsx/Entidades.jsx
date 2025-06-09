@@ -1,3 +1,10 @@
+/**
+ * @file Entidades.jsx
+ * @module pages/Entidades/Entidades
+ * @description Página para la gestión de entidades (hermandades, ayuntamientos, etc). Permite crear, editar, eliminar, buscar y paginar entidades. Solo los administradores pueden modificar datos.
+ * @author Rafael Rodriguez Mengual
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -5,25 +12,43 @@ import { Plus, Edit, Trash2, Search, Building2, ArrowLeft, ArrowRight, Save, Pho
 import api from "../../api/axios"
 import { toast } from "react-toastify"
 import { useTranslation } from "../../hooks/useTranslation"
-// Importar useAuth
 import { useAuth } from "../../context/AuthContext"
 
+/**
+ * Componente principal para la gestión de entidades.
+ * Permite listar, buscar, crear, editar y eliminar entidades.
+ * @component
+ * @returns {JSX.Element} Página de entidades.
+ */
 export default function Entidades() {
+  /** Hook de traducción */
   const { t } = useTranslation()
+  /** Lista de entidades */
   const [entidades, setEntidades] = useState([])
+  /** Estado de carga */
   const [loading, setLoading] = useState(true)
+  /** Término de búsqueda */
   const [searchTerm, setSearchTerm] = useState("")
+  /** Estado del modal de confirmación de borrado */
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  /** ID de la entidad a eliminar */
   const [entidadToDelete, setEntidadToDelete] = useState(null)
+  /** Estado del modal de formulario */
   const [showFormModal, setShowFormModal] = useState(false)
-  const [modalMode, setModalMode] = useState("create") // "create" o "edit"
+  /** Modo del modal: "create" o "edit" */
+  const [modalMode, setModalMode] = useState("create")
+  /** Estado de guardado */
   const [saving, setSaving] = useState(false)
+  /** Mensaje de error */
   const [error, setError] = useState("")
 
   // Paginación
+  /** Página actual */
   const [currentPage, setCurrentPage] = useState(1)
+  /** Elementos por página */
   const itemsPerPage = 10
 
+  /** Datos del formulario de entidad */
   const [formData, setFormData] = useState({
     id: null,
     nombre: "",
@@ -33,9 +58,12 @@ export default function Entidades() {
     email_contacto: "",
   })
 
-  // Dentro del componente:
+  /** Si el usuario es administrador */
   const { isAdmin } = useAuth()
 
+  /**
+   * Efecto para cargar entidades al montar el componente.
+   */
   useEffect(() => {
     const fetchEntidades = async () => {
       try {
@@ -60,6 +88,11 @@ export default function Entidades() {
     fetchEntidades()
   }, [])
 
+  /**
+   * Abre el modal de formulario en modo crear o editar.
+   * @param {"create"|"edit"} mode - Modo del modal.
+   * @param {Object|null} entidad - Entidad a editar (opcional).
+   */
   const handleOpenModal = (mode, entidad = null) => {
     setModalMode(mode)
     if (mode === "edit" && entidad) {
@@ -84,16 +117,28 @@ export default function Entidades() {
     setShowFormModal(true)
   }
 
+  /**
+   * Cierra el modal de formulario.
+   */
   const handleCloseModal = () => {
     setShowFormModal(false)
     setError("")
   }
 
+  /**
+   * Maneja el cambio en los campos del formulario.
+   * @param {Object} e - Evento de cambio.
+   */
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
+  /**
+   * Envía el formulario para crear o editar una entidad.
+   * @async
+   * @param {Object} e - Evento de envío.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSaving(true)
@@ -127,6 +172,10 @@ export default function Entidades() {
     }
   }
 
+  /**
+   * Elimina una entidad seleccionada.
+   * @async
+   */
   const handleDelete = async () => {
     if (!entidadToDelete) return
 
@@ -142,11 +191,19 @@ export default function Entidades() {
     }
   }
 
+  /**
+   * Abre el modal de confirmación de borrado para una entidad.
+   * @param {number} id - ID de la entidad a eliminar.
+   */
   const confirmDelete = (id) => {
     setEntidadToDelete(id)
     setShowDeleteModal(true)
   }
 
+  /**
+   * Filtra las entidades según el término de búsqueda.
+   * @type {Array}
+   */
   const filteredEntidades = entidades.filter(
     (entidad) =>
       entidad.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -155,11 +212,20 @@ export default function Entidades() {
   )
 
   // Paginación
+  /** Índice del último elemento de la página */
   const indexOfLastItem = currentPage * itemsPerPage
+  /** Índice del primer elemento de la página */
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  /** Entidades a mostrar en la página actual */
   const currentItems = filteredEntidades.slice(indexOfFirstItem, indexOfLastItem)
+  /** Total de páginas */
   const totalPages = Math.ceil(filteredEntidades.length / itemsPerPage)
 
+  /**
+   * Devuelve la traducción del tipo de entidad.
+   * @param {string} tipo - Tipo de entidad.
+   * @returns {string} Traducción del tipo.
+   */
   const getTipoEntidad = (tipo) => {
     switch (tipo) {
       case "hermandad":
@@ -173,6 +239,7 @@ export default function Entidades() {
     }
   }
 
+  // Renderizado de la interfaz y modales
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
