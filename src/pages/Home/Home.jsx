@@ -304,7 +304,7 @@ function UserDashboard({ user }) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <QuickAccessCard
             icon={<Calendar className="h-8 w-8 text-[#C0C0C0]" />}
-            title={t("home.upcomingEvents")}
+            title={t("navbar.events")}
             description={t("home.viewAllEvents")}
             link="/eventos"
           />
