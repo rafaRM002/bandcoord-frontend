@@ -1022,10 +1022,10 @@ const [selectedComposicion, setSelectedComposicion] = useState(null)
                 onClick={() => setShowDeleteModal(false)}
                 className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
               >
-                {t("compositions.cancel")}
+                {t("common.cancel")}
               </button>
               <button onClick={handleDelete} className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800">
-                {t("compositions.delete")}
+                {t("common.delete")}
               </button>
             </div>
           </div>
@@ -1106,7 +1106,7 @@ const [selectedComposicion, setSelectedComposicion] = useState(null)
               <div className="mt-6 space-y-2">
                 <label className="block text-[#C0C0C0] text-sm font-medium">
                   {t("compositions.contentType")} *{" "}
-                  <span className="text-xs text-gray-500">{t("(compositions.bothOptions)")}</span>
+                  <span className="text-xs text-gray-500"> {t("compositions.bothOptions")}</span>
                 </label>
                 <div className="flex flex-wrap gap-4">
                   <div className="flex items-center space-x-2">

@@ -594,6 +594,7 @@ export const translations = {
       loanDate: "Fecha de Préstamo",
       returnDate: "Fecha de Devolución",
       active: "Activo",
+      createLoan: "Crear Préstamo",
       returned: "Devuelto",
       allUsers: "Todos los usuarios",
       allStatuses: "Todos los estados",
@@ -636,6 +637,8 @@ export const translations = {
       returnInstrument: "Devolver Instrumento",
       confirmReturn: "¿Confirmar devolución?",
       returnConfirmText: "¿Estás seguro de que deseas marcar este instrumento como devuelto?",
+      confirmDeleteTitle: "Confirmar Eliminación de Préstamo",
+      confirmDeleteMessage: "¿Estás seguro de que deseas eliminar este préstamo? Esta acción no se puede deshacer.",
     },
 
     // Entities
@@ -728,6 +731,7 @@ export const translations = {
       user: "usuario",
       users: "usuarios",
       author: "Autor",
+      noCompositionsFoundWithFilters: "No se encontraron composiciones con los filtros aplicados.",
       assignToUser: "Asignar a usuario",
       youtubeVideo: "Video de YouTube",
       attachedFile: "Archivo adjunto",
@@ -1516,6 +1520,7 @@ export const translations = {
       instrument: "Instrument",
       user: "User",
       loanDate: "Loan Date",
+      createLoan: "Create Loan",
       returnDate: "Return Date",
       active: "Active",
       returned: "Returned",
@@ -1559,6 +1564,8 @@ export const translations = {
       returnInstrument: "Return Instrument",
       confirmReturn: "Confirm return?",
       returnConfirmText: "Are you sure you want to mark this instrument as returned?",
+      confirmDeleteTitle: "Confirm Loan Deletion",
+      confirmDeleteMessage: "Are you sure you want to delete this loan? This action cannot be undone.",
     },
 
     // Entities
@@ -1655,6 +1662,7 @@ export const translations = {
       loadingInterpretedCompositions: "Loading interpreted compositions...",
       errorLoadingInterpretedCompositions: "Error loading interpreted compositions. Please try again later.",
       errorLoadingUsersList: "Error loading users list",
+      noCompositionsFoundWithFilters: "No compositions found with the applied filters.",
       user: "user",
       users: "users",
       author: "Author",
