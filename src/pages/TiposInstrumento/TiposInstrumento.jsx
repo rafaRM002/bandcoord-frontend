@@ -63,6 +63,8 @@ export default function TiposInstrumento() {
   const [currentTipoForQuantity, setCurrentTipoForQuantity] = useState(null)
   /** Lista de instrumentos (para gestión de cantidad) */
   const [instrumentos, setInstrumentos] = useState([])
+  /** Lista de prestamos */
+  const [prestamos, setPrestamos] = useState([])
 
   /**
    * Efecto para cargar tipos e instrumentos al montar el componente.
@@ -70,6 +72,7 @@ export default function TiposInstrumento() {
   useEffect(() => {
     fetchTipos()
     fetchInstrumentos()
+    fetchPrestamos()
   }, [])
 
   /**
@@ -123,6 +126,19 @@ export default function TiposInstrumento() {
       setInstrumentos(response.data)
     } catch (error) {
       console.error("Error al cargar instrumentos:", error)
+    }
+  }
+
+  /**
+   * Obtiene los prestamos desde la API.
+   * @async
+   */
+  const fetchPrestamos = async () => {
+    try {
+      const response = await api.get("/prestamos")
+      setPrestamos(response.data)
+    } catch (error) {
+      console.error("Error al cargar prestamos:", error)
     }
   }
 
@@ -350,7 +366,7 @@ export default function TiposInstrumento() {
   }
 
   /**
-   * Elimina un tipo de instrumento.
+   * Elimina un tipo de instrumento y todos los instrumentos y préstamos asociados.
    * @async
    */
   const handleDelete = async () => {
@@ -358,12 +374,58 @@ export default function TiposInstrumento() {
 
     try {
       setOperationLoading(true)
+
+      console.log(`🗑️ Iniciando eliminación en cascada del tipo: ${tipoToDelete}`)
+
+      // 1. Obtener todos los instrumentos de este tipo
+      const instrumentosDelTipo = instrumentos.filter((i) => i.instrumento_tipo_id === tipoToDelete)
+      console.log(`📋 Encontrados ${instrumentosDelTipo.length} instrumentos del tipo ${tipoToDelete}`)
+
+      // 2. Para cada instrumento, eliminar sus préstamos asociados
+      for (const instrumento of instrumentosDelTipo) {
+        try {
+          // Obtener préstamos del instrumento
+          const prestamosDelInstrumento = prestamos.filter(
+            (p) => String(p.num_serie) === String(instrumento.numero_serie),
+          )
+
+          console.log(
+            `🔄 Eliminando ${prestamosDelInstrumento.length} préstamos del instrumento ${instrumento.numero_serie}`,
+          )
+
+          // Eliminar cada préstamo
+          for (const prestamo of prestamosDelInstrumento) {
+            try {
+              await api.delete(`/prestamos/${prestamo.num_serie}/${prestamo.usuario_id}`)
+              console.log(`✅ Préstamo eliminado: ${prestamo.num_serie}/${prestamo.usuario_id}`)
+            } catch (error) {
+              console.error(`❌ Error al eliminar préstamo ${prestamo.num_serie}/${prestamo.usuario_id}:`, error)
+            }
+          }
+
+          // Eliminar el instrumento
+          await api.delete(`/instrumentos/${instrumento.numero_serie}`)
+          console.log(`✅ Instrumento ${instrumento.numero_serie} eliminado`)
+        } catch (error) {
+          console.error(`❌ Error al eliminar instrumento ${instrumento.numero_serie}:`, error)
+        }
+      }
+
+      // 3. Finalmente, eliminar el tipo de instrumento
       await api.delete(`/tipo-instrumentos/${encodeURIComponent(tipoToDelete)}`)
+      console.log(`✅ Tipo de instrumento ${tipoToDelete} eliminado`)
+
+      // 4. Actualizar estados locales
       await fetchTipos()
+      await fetchInstrumentos()
+
       setShowDeleteModal(false)
       setTipoToDelete(null)
+
+      console.log(`✅ Eliminación en cascada completada para el tipo: ${tipoToDelete}`)
     } catch (error) {
-      console.error("Error al eliminar tipo de instrumento:", error)
+      console.error("❌ Error en eliminación en cascada:", error)
+      setValidationError(`Error al eliminar el tipo de instrumento: ${error.message}`)
     } finally {
       setOperationLoading(false)
     }
@@ -710,12 +772,55 @@ export default function TiposInstrumento() {
         </div>
       )}
 
-      {/* Modal de confirmación de eliminación */}
+      {/* Modal de confirmación de eliminación mejorado */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("instrumentTypes.confirmDelete")}</h3>
-            <p className="text-gray-400 mb-6">{t("instrumentTypes.deleteConfirmText", { tipoToDelete })}</p>
+          <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-lg">
+            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4 flex items-center gap-2">
+              <Trash2 className="text-red-400" size={24} />
+              {t("instrumentTypes.confirmDelete")}
+            </h3>
+
+            <div className="space-y-4 mb-6">
+              <div className="bg-yellow-900/20 border border-yellow-800 rounded-lg p-4">
+                <h4 className="text-yellow-300 font-medium mb-2">⚠️ Eliminación en Cascada</h4>
+                <p className="text-yellow-100 text-sm mb-3">
+                  Al eliminar el tipo "{tipoToDelete}", se realizarán las siguientes acciones:
+                </p>
+                <ul className="text-yellow-100 text-sm space-y-2">
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-400 mt-1">•</span>
+                    <span>
+                      Se eliminarán{" "}
+                      <strong>{instrumentos.filter((i) => i.instrumento_tipo_id === tipoToDelete).length}</strong>{" "}
+                      instrumentos de este tipo
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-400 mt-1">•</span>
+                    <span>Se eliminarán todos los préstamos asociados a estos instrumentos</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-400 mt-1">•</span>
+                    <span>Se eliminará el tipo de instrumento "{tipoToDelete}"</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="bg-red-900/20 border border-red-800 rounded-lg p-4">
+                <p className="text-red-300 font-medium text-sm flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fillRule="evenodd"
+                      d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Esta acción no se puede deshacer
+                </p>
+              </div>
+            </div>
+
             <div className="flex justify-end space-x-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
@@ -723,8 +828,12 @@ export default function TiposInstrumento() {
               >
                 {t("common.cancel")}
               </button>
-              <button onClick={handleDelete} className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800">
-                Eliminar
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800 flex items-center gap-2"
+              >
+                <Trash2 size={18} />
+                Eliminar Todo
               </button>
             </div>
           </div>

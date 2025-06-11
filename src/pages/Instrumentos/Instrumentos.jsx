@@ -8,7 +8,20 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Edit, Trash2, Search, Music, Filter, ChevronLeft, ChevronRight, Save, X, AlertTriangle, Info } from 'lucide-react'
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Search,
+  Music,
+  Filter,
+  ChevronLeft,
+  ChevronRight,
+  Save,
+  X,
+  AlertTriangle,
+  Info,
+} from "lucide-react"
 import api from "../../api/axios"
 import { useTranslation } from "../../hooks/useTranslation"
 import { useAuth } from "../../context/AuthContext"
@@ -153,15 +166,30 @@ export default function Instrumentos() {
 
   /**
    * Elimina un instrumento y sus préstamos asociados, y actualiza la cantidad del tipo.
+   * Si es el último instrumento del tipo, elimina también el tipo de instrumento.
    * @async
    */
   const handleDelete = async () => {
     if (!instrumentoToDelete) return
 
     try {
-      // Obtener información del instrumento antes de eliminarlo para decrementar la cantidad
+      // Obtener información del instrumento antes de eliminarlo
       const instrumentoAEliminar = instrumentos.find((i) => i.numero_serie === instrumentoToDelete)
-      // console.log("🔍 Instrumento a eliminar:", instrumentoAEliminar)
+      console.log("🔍 Instrumento a eliminar:", instrumentoAEliminar)
+
+      if (!instrumentoAEliminar) {
+        console.error("❌ No se encontró el instrumento a eliminar")
+        return
+      }
+
+      const tipoInstrumento = instrumentoAEliminar.instrumento_tipo_id
+
+      // Contar cuántos instrumentos hay de este tipo
+      const instrumentosDelMismoTipo = instrumentos.filter((i) => i.instrumento_tipo_id === tipoInstrumento)
+      const esUltimoInstrumento = instrumentosDelMismoTipo.length === 1
+
+      console.log(`📊 Instrumentos del tipo ${tipoInstrumento}: ${instrumentosDelMismoTipo.length}`)
+      console.log(`🔍 ¿Es el último instrumento del tipo?: ${esUltimoInstrumento}`)
 
       // Eliminar préstamos activos asociados
       const prestamosActivos = prestamos.filter(
@@ -170,12 +198,12 @@ export default function Instrumentos() {
           (!prestamo.fecha_devolucion || prestamo.fecha_devolucion === ""),
       )
 
-      // console.log(`🔄 Eliminando ${prestamosActivos.length} préstamos activos para instrumento ${instrumentoToDelete}`)
+      console.log(`🔄 Eliminando ${prestamosActivos.length} préstamos activos para instrumento ${instrumentoToDelete}`)
 
       for (const prestamo of prestamosActivos) {
         try {
           await api.delete(`/prestamos/${prestamo.num_serie}/${prestamo.usuario_id}`)
-          // console.log(`✅ Préstamo eliminado: ${prestamo.num_serie}/${prestamo.usuario_id}`)
+          console.log(`✅ Préstamo eliminado: ${prestamo.num_serie}/${prestamo.usuario_id}`)
         } catch (error) {
           console.error(`❌ Error al eliminar préstamo ${prestamo.num_serie}/${prestamo.usuario_id}:`, error)
         }
@@ -183,34 +211,53 @@ export default function Instrumentos() {
 
       // Eliminar el instrumento
       await api.delete(`/instrumentos/${instrumentoToDelete}`)
-      // console.log(`✅ Instrumento ${instrumentoToDelete} eliminado`)
+      console.log(`✅ Instrumento ${instrumentoToDelete} eliminado`)
 
-      // Decrementar la cantidad del tipo de instrumento
-      if (instrumentoAEliminar && instrumentoAEliminar.instrumento_tipo_id) {
+      if (esUltimoInstrumento) {
+        // Si es el último instrumento del tipo, eliminar el tipo completo
         try {
-          // console.log(`📊 Decrementando cantidad de tipo ${instrumentoAEliminar.instrumento_tipo_id}`)
+          console.log(`🗑️ Eliminando tipo de instrumento ${tipoInstrumento} (último instrumento)`)
+          await api.delete(`/tipo-instrumentos/${encodeURIComponent(tipoInstrumento)}`)
+          console.log(`✅ Tipo de instrumento ${tipoInstrumento} eliminado`)
 
-          const tipoActual = tiposInstrumento.find((t) => t.instrumento === instrumentoAEliminar.instrumento_tipo_id)
+          setSuccessMessage(
+            `Instrumento eliminado. Como era el último de su tipo, también se eliminó el tipo "${tipoInstrumento}"`,
+          )
+        } catch (error) {
+          console.error("❌ Error al eliminar tipo de instrumento:", error)
+          setErrorMessage(`Instrumento eliminado, pero hubo un error al eliminar el tipo: ${error.message}`)
+        }
+      } else {
+        // Si no es el último, decrementar la cantidad del tipo
+        try {
+          console.log(`📊 Decrementando cantidad de tipo ${tipoInstrumento}`)
+          const tipoActual = tiposInstrumento.find((t) => t.instrumento === tipoInstrumento)
           if (tipoActual && tipoActual.cantidad > 0) {
-            await api.put(`/tipo-instrumentos/${encodeURIComponent(instrumentoAEliminar.instrumento_tipo_id)}`, {
+            await api.put(`/tipo-instrumentos/${encodeURIComponent(tipoInstrumento)}`, {
               cantidad: tipoActual.cantidad - 1,
             })
-            // console.log(`✅ Cantidad de tipo ${instrumentoAEliminar.instrumento_tipo_id} decrementada`)
+            console.log(
+              `✅ Cantidad de tipo ${tipoInstrumento} decrementada de ${tipoActual.cantidad} a ${tipoActual.cantidad - 1}`,
+            )
           } else {
-            // console.warn(`⚠️ No se pudo decrementar la cantidad del tipo ${instrumentoAEliminar.instrumento_tipo_id}`)
+            console.warn(`⚠️ No se pudo decrementar la cantidad del tipo ${tipoInstrumento}`)
           }
         } catch (error) {
           console.error("❌ Error al decrementar cantidad de tipo:", error)
+          setErrorMessage(
+            `Instrumento eliminado, pero hubo un error al actualizar la cantidad del tipo: ${error.message}`,
+          )
+          setTimeout(() => setErrorMessage(null), 5000)
         }
+
+        setSuccessMessage(t("instruments.deleteConfirmation.successMessage"))
       }
 
       setInstrumentos(instrumentos.filter((item) => item.numero_serie !== instrumentoToDelete))
       setShowDeleteModal(false)
       setInstrumentoToDelete(null)
 
-      setSuccessMessage(t("instruments.deleteConfirmation.successMessage"))
-      setTimeout(() => setSuccessMessage(null), 3000)
-
+      setTimeout(() => setSuccessMessage(null), 5000)
       await fetchData()
     } catch (error) {
       console.error("Error al eliminar instrumento:", error)
@@ -1078,30 +1125,56 @@ export default function Instrumentos() {
             </div>
 
             <div className="space-y-4 mb-6">
-              <div className="bg-yellow-900/20 border border-yellow-800 rounded-lg p-4">
-                <h4 className="text-yellow-300 font-medium mb-2">{t("instruments.deleteConfirmation.warning")}</h4>
-                <ul className="text-yellow-100 text-sm space-y-2">
-                  <li className="flex items-start gap-2">
-                    <span className="text-yellow-400 mt-1">•</span>
-                    <span>{t("instruments.deleteConfirmation.willDeleteInstrument")}</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-yellow-400 mt-1">•</span>
-                    <span>{t("instruments.deleteConfirmation.willDecrementQuantity")}</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-yellow-400 mt-1">•</span>
-                    <span>{t("instruments.deleteConfirmation.willDeleteLoans")}</span>
-                  </li>
-                </ul>
-              </div>
+              {(() => {
+                const instrumentoAEliminar = instrumentos.find((i) => i.numero_serie === instrumentoToDelete)
+                const tipoInstrumento = instrumentoAEliminar?.instrumento_tipo_id
+                const instrumentosDelMismoTipo = instrumentos.filter((i) => i.instrumento_tipo_id === tipoInstrumento)
+                const esUltimoInstrumento = instrumentosDelMismoTipo.length === 1
 
-              <div className="bg-red-900/20 border border-red-800 rounded-lg p-4">
-                <p className="text-red-300 font-medium text-sm">
-                  <AlertTriangle className="inline mr-2" size={16} />
-                  {t("instruments.deleteConfirmation.cannotBeUndone")}
-                </p>
-              </div>
+                return (
+                  <>
+                    <div className="bg-yellow-900/20 border border-yellow-800 rounded-lg p-4">
+                      <h4 className="text-yellow-300 font-medium mb-2">
+                        {t("instruments.deleteConfirmation.warning")}
+                      </h4>
+                      <ul className="text-yellow-100 text-sm space-y-2">
+                        <li className="flex items-start gap-2">
+                          <span className="text-yellow-400 mt-1">•</span>
+                          <span>Se eliminará el instrumento #{instrumentoToDelete}</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="text-yellow-400 mt-1">•</span>
+                          <span>{t("instruments.deleteConfirmation.willDeleteLoans")}</span>
+                        </li>
+                        {esUltimoInstrumento ? (
+                          <li className="flex items-start gap-2">
+                            <span className="text-red-400 mt-1">•</span>
+                            <span className="text-red-200 font-medium">
+                              ⚠️ Es el último instrumento del tipo "{tipoInstrumento}", por lo que también se eliminará
+                              el tipo completo
+                            </span>
+                          </li>
+                        ) : (
+                          <li className="flex items-start gap-2">
+                            <span className="text-yellow-400 mt-1">•</span>
+                            <span>
+                              Se decrementará la cantidad del tipo "{tipoInstrumento}" (
+                              {instrumentosDelMismoTipo.length} → {instrumentosDelMismoTipo.length - 1})
+                            </span>
+                          </li>
+                        )}
+                      </ul>
+                    </div>
+
+                    <div className="bg-red-900/20 border border-red-800 rounded-lg p-4">
+                      <p className="text-red-300 font-medium text-sm">
+                        <AlertTriangle className="inline mr-2" size={16} />
+                        {t("instruments.deleteConfirmation.cannotBeUndone")}
+                      </p>
+                    </div>
+                  </>
+                )
+              })()}
             </div>
 
             <div className="flex justify-end space-x-3">
