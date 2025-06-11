@@ -125,6 +125,7 @@ export const translations = {
       confirmDelete: "Confirmar eliminación",
       deleteConfirmText:
         "¿Estás seguro de que deseas eliminar este mínimo de instrumento? Esta acción no se puede deshacer.",
+        noMinimumsForThisEvent: "No hay mínimos de instrumentos registrados para este evento.",
     },
 
     // User Events
@@ -174,6 +175,7 @@ export const translations = {
       assignmentAlreadyExists: "Ya existe una asignación para este evento y usuario",
       assignmentAlreadyExistsWarning:
         "Esta asignación ya existe para este evento. Por favor, edita la existente o selecciona otro usuario.",
+      noAssignmentsForThisEvent: "No hay asignaciones para este evento.",
     },
 
     // Event Confirmation
@@ -1057,6 +1059,7 @@ export const translations = {
       selectType: "Select a type",
       confirmDelete: "Confirm deletion",
       deleteConfirmText: "Are you sure you want to delete this instrument minimum? This action cannot be undone.",
+      noMinimumsForThisEvent: "No instrument minimums for this event.",
     },
 
     // User Events
@@ -1104,6 +1107,7 @@ export const translations = {
       attendance: "attendance",
       assignmentAlreadyExistsWarning:
         "This assignment already exists for this event. Please edit the existing one or select another user.",
+      noAssignmentsForThisEvent:" No assignments for this event.",
     },
 
     // Event Confirmation

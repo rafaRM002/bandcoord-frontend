@@ -602,7 +602,7 @@ export default function MinimosEvento() {
                   <div className="px-4 py-2">
                     {eventosMinimos.length === 0 ? (
                       <div className="py-4 text-center text-gray-400">
-                        No hay mínimos de instrumentos registrados para este evento.
+                        {t("eventMinimums.noMinimumsForThisEvent")}
                         {isAdmin && (
                           <button
                             onClick={() =>
