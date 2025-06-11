@@ -292,7 +292,7 @@ export default function Eventos() {
       {/* Mensaje de error */}
       {error && (
         <div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md mb-6">
-          <h3 className="font-semibold">Error de conexión</h3>
+          <h3 className="font-semibold">{t("instrumentTypes.conexionError")}</h3>
           <p>{error}</p>
         </div>
       )}

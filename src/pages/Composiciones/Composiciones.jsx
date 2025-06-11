@@ -1183,7 +1183,7 @@ const [selectedComposicion, setSelectedComposicion] = useState(null)
               {includeFiles && (
                 <div className="mt-4 space-y-2 p-4 border border-green-900/30 bg-green-900/10 rounded-md">
                   <label className="block text-[#C0C0C0] text-sm font-medium">
-                    {t("compositions.files")} (MP3 y partituras) *
+                    {t("compositions.files")} {t("compositions.mp3")} *
                   </label>
                   <div className="space-y-4">
                     {/* Input de archivo */}

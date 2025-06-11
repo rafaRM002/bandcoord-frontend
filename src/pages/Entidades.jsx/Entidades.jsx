@@ -273,7 +273,7 @@ export default function Entidades() {
       <div className="bg-black/30 border border-gray-800 rounded-lg overflow-hidden">
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="text-[#C0C0C0]">Cargando entidades...</div>
+            <div className="text-[#C0C0C0]">{t("entities.loading")}</div>
           </div>
         ) : filteredEntidades.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-64">
@@ -352,8 +352,8 @@ export default function Entidades() {
         {filteredEntidades.length > 0 && (
           <div className="px-4 py-3 flex items-center justify-between border-t border-gray-800">
             <div className="text-sm text-gray-400">
-              Mostrando {indexOfFirstItem + 1} a {Math.min(indexOfLastItem, filteredEntidades.length)} de{" "}
-              {filteredEntidades.length} entidades
+               {t("eventConfirmation.showing")} {indexOfFirstItem + 1} a {Math.min(indexOfLastItem, filteredEntidades.length)}  {t("eventConfirmation.of")}{" "}
+              {filteredEntidades.length} {t("entities.entities")}
             </div>
             <div className="flex space-x-2">
               <button
@@ -361,14 +361,14 @@ export default function Entidades() {
                 disabled={currentPage === 1}
                 className="px-3 py-1 rounded-md bg-gray-900/50 text-[#C0C0C0] border border-gray-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
               >
-                <ArrowLeft size={16} className="mr-1" /> Anterior
+                <ArrowLeft size={16} className="mr-1" /> {t("common.previous")}
               </button>
               <button
                 onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
                 className="px-3 py-1 rounded-md bg-gray-900/50 text-[#C0C0C0] border border-gray-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
               >
-                Siguiente <ArrowRight size={16} className="ml-1" />
+                {t("common.next")} <ArrowRight size={16} className="ml-1" />
               </button>
             </div>
           </div>

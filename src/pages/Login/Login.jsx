@@ -152,7 +152,7 @@ export default function Login() {
                     <p>{error}</p>
                     {error === "El usuario no existe. Por favor, regístrate." && (
                       <Link to="/register" className="underline mt-1 block">
-                        Ir a registro
+                        {t("login.goToRegister", "Ir a Registro")}
                       </Link>
                     )}
                   </div>

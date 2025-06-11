@@ -308,7 +308,7 @@ export default function FormularioEvento({ evento = null, onClose }) {
                 onChange={handleChange}
                 className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
               >
-                <option value="">Ninguna</option>
+                <option value="">{t("events.none")}</option>
                 {entidades.map((entidad) => (
                   <option key={entidad.id} value={entidad.id}>
                     {entidad.nombre}

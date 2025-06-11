@@ -401,8 +401,8 @@ export default function ConfirmacionEventos() {
       {totalPages > 1 && (
         <div className="flex justify-between items-center bg-gray-900/50 px-4 py-3 mt-6 rounded-md">
           <div className="text-sm text-gray-400">
-            Mostrando {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredEventos.length)} de{" "}
-            {filteredEventos.length} eventos
+             {t("eventConfirmation.showing")} {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredEventos.length)}  {t("eventConfirmation.of")}{" "}
+            {filteredEventos.length}  {t("eventConfirmation.events")}
           </div>
           <div className="flex space-x-1">
             <button

@@ -379,7 +379,7 @@ function UserDashboard({ user }) {
         <div className="bg-black/50 border border-gray-800 rounded-lg overflow-hidden">
           {loadingEvents ? (
             <div className="p-4 border-b border-gray-800">
-              <p className="text-gray-400 text-sm">Cargando eventos...</p>
+              <p className="text-gray-400 text-sm">{t("events.loading")}</p>
             </div>
           ) : upcomingEvents.length > 0 ? (
             <div className="divide-y divide-gray-800">
@@ -431,7 +431,7 @@ function UserDashboard({ user }) {
         <div className="bg-black/50 border border-gray-800 rounded-lg overflow-hidden">
           {loadingCompositions ? (
             <div className="p-4 border-b border-gray-800">
-              <p className="text-gray-400 text-sm">Cargando composiciones...</p>
+              <p className="text-gray-400 text-sm">{t("compositions.loading")}</p>
             </div>
           ) : recentCompositions.length > 0 ? (
             <div className="divide-y divide-gray-800">
@@ -439,7 +439,7 @@ function UserDashboard({ user }) {
                 <div key={composicion.id} className="p-4">
                   <div>
                     <h3 className="text-[#C0C0C0] font-medium mb-1">{composicion.nombre}</h3>
-                    <p className="text-gray-400 text-sm mb-2">Autor: {composicion.nombre_autor}</p>
+                    <p className="text-gray-400 text-sm mb-2">{t("compositions.author")}: {composicion.nombre_autor}</p>
                     <p className="text-gray-500 text-xs">
                       Añadida:{" "}
                       {new Date(composicion.created_at).toLocaleDateString("es-ES", {

@@ -477,23 +477,6 @@ export default function MinimosEvento() {
         )}
       </div>
 
-      {/* Mensaje de error */}
-      {error && (
-        <div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md mb-6">
-          <h3 className="font-semibold">Error de conexión</h3>
-          <p>{error}</p>
-          <p className="mt-2 text-sm">
-            Verifica que:
-            <ul className="list-disc pl-5 mt-1">
-              <li>El servidor Laravel esté en ejecución en http://localhost:8000</li>
-              <li>La configuración CORS en Laravel permita peticiones desde http://localhost:5173</li>
-              <li>Las rutas de la API estén correctamente definidas</li>
-              <li>Estés autenticado con un token válido</li>
-            </ul>
-          </p>
-        </div>
-      )}
-
       {/* Filtros y búsqueda */}
       <div className="bg-black/30 border border-gray-800 rounded-lg p-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -610,7 +593,7 @@ export default function MinimosEvento() {
                             }
                             className="ml-2 text-[#C0C0C0] hover:text-white underline"
                           >
-                            Añadir
+                           {t("common.add")}
                           </button>
                         )}
                       </div>
@@ -799,8 +782,7 @@ export default function MinimosEvento() {
                       <div className="mt-2 flex items-start text-amber-400 text-sm">
                         <AlertCircle size={16} className="mr-1 mt-0.5 flex-shrink-0" />
                         <span>
-                          Este mínimo ya existe para este evento. Por favor, edita el existente o selecciona otro tipo
-                          de instrumento.
+                          {t("eventMinimums.messageMinimumExists")}
                         </span>
                       </div>
                     )}
@@ -824,7 +806,7 @@ export default function MinimosEvento() {
                   />
                   {currentMinimo.instrumento_tipo_id && (
                     <div className="text-sm text-gray-400">
-                      Cantidad disponible: {getCantidadDisponible(currentMinimo.instrumento_tipo_id)}
+                      {t("eventMinimums.quantityAvaiable")}: {getCantidadDisponible(currentMinimo.instrumento_tipo_id)}
                     </div>
                   )}
                   {currentMinimo.instrumento_tipo_id &&
@@ -832,7 +814,7 @@ export default function MinimosEvento() {
                       <div className="mt-2 flex items-start text-red-400 text-sm">
                         <AlertCircle size={16} className="mr-1 mt-0.5 flex-shrink-0" />
                         <span>
-                          La cantidad mínima no puede ser superior a la cantidad disponible (
+                          {t("eventMinimums.quantityMessage")} (
                           {getCantidadDisponible(currentMinimo.instrumento_tipo_id)}).
                         </span>
                       </div>

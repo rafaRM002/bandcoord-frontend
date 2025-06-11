@@ -144,7 +144,11 @@ export const translations = {
       confirmDelete: "Confirmar eliminación",
       deleteConfirmText:
         "¿Estás seguro de que deseas eliminar este mínimo de instrumento? Esta acción no se puede deshacer.",
-        noMinimumsForThisEvent: "No hay mínimos de instrumentos registrados para este evento.",
+      noMinimumsForThisEvent: "No hay mínimos de instrumentos registrados para este evento.",
+      messageMinimumsExists:
+        " Este mínimo ya existe para este evento. Por favor, edita el existente o selecciona otro tipo de instrumento",
+      quantityAvaiable: "Cantidad disponible",
+      quantityMessage: "La cantidad mínima no puede ser superior a la cantidad disponible"
     },
 
     // User Events
@@ -257,6 +261,8 @@ export const translations = {
       confirmDelete: "Confirmar eliminación",
       deleteConfirmText: "¿Estás seguro de que deseas eliminar este evento? Esta acción no se puede deshacer.",
       saving: "Guardando...",
+      none: "Ninguna",
+      loading: "Cargando eventos...",
     },
 
     // Profile Page
@@ -324,6 +330,7 @@ export const translations = {
       processing: "Procesando...",
       emailPlaceholder: "tu@email.com",
       passwordPlaceholder: "••••••••",
+      goToRegister: "Ir a Registro",
     },
 
     // Register Page
@@ -482,6 +489,7 @@ export const translations = {
       cancel: "Cancelar",
       delete: "Eliminar",
       edit: "Editar",
+      add: "Añadir",
       create: "Crear",
       actions: "Acciones",
       search: "Buscar...",
@@ -660,6 +668,7 @@ export const translations = {
       returnConfirmText: "¿Estás seguro de que deseas marcar este instrumento como devuelto?",
       confirmDeleteTitle: "Confirmar Eliminación de Préstamo",
       confirmDeleteMessage: "¿Estás seguro de que deseas eliminar este préstamo? Esta acción no se puede deshacer.",
+      loadingLoans: "Cargando préstamos...",
     },
 
     // Entities
@@ -689,6 +698,7 @@ export const translations = {
       errorLoadingEntities: "Error al cargar las entidades",
       errorSavingEntity: "Error al guardar los datos. Por favor, verifica la información e inténtalo de nuevo.",
       errorDeletingEntity: "Error al eliminar la entidad",
+      loading: "Cargando entidades...",
     },
 
     // Compositions
@@ -736,6 +746,8 @@ export const translations = {
       mustAddFiles: "Debes agregar al menos un archivo",
       isRequired: "es obligatorio",
       bothOptions: "Ambas opciones son requeridas",
+      mp3: "MP3 y Partituras",
+      loading:"Cargando composiciones...",
     },
 
     // Interpreted Compositions
@@ -1100,6 +1112,9 @@ export const translations = {
       confirmDelete: "Confirm deletion",
       deleteConfirmText: "Are you sure you want to delete this instrument minimum? This action cannot be undone.",
       noMinimumsForThisEvent: "No instrument minimums for this event.",
+      messageMinimumsExists:"This instrument minimum already exists for this event. Please edit the existing one or select another event.",
+      quantityAvaiable: "Available quantity",
+      quantityMessage: "The minimum quantity cannot be greater than the available quantity",
     },
 
     // User Events
@@ -1210,6 +1225,8 @@ export const translations = {
       confirmDelete: "Confirm deletion",
       deleteConfirmText: "Are you sure you want to delete this event? This action cannot be undone.",
       saving: "Saving...",
+      none: "None",
+      loading: "Loading events...",
     },
 
     // Profile Page
@@ -1431,6 +1448,7 @@ export const translations = {
       loading: "Loading...",
       save: "Save",
       cancel: "Cancel",
+      add: "Add",
       delete: "Delete",
       edit: "Edit",
       create: "Create",
@@ -1610,6 +1628,7 @@ export const translations = {
       returnConfirmText: "Are you sure you want to mark this instrument as returned?",
       confirmDeleteTitle: "Confirm Loan Deletion",
       confirmDeleteMessage: "Are you sure you want to delete this loan? This action cannot be undone.",
+      loadingLoans: "Loading loans...",
     },
 
     // Entities
@@ -1639,6 +1658,7 @@ export const translations = {
       errorLoadingEntities: "Error loading entities",
       errorSavingEntity: "Error saving data. Please verify the information and try again.",
       errorDeletingEntity: "Error deleting entity",
+      loading: "Loading entities...",
     },
 
     // Compositions
@@ -1694,6 +1714,8 @@ export const translations = {
       save: "Save",
       isRequired: "is required",
       bothOptions: "Both options are required",
+      mp3: "(MP3 and sheets music)",
+      loading: "Loading compositions...",
     },
 
     // Interpreted Compositions
