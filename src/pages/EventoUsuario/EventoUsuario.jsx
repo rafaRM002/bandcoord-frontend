@@ -351,17 +351,17 @@ export default function EventoUsuario() {
     // Filtrar por evento seleccionado
     const matchesEvento = eventoFilter === "" || evento.id.toString() === eventoFilter
 
-    // Verificar si el evento tiene al menos una asignación
-    let tieneAsignaciones = eventosUsuario.some((item) => item.evento_id === evento.id)
-
-    // Si no es admin, solo mostrar eventos donde el usuario actual está asignado
+    // Si no es admin, solo mostrar eventos donde el usuario actual está asignado O todos los eventos si es admin
     if (!isAdmin) {
-      tieneAsignaciones = eventosUsuario.some(
+      const usuarioAsignado = eventosUsuario.some(
         (item) => item.evento_id === evento.id && item.usuario_id === loggedInUser.id,
       )
+      // Para usuarios no admin, mostrar solo eventos donde están asignados
+      return matchesSearch && matchesEvento && usuarioAsignado
     }
 
-    return matchesSearch && matchesEvento && tieneAsignaciones
+    // Para admins, mostrar todos los eventos que coincidan con los filtros
+    return matchesSearch && matchesEvento
   })
 
   /**
@@ -796,72 +796,94 @@ export default function EventoUsuario() {
                 {/* Tabla de asignaciones (solo visible si está expandido) */}
                 {expandedEventos[evento.id] && (
                   <>
-                    <div className="overflow-x-auto">
-                      <table className="w-full">
-                        <thead className="bg-gray-900/30 border-b border-gray-800">
-                          <tr>
-                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                              {t("userEvents.user")}
-                            </th>
-                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                              {t("userEvents.confirmed")}
-                            </th>
-                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                              {isAdmin ? t("common.actions") : ""}
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-800">
-                          {asignaciones.map((item) => (
-                            <tr key={`${item.evento_id}-${item.usuario_id}`} className="hover:bg-gray-900/30">
-                              <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                                {getUsuarioNombre(item.usuario_id)}
-                              </td>
-                              <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                                <span
-                                  className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                    item.confirmacion
-                                      ? "bg-green-900/30 text-green-400 border border-green-800"
-                                      : "bg-yellow-900/30 text-yellow-400 border border-yellow-800"
-                                  }`}
-                                >
-                                  {item.confirmacion ? t("userEvents.confirmed") : t("userEvents.pending")}
-                                </span>
-                              </td>
-                              <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                                {isAdmin && (
-                                  <div className="flex space-x-2">
-                                    {getEventoDetalles(item.evento_id).estado === "finalizado" ? (
-                                      <span className="text-xs text-red-400">{t("common.eventFinished")}</span>
-                                    ) : (
-                                      <>
-                                        <button
-                                          onClick={() => handleOpenModal("edit", item)}
-                                          className="p-1 text-gray-400 hover:text-[#C0C0C0]"
-                                          title={t("common.edit")}
-                                        >
-                                          <Edit size={18} />
-                                        </button>
-                                        <button
-                                          onClick={() => confirmDelete(item.evento_id, item.usuario_id)}
-                                          className="p-1 text-gray-400 hover:text-red-400"
-                                          title={t("common.delete")}
-                                        >
-                                          <Trash2 size={18} />
-                                        </button>
-                                      </>
-                                    )}
-                                  </div>
-                                )}
-                              </td>
+                    {asignaciones.length > 0 ? (
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead className="bg-gray-900/30 border-b border-gray-800">
+                            <tr>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                {t("userEvents.user")}
+                              </th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                {t("userEvents.confirmed")}
+                              </th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                {isAdmin ? t("common.actions") : ""}
+                              </th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                          </thead>
+                          <tbody className="divide-y divide-gray-800">
+                            {asignaciones.map((item) => (
+                              <tr key={`${item.evento_id}-${item.usuario_id}`} className="hover:bg-gray-900/30">
+                                <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                                  {getUsuarioNombre(item.usuario_id)}
+                                </td>
+                                <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                                  <span
+                                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                      item.confirmacion
+                                        ? "bg-green-900/30 text-green-400 border border-green-800"
+                                        : "bg-yellow-900/30 text-yellow-400 border border-yellow-800"
+                                    }`}
+                                  >
+                                    {item.confirmacion ? t("userEvents.confirmed") : t("userEvents.pending")}
+                                  </span>
+                                </td>
+                                <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
+                                  {isAdmin && (
+                                    <div className="flex space-x-2">
+                                      {getEventoDetalles(item.evento_id).estado === "finalizado" ? (
+                                        <span className="text-xs text-red-400">{t("common.eventFinished")}</span>
+                                      ) : (
+                                        <>
+                                          <button
+                                            onClick={() => handleOpenModal("edit", item)}
+                                            className="p-1 text-gray-400 hover:text-[#C0C0C0]"
+                                            title={t("common.edit")}
+                                          >
+                                            <Edit size={18} />
+                                          </button>
+                                          <button
+                                            onClick={() => confirmDelete(item.evento_id, item.usuario_id)}
+                                            className="p-1 text-gray-400 hover:text-red-400"
+                                            title={t("common.delete")}
+                                          >
+                                            <Trash2 size={18} />
+                                          </button>
+                                        </>
+                                      )}
+                                    </div>
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      /* Mensaje cuando no hay asignaciones */
+                      <div className="flex flex-col items-center justify-center py-8 px-4">
+                        <p className="text-gray-400 text-center mb-4">{t("userEvents.noAssignmentsForThisEvent")}</p>
+                        {isAdmin && evento.estado !== "finalizado" && (
+                          <button
+                            onClick={() =>
+                              handleOpenModal("create", {
+                                evento_id: evento.id,
+                                usuario_id: "",
+                                confirmacion: false,
+                              })
+                            }
+                            className="flex items-center gap-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
+                          >
+                            <Plus size={18} />
+                            {t("userEvents.addAssignment")}
+                          </button>
+                        )}
+                      </div>
+                    )}
 
-                    {/* Botón para añadir asignación a este evento */}
-                    {isAdmin && evento.estado !== "finalizado" && (
+                    {/* Botón para añadir asignación a este evento (solo si ya hay asignaciones) */}
+                    {isAdmin && evento.estado !== "finalizado" && asignaciones.length > 0 && (
                       <div className="bg-gray-900/20 px-4 py-3 flex justify-center">
                         <button
                           onClick={() =>
