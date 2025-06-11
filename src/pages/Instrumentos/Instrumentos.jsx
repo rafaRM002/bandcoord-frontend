@@ -1036,7 +1036,7 @@ export default function Instrumentos() {
                 {currentInstrumento.estado === "prestado" && (
                   <div className="space-y-2">
                     <label htmlFor="selectedLoanUser" className="block text-[#C0C0C0] text-sm font-medium">
-                      Usuario del préstamo *
+                      {t("instruments.userLoan")} *
                     </label>
                     <select
                       id="selectedLoanUser"
@@ -1046,7 +1046,7 @@ export default function Instrumentos() {
                       required
                       className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
                     >
-                      <option value="">Selecciona un usuario</option>
+                      <option value="">{t("instruments.selectUser")}</option>
                       {usuarios.map((usuario) => (
                         <option key={usuario.id} value={String(usuario.id)}>
                           {usuario.nombre} {usuario.apellido1}

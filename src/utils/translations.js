@@ -68,6 +68,8 @@ export const translations = {
       serialNumberCannotBeModified: "El número de serie no se puede modificar",
       confirmDelete: "Confirmar Eliminación",
       deleteConfirmText: "¿Estás seguro de que deseas eliminar este instrumento? Esta acción no se puede deshacer.",
+      userLoan: "Usuario del préstamo",
+      selectUser: "Selecciona un usuario",
       // Nuevas traducciones para el modal de confirmación
       createConfirmation: {
         title: "Información sobre creación de instrumentos",
@@ -1022,6 +1024,8 @@ export const translations = {
       serialNumberCannotBeModified: "Serial number cannot be modified",
       confirmDelete: "Confirm Deletion",
       deleteConfirmText: "Are you sure you want to delete this instrument? This action cannot be undone.",
+      userLoan: "Loan User",
+      selectUser: "Select a user",
       // New translations for confirmation modal
       createConfirmation: {
         title: "Information about instrument creation",
