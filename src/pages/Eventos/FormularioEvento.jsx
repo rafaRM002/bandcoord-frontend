@@ -1,7 +1,7 @@
 /**
  * @file FormularioEvento.jsx
  * @module pages/Eventos/FormularioEvento
- * @description Componente de formulario para crear o editar eventos. Permite introducir nombre, tipo, fecha, hora, lugar, descripción, estado y entidad asociada. Muestra errores y feedback de guardado. Solo accesible para administradores.
+ * @description Componente de formulario para crear o editar eventos. Permite introducir nombre, tipo, fecha, hora, lugar, estado y entidad asociada. Muestra errores y feedback de guardado. Solo accesible para administradores.
  * @author Rafael Rodriguez Mengual
  */
 
@@ -42,7 +42,6 @@ export default function FormularioEvento({ evento = null, onClose }) {
     fecha: "",
     hora: "",
     lugar: "",
-    descripcion: "",
     estado: "planificado",
     entidad_id: "",
   })
@@ -69,7 +68,6 @@ export default function FormularioEvento({ evento = null, onClose }) {
             fecha: evento.fecha || "",
             hora: evento.hora || "",
             lugar: evento.lugar || "",
-            descripcion: evento.descripcion || "",
             estado: evento.estado || "planificado",
             entidad_id: evento.entidad_id || "",
           })
@@ -318,21 +316,6 @@ export default function FormularioEvento({ evento = null, onClose }) {
                 ))}
               </select>
             </div>
-          </div>
-
-          {/* Descripción */}
-          <div className="mt-6 space-y-2">
-            <label htmlFor="descripcion" className="block text-[#C0C0C0] text-sm font-medium">
-              {t("events.description")}
-            </label>
-            <textarea
-              id="descripcion"
-              name="descripcion"
-              value={formData.descripcion}
-              onChange={handleChange}
-              rows={4}
-              className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
-            />
           </div>
 
           <div className="mt-8 flex justify-end">
