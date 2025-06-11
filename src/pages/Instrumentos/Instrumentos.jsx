@@ -803,7 +803,7 @@ export default function Instrumentos() {
                           {instrumento.numero_serie}
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-[#C0C0C0]">
-                          {instrumento.instrumento_tipo_id}
+                          {instrumento.instrumento_tipo_id.charAt(0).toUpperCase() + instrumento.instrumento_tipo_id.slice(1)}
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm">
                           <span
