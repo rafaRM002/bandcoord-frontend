@@ -351,17 +351,27 @@ export default function EventoUsuario() {
     // Filtrar por evento seleccionado
     const matchesEvento = eventoFilter === "" || evento.id.toString() === eventoFilter
 
+    // Filtrar por usuario seleccionado
+    let matchesUsuario = true
+    if (usuarioFilter !== "") {
+      // Si hay un filtro de usuario, verificar que ese usuario esté asignado al evento
+      const usuarioAsignado = eventosUsuario.some(
+        (item) => item.evento_id === evento.id && item.usuario_id.toString() === usuarioFilter,
+      )
+      matchesUsuario = usuarioAsignado
+    }
+
     // Si no es admin, solo mostrar eventos donde el usuario actual está asignado O todos los eventos si es admin
     if (!isAdmin) {
       const usuarioAsignado = eventosUsuario.some(
         (item) => item.evento_id === evento.id && item.usuario_id === loggedInUser.id,
       )
       // Para usuarios no admin, mostrar solo eventos donde están asignados
-      return matchesSearch && matchesEvento && usuarioAsignado
+      return matchesSearch && matchesEvento && matchesUsuario && usuarioAsignado
     }
 
     // Para admins, mostrar todos los eventos que coincidan con los filtros
-    return matchesSearch && matchesEvento
+    return matchesSearch && matchesEvento && matchesUsuario
   })
 
   /**
