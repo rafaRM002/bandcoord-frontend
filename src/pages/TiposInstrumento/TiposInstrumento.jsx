@@ -1,10 +1,3 @@
-/**
- * @file TiposInstrumento.jsx
- * @module pages/TiposInstrumento/TiposInstrumento
- * @description Página para la gestión de tipos de instrumentos musicales. Permite crear, editar, eliminar y ajustar cantidades de tipos de instrumentos, así como gestionar los instrumentos asociados. Incluye paginación, búsqueda, modales y validaciones. Solo los administradores pueden modificar los tipos.
- * @author Rafael Rodriguez Mengual
- */
-
 "use client"
 
 import { useState, useEffect } from "react"
@@ -24,6 +17,8 @@ export default function TiposInstrumento() {
   const [tipos, setTipos] = useState([])
   /** Estado de carga */
   const [loading, setLoading] = useState(true)
+  /** Estado de carga para operaciones */
+  const [operationLoading, setOperationLoading] = useState(false)
   /** Mensaje de error */
   const [error, setError] = useState(null)
   /** Término de búsqueda */
@@ -33,11 +28,17 @@ export default function TiposInstrumento() {
   /** Modo del modal: "create" o "edit" */
   const [modalMode, setModalMode] = useState("create")
   /** Tipo de instrumento actual para crear/editar */
-  const [currentTipo, setCurrentTipo] = useState({ instrumento: "", cantidad: 0 })
+  const [currentTipo, setCurrentTipo] = useState({ instrumento: "", cantidad: 1 })
   /** Estado del modal de confirmación de borrado */
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   /** Tipo de instrumento a eliminar */
   const [tipoToDelete, setTipoToDelete] = useState(null)
+  /** Estado del modal de número de serie */
+  const [showSerialModal, setShowSerialModal] = useState(false)
+  /** Número de serie para nuevo instrumento */
+  const [serialNumber, setSerialNumber] = useState("")
+  /** Mensaje de error para validaciones */
+  const [validationError, setValidationError] = useState("")
 
   // Paginación
   /** Página actual */
@@ -79,10 +80,8 @@ export default function TiposInstrumento() {
     try {
       setLoading(true)
       setError(null)
-      // console.log("Intentando conectar a:", `${api.defaults.baseURL}/tipo-instrumentos`)
 
       const response = await api.get("/tipo-instrumentos")
-      // console.log("Respuesta completa de tipos:", response)
 
       // Verificar la estructura de la respuesta
       let tiposData = []
@@ -91,7 +90,6 @@ export default function TiposInstrumento() {
       } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
         tiposData = response.data.data
       } else {
-        // console.warn("Formato de respuesta inesperado para tipos:", response.data)
         setError("Formato de respuesta inesperado. Verifica la consola para más detalles.")
       }
 
@@ -100,7 +98,6 @@ export default function TiposInstrumento() {
       console.error("Error al cargar tipos de instrumento:", error)
       setError(`Error al cargar tipos de instrumento: ${error.message}`)
 
-      // Intentar determinar el tipo de error
       if (error.response) {
         console.error("Respuesta del servidor:", error.response.status, error.response.data)
         setError(`Error del servidor: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
@@ -130,14 +127,42 @@ export default function TiposInstrumento() {
   }
 
   /**
+   * Verifica si un número de serie ya existe
+   * @param {string} serial - Número de serie a verificar
+   * @returns {boolean} True si ya existe, false si no
+   */
+  const checkIfSerialExists = (serial) => {
+    if (!serial || serial.trim() === "") return false
+
+    return instrumentos.some((instrumento) => {
+      // Convertir ambos valores a string para comparar
+      const instrumentoSerial = String(instrumento.numero_serie || "")
+        .toLowerCase()
+        .trim()
+      const searchSerial = String(serial).toLowerCase().trim()
+      return instrumentoSerial === searchSerial
+    })
+  }
+
+  /**
+   * Verifica si un tipo de instrumento ya existe
+   * @param {string} nombreInstrumento - Nombre del instrumento a verificar
+   * @returns {boolean} True si ya existe, false si no
+   */
+  const checkIfTypeExists = (nombreInstrumento) => {
+    return tipos.some((tipo) => tipo.instrumento.toLowerCase().trim() === nombreInstrumento.toLowerCase().trim())
+  }
+
+  /**
    * Abre el modal para crear o editar un tipo de instrumento.
    * @param {"create"|"edit"} mode - Modo del modal.
    * @param {Object} tipo - Tipo de instrumento a editar (opcional).
    */
-  const handleOpenModal = (mode, tipo = { instrumento: "", cantidad: 0 }) => {
+  const handleOpenModal = (mode, tipo = { instrumento: "", cantidad: 1 }) => {
     setModalMode(mode)
-    setCurrentTipo(tipo)
+    setCurrentTipo(mode === "create" ? { instrumento: "", cantidad: 1 } : tipo)
     setCurrentTipoForQuantity(tipo)
+    setValidationError("")
     setShowModal(true)
   }
 
@@ -146,7 +171,8 @@ export default function TiposInstrumento() {
    */
   const handleCloseModal = () => {
     setShowModal(false)
-    setCurrentTipo({ instrumento: "", cantidad: 0 })
+    setCurrentTipo({ instrumento: "", cantidad: 1 })
+    setValidationError("")
   }
 
   /**
@@ -155,58 +181,162 @@ export default function TiposInstrumento() {
    */
   const handleInputChange = (e) => {
     const { name, value } = e.target
+
+    // Para nuevos tipos, la cantidad siempre es 1 y no se puede cambiar
+    if (modalMode === "create" && name === "cantidad") {
+      return // No permitir cambios en cantidad para nuevos tipos
+    }
+
     setCurrentTipo((prev) => ({
       ...prev,
       [name]: name === "cantidad" ? Number.parseInt(value, 10) || 0 : value,
     }))
+
+    // Limpiar error de validación cuando el usuario empiece a escribir
+    if (validationError) {
+      setValidationError("")
+    }
   }
 
   /**
    * Envía el formulario para crear o editar un tipo de instrumento.
-   * Si se cambia la cantidad, gestiona la creación/eliminación de instrumentos asociados.
    * @async
    * @param {Object} e - Evento de envío.
    */
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setValidationError("")
 
     try {
       if (modalMode === "create") {
-        await api.post("/tipo-instrumentos", currentTipo)
+        // Validar que el nombre no esté vacío
+        if (!currentTipo.instrumento.trim()) {
+          setValidationError("El nombre del instrumento es obligatorio")
+          return
+        }
+
+        // Verificar si el tipo ya existe
+        if (checkIfTypeExists(currentTipo.instrumento)) {
+          setValidationError("Ya existe un tipo de instrumento con este nombre")
+          return
+        }
+
+        // CREAR EL TIPO INMEDIATAMENTE
+        setOperationLoading(true)
+
+        try {
+          await api.post("/tipo-instrumentos", {
+            instrumento: currentTipo.instrumento,
+            cantidad: 1,
+          })
+
+          // Actualizar la lista de tipos
+          await fetchTipos()
+
+          // Cerrar el modal principal y abrir el de número de serie
+          setShowModal(false)
+          setShowSerialModal(true)
+        } catch (error) {
+          console.error("Error al crear tipo de instrumento:", error)
+          if (error.response?.data?.error) {
+            setValidationError("Error al crear el tipo: " + JSON.stringify(error.response.data.error))
+          } else {
+            setValidationError("Error al crear el tipo de instrumento")
+          }
+          return
+        } finally {
+          setOperationLoading(false)
+        }
+
+        return
       } else {
+        // Resto del código para modo edición permanece igual...
         const oldQuantity = currentTipoForQuantity?.cantidad || 0
         const newQuantityValue = currentTipo.cantidad
 
         if (newQuantityValue > oldQuantity) {
-          // Aumentar cantidad: crear nuevos instrumentos
           setQuantityAction("increase")
           setNewQuantity(newQuantityValue - oldQuantity)
           setCurrentTipoForQuantity(currentTipo)
           setShowQuantityModal(true)
           return
         } else if (newQuantityValue < oldQuantity) {
-          // Disminuir cantidad: seleccionar instrumentos a eliminar
           setQuantityAction("decrease")
           setNewQuantity(oldQuantity - newQuantityValue)
           setCurrentTipoForQuantity(currentTipo)
 
-          // Obtener instrumentos de este tipo
           const instrumentsOfType = instrumentos.filter((i) => i.instrumento_tipo_id === currentTipo.instrumento)
           setSelectedInstruments(instrumentsOfType)
           setShowQuantityModal(true)
           return
         }
 
-        // Misma cantidad, solo actualizar
+        setOperationLoading(true)
         await api.put(`/tipo-instrumentos/${encodeURIComponent(currentTipo.instrumento)}`, {
           cantidad: currentTipo.cantidad,
         })
       }
 
-      fetchTipos()
+      await fetchTipos()
       handleCloseModal()
     } catch (error) {
       console.error("Error al guardar tipo de instrumento:", error)
+      setValidationError("Error al guardar el tipo de instrumento")
+    } finally {
+      setOperationLoading(false)
+    }
+  }
+
+  /**
+   * Maneja la creación del instrumento con número de serie (el tipo ya existe)
+   */
+  const handleCreateWithSerial = async () => {
+    if (!serialNumber.trim()) {
+      setValidationError("El número de serie es obligatorio")
+      return
+    }
+
+    // Verificar si el número de serie ya existe antes de enviar
+    if (checkIfSerialExists(serialNumber)) {
+      setValidationError("Este número de serie ya existe")
+      return
+    }
+
+    try {
+      setOperationLoading(true)
+
+      // El tipo ya existe, solo crear el instrumento
+      await api.post("/instrumentos", {
+        numero_serie: serialNumber.trim(),
+        instrumento_tipo_id: currentTipo.instrumento.toLowerCase(), // Convertir a minúscula
+        estado: "disponible",
+      })
+
+      // Actualizar la lista de instrumentos
+      await fetchInstrumentos()
+
+      // Cerrar modales y limpiar estados
+      setShowSerialModal(false)
+      setSerialNumber("")
+      setCurrentTipo({ instrumento: "", cantidad: 1 })
+      setValidationError("")
+
+      // Mostrar mensaje de éxito
+      console.log("Tipo de instrumento e instrumento creados exitosamente")
+    } catch (error) {
+      console.error("Error al crear instrumento:", error)
+
+      if (error.response?.data?.error?.numero_serie) {
+        setValidationError(error.response.data.error.numero_serie[0])
+      } else if (error.response?.data?.error?.instrumento_tipo_id) {
+        setValidationError(
+          "Error: El tipo de instrumento no existe. " + error.response.data.error.instrumento_tipo_id[0],
+        )
+      } else {
+        setValidationError("Error al crear el instrumento. Por favor, inténtelo de nuevo.")
+      }
+    } finally {
+      setOperationLoading(false)
     }
   }
 
@@ -227,13 +357,15 @@ export default function TiposInstrumento() {
     if (!tipoToDelete) return
 
     try {
-      // Usar el nombre del instrumento como identificador para la eliminación
+      setOperationLoading(true)
       await api.delete(`/tipo-instrumentos/${encodeURIComponent(tipoToDelete)}`)
-      setTipos(tipos.filter((tipo) => tipo.instrumento !== tipoToDelete))
+      await fetchTipos()
       setShowDeleteModal(false)
       setTipoToDelete(null)
     } catch (error) {
       console.error("Error al eliminar tipo de instrumento:", error)
+    } finally {
+      setOperationLoading(false)
     }
   }
 
@@ -259,6 +391,18 @@ export default function TiposInstrumento() {
   // Renderizado principal de la página de tipos de instrumentos
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Overlay de carga para operaciones */}
+      {operationLoading && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-black border border-gray-800 rounded-lg p-6">
+            <div className="flex items-center space-x-3">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#C0C0C0]"></div>
+              <span className="text-[#C0C0C0]">Procesando...</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-[#C0C0C0]">{t("instrumentTypes.title")}</h1>
         {isAdmin && (
@@ -277,15 +421,6 @@ export default function TiposInstrumento() {
         <div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md mb-6">
           <h3 className="font-semibold">Error de conexión</h3>
           <p>{error}</p>
-          <p className="mt-2 text-sm">
-            Verifica que:
-            <ul className="list-disc pl-5 mt-1">
-              <li>El servidor Laravel esté en ejecución en http://localhost:8000</li>
-              <li>La configuración CORS en Laravel permita peticiones desde http://localhost:5173</li>
-              <li>Las rutas de la API estén correctamente definidas</li>
-              <li>Estés autenticado con un token válido</li>
-            </ul>
-          </p>
         </div>
       )}
 
@@ -307,7 +442,10 @@ export default function TiposInstrumento() {
       <div className="bg-black/30 border border-gray-800 rounded-lg overflow-hidden">
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="text-[#C0C0C0]">{t("common.loading")}</div>
+            <div className="flex items-center space-x-3">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#C0C0C0]"></div>
+              <span className="text-[#C0C0C0]">{t("common.loading")}</span>
+            </div>
           </div>
         ) : filteredTipos.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-64">
@@ -386,7 +524,6 @@ export default function TiposInstrumento() {
                 <ChevronLeft size={16} />
               </button>
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                // Show pages around current page
                 let pageNum
                 if (totalPages <= 5) {
                   pageNum = i + 1
@@ -431,6 +568,13 @@ export default function TiposInstrumento() {
             <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">
               {modalMode === "create" ? t("instrumentTypes.newType") : t("instrumentTypes.editType")}
             </h3>
+
+            {validationError && (
+              <div className="bg-red-900/20 border border-red-800 text-red-100 px-3 py-2 rounded-md mb-4 text-sm">
+                {validationError}
+              </div>
+            )}
+
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div className="space-y-2">
@@ -442,7 +586,7 @@ export default function TiposInstrumento() {
                     name="instrumento"
                     value={currentTipo.instrumento}
                     onChange={handleInputChange}
-                    disabled={modalMode === "edit"} // No permitir cambiar el nombre en modo edición
+                    disabled={modalMode === "edit"}
                     required
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] disabled:opacity-60 disabled:cursor-not-allowed"
                   />
@@ -461,9 +605,13 @@ export default function TiposInstrumento() {
                     min="0"
                     value={currentTipo.cantidad}
                     onChange={handleInputChange}
+                    disabled={modalMode === "create"}
                     required
-                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] disabled:opacity-60 disabled:cursor-not-allowed"
                   />
+                  {modalMode === "create" && (
+                    <p className="text-xs text-gray-500">Los nuevos tipos siempre tienen cantidad 1</p>
+                  )}
                 </div>
               </div>
               <div className="mt-6 flex justify-end space-x-3">
@@ -482,6 +630,82 @@ export default function TiposInstrumento() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de número de serie para nuevos tipos */}
+      {showSerialModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">Añadir instrumentos</h3>
+            <p className="text-gray-400 mb-4">
+              Se van a añadir 1 instrumentos de tipo "{currentTipo.instrumento}". Proporciona los números de serie:
+            </p>
+
+            {validationError && (
+              <div className="bg-red-900/20 border border-red-800 text-red-100 px-3 py-2 rounded-md mb-4 text-sm">
+                {validationError}
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <input
+                type="text"
+                placeholder="Número de serie 1"
+                value={serialNumber}
+                onChange={(e) => {
+                  const newValue = e.target.value
+                  setSerialNumber(newValue)
+
+                  // Validar en tiempo real si el número de serie ya existe
+                  if (checkIfSerialExists(newValue)) {
+                    setValidationError("Este número de serie ya existe")
+                  } else {
+                    setValidationError("")
+                  }
+                }}
+                className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+              />
+            </div>
+
+            <div className="mt-6 flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  // Si cancelamos después de crear el tipo, necesitamos eliminar el tipo creado
+                  const shouldDeleteType = window.confirm(
+                    "¿Estás seguro de cancelar? El tipo de instrumento ya fue creado. Si cancelas, se eliminará el tipo.",
+                  )
+
+                  if (shouldDeleteType) {
+                    // Eliminar el tipo creado
+                    api
+                      .delete(`/tipo-instrumentos/${encodeURIComponent(currentTipo.instrumento)}`)
+                      .then(() => {
+                        fetchTipos()
+                      })
+                      .catch((error) => {
+                        console.error("Error al eliminar tipo:", error)
+                      })
+                  }
+
+                  setShowSerialModal(false)
+                  setSerialNumber("")
+                  setValidationError("")
+                  setCurrentTipo({ instrumento: "", cantidad: 1 })
+                }}
+                className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleCreateWithSerial}
+                disabled={!serialNumber.trim() || validationError !== ""}
+                className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Confirmar
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -521,19 +745,32 @@ export default function TiposInstrumento() {
                   Se van a añadir {newQuantity} instrumentos de tipo "{currentTipoForQuantity?.instrumento}".
                   Proporciona los números de serie:
                 </p>
-                {Array.from({ length: newQuantity }, (_, i) => (
-                  <input
-                    key={i}
-                    type="text"
-                    placeholder={`Número de serie ${i + 1}`}
-                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
-                    onChange={(e) => {
-                      const newSerials = [...(currentTipoForQuantity.newSerials || [])]
-                      newSerials[i] = e.target.value
-                      setCurrentTipoForQuantity({ ...currentTipoForQuantity, newSerials })
-                    }}
-                  />
-                ))}
+                {Array.from({ length: newQuantity }, (_, i) => {
+                  const currentSerials = currentTipoForQuantity.newSerials || []
+                  const currentValue = currentSerials[i] || ""
+                  const isNumeric = /^\d+$/.test(currentValue.trim()) || currentValue.trim() === ""
+
+                  return (
+                    <div key={i} className="space-y-1">
+                      <input
+                        type="text"
+                        placeholder={`Número de serie ${i + 1}`}
+                        value={currentValue}
+                        className={`w-full py-2 px-3 bg-gray-900/50 border rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] ${
+                          !isNumeric ? "border-red-500" : "border-gray-800"
+                        }`}
+                        onChange={(e) => {
+                          const newSerials = [...(currentTipoForQuantity.newSerials || [])]
+                          newSerials[i] = e.target.value
+                          setCurrentTipoForQuantity({ ...currentTipoForQuantity, newSerials })
+                        }}
+                      />
+                      {!isNumeric && currentValue.trim() !== "" && (
+                        <p className="text-xs text-red-400">El número de serie debe ser numérico</p>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
             ) : (
               <div className="space-y-4 flex-1">
@@ -587,9 +824,9 @@ export default function TiposInstrumento() {
               <button
                 onClick={() => {
                   setShowQuantityModal(false)
-                  setShowModal(false) // También cerrar el modal principal
+                  setShowModal(false)
                   setCurrentTipoForQuantity(null)
-                  setCurrentTipo({ instrumento: "", cantidad: 0 }) // Reset del estado
+                  setCurrentTipo({ instrumento: "", cantidad: 1 })
                 }}
                 className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
               >
@@ -597,19 +834,38 @@ export default function TiposInstrumento() {
               </button>
               <button
                 disabled={
-                  quantityAction === "decrease" &&
-                  (!currentTipoForQuantity.toDelete || currentTipoForQuantity.toDelete.length !== newQuantity)
+                  (quantityAction === "decrease" &&
+                    (!currentTipoForQuantity.toDelete || currentTipoForQuantity.toDelete.length !== newQuantity)) ||
+                  (quantityAction === "increase" &&
+                    (!currentTipoForQuantity.newSerials ||
+                      currentTipoForQuantity.newSerials.length < newQuantity ||
+                      currentTipoForQuantity.newSerials.some(
+                        (serial, index) =>
+                          index < newQuantity && (!serial || serial.trim() === "" || !/^\d+$/.test(serial.trim())),
+                      )))
                 }
                 onClick={async () => {
                   try {
+                    setOperationLoading(true)
+
                     if (quantityAction === "increase") {
-                      // Create new instruments
+                      // Validar que todos los números de serie sean numéricos antes de crear
                       const serials = currentTipoForQuantity.newSerials || []
-                      for (const serial of serials) {
+                      for (let i = 0; i < newQuantity; i++) {
+                        const serial = serials[i]
+                        if (!serial || serial.trim() === "" || !/^\d+$/.test(serial.trim())) {
+                          alert(`El número de serie ${i + 1} debe ser numérico y no puede estar vacío`)
+                          return
+                        }
+                      }
+
+                      // Create new instruments
+                      for (let i = 0; i < newQuantity; i++) {
+                        const serial = serials[i]
                         if (serial) {
                           await api.post("/instrumentos", {
-                            numero_serie: serial,
-                            instrumento_tipo_id: currentTipoForQuantity.instrumento,
+                            numero_serie: serial.trim(),
+                            instrumento_tipo_id: currentTipoForQuantity.instrumento.toLowerCase(), // Convertir a minúscula
                             estado: "disponible",
                           })
                         }
@@ -631,13 +887,16 @@ export default function TiposInstrumento() {
                       cantidad: currentTipo.cantidad,
                     })
 
-                    fetchTipos()
+                    await fetchTipos()
+                    await fetchInstrumentos()
                     setShowQuantityModal(false)
-                    setShowModal(false) // Cerrar también el modal principal
+                    setShowModal(false)
                     setCurrentTipoForQuantity(null)
-                    setCurrentTipo({ instrumento: "", cantidad: 0 })
+                    setCurrentTipo({ instrumento: "", cantidad: 1 })
                   } catch (error) {
                     console.error("Error al actualizar cantidad:", error)
+                  } finally {
+                    setOperationLoading(false)
                   }
                 }}
                 className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
