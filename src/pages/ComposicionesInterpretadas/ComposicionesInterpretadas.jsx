@@ -1,10 +1,3 @@
-/**
- * @file ComposicionesInterpretadas.jsx
- * @module pages/ComposicionesInterpretadas/ComposicionesInterpretadas
- * @description Página para la gestión y visualización de composiciones interpretadas por usuarios. Permite asignar, eliminar y buscar asignaciones de composiciones a usuarios, con paginación y control de duplicados.
- * @author Rafael Rodriguez Mengual
- */
-
 "use client"
 
 import { useState, useEffect } from "react"
@@ -31,61 +24,48 @@ import { useAuth } from "../../context/AuthContext"
 /**
  * Componente principal para la gestión de composiciones interpretadas.
  * Permite listar, buscar, asignar y eliminar asignaciones de composiciones a usuarios.
+ * Ahora muestra TODAS las composiciones, incluso las que no tienen usuarios asignados.
  * @component
  * @returns {JSX.Element} Página de composiciones interpretadas.
  */
 const ComposicionesInterpretadas = () => {
   /** Estado de composiciones agrupadas */
-/** @type {Array} */
-const [composiciones, setComposiciones] = useState([])
+  const [composiciones, setComposiciones] = useState([])
 
-/** Estado de carga */
-/** @type {boolean} */
-const [loading, setLoading] = useState(true)
+  /** Estado de carga */
+  const [loading, setLoading] = useState(true)
 
-/** Estado de error */
-/** @type {string|null} */
-const [error, setError] = useState(null)
+  /** Estado de error */
+  const [error, setError] = useState(null)
 
-/** Término de búsqueda */
-/** @type {string} */
-const [searchTerm, setSearchTerm] = useState("")
+  /** Término de búsqueda */
+  const [searchTerm, setSearchTerm] = useState("")
 
-// Estados para expansión y paginación
+  // Estados para expansión y paginación
+  /** Estado de expansión de composiciones */
+  const [expandedComposiciones, setExpandedComposiciones] = useState({})
 
-/** Estado de expansión de composiciones */
-/** @type {Object} */
-const [expandedComposiciones, setExpandedComposiciones] = useState({})
+  /** Página actual de composiciones */
+  const [currentPage, setCurrentPage] = useState(1)
 
-/** Página actual de composiciones */
-/** @type {number} */
-const [currentPage, setCurrentPage] = useState(1)
+  /** Paginación de usuarios por composición */
+  const [usuariosPagination, setUsuariosPagination] = useState({})
 
-/** Paginación de usuarios por composición */
-/** @type {Object} */
-const [usuariosPagination, setUsuariosPagination] = useState({})
+  // Estados para modal de asignación de usuario
+  /** Estado del modal de asignación */
+  const [showAssignModal, setShowAssignModal] = useState(false)
 
-// Estados para modal de asignación de usuario
+  /** Composición seleccionada para asignar */
+  const [selectedComposicionForAssign, setSelectedComposicionForAssign] = useState(null)
 
-/** Estado del modal de asignación */
-/** @type {boolean} */
-const [showAssignModal, setShowAssignModal] = useState(false)
+  /** Lista de usuarios */
+  const [usuarios, setUsuarios] = useState([])
 
-/** Composición seleccionada para asignar */
-/** @type {Object|null} */
-const [selectedComposicionForAssign, setSelectedComposicionForAssign] = useState(null)
+  /** ID del usuario seleccionado */
+  const [selectedUsuarioId, setSelectedUsuarioId] = useState("")
 
-/** Lista de usuarios */
-/** @type {Array} */
-const [usuarios, setUsuarios] = useState([])
-
-/** ID del usuario seleccionado */
-/** @type {string} */
-const [selectedUsuarioId, setSelectedUsuarioId] = useState("")
-
-/** Estado de advertencia por duplicado */
-/** @type {boolean} */
-const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
+  /** Estado de advertencia por duplicado */
+  const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
 
   /** Hook de traducción */
   const { t } = useTranslation()
@@ -99,125 +79,114 @@ const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
   const usuariosPorPagina = 10
 
   /**
-   * Obtiene y agrupa las composiciones interpretadas, usuarios y relaciones.
+   * Obtiene TODAS las composiciones y sus asignaciones de usuarios.
+   * Modificado para mostrar todas las composiciones, no solo las que tienen usuarios asignados.
    * @async
    */
   const fetchComposicionesInterpretadas = async () => {
     try {
       setLoading(true)
 
-      // 1. Obtener todas las relaciones composición-usuario
-      const composicionUsuarioResponse = await axios.get("/composicion-usuario")
-      // console.log("Respuesta de composiciones-usuario:", composicionUsuarioResponse.data)
+      // 1. Obtener TODAS las composiciones primero
+      const composicionesResponse = await axios.get("/composiciones")
+      const todasComposiciones = Array.isArray(composicionesResponse.data)
+        ? composicionesResponse.data
+        : composicionesResponse.data.data || []
 
-      const relaciones = Array.isArray(composicionUsuarioResponse.data)
-        ? composicionUsuarioResponse.data
-        : composicionUsuarioResponse.data.data || []
-
-      if (relaciones.length === 0) {
+      if (todasComposiciones.length === 0) {
         setComposiciones([])
         setLoading(false)
         return
       }
 
-      // 2. Obtener todas las composiciones
-      const composicionesResponse = await axios.get("/composiciones")
-      // console.log("Respuesta de composiciones:", composicionesResponse.data)
-
-      const todasComposiciones = Array.isArray(composicionesResponse.data)
-        ? composicionesResponse.data
-        : composicionesResponse.data.data || []
+      // 2. Obtener todas las relaciones composición-usuario
+      const composicionUsuarioResponse = await axios.get("/composicion-usuario")
+      const relaciones = Array.isArray(composicionUsuarioResponse.data)
+        ? composicionUsuarioResponse.data
+        : composicionUsuarioResponse.data.data || []
 
       // 3. Obtener todos los usuarios
       const usuariosResponse = await axios.get("/usuarios")
-      // console.log("Respuesta de usuarios:", usuariosResponse.data)
-
       const todosUsuarios = Array.isArray(usuariosResponse.data)
         ? usuariosResponse.data
         : usuariosResponse.data.data || []
 
-      // 4. Crear un mapa de composiciones por ID para acceso rápido
-      const composicionesMap = {}
-      todasComposiciones.forEach((comp) => {
-        composicionesMap[comp.id] = comp
-      })
-
-      // 5. Crear un mapa de usuarios por ID para acceso rápido
+      // 4. Crear un mapa de usuarios por ID para acceso rápido
       const usuariosMap = {}
       todosUsuarios.forEach((user) => {
         usuariosMap[user.id] = user
       })
 
-      // 6. Agrupar por composición_id
-      const composicionesAgrupadas = {}
-
+      // 5. Crear un mapa de relaciones agrupadas por composicion_id
+      const relacionesPorComposicion = {}
       relaciones.forEach((relacion) => {
         const composicionId = relacion.composicion_id
-
-        // Si es la primera vez que vemos esta composición, inicializarla
-        if (!composicionesAgrupadas[composicionId]) {
-          const composicion = composicionesMap[composicionId]
-
-          // Si no encontramos la composición, usar valores por defecto
-          composicionesAgrupadas[composicionId] = {
-            composicion_id: composicionId,
-            nombre: composicion ? composicion.nombre : `Composición ${composicionId}`,
-            descripcion: composicion ? composicion.descripcion : "",
-            nombre_autor: composicion ? composicion.nombre_autor : "",
-            ruta: composicion ? composicion.ruta : "",
-            anio: composicion ? composicion.anio : "",
-            usuarios: [],
-          }
+        if (!relacionesPorComposicion[composicionId]) {
+          relacionesPorComposicion[composicionId] = []
         }
+        relacionesPorComposicion[composicionId].push(relacion)
+      })
 
-        // Añadir usuario a la composición
-        const usuario = usuariosMap[relacion.usuario_id]
+      // 6. Procesar TODAS las composiciones (con o sin usuarios asignados)
+      const composicionesConUsuarios = todasComposiciones.map((composicion) => {
+        const relacionesComposicion = relacionesPorComposicion[composicion.id] || []
 
-        if (usuario) {
-          composicionesAgrupadas[composicionId].usuarios.push({
-            usuario_id: relacion.usuario_id,
-            nombre: usuario.nombre || "Usuario",
-            apellidos: `${usuario.apellido1 || ""} ${usuario.apellido2 || ""}`.trim(),
-            email: usuario.email || "",
-            created_at: relacion.created_at,
-            updated_at: relacion.updated_at,
-          })
-        } else {
-          // Si no encontramos el usuario, usar valores por defecto
-          composicionesAgrupadas[composicionId].usuarios.push({
-            usuario_id: relacion.usuario_id,
-            nombre: "Usuario",
-            apellidos: `#${relacion.usuario_id}`,
-            email: "",
-            created_at: relacion.created_at,
-            updated_at: relacion.updated_at,
-          })
+        // Crear array de usuarios asignados a esta composición
+        const usuariosAsignados = relacionesComposicion.map((relacion) => {
+          const usuario = usuariosMap[relacion.usuario_id]
+
+          if (usuario) {
+            return {
+              usuario_id: relacion.usuario_id,
+              nombre: usuario.nombre || "Usuario",
+              apellidos: `${usuario.apellido1 || ""} ${usuario.apellido2 || ""}`.trim(),
+              email: usuario.email || "",
+              created_at: relacion.created_at,
+              updated_at: relacion.updated_at,
+            }
+          } else {
+            // Si no encontramos el usuario, usar valores por defecto
+            return {
+              usuario_id: relacion.usuario_id,
+              nombre: "Usuario",
+              apellidos: `#${relacion.usuario_id}`,
+              email: "",
+              created_at: relacion.created_at,
+              updated_at: relacion.updated_at,
+            }
+          }
+        })
+
+        return {
+          composicion_id: composicion.id,
+          nombre: composicion.nombre || `Composición ${composicion.id}`,
+          descripcion: composicion.descripcion || "",
+          nombre_autor: composicion.nombre_autor || "",
+          ruta: composicion.ruta || "",
+          anio: composicion.anio || "",
+          usuarios: usuariosAsignados,
         }
       })
 
-      // 7. Convertir a array y parsear rutas
-      const composicionesArray = Object.values(composicionesAgrupadas)
-
-      // 8. Parsear rutas y filtrar según permisos
-      const composicionesConRutasParsed = composicionesArray
+      // 7. Parsear rutas y filtrar según permisos
+      const composicionesConRutasParsed = composicionesConUsuarios
         .map((comp) => ({
           ...comp,
           parsedRuta: parseRuta(comp.ruta),
         }))
         .filter((comp) => {
           // Si no es admin, solo mostrar composiciones que interpreta el usuario actual
+          // O composiciones sin usuarios asignados (para que pueda asignarse)
           if (!isAdmin) {
-            return comp.usuarios.some((usuario) => usuario.usuario_id === user.id)
+            return comp.usuarios.length === 0 || comp.usuarios.some((usuario) => usuario.usuario_id === user.id)
           }
           return true
         })
 
-      // 9. Ordenar alfabéticamente por nombre
+      // 8. Ordenar alfabéticamente por nombre
       composicionesConRutasParsed.sort((a, b) => a.nombre.localeCompare(b.nombre))
 
-      // console.log("Composiciones procesadas:", composicionesConRutasParsed)
-
-      // 10. Inicializar estados de expansión y paginación
+      // 9. Inicializar estados de expansión y paginación
       const initialExpanded = {}
       const initialPagination = {}
 
@@ -231,7 +200,7 @@ const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
       setComposiciones(composicionesConRutasParsed)
       setError(null)
     } catch (err) {
-      console.error("Error al cargar composiciones interpretadas:", err)
+      console.error("Error al cargar composiciones:", err)
       setError(t("interpretedCompositions.errorLoadingCompositionsMessage"))
       toast.error(t("interpretedCompositions.errorLoadingCompositions"))
     } finally {
@@ -240,7 +209,7 @@ const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
   }
 
   /**
-   * Efecto para cargar composiciones interpretadas y usuarios al montar el componente.
+   * Efecto para cargar composiciones y usuarios al montar el componente.
    */
   useEffect(() => {
     fetchComposicionesInterpretadas()
@@ -375,7 +344,6 @@ const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
         usuario_id: selectedUsuarioId,
       })
 
-      // console.log("Respuesta al asignar composición:", response.data)
       toast.success(t("interpretedCompositions.assignmentCreatedSuccessfully"))
       setShowAssignModal(false)
       setShowDuplicateWarning(false)
@@ -385,7 +353,7 @@ const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
     } catch (error) {
       console.error("Error al asignar composición:", error)
 
-      // Si es un error de duplicado (el mensaje puede variar según tu backend)
+      // Si es un error de duplicado
       if (
         error.response &&
         error.response.data &&
@@ -413,17 +381,16 @@ const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
 
       // Actualizar composiciones en pantalla eliminando el usuario
       setComposiciones((prevComposiciones) => {
-        return prevComposiciones
-          .map((comp) => {
-            if (comp.composicion_id === composicionId) {
-              return {
-                ...comp,
-                usuarios: comp.usuarios.filter((usuario) => usuario.usuario_id !== usuarioId),
-              }
+        return prevComposiciones.map((comp) => {
+          if (comp.composicion_id === composicionId) {
+            return {
+              ...comp,
+              usuarios: comp.usuarios.filter((usuario) => usuario.usuario_id !== usuarioId),
             }
-            return comp
-          })
-          .filter((comp) => comp.usuarios.length > 0) // Eliminar composiciones sin usuarios
+          }
+          return comp
+        })
+        // Ya no filtramos composiciones sin usuarios - las mantenemos todas
       })
     } catch (error) {
       console.error("Error al eliminar asignación:", error)
@@ -537,7 +504,7 @@ const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
           <p className="text-gray-400">
             {searchTerm
               ? t("interpretedCompositions.noCompositionsFoundWithFilters")
-              : t("interpretedCompositions.noInterpretedCompositionsRegistered")}
+              : "No hay composiciones registradas"}
           </p>
         </div>
       ) : (
@@ -555,12 +522,21 @@ const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
                     <div className="flex items-center">
                       <h3 className="text-lg font-medium text-[#C0C0C0]">{composicion.nombre}</h3>
 
-                      {/* Contador de usuarios */}
-                      <div className="ml-3 px-2 py-0.5 bg-gray-800 rounded-full text-xs text-gray-400">
-                        {composicion.usuarios.length}{" "}
-                        {composicion.usuarios.length === 1
-                          ? t("interpretedCompositions.user")
-                          : t("interpretedCompositions.users")}
+                      {/* Contador de usuarios - Modificado para mostrar estado */}
+                      <div
+                        className={`ml-3 px-2 py-0.5 rounded-full text-xs ${
+                          composicion.usuarios.length === 0
+                            ? "bg-yellow-800/50 text-yellow-400"
+                            : "bg-gray-800 text-gray-400"
+                        }`}
+                      >
+                        {composicion.usuarios.length === 0
+                          ? "Sin asignar"
+                          : `${composicion.usuarios.length} ${
+                              composicion.usuarios.length === 1
+                                ? t("interpretedCompositions.user")
+                                : t("interpretedCompositions.users")
+                            }`}
                       </div>
                     </div>
 
@@ -585,7 +561,7 @@ const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
                       </button>
                     )}
 
-                    {/* Botón para expandir/colapsar - SIEMPRE VISIBLE */}
+                    {/* Botón para expandir/colapsar */}
                     <button
                       onClick={() => toggleExpand(composicion.composicion_id)}
                       className="p-2 bg-gray-800 text-gray-400 rounded-full hover:bg-gray-700 hover:text-[#C0C0C0]"
@@ -603,7 +579,6 @@ const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
                 <div className="px-4 py-2 border-t border-gray-800 bg-gray-900/10">
                   {composicion.descripcion && <p className="text-sm text-gray-400 mb-2">{composicion.descripcion}</p>}
 
-                  {/* Eliminar o modificar esta sección en el componente */}
                   <div className="flex items-center text-xs text-gray-500">
                     {composicion.parsedRuta && composicion.parsedRuta.type === "youtube" ? (
                       <>
@@ -630,10 +605,12 @@ const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
                   <div className="border-t border-gray-800">
                     <div className="p-3 bg-gray-900/20 border-b border-gray-800 flex justify-between items-center">
                       <h4 className="text-sm font-medium text-[#C0C0C0]">
-                        {t("interpretedCompositions.usersWhoInterpretThisComposition")}
+                        {composicion.usuarios.length === 0
+                          ? "Esta composición no tiene usuarios asignados"
+                          : t("interpretedCompositions.usersWhoInterpretThisComposition")}
                       </h4>
 
-                      {/* Paginación de usuarios */}
+                      {/* Paginación de usuarios - Solo mostrar si hay usuarios */}
                       {composicion.usuarios.length > usuariosPorPagina && (
                         <div className="flex items-center space-x-1">
                           <button
@@ -661,49 +638,66 @@ const [showDuplicateWarning, setShowDuplicateWarning] = useState(false)
                       )}
                     </div>
 
-                    {/* Lista de usuarios */}
-                    <div className="divide-y divide-gray-800">
-                      {getCurrentUsuarios(composicion).map((usuario) => (
-                        <div
-                          key={usuario.usuario_id}
-                          className="p-3 flex justify-between items-center hover:bg-gray-900/10"
-                        >
-                          <div>
-                            <div className="flex items-center">
-                              <User size={16} className="mr-2 text-gray-500" />
-                              <span className="text-[#C0C0C0]">
-                                {usuario.nombre} {usuario.apellidos}
-                              </span>
-                            </div>
-                            {usuario.email && <p className="text-xs text-gray-500 mt-1 ml-6">{usuario.email}</p>}
-                          </div>
-
-                          <div className="flex items-center space-x-2">
-                            <div className="text-xs text-gray-500 flex items-center">
-                              <Calendar size={14} className="mr-1" />
-                              {new Date(usuario.created_at).toLocaleDateString("es-ES", {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                              })}
-                            </div>
-
-                            {/* Botón para eliminar asignación */}
-                            {isAdmin && (
-                              <button
-                                onClick={() =>
-                                  handleDeleteUserComposicion(composicion.composicion_id, usuario.usuario_id)
-                                }
-                                className="p-1.5 text-gray-400 hover:text-red-400 transition-colors"
-                                title={t("interpretedCompositions.deleteAssignment")}
-                              >
-                                <X size={14} />
-                              </button>
-                            )}
-                          </div>
+                    {/* Lista de usuarios o mensaje de composición vacía */}
+                    {composicion.usuarios.length === 0 ? (
+                      <div className="p-6 text-center">
+                        <div className="text-gray-500 mb-3">
+                          <UserPlus size={32} className="mx-auto mb-2 opacity-50" />
+                          <p className="text-sm">{t("interpretedCompositions.noAssign")}</p>
                         </div>
-                      ))}
-                    </div>
+                        {isAdmin && (
+                          <button
+                            onClick={() => handleOpenAssignModal(composicion)}
+                            className="px-4 py-2 bg-blue-900/30 border border-blue-700 text-blue-400 rounded-md hover:bg-blue-900/50 transition-colors text-sm"
+                          >
+                            {t("interpretedCompositions.assignUser")}
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="divide-y divide-gray-800">
+                        {getCurrentUsuarios(composicion).map((usuario) => (
+                          <div
+                            key={usuario.usuario_id}
+                            className="p-3 flex justify-between items-center hover:bg-gray-900/10"
+                          >
+                            <div>
+                              <div className="flex items-center">
+                                <User size={16} className="mr-2 text-gray-500" />
+                                <span className="text-[#C0C0C0]">
+                                  {usuario.nombre} {usuario.apellidos}
+                                </span>
+                              </div>
+                              {usuario.email && <p className="text-xs text-gray-500 mt-1 ml-6">{usuario.email}</p>}
+                            </div>
+
+                            <div className="flex items-center space-x-2">
+                              <div className="text-xs text-gray-500 flex items-center">
+                                <Calendar size={14} className="mr-1" />
+                                {new Date(usuario.created_at).toLocaleDateString("es-ES", {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                })}
+                              </div>
+
+                              {/* Botón para eliminar asignación */}
+                              {isAdmin && (
+                                <button
+                                  onClick={() =>
+                                    handleDeleteUserComposicion(composicion.composicion_id, usuario.usuario_id)
+                                  }
+                                  className="p-1.5 text-gray-400 hover:text-red-400 transition-colors"
+                                  title={t("interpretedCompositions.deleteAssignment")}
+                                >
+                                  <X size={14} />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

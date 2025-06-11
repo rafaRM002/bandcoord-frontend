@@ -757,6 +757,8 @@ export const translations = {
       cancel: "Cancelar",
       userAlreadyAssignedWarning:
         "Este usuario ya está asignado a esta composición. Por favor, selecciona otro usuario.",
+      assignUser: "Asignar usuario",
+      noAssign:"Esta composición está disponible para asignar",
     },
 
     // Add calendar translations to both language objects
@@ -1691,6 +1693,8 @@ export const translations = {
       couldNotPlayAudio: "Could not play audio",
       usersWhoInterpretThisComposition: "Users who interpret this composition",
       userAlreadyAssignedWarning: "This user is already assigned to this composition. Please select another user.",
+      assignUser: "Assign user",
+      noAssign:"This composition is available for assignment",
     },
 
     // Add calendar translations to both language objects
