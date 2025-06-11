@@ -8,20 +8,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import {
-  Plus,
-  Edit,
-  Trash2,
-  Search,
-  Music,
-  Filter,
-  ChevronLeft,
-  ChevronRight,
-  Save,
-  X,
-  AlertTriangle,
-  Info,
-} from "lucide-react"
+import { Plus, Edit, Trash2, Search, Music, Filter, ChevronLeft, ChevronRight, Save, X, AlertTriangle, Info } from 'lucide-react'
 import api from "../../api/axios"
 import { useTranslation } from "../../hooks/useTranslation"
 import { useAuth } from "../../context/AuthContext"
@@ -1005,8 +992,9 @@ export default function Instrumentos() {
                     name="instrumento_tipo_id"
                     value={currentInstrumento.instrumento_tipo_id}
                     onChange={handleInputChange}
+                    disabled={modalMode === "edit"}
                     required
-                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0]"
+                    className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     <option value="">Selecciona un tipo</option>
                     {tiposInstrumento.map((tipo) => (
@@ -1015,6 +1003,9 @@ export default function Instrumentos() {
                       </option>
                     ))}
                   </select>
+                  {modalMode === "edit" && (
+                    <p className="text-xs text-gray-500">{t("instruments.instrumentTypeCannotBeModified")}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="estado" className="block text-[#C0C0C0] text-sm font-medium">
