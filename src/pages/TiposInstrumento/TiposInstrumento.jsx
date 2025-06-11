@@ -308,7 +308,7 @@ export default function TiposInstrumento() {
       // El tipo ya existe, solo crear el instrumento
       await api.post("/instrumentos", {
         numero_serie: serialNumber.trim(),
-        instrumento_tipo_id: currentTipo.instrumento.toLowerCase(), // Convertir a minúscula
+        instrumento_tipo_id: currentTipo.instrumento,
         estado: "disponible",
       })
 
@@ -865,7 +865,7 @@ export default function TiposInstrumento() {
                         if (serial) {
                           await api.post("/instrumentos", {
                             numero_serie: serial.trim(),
-                            instrumento_tipo_id: currentTipoForQuantity.instrumento.toLowerCase(), // Convertir a minúscula
+                            instrumento_tipo_id: currentTipoForQuantity.instrumento,
                             estado: "disponible",
                           })
                         }
