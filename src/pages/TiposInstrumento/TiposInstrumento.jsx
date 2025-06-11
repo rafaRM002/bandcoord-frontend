@@ -459,7 +459,7 @@ export default function TiposInstrumento() {
           <div className="bg-black border border-gray-800 rounded-lg p-6">
             <div className="flex items-center space-x-3">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#C0C0C0]"></div>
-              <span className="text-[#C0C0C0]">Procesando...</span>
+              <span className="text-[#C0C0C0]">{t("instrumentTypes.processing")}</span>
             </div>
           </div>
         </div>
@@ -481,7 +481,7 @@ export default function TiposInstrumento() {
       {/* Mensaje de error */}
       {error && (
         <div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md mb-6">
-          <h3 className="font-semibold">Error de conexión</h3>
+          <h3 className="font-semibold">{t("instrumentTypes.connectionError")}</h3>
           <p>{error}</p>
         </div>
       )}
@@ -513,9 +513,7 @@ export default function TiposInstrumento() {
           <div className="flex flex-col justify-center items-center h-64">
             <Music size={48} className="text-gray-600 mb-4" />
             <p className="text-gray-400 text-center">
-              {searchTerm
-                ? "No se encontraron tipos de instrumento con la búsqueda aplicada."
-                : t("instrumentTypes.noTypes")}
+              {searchTerm ? t("instrumentTypes.noTypesWithSearch") : t("instrumentTypes.noTypes")}
             </p>
             {isAdmin && (
               <button
@@ -574,8 +572,9 @@ export default function TiposInstrumento() {
         {filteredTipos.length > 0 && (
           <div className="px-4 py-3 flex items-center justify-between border-t border-gray-800">
             <div className="text-sm text-gray-400">
-              Mostrando {indexOfFirstItem + 1} a {Math.min(indexOfLastItem, filteredTipos.length)} de{" "}
-              {filteredTipos.length} tipos
+              {t("instrumentTypes.showing")} {indexOfFirstItem + 1} {t("instrumentTypes.to")}{" "}
+              {Math.min(indexOfLastItem, filteredTipos.length)} {t("instrumentTypes.of")} {filteredTipos.length}{" "}
+              {t("instrumentTypes.types")}
             </div>
             <div className="flex space-x-1">
               <button
@@ -672,7 +671,7 @@ export default function TiposInstrumento() {
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] disabled:opacity-60 disabled:cursor-not-allowed"
                   />
                   {modalMode === "create" && (
-                    <p className="text-xs text-gray-500">Los nuevos tipos siempre tienen cantidad 1</p>
+                    <p className="text-xs text-gray-500">{t("instrumentTypes.newTypesAlwaysQuantityOne")}</p>
                   )}
                 </div>
               </div>
@@ -700,9 +699,10 @@ export default function TiposInstrumento() {
       {showSerialModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">Añadir instrumentos</h3>
+            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("instrumentTypes.addInstruments")}</h3>
             <p className="text-gray-400 mb-4">
-              Se van a añadir 1 instrumentos de tipo "{currentTipo.instrumento}". Proporciona los números de serie:
+              {t("instrumentTypes.willAddInstruments")} "{currentTipo.instrumento}".{" "}
+              {t("instrumentTypes.provideSerialNumbers")}
             </p>
 
             {validationError && (
@@ -714,7 +714,7 @@ export default function TiposInstrumento() {
             <div className="space-y-4">
               <input
                 type="text"
-                placeholder="Número de serie 1"
+                placeholder={`${t("instrumentTypes.serialNumber")} 1`}
                 value={serialNumber}
                 onChange={(e) => {
                   const newValue = e.target.value
@@ -722,7 +722,7 @@ export default function TiposInstrumento() {
 
                   // Validar en tiempo real si el número de serie ya existe
                   if (checkIfSerialExists(newValue)) {
-                    setValidationError("Este número de serie ya existe")
+                    setValidationError(t("instrumentTypes.serialNumberExists"))
                   } else {
                     setValidationError("")
                   }
@@ -735,9 +735,7 @@ export default function TiposInstrumento() {
               <button
                 onClick={() => {
                   // Si cancelamos después de crear el tipo, necesitamos eliminar el tipo creado
-                  const shouldDeleteType = window.confirm(
-                    "¿Estás seguro de cancelar? El tipo de instrumento ya fue creado. Si cancelas, se eliminará el tipo.",
-                  )
+                  const shouldDeleteType = window.confirm(t("instrumentTypes.cancelConfirmation"))
 
                   if (shouldDeleteType) {
                     // Eliminar el tipo creado
@@ -765,7 +763,7 @@ export default function TiposInstrumento() {
                 disabled={!serialNumber.trim() || validationError !== ""}
                 className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Confirmar
+                {t("instrumentTypes.confirm")}
               </button>
             </div>
           </div>
@@ -783,26 +781,27 @@ export default function TiposInstrumento() {
 
             <div className="space-y-4 mb-6">
               <div className="bg-yellow-900/20 border border-yellow-800 rounded-lg p-4">
-                <h4 className="text-yellow-300 font-medium mb-2">⚠️ Eliminación en Cascada</h4>
+                <h4 className="text-yellow-300 font-medium mb-2">⚠️ {t("instrumentTypes.cascadeDelete")}</h4>
                 <p className="text-yellow-100 text-sm mb-3">
-                  Al eliminar el tipo "{tipoToDelete}", se realizarán las siguientes acciones:
+                  {t("instrumentTypes.cascadeDeleteWarning").replace("{type}", tipoToDelete)}
                 </p>
                 <ul className="text-yellow-100 text-sm space-y-2">
                   <li className="flex items-start gap-2">
                     <span className="text-yellow-400 mt-1">•</span>
                     <span>
-                      Se eliminarán{" "}
-                      <strong>{instrumentos.filter((i) => i.instrumento_tipo_id === tipoToDelete).length}</strong>{" "}
-                      instrumentos de este tipo
+                      {t("instrumentTypes.willDeleteInstruments").replace(
+                        "{count}",
+                        instrumentos.filter((i) => i.instrumento_tipo_id === tipoToDelete).length,
+                      )}
                     </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-yellow-400 mt-1">•</span>
-                    <span>Se eliminarán todos los préstamos asociados a estos instrumentos</span>
+                    <span>{t("instrumentTypes.willDeleteLoans")}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-yellow-400 mt-1">•</span>
-                    <span>Se eliminará el tipo de instrumento "{tipoToDelete}"</span>
+                    <span>{t("instrumentTypes.willDeleteType").replace("{type}", tipoToDelete)}</span>
                   </li>
                 </ul>
               </div>
@@ -816,7 +815,7 @@ export default function TiposInstrumento() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  Esta acción no se puede deshacer
+                  {t("instrumentTypes.actionCannotBeUndone")}
                 </p>
               </div>
             </div>
@@ -833,7 +832,7 @@ export default function TiposInstrumento() {
                 className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800 flex items-center gap-2"
               >
                 <Trash2 size={18} />
-                Eliminar Todo
+                {t("instrumentTypes.deleteAll")}
               </button>
             </div>
           </div>
@@ -845,7 +844,9 @@ export default function TiposInstrumento() {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md flex flex-col max-h-[80vh]">
             <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">
-              {quantityAction === "increase" ? "Añadir instrumentos" : "Eliminar instrumentos"}
+              {quantityAction === "increase"
+                ? t("instrumentTypes.addInstrumentsTitle")
+                : t("instrumentTypes.removeInstrumentsTitle")}
             </h3>
 
             {quantityAction === "increase" ? (
@@ -875,7 +876,7 @@ export default function TiposInstrumento() {
                         }}
                       />
                       {!isNumeric && currentValue.trim() !== "" && (
-                        <p className="text-xs text-red-400">El número de serie debe ser numérico</p>
+                        <p className="text-xs text-red-400">{t("instrumentTypes.serialNumberMustBeNumeric")}</p>
                       )}
                     </div>
                   )
@@ -883,7 +884,9 @@ export default function TiposInstrumento() {
               </div>
             ) : (
               <div className="space-y-4 flex-1">
-                <p className="text-gray-400">Selecciona {newQuantity} instrumentos para eliminar:</p>
+                <p className="text-gray-400">
+                  {t("instrumentTypes.selectInstrumentsToDelete").replace("{count}", newQuantity)}:
+                </p>
                 <div className="max-h-48 overflow-y-auto pr-1 space-y-2">
                   {selectedInstruments.map((instrument) => {
                     const currentSelected = currentTipoForQuantity.toDelete || []
@@ -923,7 +926,9 @@ export default function TiposInstrumento() {
                 </div>
                 {currentTipoForQuantity.toDelete && currentTipoForQuantity.toDelete.length > 0 && (
                   <p className="text-sm text-gray-500">
-                    Seleccionados: {currentTipoForQuantity.toDelete.length} de {newQuantity}
+                    {t("instrumentTypes.selectedCount")
+                      .replace("{selected}", currentTipoForQuantity.toDelete.length)
+                      .replace("{total}", newQuantity)}
                   </p>
                 )}
               </div>
@@ -963,7 +968,7 @@ export default function TiposInstrumento() {
                       for (let i = 0; i < newQuantity; i++) {
                         const serial = serials[i]
                         if (!serial || serial.trim() === "" || !/^\d+$/.test(serial.trim())) {
-                          alert(`El número de serie ${i + 1} debe ser numérico y no puede estar vacío`)
+                          alert(t("instrumentTypes.serialNumberRequired").replace("{number}", i + 1))
                           return
                         }
                       }
@@ -983,7 +988,7 @@ export default function TiposInstrumento() {
                       // Delete selected instruments
                       const toDelete = currentTipoForQuantity.toDelete || []
                       if (toDelete.length !== newQuantity) {
-                        alert(`Debes seleccionar exactamente ${newQuantity} instrumentos para eliminar`)
+                        alert(t("instrumentTypes.mustSelectExactly").replace("{count}", newQuantity))
                         return
                       }
                       for (const serial of toDelete) {

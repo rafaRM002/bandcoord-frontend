@@ -220,9 +220,7 @@ export default function Instrumentos() {
           await api.delete(`/tipo-instrumentos/${encodeURIComponent(tipoInstrumento)}`)
           console.log(`✅ Tipo de instrumento ${tipoInstrumento} eliminado`)
 
-          setSuccessMessage(
-            `Instrumento eliminado. Como era el último de su tipo, también se eliminó el tipo "${tipoInstrumento}"`,
-          )
+          setSuccessMessage(t("instruments.instrumentDeletedTypeAlso").replace("{type}", tipoInstrumento))
         } catch (error) {
           console.error("❌ Error al eliminar tipo de instrumento:", error)
           setErrorMessage(`Instrumento eliminado, pero hubo un error al eliminar el tipo: ${error.message}`)
@@ -244,9 +242,7 @@ export default function Instrumentos() {
           }
         } catch (error) {
           console.error("❌ Error al decrementar cantidad de tipo:", error)
-          setErrorMessage(
-            `Instrumento eliminado, pero hubo un error al actualizar la cantidad del tipo: ${error.message}`,
-          )
+          setErrorMessage(t("instruments.instrumentDeletedQuantityUpdated").replace("{error}", error.message))
           setTimeout(() => setErrorMessage(null), 5000)
         }
 
@@ -1043,7 +1039,7 @@ export default function Instrumentos() {
                     required
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    <option value="">Selecciona un tipo</option>
+                    <option value="">{t("instruments.selectType")}</option>
                     {tiposInstrumento.map((tipo) => (
                       <option key={tipo.instrumento} value={tipo.instrumento}>
                         {tipo.instrumento} ({t("instrumentTypes.quantity")}: {tipo.cantidad})
@@ -1051,7 +1047,7 @@ export default function Instrumentos() {
                     ))}
                   </select>
                   {modalMode === "edit" && (
-                    <p className="text-xs text-gray-500">{t("instruments.instrumentTypeCannotBeModified")}</p>
+                    <p className="text-xs text-gray-500">{t("instruments.typeCannotBeModified")}</p>
                   )}
                 </div>
                 <div className="space-y-2">
@@ -1140,7 +1136,9 @@ export default function Instrumentos() {
                       <ul className="text-yellow-100 text-sm space-y-2">
                         <li className="flex items-start gap-2">
                           <span className="text-yellow-400 mt-1">•</span>
-                          <span>Se eliminará el instrumento #{instrumentoToDelete}</span>
+                          <span>
+                            {t("instruments.willDeleteInstrumentNumber").replace("{number}", instrumentoToDelete)}
+                          </span>
                         </li>
                         <li className="flex items-start gap-2">
                           <span className="text-yellow-400 mt-1">•</span>
@@ -1150,16 +1148,17 @@ export default function Instrumentos() {
                           <li className="flex items-start gap-2">
                             <span className="text-red-400 mt-1">•</span>
                             <span className="text-red-200 font-medium">
-                              ⚠️ Es el último instrumento del tipo "{tipoInstrumento}", por lo que también se eliminará
-                              el tipo completo
+                              ⚠️ {t("instruments.isLastInstrumentOfType").replace("{type}", tipoInstrumento)}
                             </span>
                           </li>
                         ) : (
                           <li className="flex items-start gap-2">
                             <span className="text-yellow-400 mt-1">•</span>
                             <span>
-                              Se decrementará la cantidad del tipo "{tipoInstrumento}" (
-                              {instrumentosDelMismoTipo.length} → {instrumentosDelMismoTipo.length - 1})
+                              {t("instruments.willDecrementTypeQuantity")
+                                .replace("{type}", tipoInstrumento)
+                                .replace("{current}", instrumentosDelMismoTipo.length)
+                                .replace("{new}", instrumentosDelMismoTipo.length - 1)}
                             </span>
                           </li>
                         )}

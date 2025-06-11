@@ -91,6 +91,17 @@ export const translations = {
         confirmDelete: "Sí, eliminar instrumento",
         successMessage: "Instrumento y préstamos asociados eliminados correctamente",
       },
+      selectType: "Selecciona un tipo",
+      instrumentsCount: "instrumentos",
+      typeCannotBeModified: "El tipo de instrumento no se puede modificar en modo edición",
+      willDeleteInstrumentNumber: "Se eliminará el instrumento #{number}",
+      isLastInstrumentOfType:
+        'Es el último instrumento del tipo "{type}", por lo que también se eliminará el tipo completo',
+      willDecrementTypeQuantity: 'Se decrementará la cantidad del tipo "{type}" ({current} → {new})',
+      instrumentDeletedTypeAlso:
+        'Instrumento eliminado. Como era el último de su tipo, también se eliminó el tipo "{type}"',
+      instrumentDeletedQuantityUpdated:
+        "Instrumento eliminado, pero hubo un error al actualizar la cantidad del tipo: {error}",
     },
 
     // Instrument Types
@@ -106,10 +117,10 @@ export const translations = {
       deleteConfirmText: "¿Estás seguro de que deseas eliminar este tipo de instrumento?",
       nameCannotBeModified: "El nombre no se puede modificar en modo edición",
       newTypes: "Los nuevos tipos siempre tienen cantidad 1",
-      addInst:"Añadir Instrumentos",
-      add:"Se van a añadir 1 instrumentos de tipo",
-      numS:"Proporciona los números de serie:",
-      process:"Procesando...",
+      addInst: "Añadir Instrumentos",
+      add: "Se van a añadir 1 instrumentos de tipo",
+      numS: "Proporciona los números de serie:",
+      process: "Procesando...",
       conexionError: "Error de conexión",
       show: "Mostrando",
       to: "a",
@@ -122,6 +133,33 @@ export const translations = {
       instumentosTipo: " instrumento de tipo",
       numerosSerie: "Proporciona los números de serie:",
       selected: "Seleccionados",
+      processing: "Procesando...",
+      connectionError: "Error de conexión",
+      noTypesWithSearch: "No se encontraron tipos de instrumento con la búsqueda aplicada.",
+      showing: "Mostrando",
+      newTypesAlwaysQuantityOne: "Los nuevos tipos siempre tienen cantidad 1",
+      addInstruments: "Añadir instrumentos",
+      willAddInstruments: "Se van a añadir 1 instrumentos de tipo",
+      provideSerialNumbers: "Proporciona los números de serie:",
+      serialNumber: "Número de serie",
+      serialNumberExists: "Este número de serie ya existe",
+      cancelConfirmation:
+        "¿Estás seguro de cancelar? El tipo de instrumento ya fue creado. Si cancelas, se eliminará el tipo.",
+      confirm: "Confirmar",
+      cascadeDelete: "Eliminación en Cascada",
+      cascadeDeleteWarning: 'Al eliminar el tipo "{type}", se realizarán las siguientes acciones:',
+      willDeleteInstruments: "Se eliminarán {count} instrumentos de este tipo",
+      willDeleteLoans: "Se eliminarán todos los préstamos asociados a estos instrumentos",
+      willDeleteType: 'Se eliminará el tipo de instrumento "{type}"',
+      actionCannotBeUndone: "Esta acción no se puede deshacer",
+      deleteAll: "Eliminar Todo",
+      addInstrumentsTitle: "Añadir instrumentos",
+      removeInstrumentsTitle: "Eliminar instrumentos",
+      serialNumberMustBeNumeric: "El número de serie debe ser numérico",
+      selectInstrumentsToDelete: "Selecciona {count} instrumentos para eliminar:",
+      selectedCount: "Seleccionados: {selected} de {total}",
+      mustSelectExactly: "Debes seleccionar exactamente {count} instrumentos para eliminar",
+      serialNumberRequired: "El número de serie {number} debe ser numérico y no puede estar vacío",
     },
 
     // Event Minimums
@@ -148,7 +186,7 @@ export const translations = {
       messageMinimumsExists:
         " Este mínimo ya existe para este evento. Por favor, edita el existente o selecciona otro tipo de instrumento",
       quantityAvaiable: "Cantidad disponible",
-      quantityMessage: "La cantidad mínima no puede ser superior a la cantidad disponible"
+      quantityMessage: "La cantidad mínima no puede ser superior a la cantidad disponible",
     },
 
     // User Events
@@ -482,8 +520,8 @@ export const translations = {
 
     // Common
     common: {
-      name:"Nombre",
-      status:"Estado",
+      name: "Nombre",
+      status: "Estado",
       loading: "Cargando...",
       save: "Guardar",
       cancel: "Cancelar",
@@ -497,12 +535,12 @@ export const translations = {
       showing: "Mostrando",
       to: "a",
       of: "de",
-      oof:"del",
+      oof: "del",
       yes: "Sí",
       no: "No",
-      all:"Todos",
-      select:"Seleccionar todos",
-      selected:"seleccionados",
+      all: "Todos",
+      select: "Seleccionar todos",
+      selected: "seleccionados",
       confirm: "Confirmar",
       back: "Volver",
       next: "Siguiente",
@@ -518,7 +556,7 @@ export const translations = {
       reset: "Restablecer",
       submit: "Enviar",
       continue: "Continuar",
-      eventFinished:"Evento finalizado"
+      eventFinished: "Evento finalizado",
     },
 
     // Home Page
@@ -747,7 +785,7 @@ export const translations = {
       isRequired: "es obligatorio",
       bothOptions: "Ambas opciones son requeridas",
       mp3: "MP3 y Partituras",
-      loading:"Cargando composiciones...",
+      loading: "Cargando composiciones...",
     },
 
     // Interpreted Compositions
@@ -789,7 +827,7 @@ export const translations = {
       userAlreadyAssignedWarning:
         "Este usuario ya está asignado a esta composición. Por favor, selecciona otro usuario.",
       assignUser: "Asignar usuario",
-      noAssign:"Esta composición está disponible para asignar",
+      noAssign: "Esta composición está disponible para asignar",
     },
 
     // Add calendar translations to both language objects
@@ -838,8 +876,8 @@ export const translations = {
       procession: "Procesión",
       parade: "Pasacalles",
       other: "Otro",
-      pastEventCannotCancel:"Un evento pasado de fecha no se puede cancelar",
-      space:"de"
+      pastEventCannotCancel: "Un evento pasado de fecha no se puede cancelar",
+      space: "de",
     },
 
     // Reset Password
@@ -1059,6 +1097,15 @@ export const translations = {
         confirmDelete: "Yes, delete instrument",
         successMessage: "Instrument and associated loans deleted successfully",
       },
+      selectType: "Select a type",
+      instrumentsCount: "instruments",
+      typeCannotBeModified: "The instrument type cannot be modified in edit mode",
+      willDeleteInstrumentNumber: "Instrument #{number} will be deleted",
+      isLastInstrumentOfType: 'It is the last instrument of type "{type}", so the complete type will also be deleted',
+      willDecrementTypeQuantity: 'The quantity of type "{type}" will be decremented ({current} → {new})',
+      instrumentDeletedTypeAlso: 'Instrument deleted. As it was the last of its type, type "{type}" was also deleted',
+      instrumentDeletedQuantityUpdated:
+        "Instrument deleted, but there was an error updating the type quantity: {error}",
     },
 
     // Instrument Types
@@ -1089,7 +1136,34 @@ export const translations = {
       add1: "The following will be added",
       instumentosTipo: " instruments of type",
       numerosSerie: "Provide the serial numbers:",
-      selected: "Selected"
+      selected: "Selected",
+      processing: "Processing...",
+      connectionError: "Connection error",
+      noTypesWithSearch: "No instrument types found with the applied search.",
+      showing: "Showing",
+      newTypesAlwaysQuantityOne: "New types always have quantity 1",
+      addInstruments: "Add instruments",
+      willAddInstruments: "1 instruments of type will be added",
+      provideSerialNumbers: "Provide the serial numbers:",
+      serialNumber: "Serial number",
+      serialNumberExists: "This serial number already exists",
+      cancelConfirmation:
+        "Are you sure you want to cancel? The instrument type has already been created. If you cancel, the type will be deleted.",
+      confirm: "Confirm",
+      cascadeDelete: "Cascade Delete",
+      cascadeDeleteWarning: 'When deleting type "{type}", the following actions will be performed:',
+      willDeleteInstruments: "{count} instruments of this type will be deleted",
+      willDeleteLoans: "All loans associated with these instruments will be deleted",
+      willDeleteType: 'The instrument type "{type}" will be deleted',
+      actionCannotBeUndone: "This action cannot be undone",
+      deleteAll: "Delete All",
+      addInstrumentsTitle: "Add instruments",
+      removeInstrumentsTitle: "Remove instruments",
+      serialNumberMustBeNumeric: "The serial number must be numeric",
+      selectInstrumentsToDelete: "Select {count} instruments to delete:",
+      selectedCount: "Selected: {selected} of {total}",
+      mustSelectExactly: "You must select exactly {count} instruments to delete",
+      serialNumberRequired: "Serial number {number} must be numeric and cannot be empty",
     },
 
     // Event Minimums
@@ -1112,7 +1186,8 @@ export const translations = {
       confirmDelete: "Confirm deletion",
       deleteConfirmText: "Are you sure you want to delete this instrument minimum? This action cannot be undone.",
       noMinimumsForThisEvent: "No instrument minimums for this event.",
-      messageMinimumsExists:"This instrument minimum already exists for this event. Please edit the existing one or select another event.",
+      messageMinimumsExists:
+        "This instrument minimum already exists for this event. Please edit the existing one or select another event.",
       quantityAvaiable: "Available quantity",
       quantityMessage: "The minimum quantity cannot be greater than the available quantity",
     },
@@ -1162,7 +1237,7 @@ export const translations = {
       attendance: "attendance",
       assignmentAlreadyExistsWarning:
         "This assignment already exists for this event. Please edit the existing one or select another user.",
-      noAssignmentsForThisEvent:" No assignments for this event.",
+      noAssignmentsForThisEvent: " No assignments for this event.",
     },
 
     // Event Confirmation
@@ -1443,8 +1518,8 @@ export const translations = {
 
     // Common
     common: {
-      name:"Name",
-      status:"Status",
+      name: "Name",
+      status: "Status",
       loading: "Loading...",
       save: "Save",
       cancel: "Cancel",
@@ -1458,12 +1533,12 @@ export const translations = {
       showing: "Showing",
       to: "to",
       of: "of",
-      oof:"of",
+      oof: "of",
       yes: "Yes",
       no: "No",
-      all:"All",
-      select:"Select all",
-      selected:"selected",
+      all: "All",
+      select: "Select all",
+      selected: "selected",
       confirm: "Confirm",
       back: "Back",
       next: "Next",
@@ -1479,7 +1554,7 @@ export const translations = {
       reset: "Reset",
       submit: "Submit",
       continue: "Continue",
-      eventFinished:"Event  finished"
+      eventFinished: "Event  finished",
     },
 
     // Home Page
@@ -1754,7 +1829,7 @@ export const translations = {
       usersWhoInterpretThisComposition: "Users who interpret this composition",
       userAlreadyAssignedWarning: "This user is already assigned to this composition. Please select another user.",
       assignUser: "Assign user",
-      noAssign:"This composition is available for assignment",
+      noAssign: "This composition is available for assignment",
     },
 
     // Add calendar translations to both language objects
@@ -1803,8 +1878,8 @@ export const translations = {
       procession: "Procession",
       parade: "Parade",
       other: "Other",
-      pastEventCannotCancel:"An event that is past its date cannot be cancelled.",
-      space:" "
+      pastEventCannotCancel: "An event that is past its date cannot be cancelled.",
+      space: " ",
     },
 
     // Reset Password
