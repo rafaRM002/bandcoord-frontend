@@ -397,7 +397,7 @@ export default function TiposInstrumento() {
           <div className="bg-black border border-gray-800 rounded-lg p-6">
             <div className="flex items-center space-x-3">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#C0C0C0]"></div>
-              <span className="text-[#C0C0C0]">{t("instrumentTypes.process")}</span>
+              <span className="text-[#C0C0C0]">Procesando...</span>
             </div>
           </div>
         </div>
@@ -419,7 +419,7 @@ export default function TiposInstrumento() {
       {/* Mensaje de error */}
       {error && (
         <div className="bg-red-900/20 border border-red-800 text-red-100 px-4 py-3 rounded-md mb-6">
-          <h3 className="font-semibold">{t("instrumentTypes.conexioError")}</h3>
+          <h3 className="font-semibold">Error de conexión</h3>
           <p>{error}</p>
         </div>
       )}
@@ -512,8 +512,8 @@ export default function TiposInstrumento() {
         {filteredTipos.length > 0 && (
           <div className="px-4 py-3 flex items-center justify-between border-t border-gray-800">
             <div className="text-sm text-gray-400">
-              {t("instrumentTypes.show")} {indexOfFirstItem + 1} {t("instrumentTypes.to")} {Math.min(indexOfLastItem, filteredTipos.length)} {t("instrumentTypes.of")}{" "}
-              {filteredTipos.length} {t("instrumentTypes.types")}
+              Mostrando {indexOfFirstItem + 1} a {Math.min(indexOfLastItem, filteredTipos.length)} de{" "}
+              {filteredTipos.length} tipos
             </div>
             <div className="flex space-x-1">
               <button
@@ -610,7 +610,7 @@ export default function TiposInstrumento() {
                     className="w-full py-2 px-3 bg-gray-900/50 border border-gray-800 rounded-md text-[#C0C0C0] placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-[#C0C0C0] focus:border-[#C0C0C0] disabled:opacity-60 disabled:cursor-not-allowed"
                   />
                   {modalMode === "create" && (
-                    <p className="text-xs text-gray-500">{t("instrumentTypes.newTypes")}</p>
+                    <p className="text-xs text-gray-500">Los nuevos tipos siempre tienen cantidad 1</p>
                   )}
                 </div>
               </div>
@@ -638,9 +638,9 @@ export default function TiposInstrumento() {
       {showSerialModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("instrumentTypes.addInst")}</h3>
+            <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">Añadir instrumentos</h3>
             <p className="text-gray-400 mb-4">
-              {t("instrumentTypes.add")} "{currentTipo.instrumento}". {t("instrumentTypes.numS")}
+              Se van a añadir 1 instrumentos de tipo "{currentTipo.instrumento}". Proporciona los números de serie:
             </p>
 
             {validationError && (
@@ -696,14 +696,14 @@ export default function TiposInstrumento() {
                 }}
                 className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
               >
-                {t("common.cancel")}
+                Cancelar
               </button>
               <button
                 onClick={handleCreateWithSerial}
                 disabled={!serialNumber.trim() || validationError !== ""}
                 className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {t("common.confirm")}
+                Confirmar
               </button>
             </div>
           </div>
@@ -724,14 +724,14 @@ export default function TiposInstrumento() {
                 {t("common.cancel")}
               </button>
               <button onClick={handleDelete} className="px-4 py-2 bg-red-900/80 text-white rounded-md hover:bg-red-800">
-                {t("common.delete")}
+                Eliminar
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Modal de manejo de cantidad */}
+      {/* Modal for quantity management - FIXED SCROLLBAR ISSUE */}
       {showQuantityModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md flex flex-col max-h-[80vh]">
@@ -742,8 +742,8 @@ export default function TiposInstrumento() {
             {quantityAction === "increase" ? (
               <div className="space-y-4 overflow-y-auto flex-1 pr-1">
                 <p className="text-gray-400">
-                  {t("instrumentTypes.add1")} {newQuantity}{t("instrumentTypes.instumentosTipo")} "{currentTipoForQuantity?.instrumento}".
-                  {t("instrumentTypes.numerosSerie")}
+                  Se van a añadir {newQuantity} instrumentos de tipo "{currentTipoForQuantity?.instrumento}".
+                  Proporciona los números de serie:
                 </p>
                 {Array.from({ length: newQuantity }, (_, i) => {
                   const currentSerials = currentTipoForQuantity.newSerials || []
@@ -766,7 +766,7 @@ export default function TiposInstrumento() {
                         }}
                       />
                       {!isNumeric && currentValue.trim() !== "" && (
-                        <p className="text-xs text-red-400">{t("instrumentTypes.numNumeric")}</p>
+                        <p className="text-xs text-red-400">El número de serie debe ser numérico</p>
                       )}
                     </div>
                   )
@@ -774,7 +774,7 @@ export default function TiposInstrumento() {
               </div>
             ) : (
               <div className="space-y-4 flex-1">
-                <p className="text-gray-400">{t("instrumentTypes.select")} {newQuantity} {t("instrumentTypes.instToDel")}</p>
+                <p className="text-gray-400">Selecciona {newQuantity} instrumentos para eliminar:</p>
                 <div className="max-h-48 overflow-y-auto pr-1 space-y-2">
                   {selectedInstruments.map((instrument) => {
                     const currentSelected = currentTipoForQuantity.toDelete || []
@@ -814,7 +814,7 @@ export default function TiposInstrumento() {
                 </div>
                 {currentTipoForQuantity.toDelete && currentTipoForQuantity.toDelete.length > 0 && (
                   <p className="text-sm text-gray-500">
-                    {t("instrumentTypes.selected")} {currentTipoForQuantity.toDelete.length} de {newQuantity}
+                    Seleccionados: {currentTipoForQuantity.toDelete.length} de {newQuantity}
                   </p>
                 )}
               </div>
@@ -830,7 +830,7 @@ export default function TiposInstrumento() {
                 }}
                 className="px-4 py-2 bg-gray-800 text-[#C0C0C0] rounded-md hover:bg-gray-700"
               >
-                {t("common.cancel")}
+                Cancelar
               </button>
               <button
                 disabled={
@@ -901,7 +901,7 @@ export default function TiposInstrumento() {
                 }}
                 className="px-4 py-2 bg-black border border-[#C0C0C0] text-[#C0C0C0] rounded-md hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {t("common.confirm")}
+                Confirmar
               </button>
             </div>
           </div>
