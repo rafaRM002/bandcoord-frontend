@@ -183,10 +183,11 @@ export const translations = {
       deleteConfirmText:
         "¿Estás seguro de que deseas eliminar este mínimo de instrumento? Esta acción no se puede deshacer.",
       noMinimumsForThisEvent: "No hay mínimos de instrumentos registrados para este evento.",
-      messageMinimumsExists:
+      messageMinimumExists:
         " Este mínimo ya existe para este evento. Por favor, edita el existente o selecciona otro tipo de instrumento",
       quantityAvaiable: "Cantidad disponible",
       quantityMessage: "La cantidad mínima no puede ser superior a la cantidad disponible",
+      
     },
 
     // User Events
@@ -1187,7 +1188,7 @@ export const translations = {
       confirmDelete: "Confirm deletion",
       deleteConfirmText: "Are you sure you want to delete this instrument minimum? This action cannot be undone.",
       noMinimumsForThisEvent: "No instrument minimums for this event.",
-      messageMinimumsExists:
+      messageMinimumExists:
         "This instrument minimum already exists for this event. Please edit the existing one or select another event.",
       quantityAvaiable: "Available quantity",
       quantityMessage: "The minimum quantity cannot be greater than the available quantity",

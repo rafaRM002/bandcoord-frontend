@@ -22,41 +22,40 @@ export default function GestionUsuarios() {
   const { t } = useTranslation() // Hook de traducción
 
   /** Lista de usuarios */
-/** @type {Array} */
-const [usuarios, setUsuarios] = useState([])
+  /** @type {Array} */
+  const [usuarios, setUsuarios] = useState([])
 
-/** Estado de carga */
-/** @type {boolean} */
-const [loading, setLoading] = useState(true)
+  /** Estado de carga */
+  /** @type {boolean} */
+  const [loading, setLoading] = useState(true)
 
-/** Estado de error */
-/** @type {string|null} */
-const [error, setError] = useState(null)
+  /** Estado de error */
+  /** @type {string|null} */
+  const [error, setError] = useState(null)
 
-/** Filtro de estado de usuario */
-/** @type {string} */
-const [filtroEstado, setFiltroEstado] = useState("todos")
+  /** Filtro de estado de usuario */
+  /** @type {string} */
+  const [filtroEstado, setFiltroEstado] = useState("todos")
 
-/** Búsqueda por nombre/email */
-/** @type {string} */
-const [busqueda, setBusqueda] = useState("")
+  /** Búsqueda por nombre/email */
+  /** @type {string} */
+  const [busqueda, setBusqueda] = useState("")
 
-/** Número de usuarios pendientes de aprobación */
-/** @type {number} */
-const [usuariosPendientes, setUsuariosPendientes] = useState(0)
+  /** Número de usuarios pendientes de aprobación */
+  /** @type {number} */
+  const [usuariosPendientes, setUsuariosPendientes] = useState(0)
 
-/** Estado del modal de confirmación de acciones */
-/** @type {{ visible: boolean, accion: string|null, usuario: Object|null }} */
-const [modalConfirmacion, setModalConfirmacion] = useState({
-  visible: false,
-  accion: null,
-  usuario: null,
-})
+  /** Estado del modal de confirmación de acciones */
+  /** @type {{ visible: boolean, accion: string|null, usuario: Object|null }} */
+  const [modalConfirmacion, setModalConfirmacion] = useState({
+    visible: false,
+    accion: null,
+    usuario: null,
+  })
 
-/** Estado para indicar si se está procesando una acción */
-/** @type {boolean} */
-const [actualizando, setActualizando] = useState(false)
-
+  /** Estado para indicar si se está procesando una acción */
+  /** @type {boolean} */
+  const [actualizando, setActualizando] = useState(false)
 
   /**
    * Carga los usuarios desde la API y actualiza los estados correspondientes.
@@ -67,19 +66,13 @@ const [actualizando, setActualizando] = useState(false)
       setLoading(true)
       setError(null)
 
-      // console.log("Cargando usuarios...")
       const response = await api.get("/usuarios")
-      // console.log("Respuesta de usuarios:", response.data)
-
-      // Comprueba si la respuesta es un array o tiene propiedad data
       const usuariosData = Array.isArray(response.data) ? response.data : response.data.data || []
       setUsuarios(usuariosData)
 
-      // Cuenta los usuarios pendientes
       const pendientes = usuariosData.filter((usuario) => usuario.estado === "pendiente").length
       setUsuariosPendientes(pendientes)
     } catch (error) {
-      // console.error("Error al cargar usuarios:", error)
       setError("Error al cargar los usuarios. Por favor, inténtalo de nuevo.")
     } finally {
       setLoading(false)
@@ -91,28 +84,6 @@ const [actualizando, setActualizando] = useState(false)
    * Solo se ejecuta una vez.
    */
   useEffect(() => {
-    const cargarUsuarios = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-
-        // console.log("Cargando usuarios...")
-        const response = await api.get("/usuarios")
-        // console.log("Respuesta de usuarios:", response.data)
-
-        const usuariosData = Array.isArray(response.data) ? response.data : response.data.data || []
-        setUsuarios(usuariosData)
-
-        const pendientes = usuariosData.filter((usuario) => usuario.estado === "pendiente").length
-        setUsuariosPendientes(pendientes)
-      } catch (error) {
-        // console.error("Error al cargar usuarios:", error)
-        setError("Error al cargar los usuarios. Por favor, inténtalo de nuevo.")
-      } finally {
-        setLoading(false)
-      }
-    }
-
     cargarUsuarios()
   }, []) // Solo se ejecuta una vez al montar
 
@@ -150,7 +121,7 @@ const [actualizando, setActualizando] = useState(false)
       cargarUsuarios()
       setModalConfirmacion({ visible: false, accion: null, usuario: null })
     } catch (error) {
-      // console.error("Error al aprobar usuario:", error)
+      console.error("Error al aprobar usuario:", error)
       setError("Error al aprobar el usuario. Por favor, inténtalo de nuevo.")
     } finally {
       setActualizando(false)
@@ -169,7 +140,7 @@ const [actualizando, setActualizando] = useState(false)
       cargarUsuarios()
       setModalConfirmacion({ visible: false, accion: null, usuario: null })
     } catch (error) {
-      // console.error("Error al bloquear usuario:", error)
+      console.error("Error al bloquear usuario:", error)
       setError("Error al bloquear el usuario. Por favor, inténtalo de nuevo.")
     } finally {
       setActualizando(false)
@@ -188,7 +159,7 @@ const [actualizando, setActualizando] = useState(false)
       cargarUsuarios()
       setModalConfirmacion({ visible: false, accion: null, usuario: null })
     } catch (error) {
-      // console.error("Error al eliminar usuario:", error)
+      console.error("Error al eliminar usuario:", error)
       setError("Error al eliminar el usuario. Por favor, inténtalo de nuevo.")
     } finally {
       setActualizando(false)
@@ -203,12 +174,35 @@ const [actualizando, setActualizando] = useState(false)
   const suspenderUsuario = async (id) => {
     try {
       setActualizando(true)
-      await api.patch(`/usuarios/${id}/suspend`)
-      cargarUsuarios()
+      setError(null)
+
+      // Realizar la petición de suspensión
+      const response = await api.patch(`/usuarios/${id}/suspend`)
+
+      // Actualizar el estado local inmediatamente para mejor UX
+      setUsuarios((prevUsuarios) =>
+        prevUsuarios.map((usuario) => (usuario.id === id ? { ...usuario, estado: "suspendido" } : usuario)),
+      )
+
+      // Recargar usuarios después de un breve delay
+      setTimeout(() => {
+        cargarUsuarios()
+      }, 300)
+
       setModalConfirmacion({ visible: false, accion: null, usuario: null })
     } catch (error) {
-      // console.error("Error al suspender usuario:", error)
-      setError("Error al suspender el usuario. Por favor, inténtalo de nuevo.")
+      // Manejar errores específicos
+      if (error.response?.status === 404) {
+        setError("El endpoint de suspensión no está disponible. Contacta con el administrador del sistema.")
+      } else if (error.response?.status === 403) {
+        setError("No tienes permisos para suspender usuarios.")
+      } else if (error.response?.status === 500) {
+        setError("Error interno del servidor. Inténtalo de nuevo más tarde.")
+      } else {
+        setError(
+          `Error al suspender el usuario: ${error.response?.data?.message || error.message || "Error desconocido"}`,
+        )
+      }
     } finally {
       setActualizando(false)
     }
@@ -232,6 +226,8 @@ const [actualizando, setActualizando] = useState(false)
    */
   const ejecutarAccion = () => {
     const { accion, usuario } = modalConfirmacion
+    if (!usuario) return
+
     if (accion === "aprobar") {
       aprobarUsuario(usuario.id)
     } else if (accion === "bloquear") {
