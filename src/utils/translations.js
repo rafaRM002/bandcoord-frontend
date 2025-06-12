@@ -482,7 +482,7 @@ export const translations = {
       noReadMessages: "No tienes mensajes leídos.",
       noSentMessages: "No has enviado ningún mensaje.",
       deleteMultipleConfirmText:
-        "¿Estás seguro de que deseas eliminar {count} mensaje(s)? Esta acción no se puede deshacer.",
+        "¿Estás seguro de que deseas eliminar los mensaje(s) seleccionados? Esta acción no se puede deshacer.",
       searchBySubjectOrContent: "Buscar por asunto o contenido...",
       formMessage: {
         newMessage: "Nuevo mensaje",
@@ -557,6 +557,7 @@ export const translations = {
       submit: "Enviar",
       continue: "Continuar",
       eventFinished: "Evento finalizado",
+      confirmDelete: "Confirmar eliminación",
     },
 
     // Home Page
@@ -1481,7 +1482,7 @@ export const translations = {
       noUnreadMessages: "You have no unread messages.",
       noReadMessages: "You have no read messages.",
       noSentMessages: "You haven't sent any messages.",
-      deleteMultipleConfirmText: "Are you sure you want to delete {count} message(s)? This action cannot be undone.",
+      deleteMultipleConfirmText: "Are you sure you want to delete the selected message(s)? This action cannot be undone.",
       searchBySubjectOrContent: "Search by subject or content...",
       formMessage: {
         newMessage: "New message",
@@ -1555,6 +1556,7 @@ export const translations = {
       submit: "Submit",
       continue: "Continue",
       eventFinished: "Event  finished",
+      confirmDelete: "Confirm deletion",
     },
 
     // Home Page

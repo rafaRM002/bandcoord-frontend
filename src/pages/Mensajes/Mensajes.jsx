@@ -425,7 +425,7 @@ export default function Mensajes() {
           <div className="bg-black border border-gray-800 rounded-lg p-6 w-full max-w-md">
             <h3 className="text-xl font-semibold text-[#C0C0C0] mb-4">{t("common.confirmDelete")}</h3>
             <p className="text-gray-400 mb-6">
-              {t("messages.deleteMultipleConfirmText", { count: selectedMensajes.length })}
+              {t("messages.deleteMultipleConfirmText")}
             </p>
             <div className="flex justify-end space-x-3">
               <button

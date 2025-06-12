@@ -12,18 +12,7 @@ import { AuthContext } from "../../context/AuthContext"
 import axios from "../../api/axios"
 import { toast } from "react-toastify"
 import { Link } from "react-router-dom"
-import {
-  Search,
-  MessageSquare,
-  User,
-  Calendar,
-  Bell,
-  Inbox,
-  Mail,
-  CheckCircle,
-  Square,
-  CheckSquare,
-} from "lucide-react"
+import { Search, MessageSquare, User, Calendar, Bell, Inbox, Mail, CheckCircle, Square, CheckSquare } from 'lucide-react'
 import { useTranslation } from "../../hooks/useTranslation"
 
 /**
@@ -132,10 +121,6 @@ const MensajesUsuario = () => {
             estadoLeido = relacion.estado === "1" || relacion.estado === "true"
           }
 
-          // console.log(
-          //   `Mensaje ${relacion.mensaje_id}: estado=${relacion.estado} (${typeof relacion.estado}), leído=${estadoLeido}`,
-          // )
-
           return {
             ...relacion,
             asunto: mensajeCompleto?.asunto || "Sin asunto",
@@ -149,9 +134,16 @@ const MensajesUsuario = () => {
           }
         })
 
-        // console.log("Mensajes combinados con estado correcto:", mensajesCombinados)
-        setMensajes(mensajesCombinados)
-        setTotalPages(Math.ceil(mensajesCombinados.length / itemsPerPage))
+        // NUEVO: Filtrar mensajes donde el usuario se envió un mensaje a sí mismo
+        const mensajesFiltrados = mensajesCombinados.filter((mensaje) => {
+          // Excluir mensajes donde el usuario actual es tanto emisor como receptor
+          const esAutoMensaje = mensaje.usuario_id_emisor === user.id || mensaje.usuario_id_emisor === Number(user.id)
+          return !esAutoMensaje
+        })
+
+        // console.log("Mensajes combinados con estado correcto:", mensajesFiltrados)
+        setMensajes(mensajesFiltrados)
+        setTotalPages(Math.ceil(mensajesFiltrados.length / itemsPerPage))
         setError(null)
       } catch (err) {
         console.error("Error al cargar mensajes del usuario:", err)
@@ -273,7 +265,7 @@ const MensajesUsuario = () => {
 
       const promises = selectedMensajes.map((mensajeId) => {
         // console.log(`Marcando mensaje ${mensajeId} para usuario ${user.id}`)
-        // CORREGIDO: URL con barra final y payload solo con estado
+        // CORREGIDO: URL con barra final
         return axios.put(`/mensaje-usuarios/${mensajeId}/${user.id}/`, {
           estado: 1, // Solo enviamos el estado
         })
